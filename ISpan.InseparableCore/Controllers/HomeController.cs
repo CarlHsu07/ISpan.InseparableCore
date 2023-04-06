@@ -11,6 +11,7 @@ namespace ISpan.InseparableCore.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            //123
         }
 
         public IActionResult Index()
