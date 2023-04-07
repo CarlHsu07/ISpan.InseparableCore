@@ -7,8 +7,17 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TFriends
     {
+        /// <summary>
+        /// 好友流水號
+        /// </summary>
         public int FId { get; set; }
+        /// <summary>
+        /// 會員ID
+        /// </summary>
         public int FMemberId { get; set; }
+        /// <summary>
+        /// 好友的序號
+        /// </summary>
         public int FFriendNo { get; set; }
         /// <summary>
         /// 好友的ID
@@ -17,7 +26,7 @@ namespace ISpan.InseparableCore.Models
         /// <summary>
         /// 成為好友的時間
         /// </summary>
-        public string FFriendDateTime { get; set; }
+        public DateTime FFriendDateTime { get; set; }
 
         public virtual TMembers FMember { get; set; }
     }

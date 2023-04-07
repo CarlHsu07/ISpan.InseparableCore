@@ -1,0 +1,86 @@
+﻿@model ISpan.InseparableCore.ViewModels.CticketVM
+
+@{
+    ViewData["Title"] = "Ticket";
+}
+@section Styles{
+    <style>
+        .mydiv {
+            margin-left: 100px;
+        }
+
+        .top {
+            margin-top: 30px;
+        }
+
+        ul li {
+            padding: 5px;
+            display: inline;
+            margin: 10px;
+            border-radius: 5px;
+            font-size:120%;
+        }
+
+        a:hover {
+            color: #80FFFF;
+        }
+    </style>
+}
+@using (Html.BeginForm())
+{
+    <h1>購票系統</h1>
+
+    <div class="mydiv">
+
+        <h3>
+            <select name="cinemaId" id="cinema" onchange="this.form.submit()">
+                <option value="0">請選擇</option>
+                @foreach (var item in Model.cinema)
+                {
+                    <option value="@item.FCinemaId">@item.FCinemaName</option>
+                }
+            </select>
+        </h3>
+    </div>
+    <div class="mydiv border-bottom">
+        <h3>
+            @if (Model.movie != null)
+            {
+                <select name="movieId" id="movie" onchange="this.form.submit()">
+                    <option value="0">請選擇</option>
+                    @foreach (var item in Model.movie)
+                    {
+                        <option value="@item.FMovieId">@item.FMovieName</option>
+                    }
+                </select>
+            }
+        </h3>
+    </div>
+    <div class="mydiv top">
+        @if (Model.sessions != null)
+        {
+            foreach (var item in Model.sessions)
+            {
+                <h3>@item.Key.Year 年 @item.Key.Month 月 @item.Key.Day 日 @item.Key.DayOfWeek</h3>
+                <ul>
+                    @foreach (var session in item.Value)
+                    {
+                        <li class="btn-secondary"><a href="/Shopping/Booking?cinema=@session.FCinemaId&&session=@session.FSessionId">@session.FSessionTime.Hours : @session.FSessionTime.Minutes.ToString("D2")</a></li>
+                    }
+                </ul>
+
+            }
+        }
+    </div>
+}
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#cinema").val(@Model.cinemaId);
+            $("#movie").val(@Model.movieId);
+
+        });
+
+    </script>
+}

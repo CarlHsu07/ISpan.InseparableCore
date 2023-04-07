@@ -1,0 +1,239 @@
+﻿@model ISpan.InseparableCore.ViewModels.CbookingVM
+
+@{
+    ViewData["Title"] = "Booking";
+}
+@section Styles{
+    <link href="~/css/blog.css" rel="stylesheet">
+    <style>
+        th, td {
+            width: 220px;
+            font-size: 20px;
+            padding: 3px;
+        }
+
+        span {
+            display: inline-block;
+            width: 250px;
+            margin: 10px;
+        }
+
+        select {
+            width: 40%;
+        }
+
+        p {
+            display: inline;
+        }
+
+        th {
+            background-color: #6FB7B7;
+        }
+
+        .background {
+            background-color: #0080FF;
+            padding: 3px;
+        }
+
+        .margin-top {
+            margin-top: 5px;
+        }
+
+        .next {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+    </style>
+
+}
+
+    <form action="/Shopping/Seat" method="post">
+    @foreach (var item in Model.movie)
+    {
+        <h1>@item.FMovieName</h1>
+
+    }
+    <section id="blog" class="pt-4 pb-4 bg_grey">
+        <div class="row blog_1">
+            <div class="col-md-8">
+                <div class="blog_1l1">
+                    @foreach (var item in Model.sessions)
+                    {
+                        <input type="hidden" name="sessionid" value="@item.FSessionId" />
+
+                        <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @item.FSessionDate.ToString("yyyy/MM/dd")  @item.FSessionTime.Hours : @item.FSessionTime.Minutes.ToString("D2")</h4>
+
+                        <div>
+                            <h4 class="background">選擇電影票</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>票種</th>
+                                        <th>價格</th>
+                                        <th>張數</th>
+                                        <th>合計</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="regular">全票</td>
+                                        <td id="regularprice">@Convert.ToInt32(item.FTicketPrice)</td>
+                                        <td>
+                                            <select id="regularnum" name="regularnum" onchange="cal();caritem()">
+                                                @for (int i = 0; i < 11; i++)
+                                                {
+                                                    <option value="@i">@i</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td id="regularsubtotal">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td id="concession">優待票</td>
+                                        <td id="concessionprice"></td>
+                                        <td>
+                                            <select id="concessionnum" name="concessionnum" onchange="cal();caritem()">
+                                                @for (int i = 0; i < 11; i++)
+                                                {
+                                                    <option value="@i">@i</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td id="concessionsubtotal">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    }
+                    <div>
+                        <h4 class="background">選擇商品</h4>
+                        @{
+                            int count = 0;
+                            foreach (var item in Model.products)
+                            {
+                                count++;
+                                <span>
+                                    <h3>@item.FProductName</h3>
+
+                                    <img src="~/images/@item.FProductPicturePath" width="150" height="150" />
+                                    <div class="margin-top">
+                                        <p>@item.FProductUnitprice.ToString("###") 元</p>
+                                        <select name="@item.FProductName" id="product" price="@item.FProductUnitprice" pid="@item.FProductId" onchange="caritem()">
+                                            @for (int i = 0; i < 11; i++)
+                                            {
+                                                <option value="@i">@i</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                </span>
+                            }
+                        }
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="blog_1r">
+                    <div class="blog_1r1 p-4">
+                        <h3 class="border-bottom">購物清單</h3>
+                        @*todo清單*@
+                        <ul id="cartitem">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="next">
+        <input type="submit" value="下一步" class="btn-primary" />
+    </div>
+</form>
+@section Scripts{
+    <script>
+        $(function () {
+            var regularprice = $("#regularprice").html();
+            var concessionprice = regularprice * 0.9;
+            $("#concessionprice").html(concessionprice);
+
+
+        });
+        function cal() {
+            var regularprice = $("#regularprice").html();
+            var concessionprice = regularprice * 0.9;
+            var regularnum = $("#regularnum").val();
+            var concessionnum = $("#concessionnum").val();
+
+            $("#regularsubtotal").html(regularnum * regularprice);
+            $("#concessionsubtotal").html(concessionnum * concessionprice);
+
+
+            //更新購物清單
+            var regular = $('#regular').html();
+            var concession = $('#concession').html();
+            $("#cartitem").html(``)
+            if (regularnum > 0) {
+                $("#cartitem").append(`<li>${regular} <p align="right">x${regularnum} = ${regularnum * regularprice}</p></li>`)
+            }
+            if (concessionnum > 0) {
+                $("#cartitem").append(`<li>${concession} <p align="right">x${concessionnum} = ${concessionnum * concessionprice}</p></li>`);
+            }
+        };
+        function caritem() {
+            //更新購物清單
+
+            //票券
+            var regular = $('#regular').html();
+            var concession = $('#concession').html();
+            var regularprice = $("#regularprice").html();
+            var concessionprice = regularprice * 0.9;
+            var regularnum = $("#regularnum").val();
+            var concessionnum = $("#concessionnum").val();
+            var total = 0;
+            $("#cartitem").html(``)
+            if (regularnum > 0) {
+                $("#cartitem").append(`<li>${regular} <p>x${regularnum} = ${regularnum * regularprice}</p></li>`)
+                total += regularnum * regularprice;
+            }
+            if (concessionnum > 0) {
+                $("#cartitem").append(`<li>${concession} <p>x${concessionnum} = ${concessionnum * concessionprice}</p></li>`);
+                total += concessionnum * concessionprice;
+            }
+
+            //產品
+            var select = document.querySelectorAll('#product');
+            $(select).each(function () {
+                var name = $(this).attr('name');
+                var price = $(this).attr('price');
+                var num = $(this).val();
+                var id = $(this).attr('pid');
+                if (num > 0) {
+                    $.ajax({
+                        //method: "POST",
+                        url: '/Shopping/CartItem',
+                        type: 'POST',
+                        data: {
+                            productId: id,
+                            quantity: num
+                        },
+                        success: function (data) {
+                            console.log(data) //pass
+                            $("#cartitem").append(`<li>${name} <p>x${num} = ${num * price}</p></li>`);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                }
+                total += num * price;
+            })
+            $("#cartitem").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
+        };
+        //todo 同步執行 promise
+    </script>
+}

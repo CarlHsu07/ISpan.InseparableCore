@@ -7,16 +7,19 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TAreas
     {
-        public TAreas()
-        {
-            TMembers = new HashSet<TMembers>();
-        }
-
+        /// <summary>
+        /// 鄉鎮市區ID
+        /// </summary>
         public int FAreaId { get; set; }
-        public string FName { get; set; }
+        /// <summary>
+        /// 鄉鎮市區所屬縣市
+        /// </summary>
         public int FCityId { get; set; }
+        /// <summary>
+        /// 鄉鎮市區的名稱
+        /// </summary>
+        public string FAreaName { get; set; }
 
         public virtual TCities FCity { get; set; }
-        public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }

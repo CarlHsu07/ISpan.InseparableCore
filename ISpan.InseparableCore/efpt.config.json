@@ -4,7 +4,7 @@
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
-   "IncludeConnectionString": true,
+   "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models",
@@ -60,10 +60,6 @@
       },
       {
          "Name": "[dbo].[tFriends]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[tGender]",
          "ObjectType": 0
       },
       {
@@ -128,10 +124,6 @@
       },
       {
          "Name": "[dbo].[tProducts]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[tReport]",
          "ObjectType": 0
       },
       {
