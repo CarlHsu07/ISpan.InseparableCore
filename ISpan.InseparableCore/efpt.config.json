@@ -31,6 +31,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[tAreas]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tArticleKeywordDetails]",
          "ObjectType": 0
       },
@@ -128,6 +132,10 @@
       },
       {
          "Name": "[dbo].[tProducts]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tReports]",
          "ObjectType": 0
       },
       {

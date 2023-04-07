@@ -49,7 +49,7 @@ namespace ISpan.InseparableCore.Models
         /// <summary>
         /// 生日
         /// </summary>
-        public string FDateOfBirth { get; set; }
+        public DateTime? FDateOfBirth { get; set; }
         /// <summary>
         /// 性別ID
         /// </summary>

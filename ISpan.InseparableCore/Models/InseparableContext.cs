@@ -22,6 +22,7 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual DbSet<TActors> TActors { get; set; }
         public virtual DbSet<TAdministrators> TAdministrators { get; set; }
+        public virtual DbSet<TAreas> TAreas { get; set; }
         public virtual DbSet<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
         public virtual DbSet<TArticles> TArticles { get; set; }
         public virtual DbSet<TCinemas> TCinemas { get; set; }
@@ -47,6 +48,7 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TProductCategories> TProductCategories { get; set; }
         public virtual DbSet<TProductOrderDetails> TProductOrderDetails { get; set; }
         public virtual DbSet<TProducts> TProducts { get; set; }
+        public virtual DbSet<TReports> TReports { get; set; }
         public virtual DbSet<TRooms> TRooms { get; set; }
         public virtual DbSet<TSeats> TSeats { get; set; }
         public virtual DbSet<TSessions> TSessions { get; set; }
@@ -211,6 +213,33 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("管理員註冊時間");
             });
 
+            modelBuilder.Entity<TAreas>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("tAreas");
+
+                entity.Property(e => e.FAreaName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnName("fAreaName")
+                    .HasComment("鄉鎮市區的名稱");
+
+                entity.Property(e => e.FCityId)
+                    .HasColumnName("fCityID")
+                    .HasComment("鄉鎮市區所屬縣市");
+
+                entity.Property(e => e.FZipCode)
+                    .HasColumnName("fZipCode")
+                    .HasComment("鄉鎮市區郵遞區號");
+
+                entity.HasOne(d => d.FCity)
+                    .WithMany()
+                    .HasForeignKey(d => d.FCityId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Areas_Cities");
+            });
+
             modelBuilder.Entity<TArticleKeywordDetails>(entity =>
             {
                 entity.HasKey(e => e.FSerialNumber)
@@ -268,6 +297,12 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fArticleTitle");
 
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
+
+                entity.HasOne(d => d.FArticleCategory)
+                    .WithMany(p => p.TArticles)
+                    .HasForeignKey(d => d.FArticleCategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tArticles_tMovieCategories");
 
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TArticles)
@@ -593,7 +628,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("手機號碼");
 
                 entity.Property(e => e.FDateOfBirth)
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fDateOfBirth")
                     .HasComment("生日");
 
@@ -975,6 +1010,28 @@ namespace ISpan.InseparableCore.Models
                     .HasForeignKey(d => d.FProductCategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Products_ProductCategories");
+            });
+
+            modelBuilder.Entity<TReports>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("tReports");
+
+                entity.Property(e => e.FDescription)
+                    .HasMaxLength(200)
+                    .HasColumnName("fDescription")
+                    .HasComment("檢舉類型的詳細描述");
+
+                entity.Property(e => e.FReportType)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("fReportType")
+                    .HasComment("檢舉類型名稱");
+
+                entity.Property(e => e.FReportTypeId)
+                    .HasColumnName("fReportTypeID")
+                    .HasComment("檢舉類型ID");
             });
 
             modelBuilder.Entity<TRooms>(entity =>

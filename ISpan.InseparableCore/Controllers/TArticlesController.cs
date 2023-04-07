@@ -21,7 +21,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: TArticles
         public async Task<IActionResult> Index()
         {
-			var inseparableContext = _context.TArticles;//.Include(t => t.FMember);
+            var inseparableContext = _context.TArticles.Include(t => t.FArticleCategory).Include(t => t.FMember);
             return View(await inseparableContext.ToListAsync());
         }
 
@@ -34,7 +34,8 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             var tArticles = await _context.TArticles
-                //.Include(t => t.FMember)
+                .Include(t => t.FArticleCategory)
+                .Include(t => t.FMember)
                 .FirstOrDefaultAsync(m => m.FArticleId == id);
             if (tArticles == null)
             {
@@ -47,7 +48,8 @@ namespace ISpan.InseparableCore.Controllers
         // GET: TArticles/Create
         public IActionResult Create()
         {
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail");
+            ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
             return View();
         }
 
@@ -64,7 +66,8 @@ namespace ISpan.InseparableCore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tArticles.FMemberId);
+            ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", tArticles.FArticleCategoryId);
+            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", tArticles.FMemberId);
             return View(tArticles);
         }
 
@@ -81,7 +84,8 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return NotFound();
             }
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tArticles.FMemberId);
+            ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", tArticles.FArticleCategoryId);
+            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", tArticles.FMemberId);
             return View(tArticles);
         }
 
@@ -117,7 +121,8 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tArticles.FMemberId);
+            ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", tArticles.FArticleCategoryId);
+            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", tArticles.FMemberId);
             return View(tArticles);
         }
 
@@ -130,9 +135,9 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             var tArticles = await _context.TArticles
-				.Include(t => t.FMember)
-				.Include(t => t.)
-				.FirstOrDefaultAsync(m => m.FArticleId == id);
+                .Include(t => t.FArticleCategory)
+                .Include(t => t.FMember)
+                .FirstOrDefaultAsync(m => m.FArticleId == id);
             if (tArticles == null)
             {
                 return NotFound();

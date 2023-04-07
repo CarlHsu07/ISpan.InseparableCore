@@ -16,9 +16,6 @@
                 @Html.DisplayNameFor(model => model.FArticleTitle)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FArticleCategoryId)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.FArticlePostingDate)
             </th>
             <th>
@@ -31,7 +28,10 @@
                 @Html.DisplayNameFor(model => model.FArticleContent)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FMemberId)
+                @Html.DisplayNameFor(model => model.FArticleCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMember)
             </th>
             <th></th>
         </tr>
@@ -41,9 +41,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.FArticleTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticleCategoryId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FArticlePostingDate)
@@ -58,7 +55,10 @@
                 @Html.DisplayFor(modelItem => item.FArticleContent)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FMemberId)
+                @Html.DisplayFor(modelItem => item.FArticleCategory.FMovieCategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMember.FFirstName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.FArticleId">Edit</a> |
