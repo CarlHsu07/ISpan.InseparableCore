@@ -1,0 +1,77 @@
+﻿@model IEnumerable<ISpan.InseparableCore.Models.TMovies>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieIntroduction)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieOnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieOffDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieLength)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieImagePath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieScore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMovieLevel)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieIntroduction)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieOnDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieOffDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieLength)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieImagePath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMovieLevel.FLevelName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FMovieId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FMovieId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FMovieId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

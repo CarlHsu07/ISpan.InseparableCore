@@ -12,12 +12,33 @@ namespace ISpan.InseparableCore.Models
             TActivityParticipants = new HashSet<TActivityParticipants>();
         }
 
+        /// <summary>
+        /// 活動流水號
+        /// </summary>
         public int FId { get; set; }
+        /// <summary>
+        /// 活動ID
+        /// </summary>
         public string FActivityId { get; set; }
+        /// <summary>
+        /// 活動標題
+        /// </summary>
         public string FActivityTitle { get; set; }
-        public string FDateTime { get; set; }
+        /// <summary>
+        /// 舉辦時間
+        /// </summary>
+        public DateTime FDateTime { get; set; }
+        /// <summary>
+        /// 參加人數上限
+        /// </summary>
         public int FmaxParticipants { get; set; }
+        /// <summary>
+        /// 活動描述
+        /// </summary>
         public string FDescription { get; set; }
+        /// <summary>
+        /// 活動新增時間
+        /// </summary>
         public string FCreateTime { get; set; }
 
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }

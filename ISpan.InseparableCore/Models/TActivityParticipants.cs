@@ -8,9 +8,21 @@ namespace ISpan.InseparableCore.Models
     public partial class TActivityParticipants
     {
         public int FId { get; set; }
+        /// <summary>
+        /// 活動ID
+        /// </summary>
         public int FActivityId { get; set; }
-        public int? FParticipantNo { get; set; }
+        /// <summary>
+        /// 報名序號
+        /// </summary>
+        public int FParticipantNo { get; set; }
+        /// <summary>
+        /// 參加者會員ID
+        /// </summary>
         public int FMemberId { get; set; }
+        /// <summary>
+        /// 報名時間
+        /// </summary>
         public string FRegisteredTime { get; set; }
 
         public virtual TActivities FActivity { get; set; }

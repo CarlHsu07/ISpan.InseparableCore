@@ -31,10 +31,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tAreas]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[tArticleKeywordDetails]",
          "ObjectType": 0
       },
@@ -63,7 +59,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tGender]",
+         "Name": "[dbo].[tGenders]",
          "ObjectType": 0
       },
       {
@@ -76,6 +72,10 @@
       },
       {
          "Name": "[dbo].[tMemberPoints]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tMemberReports]",
          "ObjectType": 0
       },
       {
@@ -128,10 +128,6 @@
       },
       {
          "Name": "[dbo].[tProducts]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[tReport]",
          "ObjectType": 0
       },
       {

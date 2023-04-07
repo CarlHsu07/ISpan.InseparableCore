@@ -7,13 +7,31 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TMemberPoints
     {
-        public int FId { get; set; }
+        /// <summary>
+        /// 會員點數的流水號
+        /// </summary>
+        public int FMemberPointId { get; set; }
+        /// <summary>
+        /// 會員ID
+        /// </summary>
         public int FMemberId { get; set; }
         public int FItemNo { get; set; }
+        /// <summary>
+        /// 新增點數數量
+        /// </summary>
         public int? FPointsAdded { get; set; }
+        /// <summary>
+        /// 扣點數量
+        /// </summary>
         public int? FPointDeducted { get; set; }
+        /// <summary>
+        /// 點數異動原因
+        /// </summary>
         public string FDescription { get; set; }
-        public string FCreateTime { get; set; }
+        /// <summary>
+        /// 點數異動的時間
+        /// </summary>
+        public DateTime FCreateTime { get; set; }
 
         public virtual TMembers FMember { get; set; }
     }

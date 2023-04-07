@@ -5,29 +5,27 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TFriends
+    public partial class TMemberReports
     {
         /// <summary>
-        /// 好友流水號
+        /// 檢舉的流水號
         /// </summary>
-        public int FId { get; set; }
+        public int FMemberReportId { get; set; }
         /// <summary>
-        /// 會員ID
+        /// 被檢舉的會員ID
         /// </summary>
-        public int FMemberId { get; set; }
+        public int FReportedMemberId { get; set; }
         /// <summary>
-        /// 好友的序號
+        /// 檢舉者的會員ID
         /// </summary>
-        public int FFriendNo { get; set; }
+        public string FReportMemberId { get; set; }
         /// <summary>
-        /// 好友的ID
+        /// 檢舉類型
         /// </summary>
-        public int FFriendId { get; set; }
+        public int FReportType { get; set; }
         /// <summary>
-        /// 成為好友的時間
+        /// 檢舉時間
         /// </summary>
-        public DateTime FFriendDateTime { get; set; }
-
-        public virtual TMembers FMember { get; set; }
+        public DateTime FReportTime { get; set; }
     }
 }

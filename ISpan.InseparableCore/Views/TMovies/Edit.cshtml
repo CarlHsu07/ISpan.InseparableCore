@@ -1,0 +1,69 @@
+﻿@model ISpan.InseparableCore.Models.TMovies
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TMovies</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FMovieId" />
+            <div class="form-group">
+                <label asp-for="FMovieName" class="control-label"></label>
+                <input asp-for="FMovieName" class="form-control" />
+                <span asp-validation-for="FMovieName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieIntroduction" class="control-label"></label>
+                <input asp-for="FMovieIntroduction" class="form-control" />
+                <span asp-validation-for="FMovieIntroduction" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieLevelId" class="control-label"></label>
+                <select asp-for="FMovieLevelId" class="form-control" asp-items="ViewBag.FMovieLevelId"></select>
+                <span asp-validation-for="FMovieLevelId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieOnDate" class="control-label"></label>
+                <input asp-for="FMovieOnDate" class="form-control" />
+                <span asp-validation-for="FMovieOnDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieOffDate" class="control-label"></label>
+                <input asp-for="FMovieOffDate" class="form-control" />
+                <span asp-validation-for="FMovieOffDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieLength" class="control-label"></label>
+                <input asp-for="FMovieLength" class="form-control" />
+                <span asp-validation-for="FMovieLength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieImagePath" class="control-label"></label>
+                <input asp-for="FMovieImagePath" class="form-control" />
+                <span asp-validation-for="FMovieImagePath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMovieScore" class="control-label"></label>
+                <input asp-for="FMovieScore" class="form-control" />
+                <span asp-validation-for="FMovieScore" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

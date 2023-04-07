@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ISpan.InseparableCore.Models.TArticles>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticleTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticleCategoryId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticlePostingDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticleLikes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticleClicks)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticleContent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMemberId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticleTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticleCategoryId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticlePostingDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticleLikes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticleClicks)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticleContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMemberId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FArticleId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FArticleId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FArticleId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
