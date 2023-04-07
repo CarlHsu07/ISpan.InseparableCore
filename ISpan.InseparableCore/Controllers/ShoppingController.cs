@@ -57,34 +57,32 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult CartItem(int? productId, int? quantity)
         {
             string responseText = "fail";
-            var item = _db.TProducts.FirstOrDefault(t=>t.FProductId==productId);
 
-            List<CShoppingCartItem> cart = null;
+            var product = _db.TProducts.FirstOrDefault(t=>t.FProductId==productId);
+
+            List<CproductCartItem> cart = null;
             string json = string.Empty;
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
             {
                 json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-                cart = JsonSerializer.Deserialize<List<CShoppingCartItem>>(json);
+                cart = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
             }
             else
-                cart = new List<CShoppingCartItem>();
+                cart = new List<CproductCartItem>();
 
-            CShoppingCartItem vm = new CShoppingCartItem();
-            //todo 紀錄
-            //vm.Price = (decimal)p.FPrice;
-            //vm.ProductId = vm.txtfId;
-            //item.Count = vm.txtCount;
-            //item.Product = p;
+            CproductCartItem item = new CproductCartItem();
+            item.FProductItemNo = cart.Count()>0? cart.Count()+1:1;
+            item.FProductUnitprice = product.FProductUnitprice;
+            item.FProductQty = (int)quantity;
+            item.FProduct = product;
+            item.FProductId = (int)productId;
 
-            //cart.Add(item);
+            cart.Add(item);
             json = JsonSerializer.Serialize(cart);
             HttpContext.Session.SetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST, json);
-
-
-
-            //test
-            if (productId!=null && quantity!=null)
+            if(cart.Count()>0)
                 responseText = "pass";
+
 
             return Ok(responseText);
         }

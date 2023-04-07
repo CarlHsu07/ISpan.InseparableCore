@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
 
 // 建立InseparableContext物件
 builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("InseparableConnection")));
@@ -23,7 +24,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
