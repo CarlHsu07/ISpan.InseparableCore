@@ -57,7 +57,7 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult CartItem(int? productId, int? quantity)
         {
             string responseText = "fail";
-
+            
             var product = _db.TProducts.FirstOrDefault(t=>t.FProductId==productId);
 
             List<CproductCartItem> cart = null;
@@ -69,6 +69,19 @@ namespace ISpan.InseparableCore.Controllers
             }
             else
                 cart = new List<CproductCartItem>();
+
+            CproductCartItem delete = null;
+            if(cart != null)
+            {
+                foreach(var p in cart)
+                {
+                    if(p.FProductId== productId)
+                    {
+                        delete=cart.FirstOrDefault(c=>c.FProductId==p.FProductId);
+                    }
+                }
+                cart.Remove(delete);
+            }
 
             CproductCartItem item = new CproductCartItem();
             item.FProductItemNo = cart.Count()>0? cart.Count()+1:1;
@@ -85,6 +98,28 @@ namespace ISpan.InseparableCore.Controllers
 
 
             return Ok(responseText);
+        }
+        public IActionResult Seat(CseatVM vm)
+        {
+            if (vm.sessionid == null)
+                return View();
+            vm.solid = new List<int>();
+
+            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid);
+            foreach (var item in solid)
+            {
+                vm.solid.Add(item.FSeatId);
+            }
+
+            vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
+            var row = _db.TSeats.GroupBy(t => t.FSeatRow).Select(t => t.Key);
+            foreach (var item in row)
+            {
+                var column = _db.TSeats.Where(t => t.FSeatRow == item);
+                vm.seats.Add(item, column);
+            }
+
+            return View(vm);
         }
     }
 }

@@ -1,0 +1,102 @@
+﻿@model ISpan.InseparableCore.ViewModels.CseatVM
+
+@{
+    ViewData["Title"] = "Seat";
+}
+
+<h1>Seat</h1>
+
+@section Styles{
+        <style>
+        td div{
+            width: 50px;
+            height: 50px;
+            text-align: center;
+        }
+        .not-seleted{
+
+            border: solid 2px black;
+            background-color:yellow;
+        }
+        .seleted{
+            border: solid 2px black;
+            background-color:green;
+        }
+        .solid{
+            border: solid 2px black;
+            background-color:blue;
+        }
+    </style>
+}
+@{
+    <div>
+                            <table>
+            @foreach (var item in Model.seats)
+            {
+                                            <tr>
+                                                <td>@item.Key</td>
+                    @foreach (var column in item.Value)
+                    {
+                                                        <td>
+                                                            <div class="not-seleted" value="@column.FSeatId" id="@column.FSeatId">
+                                @column.FSeatColumn
+                                                            </div>
+                                                        </td>
+
+                        if (column.FSeatColumn == 2 || column.FSeatColumn == 12)
+                        {
+                                                                <td><div></div></td>
+                        }
+                    }
+                                            </tr>
+            }
+                            </table>
+    </div>
+}
+<div>
+<input type="button" onclick="detial()" value="下一步" />
+</div>
+@section Scripts{
+        <script>
+            onload = function () {
+                var soldSeatIds = @Html.Raw(Json.Serialize(Model.solid));
+                $(soldSeatIds).each(function (index,value) {
+                    $('#'+value).addClass('solid');
+                });
+            }
+            var num = [];
+            var ticket = @Model.ticket
+                $("td div").click(function () {
+                    //忽略已賣出座位
+                    if($(this).hasClass('solid')){
+                        return;
+                    }
+
+                    //判斷選取座位及數量
+                    if ($(this).hasClass('seleted')) {
+                        $(this).removeClass("seleted");
+                        $(this).addClass("not-seleted");
+                        var index = num.indexOf($(this).attr('value'));
+                        num.splice(index, 1);
+
+                    }
+                    else {
+                        num.push($(this).attr('value'));
+                        if (num.length > ticket) {
+                            num.pop();
+                            alert("請先取消再選擇!!");
+                            return;
+                        }
+                        $(this).removeClass("not-seleted");
+                        $(this).addClass("seleted");
+                    }
+
+                    //console.log(num);
+                });
+
+            function detial(){
+                //todo 傳值到下一頁
+            }
+
+        </script>
+}

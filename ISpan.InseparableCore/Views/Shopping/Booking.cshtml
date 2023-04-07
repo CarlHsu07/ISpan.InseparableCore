@@ -206,47 +206,80 @@
                                             }
 
                                             //產品
-                                                function sendAjaxRequest() {
-                                return new Promise(
-                                        function (resolve, reject) {
-                                            var select = document.querySelectorAll('#product');
-                                            $(select).each(function () {
-                                                var name = $(this).attr('name');
-                                                var price = $(this).attr('price');
-                                                var num = $(this).val();
-                                                var id = $(this).attr('pid');
-                                                if (num > 0) {
-                                                    $.ajax({
-                                                        method: 'POST',
-                                                        url: '/Shopping/CartItem',
-                                                        data: {
-                                                            productId: id,
-                                                            quantity: num
-                                                        },
-                                                        success: function (data) {
-                                                            resolve(data);
-                                                            $("#cartitem").append(`<li>${name} <p>x${num} = ${num * price}</p></li>`);
-                                                        },
-                                                        error: function (error) {
-                                                            console.log(error);
-                                                        }
-                                                    });
-                                                }
-                                                total += num * price;
-                                             })
-                                             }
-                                             )}
-                                                 async function myAsyncFunction() {
-                                                 let value = await sendAjaxRequest();
-                                if (value == "pass") {
-                                    $("#cartitem").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
-                                }
-                                             else {
-                                    throw "驗證失敗"
-                                }
-                                                 }
-                                     myAsyncFunction();
+                            //                    function sendAjaxRequest() {
+                            //    return new Promise(
+                            //            function (resolve, reject) {
+                            //                var select = document.querySelectorAll('#product');
+                            //                $(select).each(function () {
+                            //                    var name = $(this).attr('name');
+                            //                    var price = $(this).attr('price');
+                            //                    var num = $(this).val();
+                            //                    var id = $(this).attr('pid');
+                            //                    if (num > 0) {
+                            //                        $.ajax({
+                            //                            method: 'POST',
+                            //                            url: '/Shopping/CartItem',
+                            //                            data: {
+                            //                                productId: id,
+                            //                                quantity: num
+                            //                            },
+                            //                            success: function (data) {
+                            //                                resolve(data);
+                            //                                $("#cartitem").append(`<li>${name} <p>x${num} = ${num * price}</p></li>`);
+                            //                            },
+                            //                            error: function (error) {
+                            //                                console.log(error);
+                            //                            }
+                            //                        });
+                            //                    }
+                            //                    total += num * price;
+                            //                 })
+                            //                 }
+                            //                 )}
+                            //                     async function myAsyncFunction() {
+                            //                     let value = await sendAjaxRequest();
+                            //    if (value == "pass") {
+                            //        $("#cartitem").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
+                            //    }
+                            //                 else {
+                            //        throw "驗證失敗"
+                            //    }
+                            //                     }
+                            //         myAsyncFunction();
 
-                            }
+                            //}
+
+                                //產品
+    var select = document.querySelectorAll('#product');
+                                                $(select).each(function () {
+                                                    var name = $(this).attr('name');
+                                                    var price = $(this).attr('price');
+                                                    var num = $(this).val();
+                                                    var id = $(this).attr('pid');
+                                                    if (num > 0) {
+    $("#cartitem").append(`<li>${name} <p>x${num} = ${num * price}</p></li>`);
+                                                        $.ajax({
+                                                            method: 'POST',
+                                                            url: '/Shopping/CartItem',
+                                                            data: {
+                                                                productId: id,
+                                                                quantity: num
+                                                            },
+                                                            success: function (data) {
+                                                                console.log(data);
+
+                                                            },
+                                                            error: function (error) {
+                                                                console.log(error);
+                                                            }
+                                                        });
+                                                    }
+                                                    total += num * price;
+                                                 })
+
+                                                    $("#cartitem").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
+
+                                }
+
                                     </script>
 }
