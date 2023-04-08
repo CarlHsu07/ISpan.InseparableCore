@@ -95,7 +95,7 @@
 
                         if (column.FSeatColumn == 2 || column.FSeatColumn == 12)
                         {
-                                                                <td><div></div></td>
+                                                        <td><div class="aisle"></div></td>
                         }
                     }
                                             </tr>
@@ -120,8 +120,8 @@
             var ticket = @Model.ticket
             
                 $("td div").click(function () {
-                    //忽略已賣出座位
-                    if($(this).hasClass('solid')){
+                    //忽略已賣出座位及走道
+                    if($(this).hasClass('solid') |$(this).hasClass('aisle')){
                         return;
                     }
 
@@ -187,7 +187,9 @@
                 var regular =@Model.regularnum;
                 var concession=@Model.concessionnum;
                 var session=@Model.sessionid;
-
+                if(num.length!=ticket){
+                    alert(`還有 ${ticket-num.length} 個座位還沒選~~`);
+                }
             }
 
         </script>
