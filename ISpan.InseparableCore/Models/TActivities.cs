@@ -39,7 +39,7 @@ namespace ISpan.InseparableCore.Models
         /// <summary>
         /// 活動新增時間
         /// </summary>
-        public string FCreateTime { get; set; }
+        public DateTime FCreateTime { get; set; }
 
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }
     }

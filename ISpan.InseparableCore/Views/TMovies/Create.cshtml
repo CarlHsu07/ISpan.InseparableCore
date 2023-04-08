@@ -1,7 +1,7 @@
-﻿@model ISpan.InseparableCore.Models.TMovies
+﻿@model ISpan.InseparableCore.ViewModels.MovieCreateVm
 
 @{
-    ViewData["Title"] = "Create";
+	ViewData["Title"] = "Create";
 }
 
 <h1>Create</h1>
@@ -9,54 +9,77 @@
 <h4>TMovies</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="FMovieName" class="control-label"></label>
-                <input asp-for="FMovieName" class="form-control" />
-                <span asp-validation-for="FMovieName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieIntroduction" class="control-label"></label>
-                <input asp-for="FMovieIntroduction" class="form-control" />
-                <span asp-validation-for="FMovieIntroduction" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieLevelId" class="control-label"></label>
-                <select asp-for="FMovieLevelId" class ="form-control" asp-items="ViewBag.FMovieLevelId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieOnDate" class="control-label"></label>
-                <input asp-for="FMovieOnDate" class="form-control" />
-                <span asp-validation-for="FMovieOnDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieOffDate" class="control-label"></label>
-                <input asp-for="FMovieOffDate" class="form-control" />
-                <span asp-validation-for="FMovieOffDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieLength" class="control-label"></label>
-                <input asp-for="FMovieLength" class="form-control" />
-                <span asp-validation-for="FMovieLength" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieScore" class="control-label"></label>
-                <input asp-for="FMovieScore" class="form-control" />
-                <span asp-validation-for="FMovieScore" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+	<div class="col-md-4">
+		<form asp-action="Create" id="Create">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="FMovieName" class="control-label"></label>
+				<input asp-for="FMovieName" class="form-control" />
+				<span asp-validation-for="FMovieName" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieIntroduction" class="control-label"></label>
+				<input asp-for="FMovieIntroduction" class="form-control" />
+				<span asp-validation-for="FMovieIntroduction" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieLevelId" class="control-label"></label>
+				<select asp-for="FMovieLevelId" class="form-control" asp-items="ViewBag.FMovieLevelId"></select>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieOnDate" class="control-label"></label>
+				<input asp-for="FMovieOnDate" class="form-control" />
+				<span asp-validation-for="FMovieOnDate" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieOffDate" class="control-label"></label>
+				<input asp-for="FMovieOffDate" class="form-control" />
+				<span asp-validation-for="FMovieOffDate" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieLength" class="control-label"></label>
+				<input asp-for="FMovieLength" class="form-control" />
+				<span asp-validation-for="FMovieLength" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="FMovieScore" class="control-label"></label>
+				<input asp-for="FMovieScore" class="form-control" />
+				<span asp-validation-for="FMovieScore" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="CategoryIds" class="control-label"></label>
+				<select id="FMovieCategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId" multiple></select>
+				<input type="hidden" asp-for="CategoryIds" id="CategoryIds" />
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Index">Back to List</a>
 </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 
+<script>
+	var categoryIds = "";
+
+	$("#Create").submit(function () {
+		$("#FMovieCategoryId").find(":selected").each(function () {
+			categoryIds += this.value + ',';
+		});
+		$("#CategoryIds").val(categoryIds);
+		alert($("#CategoryIds").val())
+	})
+
+</script>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

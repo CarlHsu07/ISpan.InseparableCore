@@ -7,7 +7,14 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TCities
     {
+        public TCities()
+        {
+            TAreas = new HashSet<TAreas>();
+        }
+
         public int FCityId { get; set; }
         public string FCityName { get; set; }
+
+        public virtual ICollection<TAreas> TAreas { get; set; }
     }
 }

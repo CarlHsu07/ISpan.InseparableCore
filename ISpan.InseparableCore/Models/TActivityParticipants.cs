@@ -23,7 +23,7 @@ namespace ISpan.InseparableCore.Models
         /// <summary>
         /// 報名時間
         /// </summary>
-        public string FRegisteredTime { get; set; }
+        public DateTime FRegisteredTime { get; set; }
 
         public virtual TActivities FActivity { get; set; }
         public virtual TMembers FMember { get; set; }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.ViewModels;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -48,7 +49,8 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult Create()
         {
             ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName");
-            return View();
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View();
         }
 
         // POST: TMovies/Create
@@ -56,16 +58,41 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FMovieId,FMovieName,FMovieIntroduction,FMovieLevelId,FMovieOnDate,FMovieOffDate,FMovieLength,FMovieImagePath,FMovieScore")] TMovies tMovies)
+        public async Task<IActionResult> Create( MovieCreateVm movieCreateVm)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(tMovies);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            //if (ModelState.IsValid)
+            {				
+				TMovies movie = new TMovies()
+				{
+					FMovieIntroduction = movieCreateVm.FMovieIntroduction,
+					FMovieName = movieCreateVm.FMovieName,
+					FMovieLevelId = movieCreateVm.FMovieLevelId,
+					FMovieOnDate = movieCreateVm.FMovieOnDate,
+					FMovieOffDate = movieCreateVm.FMovieOffDate,
+					FMovieLength = movieCreateVm.FMovieLength,
+					FMovieImagePath = movieCreateVm.FMovieImagePath,
+					FMovieScore = movieCreateVm.FMovieScore,
+				};
+                _context.Add(movie);
+				_context.SaveChanges();
+
+				int movieId = _context.TMovies.First(t => t.FMovieName == movieCreateVm.FMovieName).FMovieId;
+				List<int> categoryIds = movieCreateVm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToList();
+				foreach (var id in categoryIds)
+				{
+					TMovieCategoryDetails detail = new TMovieCategoryDetails()
+					{
+						FMovieId = movieId,
+						FMovieCategoryId = id
+					};
+					_context.Add(detail);
+				}
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
             }
-            ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", tMovies.FMovieLevelId);
-            return View(tMovies);
+            ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", movieCreateVm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View(movieCreateVm);
         }
 
         // GET: TMovies/Edit/5

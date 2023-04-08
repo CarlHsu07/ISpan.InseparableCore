@@ -8,7 +8,7 @@ namespace ISpan.InseparableCore.Models
     public partial class TAreas
     {
         /// <summary>
-        /// 鄉鎮市區郵遞區號
+        /// 鄉鎮市區的郵遞區號
         /// </summary>
         public int FZipCode { get; set; }
         /// <summary>

@@ -58,6 +58,8 @@ namespace ISpan.InseparableCore.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Data Source=inseparable.database.windows.net;Initial Catalog=Inseparable;Persist Security Info=True;User ID=ISpan230117;Password=IN2023Separable_0117");
             }
         }
 
@@ -88,8 +90,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("活動標題");
 
                 entity.Property(e => e.FCreateTime)
-                    .IsRequired()
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fCreateTime")
                     .HasComment("活動新增時間");
 
@@ -129,8 +130,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("報名序號");
 
                 entity.Property(e => e.FRegisteredTime)
-                    .IsRequired()
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fRegisteredTime")
                     .HasComment("報名時間");
 
@@ -215,9 +215,14 @@ namespace ISpan.InseparableCore.Models
 
             modelBuilder.Entity<TAreas>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.FZipCode);
 
                 entity.ToTable("tAreas");
+
+                entity.Property(e => e.FZipCode)
+                    .ValueGeneratedNever()
+                    .HasColumnName("fZipCode")
+                    .HasComment("鄉鎮市區的郵遞區號");
 
                 entity.Property(e => e.FAreaName)
                     .IsRequired()
@@ -229,12 +234,8 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fCityID")
                     .HasComment("鄉鎮市區所屬縣市");
 
-                entity.Property(e => e.FZipCode)
-                    .HasColumnName("fZipCode")
-                    .HasComment("鄉鎮市區郵遞區號");
-
                 entity.HasOne(d => d.FCity)
-                    .WithMany()
+                    .WithMany(p => p.TAreas)
                     .HasForeignKey(d => d.FCityId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Areas_Cities");
