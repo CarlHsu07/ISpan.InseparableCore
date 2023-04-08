@@ -16,5 +16,6 @@ namespace ISpan.InseparableCore.ViewModels
 
         public  TOrders FOrder { get; set; }
         public  TProducts FProduct { get; set; }
+
     }
 }

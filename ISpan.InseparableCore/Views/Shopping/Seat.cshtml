@@ -4,32 +4,82 @@
     ViewData["Title"] = "Seat";
 }
 
-<h1>Seat</h1>
 
 @section Styles{
         <style>
         td div{
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             text-align: center;
+        }
+        span{
+            width:20px;
+            height:20px;
+            display:inline-block;
+        }
+        .left p{
+            display:inline;
+            margin:5px;
+            font-size:10px;
         }
         .not-seleted{
 
-            border: solid 2px black;
-            background-color:yellow;
+            border:solid 1.5px #6c7d8f ;
         }
         .seleted{
-            border: solid 2px black;
-            background-color:green;
+            border:solid 1.5px #6c7d8f ;    
+            background-color:#2E86C1 ;
         }
         .solid{
-            border: solid 2px black;
-            background-color:blue;
+            border:solid 1.5px #6c7d8f ;           
+            background-color:#F1C40F;
+        }
+        .movie{
+            overflow:auto;
+            width:80%;
+            padding:20px;
+            border:solid 2px #154360;
+            margin:auto;
+        }
+        .title{
+            text-align:center;
+            margin:10px;
+        }
+        .screen{
+            text-align:center;
+        }
+        .screen p{
+            border:solid 2px #6c7d8f;
+            border-radius:10px;
+            margin:auto;
+            margin-bottom:40px;
+        }
+        .seat{
+            overflow:auto;
+            display:grid;
+        }
+        .bottom{
+            text-align:center;
         }
     </style>
 }
 @{
-    <div>
+    <div class="title">
+        @foreach(var item in Model.movie)
+        {
+             <h3>@item.FMovieName</h3>
+        }
+        <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.sessions.FSessionDate.ToString("yyyy/MM/dd") @Model.sessions.FSessionTime.Hours : @Model.sessions.FSessionTime.Minutes.ToString("D2")</h4>
+    </div>
+    <div class="left">
+    <span class="seleted"></span><p>您的座位</p>
+    <span class="not-seleted"></span><p>可選座位</p>
+    <span class="solid"></span><p>已售出</p>
+    <p class="alert-danger" style="font-size:15px;" id="ticketnum">請選 @Model.ticket 個座位!!!</p>
+    </div>
+    <div class="movie">
+    <div class="screen"><p>螢幕</p></div>
+    <div class="seat">
                             <table>
             @foreach (var item in Model.seats)
             {
@@ -51,10 +101,12 @@
                                             </tr>
             }
                             </table>
+               </div>
     </div>
+
 }
-<div>
-<input type="button" onclick="detial()" value="下一步" />
+<div class="bottom">
+<input type="button" onclick="detial()" value="下一步" class="btn-primary" id="button"/>
 </div>
 @section Scripts{
         <script>
@@ -66,6 +118,7 @@
             }
             var num = [];
             var ticket = @Model.ticket
+            
                 $("td div").click(function () {
                     //忽略已賣出座位
                     if($(this).hasClass('solid')){
@@ -78,6 +131,22 @@
                         $(this).addClass("not-seleted");
                         var index = num.indexOf($(this).attr('value'));
                         num.splice(index, 1);
+                        var seatId = $(this).attr('value');
+
+                            $.ajax({
+                                        method: 'POST',
+                                        url: '/Shopping/TicketItem',
+                                        data: {
+                                        seatId,
+                                        Qty:0
+                                        },
+                                        success: function (data) {
+                                        console.log(data);
+                                        },
+                                        error: function (error) {
+                                            console.log(error);
+                                        }
+                               });
 
                     }
                     else {
@@ -89,13 +158,36 @@
                         }
                         $(this).removeClass("not-seleted");
                         $(this).addClass("seleted");
+
+                        var seatId = $(this).attr('value');
+                             $.ajax({
+                                    method: 'POST',
+                                    url: '/Shopping/TicketItem',
+                                    data: {
+                                    seatId,
+                                    Qty:1
+                                    },
+                                    success: function (data) {
+                                    console.log(data);
+                                    },
+                                    error: function (error) {
+                                        console.log(error);
+                                    }
+                           });
                     }
 
-                    //console.log(num);
+                    $('#ticketnum').html(`請再選 ${ticket-num.length} 個座位 !!!`);
+                    if(ticket==num.length){
+                            $('#ticketnum').html(``);
+                    }
                 });
 
             function detial(){
-                //todo 傳值到下一頁
+
+                var regular =@Model.regularnum;
+                var concession=@Model.concessionnum;
+                var session=@Model.sessionid;
+
             }
 
         </script>

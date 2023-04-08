@@ -1,6 +1,7 @@
 ﻿using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
@@ -57,7 +58,9 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult CartItem(int? productId, int? quantity)
         {
             string responseText = "fail";
-            
+
+            if (productId == null)
+                return Ok(responseText);
             var product = _db.TProducts.FirstOrDefault(t=>t.FProductId==productId);
 
             List<CproductCartItem> cart = null;
@@ -82,7 +85,8 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 cart.Remove(delete);
             }
-
+            if (quantity > 0)
+            {
             CproductCartItem item = new CproductCartItem();
             item.FProductItemNo = cart.Count()>0? cart.Count()+1:1;
             item.FProductUnitprice = product.FProductUnitprice;
@@ -90,12 +94,14 @@ namespace ISpan.InseparableCore.Controllers
             item.FProduct = product;
             item.FProductId = (int)productId;
 
-            cart.Add(item);
+            cart.Add(item); 
+            }
             json = JsonSerializer.Serialize(cart);
             HttpContext.Session.SetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST, json);
             if(cart.Count()>0)
                 responseText = "pass";
-
+            if (quantity == 0)
+                responseText = "fail";
 
             return Ok(responseText);
         }
@@ -119,7 +125,42 @@ namespace ISpan.InseparableCore.Controllers
                 vm.seats.Add(item, column);
             }
 
+            vm.sessions = _db.TSessions.FirstOrDefault(t => t.FSessionId == vm.sessionid);
+            vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
             return View(vm);
+        }
+        public IActionResult TicketItem(int? seatId,int? Qty)
+        {
+            string responseText = "fail";
+
+            if (seatId == null)
+                return Ok(responseText);
+
+            List<int> seats = null;
+            string json = string.Empty;
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            {
+                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                seats = JsonSerializer.Deserialize<List<int>>(json);
+            }
+            else
+                seats = new List<int>();
+            
+            if (Qty == 1)
+            {
+                seats.Add((int)seatId);
+                responseText = "pass";
+            }
+            else
+            {
+                seats.Remove((int)seatId);
+                responseText = "pass";
+            }
+
+            json = JsonSerializer.Serialize(seats);
+            HttpContext.Session.SetString(CDitionary.SK_PURCHASED_TICKET_LIST, json);
+
+            return Ok(responseText);
         }
     }
 }

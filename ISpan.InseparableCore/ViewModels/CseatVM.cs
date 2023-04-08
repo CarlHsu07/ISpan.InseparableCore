@@ -11,5 +11,8 @@ namespace ISpan.InseparableCore.ViewModels
         public List<int> solid { get; set; }
 
         public int ticket { get { return this.regularnum + this.concessionnum; } }
+
+        public TSessions sessions { get; set; }
+        public IEnumerable<TMovies> movie { get; set; }
     }
 }
