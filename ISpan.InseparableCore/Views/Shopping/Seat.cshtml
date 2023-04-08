@@ -7,6 +7,9 @@
 
 @section Styles{
         <style>
+         body {
+      font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif; 
+    }
         td div{
             width: 40px;
             height: 40px;
@@ -109,6 +112,7 @@
 <input type="button" onclick="detial()" value="下一步" class="btn-primary" id="button"/>
 </div>
 @section Scripts{
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             onload = function () {
                 var soldSeatIds = @Html.Raw(Json.Serialize(Model.solid));
@@ -153,7 +157,7 @@
                         num.push($(this).attr('value'));
                         if (num.length > ticket) {
                             num.pop();
-                            alert("請先取消再選擇!!");
+                            Swal.fire("請先取消再選擇!!");
                             return;
                         }
                         $(this).removeClass("not-seleted");
@@ -188,7 +192,8 @@
                 var concession=@Model.concessionnum;
                 var session=@Model.sessionid;
                 if(num.length!=ticket){
-                    alert(`還有 ${ticket-num.length} 個座位還沒選~~`);
+                    //alert(`還有 ${ticket-num.length} 個座位還沒選~~`);
+                    Swal.fire(`還有 ${ticket-num.length} 個座位還沒選~~`);
                 }
             }
 
