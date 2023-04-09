@@ -151,7 +151,7 @@
     </section>
 
     <div class="next">
-        <input type="submit" value="下一步" class="btn-close" id="button"/>
+        <input type="submit" value="下一步" class="btn-primary" id="button" disabled/>
     </div>
 </form>
 @section Scripts{
@@ -160,7 +160,8 @@
                                             var regularprice = $("#regularprice").html();
                                             var concessionprice = regularprice * 0.9;
                                             $("#concessionprice").html(concessionprice);
-
+                                            sessionStorage.removeItem(SK_PURCHASED_PRODUCTS_LIST);
+                                            //todo網頁返回 因為有記錄票 button應該要 undisabled
 
                                         });
                                         function cal() {
@@ -184,13 +185,13 @@
                                                 $("#cartitem").append(`<li>${concession} <p align="right">x${concessionnum} = ${concessionnum * concessionprice}</p></li>`);
                                             }
 
-                                                     if(regularnum==0 & concessionnum==0){
-                                                             $('#button').removeClass('btn-primary');
-                                                             $('#button').addClass('btn-close');
-                                                     }else{
-                                                             $('#button').addClass('btn-primary');
-                                                             $('#button').removeClass('btn-close');
-                                                     }
+                                                 if(regularnum==0 & concessionnum==0){
+                                                                         $('#button').attr('disabled',true);
+                                                                 }else{
+                                                                         $('#button').attr('disabled',false);
+                                                                 }
+                                               
+                                                     
                                         };
                                         function caritem() {
                                             //更新購物清單

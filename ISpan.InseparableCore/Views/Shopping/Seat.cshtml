@@ -128,7 +128,7 @@
                     if($(this).hasClass('solid') |$(this).hasClass('aisle')){
                         return;
                     }
-
+                    var sessionId=@Model.sessionid;
                     //判斷選取座位及數量
                     if ($(this).hasClass('seleted')) {
                         $(this).removeClass("seleted");
@@ -136,13 +136,14 @@
                         var index = num.indexOf($(this).attr('value'));
                         num.splice(index, 1);
                         var seatId = $(this).attr('value');
-
+                        
                             $.ajax({
                                         method: 'POST',
                                         url: '/Shopping/TicketItem',
                                         data: {
                                         seatId,
-                                        Qty:0
+                                        Qty:0,
+                                        sessionId
                                         },
                                         success: function (data) {
                                         console.log(data);
@@ -169,7 +170,8 @@
                                     url: '/Shopping/TicketItem',
                                     data: {
                                     seatId,
-                                    Qty:1
+                                    Qty:1,
+                                    sessionId
                                     },
                                     success: function (data) {
                                     console.log(data);
@@ -192,8 +194,12 @@
                 var concession=@Model.concessionnum;
                 var session=@Model.sessionid;
                 if(num.length!=ticket){
-                    //alert(`還有 ${ticket-num.length} 個座位還沒選~~`);
                     Swal.fire(`還有 ${ticket-num.length} 個座位還沒選~~`);
+                }
+                else{
+                    var url='/Shopping/CartView?regular='+regular+'&&concession='+concession+'&&sessionid='+session;
+                    //console.log(url);
+                    location.href=url;
                 }
             }
 

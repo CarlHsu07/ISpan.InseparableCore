@@ -1,0 +1,111 @@
+﻿@model ISpan.InseparableCore.ViewModels.CcartviewVM
+
+@{
+    ViewData["Title"] = "CartView";
+}
+@section Styles{
+    <style>
+            th, td {
+                width: 220px;
+                font-size: 20px;
+                padding: 3px;
+            }
+    </style>
+}
+
+<h1>確認訂單</h1>
+@using(Html.BeginForm("Pay","Shopping")){
+<div>
+    <input type="hidden" name="FSessionId" value="@Model.session.FSessionId">
+    @foreach (var item in Model.movies)
+    {
+         <h1>@item.FMovieName</h1>
+    }
+    <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.session.FSessionDate.ToString("yyyy/MM/dd") @Model.session.FSessionTime.Hours : @Model.session.FSessionTime.Minutes.ToString("D2")</h4>
+    <h4>
+        @foreach(var item in Model.seats)
+        {
+            <span>@item.Value</span>
+        }
+    </h4>
+</div>
+<div>
+    <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                <th>商品</th>
+                <th>價格</th>
+                <th>張數</th>
+                <th>合計</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.regular != 0)
+            {
+                int regular = Model.regular;
+                int price = @Convert.ToInt32(Model.session.FTicketPrice);
+                int total = regular * price;
+                <tr>
+                    <td id="regular">全票</td>
+                    <td>@regular</td>
+                    <td id="regularprice">@price</td>
+                    <td id="regularsub">@total</td>
+                </tr>
+            }
+            @if (Model.concession != 0)
+            {
+                int concession = Model.concession;
+                int price =(int)(@Convert.ToInt32(Model.session.FTicketPrice)*0.9);
+                int total = concession * price;
+                    <tr>
+                        <td id="regular">優待票</td>
+                        <td>@concession</td>
+                        <td id="concessionprice">@price</td>
+                        <td id="concessionsub">@total</td>
+                    </tr>
+            }
+                @if (Model.cart != null)
+                {
+
+                    @foreach (var item in Model.cart)
+                    {
+                        <tr>
+                                <td>@item.FProductName</td>
+                                <td>@item.FProductUnitprice.ToString("###")</td>
+                                <td>@item.FProductQty.ToString("###")</td>
+                                <td id="productsub">@item.FProductSubtotal.ToString("###")</td>
+                            </tr>
+                    }
+                }
+            <tr class="border-top">
+                <td colspan="3">總額</td>
+                <td id="total" name="total"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+   
+</div>
+<div>
+    <input type="submit" value="結帳" class="btn-primary"/>
+</div>
+}
+@section Scripts{
+    <script>
+        $(function(){
+            var total=0;
+                var regular = ($('#regularsub').html()==null)? 0: parseInt($('#regularsub').html());
+                var concession= ($('#concessionsub').html()==null)? 0:parseInt($('#concessionsub').html());
+             
+            total=regular+concession;
+            $('#productsub').each(function(){
+
+                    var product=($(this).html()==null)? 0:parseInt($(this).html());
+                    total+=product;
+            });
+
+            $('#total').html(total);
+        });
+    </script>
+}

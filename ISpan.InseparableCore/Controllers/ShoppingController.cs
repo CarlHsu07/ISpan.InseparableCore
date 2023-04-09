@@ -2,6 +2,7 @@
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
@@ -93,6 +94,7 @@ namespace ISpan.InseparableCore.Controllers
             item.FProductQty = (int)quantity;
             item.FProduct = product;
             item.FProductId = (int)productId;
+            item.FProductName = product.FProductName;
 
             cart.Add(item); 
             }
@@ -129,38 +131,110 @@ namespace ISpan.InseparableCore.Controllers
             vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
             return View(vm);
         }
-        public IActionResult TicketItem(int? seatId,int? Qty)
+        public IActionResult TicketItem(int? seatId,int? Qty, int? sessionId)
         {
             string responseText = "fail";
 
             if (seatId == null)
                 return Ok(responseText);
 
-            List<int> seats = null;
+            var session = _db.TSessions.FirstOrDefault(t => t.FSessionId == sessionId);
+
+            List<CticketCartItemVM> cart = null;
             string json = string.Empty;
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
             {
                 json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
-                seats = JsonSerializer.Deserialize<List<int>>(json);
+                cart = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
             else
-                seats = new List<int>();
-            
-            if (Qty == 1)
+                cart = new List<CticketCartItemVM>();
+
+            CticketCartItemVM delete = null;
+            if (Qty == 0)
             {
-                seats.Add((int)seatId);
-                responseText = "pass";
+                delete=cart.FirstOrDefault(c=>c.FSeatId== seatId);
+                cart.Remove(delete);
             }
             else
             {
-                seats.Remove((int)seatId);
-                responseText = "pass";
+                CticketCartItemVM item =new CticketCartItemVM();
+                item.FTicketUnitprice = (decimal)session.FTicketPrice;
+                item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 0;
+                item.FMovieId = session.FMovieId;
+                item.FRoomId = session.FRoomId;
+                item.FSeatId = (int)seatId;
+                item.FSessionId = (int)sessionId;
+
+                cart.Add(item);
             }
 
-            json = JsonSerializer.Serialize(seats);
+            json = JsonSerializer.Serialize(cart);
             HttpContext.Session.SetString(CDitionary.SK_PURCHASED_TICKET_LIST, json);
 
             return Ok(responseText);
+        }
+        public IActionResult CartView(int? regular,int? concession,int? sessionid)
+        {
+            CcartviewVM vm =new CcartviewVM();
+            string json = null;
+            List<CproductCartItem> cart = null;
+            List<CticketCartItemVM> ticket=null;
+            string seatid = string.Empty;
+      
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
+            {
+                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                cart = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
+            }
+
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            {
+                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
+            }
+            vm.seats = new Dictionary<int, string>();
+            var seats = ticket.Select(t => t.FSeatId);
+            foreach(var item in seats)
+            {
+                var seat = _db.TSeats.Where(t => t.FSeatId == item);
+                foreach(var name in seat)
+                {
+                    seatid = name.FSeatRow + name.FSeatColumn;
+                    vm.seats.Add(item,seatid);
+                }
+            }
+            vm.concession = (int)concession;
+            vm.regular = (int)regular;
+            vm.session = _db.TSessions.FirstOrDefault(t => t.FSessionId == sessionid);
+            vm.movies = _db.TSessions.Where(t => t.FSessionId == sessionid).Select(t=>t.FMovie);
+            vm.cart = cart;
+            
+            return View(vm);
+        }
+        //如果直截用網頁返回session要如何清除重來
+        //location.href是否可以用post
+        //問題!!要怎麼知道這一筆detial是哪個orderid???
+        public IActionResult Pay(int? regular,int? cocession)
+        {
+            List<CproductCartItem> cart = null;
+            List<CticketCartItemVM> ticket = null;
+            string json = string.Empty;
+
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
+            {
+                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                cart = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
+            }
+
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            {
+                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
+            }
+
+
+            return View();
         }
     }
 }
