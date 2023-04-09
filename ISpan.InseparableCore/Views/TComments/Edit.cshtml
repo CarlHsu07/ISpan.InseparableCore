@@ -1,0 +1,59 @@
+﻿@model ISpan.InseparableCore.Models.TComments
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TComments</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FCommentId" />
+            <div class="form-group">
+                <label asp-for="FArticleId" class="control-label"></label>
+                <select asp-for="FArticleId" class="form-control" asp-items="ViewBag.FArticleId"></select>
+                <span asp-validation-for="FArticleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FItemNumber" class="control-label"></label>
+                <input asp-for="FItemNumber" class="form-control" />
+                <span asp-validation-for="FItemNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMemberId" class="control-label"></label>
+                <select asp-for="FMemberId" class="form-control" asp-items="ViewBag.FMemberId"></select>
+                <span asp-validation-for="FMemberId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCommentPostingDate" class="control-label"></label>
+                <input asp-for="FCommentPostingDate" class="form-control" />
+                <span asp-validation-for="FCommentPostingDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCommentLikes" class="control-label"></label>
+                <input asp-for="FCommentLikes" class="form-control" />
+                <span asp-validation-for="FCommentLikes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCommentContent" class="control-label"></label>
+                <input asp-for="FCommentContent" class="form-control" />
+                <span asp-validation-for="FCommentContent" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

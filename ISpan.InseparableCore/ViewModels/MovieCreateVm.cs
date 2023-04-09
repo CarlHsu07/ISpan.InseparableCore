@@ -12,6 +12,6 @@
 		public string FMovieImagePath { get; set; }
 		public int FMovieScore { get; set; }
 		public string CategoryIds { get; set; }
-
+		public IFormFile Image { get; set; }
 	}
 }
