@@ -15,6 +15,10 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
+         "Name": "[dbo].[tAccountStatuses]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tActivities]",
          "ObjectType": 0
       },
@@ -63,7 +67,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tGender]",
+         "Name": "[dbo].[tGenders]",
          "ObjectType": 0
       },
       {
@@ -79,11 +83,11 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tMembers]",
+         "Name": "[dbo].[tMemberReports]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tMemberStatus]",
+         "Name": "[dbo].[tMembers]",
          "ObjectType": 0
       },
       {
@@ -131,7 +135,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tReport]",
+         "Name": "[dbo].[tReports]",
          "ObjectType": 0
       },
       {

@@ -1,0 +1,111 @@
+﻿@model IEnumerable<ISpan.InseparableCore.Models.TMembers>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">新增會員</a>
+</p>
+<p>
+    @using (Html.BeginForm())
+    {
+        @:關鍵字 @Html.TextBox("txtKeyword") <input type="submit" value="查詢" />
+    }
+</p>
+<table class="table text-light">
+    <thead>
+        <tr>
+            <th>
+                序號
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMemberId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FLastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FFirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FDateOfBirth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FCellphone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FPhotoPath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FTotalMemberPoint)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FAccountStatusNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FGender)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@{
+    int count = 0;
+    foreach (var item in Model) {
+        count++;
+        <tr>
+            <td>
+                @count
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMemberId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FLastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FFirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FDateOfBirth)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FCellphone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FPhotoPath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FTotalMemberPoint)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FAccountStatusNavigation.FStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FAreaZipCodeNavigation.FAreaName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FGender.FGenderType)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |
+                <a asp-action="Details" asp-route-id="@item.FId" class="btn btn-primary">詳細資料</a> |
+                <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger" onclick="return confirm('確定要刪除嗎？')">刪除</a>
+            </td>
+        </tr>
+}
+}
+    </tbody>
+</table>

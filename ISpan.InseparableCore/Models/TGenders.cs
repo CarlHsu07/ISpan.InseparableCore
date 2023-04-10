@@ -5,14 +5,20 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TGender
+    public partial class TGenders
     {
-        public TGender()
+        public TGenders()
         {
             TMembers = new HashSet<TMembers>();
         }
 
+        /// <summary>
+        /// 性別ID
+        /// </summary>
         public int FGenderId { get; set; }
+        /// <summary>
+        /// 性別種類
+        /// </summary>
         public string FGenderType { get; set; }
 
         public virtual ICollection<TMembers> TMembers { get; set; }

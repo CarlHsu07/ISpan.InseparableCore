@@ -5,27 +5,26 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TAreas
+    public partial class TAccountStatuses
     {
-        public TAreas()
+        public TAccountStatuses()
         {
             TMembers = new HashSet<TMembers>();
         }
 
         /// <summary>
-        /// 鄉鎮市區的郵遞區號
+        /// 會員狀態ID
         /// </summary>
-        public int FZipCode { get; set; }
+        public int FStatusId { get; set; }
         /// <summary>
-        /// 鄉鎮市區所屬縣市
+        /// 會員狀態
         /// </summary>
-        public int FCityId { get; set; }
+        public string FStatus { get; set; }
         /// <summary>
-        /// 鄉鎮市區的名稱
+        /// 會員狀態的說明
         /// </summary>
-        public string FAreaName { get; set; }
+        public string FDescription { get; set; }
 
-        public virtual TCities FCity { get; set; }
         public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }
