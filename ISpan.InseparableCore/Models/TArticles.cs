@@ -22,6 +22,7 @@ namespace ISpan.InseparableCore.Models
         public int FArticleClicks { get; set; }
         public string FArticleContent { get; set; }
 
+        public virtual TMovieCategories FArticleCategory { get; set; }
         public virtual TMembers FMember { get; set; }
         public virtual ICollection<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }

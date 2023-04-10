@@ -9,6 +9,7 @@ namespace ISpan.InseparableCore.Models
     {
         public TMovieCategories()
         {
+            TArticles = new HashSet<TArticles>();
             TMemberFavoriteMovieCategories = new HashSet<TMemberFavoriteMovieCategories>();
             TMovieCategoryDetails = new HashSet<TMovieCategoryDetails>();
         }
@@ -16,6 +17,7 @@ namespace ISpan.InseparableCore.Models
         public int FMovieCategoryId { get; set; }
         public string FMovieCategoryName { get; set; }
 
+        public virtual ICollection<TArticles> TArticles { get; set; }
         public virtual ICollection<TMemberFavoriteMovieCategories> TMemberFavoriteMovieCategories { get; set; }
         public virtual ICollection<TMovieCategoryDetails> TMovieCategoryDetails { get; set; }
     }

@@ -18,6 +18,7 @@ namespace ISpan.InseparableCore.ViewModels
         public int FTicketItemNo { get { return _ticketOrderDetails.FTicketItemNo; } set { _ticketOrderDetails.FTicketItemNo = value; } }
         public int FOrderId { get { return _ticketOrderDetails.FOrderId; } set { _ticketOrderDetails.FOrderId = value; } }
         public int FMovieId { get { return _ticketOrderDetails.FMovieId; } set { _ticketOrderDetails.FMovieId = value; } }
+        public string FMovieName { get { return _ticketOrderDetails.FMovieName; } set { _ticketOrderDetails.FMovieName = value; } }
         public int FSessionId { get { return _ticketOrderDetails.FSessionId; } set { _ticketOrderDetails.FSessionId = value; } }
         public int FSeatId { get { return _ticketOrderDetails.FSeatId; } set { _ticketOrderDetails.FSeatId = value; } }
         public int FRoomId { get { return _ticketOrderDetails.FRoomId; } set { _ticketOrderDetails.FRoomId = value; } }

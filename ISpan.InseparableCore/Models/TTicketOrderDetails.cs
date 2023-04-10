@@ -11,6 +11,7 @@ namespace ISpan.InseparableCore.Models
         public int FTicketItemNo { get; set; }
         public int FOrderId { get; set; }
         public int FMovieId { get; set; }
+        public string FMovieName { get; set; }
         public int FSessionId { get; set; }
         public int FSeatId { get; set; }
         public int FRoomId { get; set; }

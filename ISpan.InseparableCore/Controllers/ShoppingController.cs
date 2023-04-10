@@ -184,6 +184,7 @@ namespace ISpan.InseparableCore.Controllers
                 item.FTicketUnitprice = (decimal)session.FTicketPrice;
                 item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 1;
                 item.FMovieId = session.FMovieId;
+                item.FMovieName = _db.TMovies.FirstOrDefault(t => t.FMovieId == session.FMovieId).FMovieName;
                 item.FRoomId = session.FRoomId;
                 item.FSeatId = (int)seatId;
                 item.FSessionId = (int)sessionId;

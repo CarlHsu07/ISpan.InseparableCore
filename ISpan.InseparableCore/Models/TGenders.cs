@@ -5,27 +5,22 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TAreas
+    public partial class TGenders
     {
-        public TAreas()
+        public TGenders()
         {
             TMembers = new HashSet<TMembers>();
         }
 
         /// <summary>
-        /// 鄉鎮市區的郵遞區號
+        /// 性別ID
         /// </summary>
-        public int FZipCode { get; set; }
+        public int FGenderId { get; set; }
         /// <summary>
-        /// 鄉鎮市區所屬縣市
+        /// 性別種類
         /// </summary>
-        public int FCityId { get; set; }
-        /// <summary>
-        /// 鄉鎮市區的名稱
-        /// </summary>
-        public string FAreaName { get; set; }
+        public string FGenderType { get; set; }
 
-        public virtual TCities FCity { get; set; }
         public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }

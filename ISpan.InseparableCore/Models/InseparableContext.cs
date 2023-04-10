@@ -18,6 +18,7 @@ namespace ISpan.InseparableCore.Models
         {
         }
 
+        public virtual DbSet<TAccountStatuses> TAccountStatuses { get; set; }
         public virtual DbSet<TActivities> TActivities { get; set; }
         public virtual DbSet<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual DbSet<TActors> TActors { get; set; }
@@ -30,10 +31,11 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TComments> TComments { get; set; }
         public virtual DbSet<TDirectors> TDirectors { get; set; }
         public virtual DbSet<TFriends> TFriends { get; set; }
+        public virtual DbSet<TGenders> TGenders { get; set; }
         public virtual DbSet<TKeywords> TKeywords { get; set; }
         public virtual DbSet<TMemberFavoriteMovieCategories> TMemberFavoriteMovieCategories { get; set; }
         public virtual DbSet<TMemberPoints> TMemberPoints { get; set; }
-        public virtual DbSet<TMemberStatus> TMemberStatus { get; set; }
+        public virtual DbSet<TMemberReports> TMemberReports { get; set; }
         public virtual DbSet<TMembers> TMembers { get; set; }
         public virtual DbSet<TMovieActorDetails> TMovieActorDetails { get; set; }
         public virtual DbSet<TMovieCategories> TMovieCategories { get; set; }
@@ -46,6 +48,7 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TProductCategories> TProductCategories { get; set; }
         public virtual DbSet<TProductOrderDetails> TProductOrderDetails { get; set; }
         public virtual DbSet<TProducts> TProducts { get; set; }
+        public virtual DbSet<TReports> TReports { get; set; }
         public virtual DbSet<TRooms> TRooms { get; set; }
         public virtual DbSet<TSeats> TSeats { get; set; }
         public virtual DbSet<TSessions> TSessions { get; set; }
@@ -54,6 +57,29 @@ namespace ISpan.InseparableCore.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Chinese_Taiwan_Stroke_CI_AS");
+
+            modelBuilder.Entity<TAccountStatuses>(entity =>
+            {
+                entity.HasKey(e => e.FStatusId)
+                    .HasName("PK_tMemberStatus");
+
+                entity.ToTable("tAccountStatuses");
+
+                entity.Property(e => e.FStatusId)
+                    .HasColumnName("fStatusID")
+                    .HasComment("會員狀態ID");
+
+                entity.Property(e => e.FDescription)
+                    .HasMaxLength(200)
+                    .HasColumnName("fDescription")
+                    .HasComment("會員狀態的說明");
+
+                entity.Property(e => e.FStatus)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("fStatus")
+                    .HasComment("會員狀態");
+            });
 
             modelBuilder.Entity<TActivities>(entity =>
             {
@@ -78,8 +104,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("活動標題");
 
                 entity.Property(e => e.FCreateTime)
-                    .IsRequired()
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fCreateTime")
                     .HasComment("活動新增時間");
 
@@ -104,7 +129,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tActivityParticipants");
 
-                entity.Property(e => e.FId).HasColumnName("fID");
+                entity.Property(e => e.FId)
+                    .HasColumnName("fID")
+                    .HasComment("流水號");
 
                 entity.Property(e => e.FActivityId)
                     .HasColumnName("fActivityID")
@@ -119,8 +146,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("報名序號");
 
                 entity.Property(e => e.FRegisteredTime)
-                    .IsRequired()
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fRegisteredTime")
                     .HasComment("報名時間");
 
@@ -205,13 +231,14 @@ namespace ISpan.InseparableCore.Models
 
             modelBuilder.Entity<TAreas>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.FZipCode);
 
                 entity.ToTable("tAreas");
 
-                entity.Property(e => e.FAreaId)
-                    .HasColumnName("fAreaID")
-                    .HasComment("鄉鎮市區ID");
+                entity.Property(e => e.FZipCode)
+                    .ValueGeneratedNever()
+                    .HasColumnName("fZipCode")
+                    .HasComment("鄉鎮市區的郵遞區號");
 
                 entity.Property(e => e.FAreaName)
                     .IsRequired()
@@ -224,7 +251,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("鄉鎮市區所屬縣市");
 
                 entity.HasOne(d => d.FCity)
-                    .WithMany()
+                    .WithMany(p => p.TAreas)
                     .HasForeignKey(d => d.FCityId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Areas_Cities");
@@ -236,6 +263,9 @@ namespace ISpan.InseparableCore.Models
                     .HasName("PK_ArticleCategoryDetails");
 
                 entity.ToTable("tArticleKeywordDetails");
+
+                entity.HasIndex(e => new { e.FArticleId, e.FKeywordId }, "IX_tArticleKeywordDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -287,6 +317,12 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fArticleTitle");
 
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
+
+                entity.HasOne(d => d.FArticleCategory)
+                    .WithMany(p => p.TArticles)
+                    .HasForeignKey(d => d.FArticleCategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tArticles_tMovieCategories");
 
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TArticles)
@@ -432,6 +468,24 @@ namespace ISpan.InseparableCore.Models
                     .HasConstraintName("FK_tFriends_tMembers");
             });
 
+            modelBuilder.Entity<TGenders>(entity =>
+            {
+                entity.HasKey(e => e.FGenderId)
+                    .HasName("PK_Gender");
+
+                entity.ToTable("tGenders");
+
+                entity.Property(e => e.FGenderId)
+                    .HasColumnName("fGenderID")
+                    .HasComment("性別ID");
+
+                entity.Property(e => e.FGenderType)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("fGenderType")
+                    .HasComment("性別種類");
+            });
+
             modelBuilder.Entity<TKeywords>(entity =>
             {
                 entity.HasKey(e => e.FKeywordId)
@@ -515,24 +569,53 @@ namespace ISpan.InseparableCore.Models
                     .HasConstraintName("FK_tMemberPoints_tMembers");
             });
 
-            modelBuilder.Entity<TMemberStatus>(entity =>
+            modelBuilder.Entity<TMemberReports>(entity =>
             {
-                entity.HasKey(e => e.FStatusId);
+                entity.HasKey(e => e.FMemberReportId)
+                    .HasName("PK_tReport");
 
-                entity.ToTable("tMemberStatus");
+                entity.ToTable("tMemberReports");
 
-                entity.Property(e => e.FStatusId)
+                entity.Property(e => e.FMemberReportId)
                     .ValueGeneratedNever()
-                    .HasColumnName("fStatusID");
+                    .HasColumnName("fMemberReportID")
+                    .HasComment("檢舉的流水號");
 
-                entity.Property(e => e.FDescription)
-                    .HasMaxLength(200)
-                    .HasColumnName("fDescription");
+                entity.Property(e => e.FReportMemberId)
+                    .HasColumnName("fReportMemberID")
+                    .HasComment("檢舉者的會員ID");
 
-                entity.Property(e => e.FStatus)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("fStatus");
+                entity.Property(e => e.FReportTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fReportTime")
+                    .HasDefaultValueSql("(getdate())")
+                    .HasComment("檢舉時間");
+
+                entity.Property(e => e.FReportType)
+                    .HasColumnName("fReportType")
+                    .HasComment("檢舉類型");
+
+                entity.Property(e => e.FReportedMemberId)
+                    .HasColumnName("fReportedMemberID")
+                    .HasComment("被檢舉的會員ID");
+
+                entity.HasOne(d => d.FReportMember)
+                    .WithMany(p => p.TMemberReportsFReportMember)
+                    .HasForeignKey(d => d.FReportMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tMembers1");
+
+                entity.HasOne(d => d.FReportTypeNavigation)
+                    .WithMany(p => p.TMemberReports)
+                    .HasForeignKey(d => d.FReportType)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tReports");
+
+                entity.HasOne(d => d.FReportedMember)
+                    .WithMany(p => p.TMemberReportsFReportedMember)
+                    .HasForeignKey(d => d.FReportedMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tMembers");
             });
 
             modelBuilder.Entity<TMembers>(entity =>
@@ -546,14 +629,18 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fID")
                     .HasComment("會員流水號");
 
+                entity.Property(e => e.FAccountStatus)
+                    .HasColumnName("fAccountStatus")
+                    .HasComment("會員帳戶狀態");
+
                 entity.Property(e => e.FAddress)
                     .HasMaxLength(100)
                     .HasColumnName("fAddress")
                     .HasComment("住址");
 
-                entity.Property(e => e.FAreaId)
-                    .HasColumnName("fAreaID")
-                    .HasComment("區域ID");
+                entity.Property(e => e.FAreaZipCode)
+                    .HasColumnName("fAreaZipCode")
+                    .HasComment("區域郵遞區號");
 
                 entity.Property(e => e.FCellphone)
                     .HasMaxLength(50)
@@ -561,7 +648,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("手機號碼");
 
                 entity.Property(e => e.FDateOfBirth)
-                    .HasMaxLength(50)
+                    .HasColumnType("datetime")
                     .HasColumnName("fDateOfBirth")
                     .HasComment("生日");
 
@@ -624,6 +711,21 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FTotalMemberPoint)
                     .HasColumnName("fTotalMemberPoint")
                     .HasComment("目前點數餘額");
+
+                entity.HasOne(d => d.FAccountStatusNavigation)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FAccountStatus)
+                    .HasConstraintName("FK_tMembers_tAccountStatuses");
+
+                entity.HasOne(d => d.FAreaZipCodeNavigation)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FAreaZipCode)
+                    .HasConstraintName("FK_tMembers_tAreas");
+
+                entity.HasOne(d => d.FGender)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FGenderId)
+                    .HasConstraintName("FK_tMembers_tGenders");
             });
 
             modelBuilder.Entity<TMovieActorDetails>(entity =>
@@ -632,6 +734,9 @@ namespace ISpan.InseparableCore.Models
                     .HasName("PK_MovieActorDetails");
 
                 entity.ToTable("tMovieActorDetails");
+
+                entity.HasIndex(e => new { e.FMovieId, e.FActorId }, "IX_tMovieActorDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -674,6 +779,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieCategoryDetails");
 
+                entity.HasIndex(e => new { e.FMovieCategoryId, e.FMovieId }, "IX_tMovieCategoryDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FMovieCategoryId).HasColumnName("fMovieCategoryID");
@@ -699,6 +807,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieDirectorDetails");
 
+                entity.HasIndex(e => new { e.FDirectorId, e.FMovieId }, "IX_tMovieDirectorDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FDirectorId).HasColumnName("fDirectorID");
@@ -723,6 +834,9 @@ namespace ISpan.InseparableCore.Models
                 entity.HasKey(e => e.FSerialNumber);
 
                 entity.ToTable("tMovieKeywordDetails");
+
+                entity.HasIndex(e => new { e.FKeywordId, e.FMovieId }, "IX_tMovieKeywordDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -771,7 +885,7 @@ namespace ISpan.InseparableCore.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fMovieImagePath")
-                    .HasDefaultValueSql("(N'not image')");
+                    .HasDefaultValueSql("('no image')");
 
                 entity.Property(e => e.FMovieIntroduction)
                     .IsRequired()
@@ -824,6 +938,10 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FOrderDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fOrderDate");
+
+                entity.Property(e => e.FStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("fStatus");
 
                 entity.Property(e => e.FTotalMoney)
                     .HasColumnType("money")
@@ -945,6 +1063,28 @@ namespace ISpan.InseparableCore.Models
                     .HasConstraintName("FK_Products_ProductCategories");
             });
 
+            modelBuilder.Entity<TReports>(entity =>
+            {
+                entity.HasKey(e => e.FReportTypeId);
+
+                entity.ToTable("tReports");
+
+                entity.Property(e => e.FReportTypeId)
+                    .HasColumnName("fReportTypeID")
+                    .HasComment("檢舉類型ID");
+
+                entity.Property(e => e.FDescription)
+                    .HasMaxLength(200)
+                    .HasColumnName("fDescription")
+                    .HasComment("檢舉類型的詳細描述");
+
+                entity.Property(e => e.FReportType)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("fReportType")
+                    .HasComment("檢舉類型");
+            });
+
             modelBuilder.Entity<TRooms>(entity =>
             {
                 entity.HasKey(e => e.FRoomId)
@@ -1039,6 +1179,10 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FId).HasColumnName("fID");
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
+
+                entity.Property(e => e.FMovieName)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMovieName");
 
                 entity.Property(e => e.FOrderId).HasColumnName("fOrderID");
 
