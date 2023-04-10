@@ -9,7 +9,7 @@ namespace ISpan.InseparableCore.ViewModels
         public int? sessionid { get; set; }
         public Dictionary<string, IEnumerable<TSeats>> seats { get; set; }
         public List<int> solid { get; set; }
-
+        public List<int> myseats { get; set; }
         public int ticket { get { return this.regularnum + this.concessionnum; } }
 
         public TSessions sessions { get; set; }
