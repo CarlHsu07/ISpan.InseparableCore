@@ -77,12 +77,14 @@
         }
     </style>
 }
-    @{
+<form action="/Shopping/CartView" method="post" id="seat">
+ @{
     <div class="title">
         @foreach (var item in Model.movie)
         {
             <h3>@item.FMovieName</h3>
         }
+        <input type="hidden" name="sessionid" value="@Model.sessionid">
         <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.sessions.FSessionDate.ToString("yyyy/MM/dd") @Model.sessions.FSessionTime.Hours : @Model.sessions.FSessionTime.Minutes.ToString("D2")</h4>
     </div>
     <div class="left">
@@ -119,10 +121,12 @@
     </div>
 
 }
+<input type="hidden" name="regular" value="@Model.regularnum" />
+<input type="hidden" name="concession" value="@Model.concessionnum" />
 <div class="bottom">
-    <input type="button" onclick="detial()" value="下一步" class="btn-primary" id="button" />
+    <input type="submit" value="下一步" class="btn-primary" id="button" />
 </div>
-<div id="form"></div>
+</form>
 @section Scripts{
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -144,11 +148,11 @@
             //$(myseats).each(function (index, value) {
             //    $('#' + value).addClass('seleted');
             //});
-            //$('#ticketnum').html(`請選 ${ticket - num.length} 個座位!!!`);
-            //if (ticket == num.length) {
-            //    $('#ticketnum').html(``);
-            //}
 
+            $('#ticketnum').html(`請選 ${ticket - num.length} 個座位!!!`);
+            if (ticket == num.length) {
+                $('#ticketnum').html(``);
+            }
 
             //網頁重載 session清空
             $.ajax({
@@ -228,21 +232,15 @@
             }
         });
 
-        function detial() {
+        $('#seat').submit(function(event) {
             //判斷選擇的位置數量是否正確
             var regular = @Model.regularnum;
             var concession = @Model.concessionnum;
             var session = @Model.sessionid;
             if (num.length != ticket) {
+                event.preventDefault();
                 Swal.fire(`還有 ${ticket - num.length} 個座位還沒選~~`);
             }
-            else {
-                //post
-
-                //get
-                var url = '/Shopping/CartView?regular=' + regular + '&&concession=' + concession + '&&sessionid=' + session;
-                location.href = url;
-            }
-        }
+        });
     </script>
 }

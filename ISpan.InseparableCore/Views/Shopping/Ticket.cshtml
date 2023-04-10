@@ -65,7 +65,7 @@
                 <ul>
                     @foreach (var session in item.Value)
                     {
-                        <li class="btn-secondary"><a href="/Shopping/Booking?cinema=@session.FCinemaId&&session=@session.FSessionId">@session.FSessionTime.Hours : @session.FSessionTime.Minutes.ToString("D2")</a></li>
+                        <li class="btn-secondary"><a href="#" cinema="@session.FCinemaId" session="@session.FSessionId">@session.FSessionTime.Hours : @session.FSessionTime.Minutes.ToString("D2")</a></li>
                     }
                 </ul>
 
@@ -73,7 +73,7 @@
         }
     </div>
 }
-
+<div id="form"></div>
 @section Scripts{
     <script>
         $(function () {
@@ -81,6 +81,15 @@
             $("#movie").val(@Model.movieId);
 
         });
+        $('li a').click(function(){
+            var cinema =$(this).attr('cinema');
+            var session =$(this).attr('session');
 
+            $('#form').append(`<form action="/Shopping/Booking" method="post" id="ticketform">
+                    <input type="hidden" name="cinema" value="${cinema}" />
+                    <input type="hidden" name="session" value="${session}" />
+            </form>`);
+            $('#ticketform').submit();
+        });
     </script>
 }
