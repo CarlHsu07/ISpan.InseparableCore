@@ -77,16 +77,7 @@ namespace ISpan.InseparableCore.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				TMovies movie = new TMovies()
-				{
-					FMovieIntroduction = movieCreateVm.FMovieIntroduction,
-					FMovieName = movieCreateVm.FMovieName,
-					FMovieLevelId = movieCreateVm.FMovieLevelId,
-					FMovieOnDate = movieCreateVm.FMovieOnDate,
-					FMovieOffDate = movieCreateVm.FMovieOffDate,
-					FMovieLength = movieCreateVm.FMovieLength,
-					FMovieScore = movieCreateVm.FMovieScore,
-				};
+				TMovies movie = movieCreateVm.VmToModel();
 				if (movieCreateVm.Image != null)
 				{
 					string imageName = Guid.NewGuid().ToString() + ".jpg";
@@ -133,18 +124,7 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
-			MovieCreateVm vm = new MovieCreateVm()
-			{
-				FMovieId = tMovies.FMovieId,
-				FMovieIntroduction = tMovies.FMovieIntroduction,
-				FMovieName = tMovies.FMovieName,
-				FMovieLevelId = tMovies.FMovieLevelId,
-				FMovieOnDate = tMovies.FMovieOnDate,
-				FMovieOffDate = tMovies.FMovieOffDate,
-				FMovieLength = tMovies.FMovieLength,
-				FMovieScore = tMovies.FMovieScore,
-				FMovieImagePath = tMovies.FMovieImagePath,
-			};
+			MovieCreateVm vm = tMovies.ModelToVm();
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(vm);
@@ -164,18 +144,7 @@ namespace ISpan.InseparableCore.Controllers
 
 			if (ModelState.IsValid)
 			{
-				TMovies movie = new TMovies()
-				{
-					FMovieId = movieCreateVm.FMovieId,
-					FMovieIntroduction = movieCreateVm.FMovieIntroduction,
-					FMovieName = movieCreateVm.FMovieName,
-					FMovieLevelId = movieCreateVm.FMovieLevelId,
-					FMovieOnDate = movieCreateVm.FMovieOnDate,
-					FMovieOffDate = movieCreateVm.FMovieOffDate,
-					FMovieLength = movieCreateVm.FMovieLength,
-					FMovieScore = movieCreateVm.FMovieScore,
-					FMovieImagePath = movieCreateVm.FMovieImagePath,
-				};
+				TMovies movie = movieCreateVm.VmToModel(); 
 				if (movieCreateVm.Image != null)
 				{
 					string imageName = Guid.NewGuid().ToString() + ".jpg";
