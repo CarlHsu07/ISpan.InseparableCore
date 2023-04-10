@@ -7,17 +7,24 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TReports
     {
+        public TReports()
+        {
+            TMemberReports = new HashSet<TMemberReports>();
+        }
+
         /// <summary>
         /// 檢舉類型ID
         /// </summary>
         public int FReportTypeId { get; set; }
         /// <summary>
-        /// 檢舉類型名稱
+        /// 檢舉類型
         /// </summary>
         public string FReportType { get; set; }
         /// <summary>
         /// 檢舉類型的詳細描述
         /// </summary>
         public string FDescription { get; set; }
+
+        public virtual ICollection<TMemberReports> TMemberReports { get; set; }
     }
 }

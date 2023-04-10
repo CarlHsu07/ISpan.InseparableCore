@@ -7,6 +7,11 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TAreas
     {
+        public TAreas()
+        {
+            TMembers = new HashSet<TMembers>();
+        }
+
         /// <summary>
         /// 鄉鎮市區的郵遞區號
         /// </summary>
@@ -21,5 +26,6 @@ namespace ISpan.InseparableCore.Models
         public string FAreaName { get; set; }
 
         public virtual TCities FCity { get; set; }
+        public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }

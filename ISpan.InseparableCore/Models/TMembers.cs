@@ -15,6 +15,8 @@ namespace ISpan.InseparableCore.Models
             TFriends = new HashSet<TFriends>();
             TMemberFavoriteMovieCategories = new HashSet<TMemberFavoriteMovieCategories>();
             TMemberPoints = new HashSet<TMemberPoints>();
+            TMemberReportsFReportMember = new HashSet<TMemberReports>();
+            TMemberReportsFReportedMember = new HashSet<TMemberReports>();
             TOrders = new HashSet<TOrders>();
         }
 
@@ -63,9 +65,9 @@ namespace ISpan.InseparableCore.Models
         /// </summary>
         public string FAddress { get; set; }
         /// <summary>
-        /// 區域ID
+        /// 區域郵遞區號
         /// </summary>
-        public int? FAreaId { get; set; }
+        public int? FAreaZipCode { get; set; }
         /// <summary>
         /// 大頭貼的檔案路徑
         /// </summary>
@@ -75,6 +77,10 @@ namespace ISpan.InseparableCore.Models
         /// </summary>
         public string FIntroduction { get; set; }
         /// <summary>
+        /// 會員帳戶狀態
+        /// </summary>
+        public int? FAccountStatus { get; set; }
+        /// <summary>
         /// 目前點數餘額
         /// </summary>
         public int? FTotalMemberPoint { get; set; }
@@ -83,12 +89,15 @@ namespace ISpan.InseparableCore.Models
         /// </summary>
         public DateTime? FSignUpTime { get; set; }
 
+        public virtual TAreas FAreaZipCodeNavigation { get; set; }
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }
         public virtual ICollection<TFriends> TFriends { get; set; }
         public virtual ICollection<TMemberFavoriteMovieCategories> TMemberFavoriteMovieCategories { get; set; }
         public virtual ICollection<TMemberPoints> TMemberPoints { get; set; }
+        public virtual ICollection<TMemberReports> TMemberReportsFReportMember { get; set; }
+        public virtual ICollection<TMemberReports> TMemberReportsFReportedMember { get; set; }
         public virtual ICollection<TOrders> TOrders { get; set; }
     }
 }

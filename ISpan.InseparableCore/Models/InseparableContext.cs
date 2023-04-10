@@ -18,6 +18,7 @@ namespace ISpan.InseparableCore.Models
         {
         }
 
+        public virtual DbSet<TAccountStatus> TAccountStatus { get; set; }
         public virtual DbSet<TActivities> TActivities { get; set; }
         public virtual DbSet<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual DbSet<TActors> TActors { get; set; }
@@ -35,7 +36,6 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TMemberFavoriteMovieCategories> TMemberFavoriteMovieCategories { get; set; }
         public virtual DbSet<TMemberPoints> TMemberPoints { get; set; }
         public virtual DbSet<TMemberReports> TMemberReports { get; set; }
-        public virtual DbSet<TMemberStatus> TMemberStatus { get; set; }
         public virtual DbSet<TMembers> TMembers { get; set; }
         public virtual DbSet<TMovieActorDetails> TMovieActorDetails { get; set; }
         public virtual DbSet<TMovieCategories> TMovieCategories { get; set; }
@@ -64,6 +64,29 @@ namespace ISpan.InseparableCore.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Chinese_Taiwan_Stroke_CI_AS");
+
+            modelBuilder.Entity<TAccountStatus>(entity =>
+            {
+                entity.HasKey(e => e.FStatusId)
+                    .HasName("PK_tMemberStatus");
+
+                entity.ToTable("tAccountStatus");
+
+                entity.Property(e => e.FStatusId)
+                    .HasColumnName("fStatusID")
+                    .HasComment("會員狀態ID");
+
+                entity.Property(e => e.FDescription)
+                    .HasMaxLength(200)
+                    .HasColumnName("fDescription")
+                    .HasComment("會員狀態的說明");
+
+                entity.Property(e => e.FStatus)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("fStatus")
+                    .HasComment("會員狀態");
+            });
 
             modelBuilder.Entity<TActivities>(entity =>
             {
@@ -113,7 +136,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tActivityParticipants");
 
-                entity.Property(e => e.FId).HasColumnName("fID");
+                entity.Property(e => e.FId)
+                    .HasColumnName("fID")
+                    .HasComment("流水號");
 
                 entity.Property(e => e.FActivityId)
                     .HasColumnName("fActivityID")
@@ -561,15 +586,13 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("檢舉的流水號");
 
                 entity.Property(e => e.FReportMemberId)
-                    .IsRequired()
-                    .HasMaxLength(10)
                     .HasColumnName("fReportMemberID")
-                    .IsFixedLength()
                     .HasComment("檢舉者的會員ID");
 
                 entity.Property(e => e.FReportTime)
                     .HasColumnType("datetime")
                     .HasColumnName("fReportTime")
+                    .HasDefaultValueSql("(getdate())")
                     .HasComment("檢舉時間");
 
                 entity.Property(e => e.FReportType)
@@ -579,26 +602,24 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FReportedMemberId)
                     .HasColumnName("fReportedMemberID")
                     .HasComment("被檢舉的會員ID");
-            });
 
-            modelBuilder.Entity<TMemberStatus>(entity =>
-            {
-                entity.HasKey(e => e.FStatusId);
+                entity.HasOne(d => d.FReportMember)
+                    .WithMany(p => p.TMemberReportsFReportMember)
+                    .HasForeignKey(d => d.FReportMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tMembers1");
 
-                entity.ToTable("tMemberStatus");
+                entity.HasOne(d => d.FReportTypeNavigation)
+                    .WithMany(p => p.TMemberReports)
+                    .HasForeignKey(d => d.FReportType)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tReports");
 
-                entity.Property(e => e.FStatusId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("fStatusID");
-
-                entity.Property(e => e.FDescription)
-                    .HasMaxLength(200)
-                    .HasColumnName("fDescription");
-
-                entity.Property(e => e.FStatus)
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnName("fStatus");
+                entity.HasOne(d => d.FReportedMember)
+                    .WithMany(p => p.TMemberReportsFReportedMember)
+                    .HasForeignKey(d => d.FReportedMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMemberReports_tMembers");
             });
 
             modelBuilder.Entity<TMembers>(entity =>
@@ -612,14 +633,18 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fID")
                     .HasComment("會員流水號");
 
+                entity.Property(e => e.FAccountStatus)
+                    .HasColumnName("fAccountStatus")
+                    .HasComment("會員帳戶狀態");
+
                 entity.Property(e => e.FAddress)
                     .HasMaxLength(100)
                     .HasColumnName("fAddress")
                     .HasComment("住址");
 
-                entity.Property(e => e.FAreaId)
-                    .HasColumnName("fAreaID")
-                    .HasComment("區域ID");
+                entity.Property(e => e.FAreaZipCode)
+                    .HasColumnName("fAreaZipCode")
+                    .HasComment("區域郵遞區號");
 
                 entity.Property(e => e.FCellphone)
                     .HasMaxLength(50)
@@ -690,6 +715,11 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FTotalMemberPoint)
                     .HasColumnName("fTotalMemberPoint")
                     .HasComment("目前點數餘額");
+
+                entity.HasOne(d => d.FAreaZipCodeNavigation)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FAreaZipCode)
+                    .HasConstraintName("FK_tMembers_tAreas");
             });
 
             modelBuilder.Entity<TMovieActorDetails>(entity =>
@@ -837,7 +867,7 @@ namespace ISpan.InseparableCore.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fMovieImagePath")
-                    .HasDefaultValueSql("(N'not image')");
+                    .HasDefaultValueSql("('no image')");
 
                 entity.Property(e => e.FMovieIntroduction)
                     .IsRequired()
@@ -1013,9 +1043,13 @@ namespace ISpan.InseparableCore.Models
 
             modelBuilder.Entity<TReports>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => e.FReportTypeId);
 
                 entity.ToTable("tReports");
+
+                entity.Property(e => e.FReportTypeId)
+                    .HasColumnName("fReportTypeID")
+                    .HasComment("檢舉類型ID");
 
                 entity.Property(e => e.FDescription)
                     .HasMaxLength(200)
@@ -1026,11 +1060,7 @@ namespace ISpan.InseparableCore.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fReportType")
-                    .HasComment("檢舉類型名稱");
-
-                entity.Property(e => e.FReportTypeId)
-                    .HasColumnName("fReportTypeID")
-                    .HasComment("檢舉類型ID");
+                    .HasComment("檢舉類型");
             });
 
             modelBuilder.Entity<TRooms>(entity =>

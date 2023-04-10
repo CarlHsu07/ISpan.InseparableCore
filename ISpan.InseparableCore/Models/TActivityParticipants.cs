@@ -7,6 +7,9 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TActivityParticipants
     {
+        /// <summary>
+        /// 流水號
+        /// </summary>
         public int FId { get; set; }
         /// <summary>
         /// 活動ID

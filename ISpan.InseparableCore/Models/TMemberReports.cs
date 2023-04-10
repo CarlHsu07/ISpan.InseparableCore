@@ -18,7 +18,7 @@ namespace ISpan.InseparableCore.Models
         /// <summary>
         /// 檢舉者的會員ID
         /// </summary>
-        public string FReportMemberId { get; set; }
+        public int FReportMemberId { get; set; }
         /// <summary>
         /// 檢舉類型
         /// </summary>
@@ -27,5 +27,9 @@ namespace ISpan.InseparableCore.Models
         /// 檢舉時間
         /// </summary>
         public DateTime FReportTime { get; set; }
+
+        public virtual TMembers FReportMember { get; set; }
+        public virtual TReports FReportTypeNavigation { get; set; }
+        public virtual TMembers FReportedMember { get; set; }
     }
 }

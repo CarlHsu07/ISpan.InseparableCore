@@ -65,23 +65,16 @@
 <div>
 	<a asp-action="Index">Back to List</a>
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-
-<script>
-	var categoryIds = "";
-
-	$("#Create").submit(function () {
-		$("#FMovieCategoryId").find(":selected").each(function () {
-			categoryIds += this.value + ',';
-		});
-		$("#CategoryIds").val(categoryIds);
-		alert($("#CategoryIds").val())
-	})
-
-</script>
 @section Scripts {
+		var categoryIds = "";
+
+		$("#Create").submit(function () {
+			$("#FMovieCategoryId").find(":selected").each(function () {
+				categoryIds += this.value + ',';
+			});
+			$("#CategoryIds").val(categoryIds);
+			alert($("#CategoryIds").val())
+		})
 
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");

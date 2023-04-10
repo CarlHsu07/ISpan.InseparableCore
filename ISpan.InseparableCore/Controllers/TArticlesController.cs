@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.ViewModels;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -18,11 +19,30 @@ namespace ISpan.InseparableCore.Controllers
             _context = context;
         }
 
-        // GET: TArticles
+		// GET: TArticles
         public async Task<IActionResult> Index()
         {
             var inseparableContext = _context.TArticles.Include(t => t.FArticleCategory).Include(t => t.FMember);
-            return View(await inseparableContext.ToListAsync());
+
+			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
+
+			return View(await inseparableContext.ToListAsync());
+        }
+		[HttpPost]
+        public IActionResult Index(ArticleSearchCondition condition)
+        {
+            IEnumerable<TArticles> inseparableContext = _context.TArticles.Include(t => t.FArticleCategory).Include(t => t.FMember);
+
+			if (condition.ArticleId.HasValue) inseparableContext = inseparableContext.Where(t => t.FArticleId == condition.ArticleId);
+			if (!string.IsNullOrEmpty(condition.Title)) inseparableContext = inseparableContext.Where(t => t.FArticleTitle.Contains(condition.Title));
+			if (condition.CategoryId.HasValue) inseparableContext = inseparableContext.Where(t => t.FArticleCategoryId == condition.CategoryId);
+			if (condition.MemberId.HasValue) inseparableContext = inseparableContext.Where(t => t.FMemberId == condition.MemberId);
+
+			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
+
+			return View(inseparableContext.ToList());
         }
 
         // GET: TArticles/Details/5

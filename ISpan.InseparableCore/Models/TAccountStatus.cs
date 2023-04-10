@@ -5,10 +5,19 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TMemberStatus
+    public partial class TAccountStatus
     {
+        /// <summary>
+        /// 會員狀態ID
+        /// </summary>
         public int FStatusId { get; set; }
+        /// <summary>
+        /// 會員狀態
+        /// </summary>
         public string FStatus { get; set; }
+        /// <summary>
+        /// 會員狀態的說明
+        /// </summary>
         public string FDescription { get; set; }
     }
 }

@@ -25,14 +25,20 @@ namespace ISpan.InseparableCore.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(await inseparableContext.ToListAsync());
 		}
 		[HttpPost]
-		public async Task<IActionResult> Index(string key)
+		public IActionResult Index(MovieSearchCondition condition)
 		{
-			var inseparableContext = _context.TMovies.Where(t => t.FMovieName.Contains(key))
-				.Include(t => t.FMovieLevel);
-			return View(await inseparableContext.ToListAsync());
+			IEnumerable<TMovies> inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+
+			if (!string.IsNullOrEmpty(condition.Key)) inseparableContext = inseparableContext.Where(t => t.FMovieName.Contains(condition.Key));
+			//if (condition.MovieId.HasValue) inseparableContext = inseparableContext.Where(t => t.FMovieId == condition.MovieId);
+
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+
+			return View(inseparableContext.ToList());
 		}
 
 		// GET: TMovies/Details/5
@@ -69,7 +75,7 @@ namespace ISpan.InseparableCore.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(MovieCreateVm movieCreateVm)
 		{
-			//if (ModelState.IsValid)
+			if (ModelState.IsValid)
 			{
 				TMovies movie = new TMovies()
 				{
@@ -81,10 +87,6 @@ namespace ISpan.InseparableCore.Controllers
 					FMovieLength = movieCreateVm.FMovieLength,
 					FMovieScore = movieCreateVm.FMovieScore,
 				};
-				if (movieCreateVm.Image == null)
-				{
-					return View();
-				}
 				if (movieCreateVm.Image != null)
 				{
 					string imageName = Guid.NewGuid().ToString() + ".jpg";
@@ -131,8 +133,21 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
-			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", tMovies.FMovieLevelId);
-			return View(tMovies);
+			MovieCreateVm vm = new MovieCreateVm()
+			{
+				FMovieId = tMovies.FMovieId,
+				FMovieIntroduction = tMovies.FMovieIntroduction,
+				FMovieName = tMovies.FMovieName,
+				FMovieLevelId = tMovies.FMovieLevelId,
+				FMovieOnDate = tMovies.FMovieOnDate,
+				FMovieOffDate = tMovies.FMovieOffDate,
+				FMovieLength = tMovies.FMovieLength,
+				FMovieScore = tMovies.FMovieScore,
+				FMovieImagePath = tMovies.FMovieImagePath,
+			};
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View(vm);
 		}
 
 		// POST: TMovies/Edit/5
@@ -140,23 +155,67 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("FMovieId,FMovieName,FMovieIntroduction,FMovieLevelId,FMovieOnDate,FMovieOffDate,FMovieLength,FMovieImagePath,FMovieScore")] TMovies tMovies)
+		public async Task<IActionResult> Edit(int id, MovieCreateVm movieCreateVm)
 		{
-			if (id != tMovies.FMovieId)
-			{
-				return NotFound();
-			}
+			//if (id != movieCreateVm.FMovieId)
+			//{
+			//	return NotFound();
+			//}
 
 			if (ModelState.IsValid)
 			{
+				TMovies movie = new TMovies()
+				{
+					FMovieId = movieCreateVm.FMovieId,
+					FMovieIntroduction = movieCreateVm.FMovieIntroduction,
+					FMovieName = movieCreateVm.FMovieName,
+					FMovieLevelId = movieCreateVm.FMovieLevelId,
+					FMovieOnDate = movieCreateVm.FMovieOnDate,
+					FMovieOffDate = movieCreateVm.FMovieOffDate,
+					FMovieLength = movieCreateVm.FMovieLength,
+					FMovieScore = movieCreateVm.FMovieScore,
+					FMovieImagePath = movieCreateVm.FMovieImagePath,
+				};
+				if (movieCreateVm.Image != null)
+				{
+					string imageName = Guid.NewGuid().ToString() + ".jpg";
+					string path = enviro.WebRootPath + "/images/" + imageName;
+					movieCreateVm.Image.CopyTo(new FileStream(path, FileMode.Create));
+					movie.FMovieImagePath = imageName;
+				}
+
 				try
 				{
-					_context.Update(tMovies);
+					_context.Update(movie);
+					_context.SaveChanges();
+
+					int movieId = _context.TMovies.First(t => t.FMovieName == movieCreateVm.FMovieName).FMovieId;
+
+					IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == movieId);
+					foreach (TMovieCategoryDetails detail in categoryDetails)
+					{
+						_context.Remove(detail);
+					}
+
+					if (!string.IsNullOrEmpty(movieCreateVm.CategoryIds))
+					{
+						List<int> categoryIds = movieCreateVm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToList();
+						foreach (var categoryId in categoryIds)
+						{
+							TMovieCategoryDetails detail = new TMovieCategoryDetails()
+							{
+								FMovieId = movieId,
+								FMovieCategoryId = categoryId,
+							};
+							_context.Add(detail);
+						}
+
+					}
 					await _context.SaveChangesAsync();
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!TMoviesExists(tMovies.FMovieId))
+					if (!TMoviesExists(movie.FMovieId))
 					{
 						return NotFound();
 					}
@@ -167,8 +226,8 @@ namespace ISpan.InseparableCore.Controllers
 				}
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", tMovies.FMovieLevelId);
-			return View(tMovies);
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", movieCreateVm.FMovieLevelId);
+			return View(movieCreateVm);
 		}
 
 		// GET: TMovies/Delete/5
@@ -202,6 +261,11 @@ namespace ISpan.InseparableCore.Controllers
 			var tMovies = await _context.TMovies.FindAsync(id);
 			if (tMovies != null)
 			{
+				IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId);
+				foreach (TMovieCategoryDetails detail in categoryDetails)
+				{
+					_context.Remove(detail);
+				}
 				_context.TMovies.Remove(tMovies);
 			}
 

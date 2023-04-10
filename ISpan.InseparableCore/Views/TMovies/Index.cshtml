@@ -9,16 +9,38 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Index" method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+@*				<label name="Key" class="control-label"></label>
+*@				<input name="Key" class="form-control" />
+			</div>
+@*			<div class="form-group">
+				<label name="CategoryId" class="control-label"></label>
+				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
+			</div>
+			<div class="form-group">
+				<label name="MovieId" class="control-label"></label>
+				<input name="MovieId" class="form-control">
+			</div>
+*@			<div class="form-group">
+				<input type="submit" value="search" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
 <table class="table">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.FMovieName)
             </th>
-            <th>
+@*            <th>
                 @Html.DisplayNameFor(model => model.FMovieIntroduction)
             </th>
-            <th>
+*@            <th>
                 @Html.DisplayNameFor(model => model.FMovieOnDate)
             </th>
             <th>
@@ -28,7 +50,7 @@
                 @Html.DisplayNameFor(model => model.FMovieLength)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FMovieImagePath)
+				MovieImage
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FMovieScore)
@@ -45,10 +67,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.FMovieName)
             </td>
-            <td>
+@*            <td>
                 @Html.DisplayFor(modelItem => item.FMovieIntroduction)
             </td>
-            <td>
+*@            <td>
                 @Html.DisplayFor(modelItem => item.FMovieOnDate)
             </td>
             <td>
@@ -59,6 +81,7 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FMovieImagePath)
+				<img src="~/images/@item.FMovieImagePath" width="150">
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FMovieScore)
