@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>會員管理</h1>
 
 <p>
     <a asp-action="Create" class="btn btn-primary">新增會員</a>
@@ -38,9 +38,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FCellphone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FPhotoPath)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FTotalMemberPoint)
@@ -83,9 +80,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FCellphone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FPhotoPath)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FTotalMemberPoint)

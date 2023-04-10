@@ -46,8 +46,6 @@ namespace ISpan.InseparableCore.Controllers
 
                 return View(await inseparableContext.ToListAsync());
             }
-
-            
         }
 
         // GET: AdminMember/Details/5

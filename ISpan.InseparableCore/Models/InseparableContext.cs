@@ -272,6 +272,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tArticleKeywordDetails");
 
+                entity.HasIndex(e => new { e.FArticleId, e.FKeywordId }, "IX_tArticleKeywordDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FArticleId).HasColumnName("fArticleID");
@@ -740,6 +743,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieActorDetails");
 
+                entity.HasIndex(e => new { e.FMovieId, e.FActorId }, "IX_tMovieActorDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FActorId).HasColumnName("fActorID");
@@ -781,6 +787,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieCategoryDetails");
 
+                entity.HasIndex(e => new { e.FMovieCategoryId, e.FMovieId }, "IX_tMovieCategoryDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FMovieCategoryId).HasColumnName("fMovieCategoryID");
@@ -806,6 +815,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieDirectorDetails");
 
+                entity.HasIndex(e => new { e.FDirectorId, e.FMovieId }, "IX_tMovieDirectorDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FDirectorId).HasColumnName("fDirectorID");
@@ -830,6 +842,9 @@ namespace ISpan.InseparableCore.Models
                 entity.HasKey(e => e.FSerialNumber);
 
                 entity.ToTable("tMovieKeywordDetails");
+
+                entity.HasIndex(e => new { e.FKeywordId, e.FMovieId }, "IX_tMovieKeywordDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -931,6 +946,10 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FOrderDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fOrderDate");
+
+                entity.Property(e => e.FStatus)
+                    .HasMaxLength(50)
+                    .HasColumnName("fStatus");
 
                 entity.Property(e => e.FTotalMoney)
                     .HasColumnType("money")
