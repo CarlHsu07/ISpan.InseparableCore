@@ -78,17 +78,15 @@ namespace ISpan.InseparableCore.Controllers
 
             //同一商品只記錄一次
             CproductCartItem delete = null;
-            if (cart != null)
+            foreach (var p in cart)
             {
-                foreach (var p in cart)
+                if (p.FProductId == productId)
                 {
-                    if (p.FProductId == productId)
-                    {
-                        delete = cart.FirstOrDefault(c => c.FProductId == p.FProductId);
-                    }
+                    delete = cart.FirstOrDefault(c => c.FProductId == p.FProductId);
                 }
-                cart.Remove(delete);
             }
+            cart.Remove(delete);
+
             if (quantity > 0)
             {
                 CproductCartItem item = new CproductCartItem();
@@ -128,25 +126,6 @@ namespace ISpan.InseparableCore.Controllers
                 vm.seats.Add(item, column);
             }
 
-            //紀錄座位 跟session二擇一
-            //List<CticketCartItemVM> cart = null;
-            //string json = string.Empty;
-            
-            //if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
-            //{
-            //    json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
-            //    cart = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
-            //}
-            //if (cart != null)
-            //{
-            //    vm.myseats = new List<int>();
-            //    foreach (var item in cart)
-            //    {
-            //        vm.myseats.Add(item.FSeatId);
-            //    }
-            //}
-            
-
             vm.sessions = _db.TSessions.FirstOrDefault(t => t.FSessionId == vm.sessionid);
             vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
             return View(vm);
@@ -171,7 +150,7 @@ namespace ISpan.InseparableCore.Controllers
             else
                 cart = new List<CticketCartItemVM>();
             
-            //如果位置取消session也要刪除
+            //位置取消session也要刪除
             CticketCartItemVM delete = null;
             if (Qty == 0)
             {
@@ -235,8 +214,8 @@ namespace ISpan.InseparableCore.Controllers
 
             return View(vm);
         }
-        //如何知道下單的是誰
-        //todo訂單紀錄
+        //todo 如何知道下單的是誰
+        //todo 訂單紀錄
         public IActionResult Pay(CorderVM vm)
         {
             List<CproductCartItem> product_list = null;
@@ -316,11 +295,9 @@ namespace ISpan.InseparableCore.Controllers
         //清除session
         public IActionResult Clearticket()
         {
-            string response = "fail";
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
                 HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
-            response = "pass";
-            return Ok(response);
+            return Ok();
         }
         public IActionResult Clearproduct()
         {

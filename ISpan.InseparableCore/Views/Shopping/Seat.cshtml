@@ -133,21 +133,12 @@
 
         var num = [];
         var ticket = @Model.ticket;
-        //var myseats = @Html.Raw(Json.Serialize(Model.myseats));
-        //if (myseats != null) {
-        //    num = myseats;
-        //}
+
         onload = function () {
             var soldSeatIds = @Html.Raw(Json.Serialize(Model.solid));
             $(soldSeatIds).each(function (index, value) {
                 $('#' + value).addClass('solid');
             });
-
-            //網頁重載記錄位置
-            //var myseats = @Html.Raw(Json.Serialize(Model.myseats));
-            //$(myseats).each(function (index, value) {
-            //    $('#' + value).addClass('seleted');
-            //});
 
             $('#ticketnum').html(`請選 ${ticket - num.length} 個座位!!!`);
             if (ticket == num.length) {

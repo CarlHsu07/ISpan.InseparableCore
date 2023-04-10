@@ -161,14 +161,18 @@
             var concessionprice = regularprice * 0.9;
             $("#concessionprice").html(concessionprice);
 
-            //todo 票數紀錄
-            var regularnum = $("#regularnum").val();
-            var concessionnum = $("#concessionnum").val();
-            if (regularnum == 0 & concessionnum == 0) {
-                $('#button').attr('disabled', true);
-            } else {
-                $('#button').attr('disabled', false);
-            }
+            //網頁重載 session清空
+                $.ajax({
+                    method: 'POST',
+                    url: 'Clearproduct',
+                    data: {},
+                    success: function (data) {
+                        console.log('pass');
+                    },
+                    error: function (error) {
+                        console.log('QQ');
+                    }
+                });
         });
         function cal() {
             //小計
@@ -236,10 +240,15 @@
 
                 total += num * price;
             })
-            //等 ajax完成才能執行
+            //等ajax完成才能執行 todo有機會改成await
             $("#calculate").html(``);
             $("#calculate").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
         }
 
+        window.onunload=function(){
+            $('select option').each(function(){
+                $(this).val(0);
+            });
+        };
     </script>
 }
