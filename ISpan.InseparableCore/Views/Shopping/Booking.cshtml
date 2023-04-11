@@ -40,6 +40,7 @@
         }
 
         .next {
+            margin-top:10px;
             text-align: center;
         }
 
@@ -116,21 +117,21 @@
                             foreach (var item in Model.products)
                             {
                                 count++;
-                                <span>
-                                    <h3>@item.FProductName</h3>
+                                    <span>
+                                        <h3>@item.FProductName</h3>
 
-                                    <img src="~/images/@item.FProductPicturePath" width="150" height="150" />
-                                    <div class="margin-top">
-                                        <p>@item.FProductUnitprice.ToString("###") 元</p>
-                                        <select name="@item.FProductName" id="product" price="@item.FProductUnitprice" pid="@item.FProductId" onchange="caritem()">
-                                            @for (int i = 0; i < 11; i++)
+                                        <img src="~/images/@item.FProductPicturePath" width="150" height="150" />
+                                        <div class="margin-top">
+                                            <p>@item.FProductUnitprice.ToString("###") 元</p>
+                                            <select name="@item.FProductName" id="product" price="@item.FProductUnitprice" pid="@item.FProductId" onchange="caritem()">
+                                                @for (int i = 0; i < 11; i++)
                                             {
-                                                <option value="@i">@i</option>
+                                                    <option value="@i">@i</option>
                                             }
-                                        </select>
-                                    </div>
+                                            </select>
+                                        </div>
 
-                                </span>
+                                    </span>
                             }
                         }
                     </div>
