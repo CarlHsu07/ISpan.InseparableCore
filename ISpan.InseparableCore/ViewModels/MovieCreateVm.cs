@@ -15,7 +15,10 @@ namespace ISpan.InseparableCore.ViewModels
 		public string? FMovieImagePath { get; set; }
 		public int FMovieScore { get; set; }
 		public string? CategoryIds { get; set; }
-		public List<TMovieCategoryDetails>? CategoryDetails { get; set; }
+		public List<TMovieCategoryDetails>? CategoryDetails
+		{
+			get => 
+		} = (new InseparableContext()).TMovieCategoryDetails.Where(t => t.FMovieId == FMovieId).ToList();
 		public List<TMovieActorDetails>? MovieActorDetails { get; set; }
 		public List<TMovieDirectorDetails>? MovieDirectorDetails { get; set; }
 		public IFormFile? Image { get; set; }
