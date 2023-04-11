@@ -21,6 +21,7 @@ namespace ISpan.InseparableCore.Controllers
 
             //限制時間區間
             var start = DateTime.Now.Date;
+            var starttime=DateTime.Now.TimeOfDay;
             var end = DateTime.Now.Date.AddDays(7);
 
             if (vm.cinemaId != 0)
@@ -34,7 +35,7 @@ namespace ISpan.InseparableCore.Controllers
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
-                    var sessions = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId && t.FSessionDate == item); // &&t.FSessionDate>=start && t.FSessionDate<=end
+                    var sessions = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId && t.FSessionDate == item); // &&t.FSessionDate>=start && t.FSessionDate<=end &&t.FsessionTime>=starttime
 
                     vm.sessions.Add(item, sessions);
                 }
