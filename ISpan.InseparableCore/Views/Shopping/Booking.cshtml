@@ -162,17 +162,17 @@
             $("#concessionprice").html(concessionprice);
 
             //網頁重載 session清空
-                $.ajax({
-                    method: 'POST',
-                    url: 'Clearproduct',
-                    data: {},
-                    success: function (data) {
-                        console.log('pass');
-                    },
-                    error: function (error) {
-                        console.log('QQ');
-                    }
-                });
+            $.ajax({
+                method: 'POST',
+                url: 'Clearproduct',
+                data: {},
+                success: function (data) {
+                    console.log('pass');
+                },
+                error: function (error) {
+                    console.log('QQ');
+                }
+            });
         });
         function cal() {
             //小計
@@ -245,8 +245,8 @@
             $("#calculate").append(`<div class="right border-top"><p>合計：${total}</p></div>`);
         }
 
-        window.onunload=function(){
-            $('select option').each(function(){
+        window.onunload = function () {
+            $('select').each(function () {
                 $(this).val(0);
             });
         };

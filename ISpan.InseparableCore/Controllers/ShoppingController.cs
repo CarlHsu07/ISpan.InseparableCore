@@ -149,7 +149,7 @@ namespace ISpan.InseparableCore.Controllers
             }
             else
                 cart = new List<CticketCartItemVM>();
-            
+
             //位置取消session也要刪除
             CticketCartItemVM delete = null;
             if (Qty == 0)

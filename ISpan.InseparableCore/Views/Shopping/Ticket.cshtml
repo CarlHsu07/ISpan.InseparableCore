@@ -81,14 +81,14 @@
             $("#movie").val(@Model.movieId);
 
         });
-        $('li a').click(function(){
-            var cinema =$(this).attr('cinema');
-            var session =$(this).attr('session');
+        $('li a').click(function () {
+            var cinema = $(this).attr('cinema');
+            var session = $(this).attr('session');
 
             $('#form').append(`<form action="/Shopping/Booking" method="post" id="ticketform">
                     <input type="hidden" name="cinema" value="${cinema}" />
                     <input type="hidden" name="session" value="${session}" />
-            </form>`);
+                    </form>`);
             $('#ticketform').submit();
         });
     </script>
