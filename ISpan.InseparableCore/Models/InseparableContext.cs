@@ -54,13 +54,6 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TSessions> TSessions { get; set; }
         public virtual DbSet<TTicketOrderDetails> TTicketOrderDetails { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Chinese_Taiwan_Stroke_CI_AS");
