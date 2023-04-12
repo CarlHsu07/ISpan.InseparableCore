@@ -1,0 +1,121 @@
+﻿@model ISpan.InseparableCore.ViewModels.CcinemaVM
+@{
+    ViewData["Title"] = "List2";
+}
+
+<h1>影城介紹</h1>
+@section Styles{
+    <style>
+        .city, .brand {
+            margin:5px;
+        }
+        p{
+            margin:0px;
+            font-size:15px;
+        }
+
+        .showcinema{
+            border: solid 1px #C4E1E1;
+        }
+        #cinema{
+            margin:5px;
+        }
+    </style>
+}
+    <div>
+        <div id="city">
+        @foreach (var item in Model.city)
+        {
+
+            <button class="city btn btn-outline-primary" value="@item">@item</button>
+
+        }
+    </div>
+    <div id="brand">
+        @foreach (var item in Model.brand)
+        {
+            <button class="brand btn btn-outline-primary" value="@item">@item</button>
+        }
+    </div>
+</div>
+
+<div id="cinema"></div>
+@section Scripts{
+    <script>
+        $(function () {
+            var city = "臺北市";
+            $.ajax({
+                method: 'POST',
+                url: '/Cinema/City',
+                data: {
+                    city
+                },
+                datatype: 'text',
+                success: function (data) {
+                    var cinema = JSON.parse(data);
+                    cinema.forEach(function (value, index) {
+                        $('#cinema').append(`<div class="showcinema"><span><h4>${value.FCinemaName}</h4>
+                                             <p>${value.FCinemaAddress}</p>
+                                             <p>${value.FCinemaTel}</p>
+                        </span></div>`)
+                    })
+                    console.log('pass');
+                },
+                error: function () {
+                    console.log('QQ');
+                }
+            });
+        });
+        $('#city button').click(function () {
+            $('#cinema').html('');
+            var city = $(this).attr('value');
+           
+            $.ajax({
+                method: 'POST',
+                url: '/Cinema/City',
+                data: {
+                    city
+                },
+                datatype: 'text',
+                success: function (data) {
+                    var cinema = JSON.parse(data);
+                    cinema.forEach(function (value, index) {
+                        $('#cinema').append(`<div class="showcinema"><span><h4>${value.FCinemaName}</h4>
+                                              <p>${value.FCinemaAddress}</p>
+                                              <p>${value.FCinemaTel}</p>
+                        </span></div>`)
+                    })
+                    console.log('pass');
+                },
+                error: function () {
+                    console.log('QQ');
+                }
+            });
+        });
+        $('#brand button').click(function () {
+            $('#cinema').html('');
+            var brand = $(this).attr('value');
+            $.ajax({
+                method: 'POST',
+                url: '/Cinema/Brand',
+                data: {
+                    brand
+                },
+                datatype: 'text',
+                success: function (data) {
+                    var cinema = JSON.parse(data);
+                    cinema.forEach(function (value, index) {
+                        $('#cinema').append(`<div class="showcinema"><span><h4>${value.FCinemaName}</h4>
+                                             <p>${value.FCinemaAddress}</p>
+                                             <p>${value.FCinemaTel}</p>
+                        </span></div>`)
+                    })
+                    console.log('pass');
+                },
+                error: function () {
+                    console.log('QQ');
+                }
+            });
+        });
+    </script>
+}
