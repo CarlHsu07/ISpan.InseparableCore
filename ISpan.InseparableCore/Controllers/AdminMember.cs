@@ -22,7 +22,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: AdminMember
         public async Task<IActionResult> Index(CQueryKeywordViewModel vm)
         {
-            if(string.IsNullOrEmpty(vm.txtKeyword))
+            if(string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
             {
                 var inseparableContext = _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
@@ -31,7 +31,7 @@ namespace ISpan.InseparableCore.Controllers
 
                 return View(await inseparableContext.ToListAsync());
             }
-            else
+            else // 搜尋關鍵字不是空的
             {
                 var inseparableContext = _context.TMembers
                     .Where(m => 
@@ -72,6 +72,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: AdminMember/Create
         public IActionResult Create()
         {
+            // todo 居住區域選單，要改成縣市跟區域，先選縣市再顯示區域
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
@@ -83,18 +84,22 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FId,FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint,FSignUpTime")] TMembers tMembers)
+        public async Task<IActionResult> Create([Bind("FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers tMember)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tMembers);
+                // 產生會員ID
+                tMember.FMemberId = GenerateFMemberId();
+                // 產生會員註冊時間
+                tMember.FSignUpTime = DateTime.Now;
+                _context.Add(tMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMember.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMember.FAreaZipCode);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMember.FGenderId);
+            return View(tMember);
         }
 
         // GET: AdminMember/Edit/5
@@ -121,7 +126,7 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FId,FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint,FSignUpTime")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint,FSignUpTime")] TMembers tMembers)
         {
             if (id != tMembers.FId)
             {
@@ -197,6 +202,28 @@ namespace ISpan.InseparableCore.Controllers
         private bool TMembersExists(int id)
         {
           return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
+        }
+
+        // 產生 FMemberId 的方法
+        private string GenerateFMemberId()
+        {
+            // 取得現在時間
+            DateTime now = DateTime.Now;
+
+            // 查詢當日已經新增的會員數量
+            int memberCount = _context.TMembers.Count(m => m.FSignUpTime.Value.Date == now.Date);
+
+            // 新的序號為會員數量加一
+            int newSequence = memberCount + 1;
+
+            // 將序號轉換為固定長度的字串，補足至 5 位數，補足的字元為 0
+            string sequenceString = newSequence.ToString().PadLeft(5, '0');
+
+            // 將日期和序號結合，形成 FMemberId，格式為 yyyyMMdd-序號
+            string fMemberId = now.ToString("yyyyMMdd") + sequenceString;
+
+            // 回傳 FMemberId
+            return fMemberId;
         }
     }
 }
