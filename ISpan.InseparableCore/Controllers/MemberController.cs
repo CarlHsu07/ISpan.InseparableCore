@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
+using System.Reflection;
+using ISpan.InseparableCore.Models.my;
+using System.Text;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -60,20 +63,45 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind(",FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FSignUpTime")] TMembers tMembers)
+        public async Task<IActionResult> Create([Bind(",FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FSignUpTime")] TMembers MemberIn)
         {
             if (ModelState.IsValid)
             {
+                // 產生會員ID
+                MemberIn.FMemberId = GenerateFMemberId();
 
+                // 產生會員註冊時間
+                MemberIn.FSignUpTime = DateTime.Now;
 
-                _context.Add(tMembers);
+                // 產生會員點數
+                if (MemberIn.FTotalMemberPoint == null)
+                {
+                    MemberIn.FTotalMemberPoint = 0;
+                }
+
+                // 加密密碼
+                # region
+                string password = MemberIn.FPasswordHash; // 要加密的密碼
+
+                // 產生鹽值
+                byte[] salt = CPasswordHelper.GenerateSalt();
+
+                // 將密碼與鹽值結合後進行加密
+                byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
+
+                // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                MemberIn.FPasswordSalt = Convert.ToBase64String(salt);
+                MemberIn.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                #endregion
+
+                _context.Add(MemberIn);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaZipCode);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
+            return View(MemberIn);
         }
 
         // GET: Members/Edit/5
