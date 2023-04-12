@@ -23,20 +23,23 @@ namespace ISpan.InseparableCore.Controllers
             var start = DateTime.Now.Date;
             var starttime=DateTime.Now.TimeOfDay;
             var end = DateTime.Now.Date.AddDays(7);
-
+            //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
                 vm.movie = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId).Select(t => t.FMovie).Distinct();
+                // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
-            //todo 電影也要加上時間篩選
+            
             if (vm.movieId != 0)
             {
-                var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId ).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
-                    var sessions = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId && t.FSessionDate == item); // &&t.FSessionDate>=start && t.FSessionDate<=end &&t.FsessionTime>=starttime
+                    var sessions = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId && t.FSessionDate == item);
+                    //&&t.FsessionTime>=starttime
 
                     vm.sessions.Add(item, sessions);
                 }
