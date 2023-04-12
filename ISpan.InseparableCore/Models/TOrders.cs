@@ -19,6 +19,7 @@ namespace ISpan.InseparableCore.Models
         public DateTime FOrderDate { get; set; }
         public DateTime FModifiedTime { get; set; }
         public decimal FTotalMoney { get; set; }
+        public bool FStatus { get; set; }
 
         public virtual TCinemas FCinema { get; set; }
         public virtual TMembers FMember { get; set; }

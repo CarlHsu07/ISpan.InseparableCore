@@ -18,7 +18,7 @@ namespace ISpan.InseparableCore.Models
         {
         }
 
-        public virtual DbSet<TAccountStatus> TAccountStatus { get; set; }
+        public virtual DbSet<TAccountStatuses> TAccountStatuses { get; set; }
         public virtual DbSet<TActivities> TActivities { get; set; }
         public virtual DbSet<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual DbSet<TActors> TActors { get; set; }
@@ -65,12 +65,12 @@ namespace ISpan.InseparableCore.Models
         {
             modelBuilder.UseCollation("Chinese_Taiwan_Stroke_CI_AS");
 
-            modelBuilder.Entity<TAccountStatus>(entity =>
+            modelBuilder.Entity<TAccountStatuses>(entity =>
             {
                 entity.HasKey(e => e.FStatusId)
                     .HasName("PK_tMemberStatus");
 
-                entity.ToTable("tAccountStatus");
+                entity.ToTable("tAccountStatuses");
 
                 entity.Property(e => e.FStatusId)
                     .HasColumnName("fStatusID")
@@ -270,6 +270,9 @@ namespace ISpan.InseparableCore.Models
                     .HasName("PK_ArticleCategoryDetails");
 
                 entity.ToTable("tArticleKeywordDetails");
+
+                entity.HasIndex(e => new { e.FArticleId, e.FKeywordId }, "IX_tArticleKeywordDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -652,7 +655,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("手機號碼");
 
                 entity.Property(e => e.FDateOfBirth)
-                    .HasColumnType("datetime")
+                    .HasColumnType("date")
                     .HasColumnName("fDateOfBirth")
                     .HasComment("生日");
 
@@ -716,10 +719,20 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnName("fTotalMemberPoint")
                     .HasComment("目前點數餘額");
 
+                entity.HasOne(d => d.FAccountStatusNavigation)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FAccountStatus)
+                    .HasConstraintName("FK_tMembers_tAccountStatuses");
+
                 entity.HasOne(d => d.FAreaZipCodeNavigation)
                     .WithMany(p => p.TMembers)
                     .HasForeignKey(d => d.FAreaZipCode)
                     .HasConstraintName("FK_tMembers_tAreas");
+
+                entity.HasOne(d => d.FGender)
+                    .WithMany(p => p.TMembers)
+                    .HasForeignKey(d => d.FGenderId)
+                    .HasConstraintName("FK_tMembers_tGenders");
             });
 
             modelBuilder.Entity<TMovieActorDetails>(entity =>
@@ -728,6 +741,9 @@ namespace ISpan.InseparableCore.Models
                     .HasName("PK_MovieActorDetails");
 
                 entity.ToTable("tMovieActorDetails");
+
+                entity.HasIndex(e => new { e.FMovieId, e.FActorId }, "IX_tMovieActorDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -770,6 +786,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieCategoryDetails");
 
+                entity.HasIndex(e => new { e.FMovieCategoryId, e.FMovieId }, "IX_tMovieCategoryDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FMovieCategoryId).HasColumnName("fMovieCategoryID");
@@ -795,6 +814,9 @@ namespace ISpan.InseparableCore.Models
 
                 entity.ToTable("tMovieDirectorDetails");
 
+                entity.HasIndex(e => new { e.FDirectorId, e.FMovieId }, "IX_tMovieDirectorDetails")
+                    .IsUnique();
+
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FDirectorId).HasColumnName("fDirectorID");
@@ -819,6 +841,9 @@ namespace ISpan.InseparableCore.Models
                 entity.HasKey(e => e.FSerialNumber);
 
                 entity.ToTable("tMovieKeywordDetails");
+
+                entity.HasIndex(e => new { e.FKeywordId, e.FMovieId }, "IX_tMovieKeywordDetails")
+                    .IsUnique();
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
@@ -920,6 +945,8 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FOrderDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fOrderDate");
+
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTotalMoney)
                     .HasColumnType("money")
@@ -1158,6 +1185,10 @@ namespace ISpan.InseparableCore.Models
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
+                entity.Property(e => e.FMovieName)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMovieName");
+
                 entity.Property(e => e.FOrderId).HasColumnName("fOrderID");
 
                 entity.Property(e => e.FRoomId).HasColumnName("fRoomID");
@@ -1165,6 +1196,8 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FSeatId).HasColumnName("fSeatID");
 
                 entity.Property(e => e.FSessionId).HasColumnName("fSessionID");
+
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTicketDiscount)
                     .HasColumnType("decimal(18, 2)")

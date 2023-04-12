@@ -15,7 +15,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[tAccountStatus]",
+         "Name": "[dbo].[tAccountStatuses]",
          "ObjectType": 0
       },
       {

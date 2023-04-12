@@ -7,6 +7,11 @@ namespace ISpan.InseparableCore.Models
 {
     public partial class TGenders
     {
+        public TGenders()
+        {
+            TMembers = new HashSet<TMembers>();
+        }
+
         /// <summary>
         /// 性別ID
         /// </summary>
@@ -15,5 +20,7 @@ namespace ISpan.InseparableCore.Models
         /// 性別種類
         /// </summary>
         public string FGenderType { get; set; }
+
+        public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }

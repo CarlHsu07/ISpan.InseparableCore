@@ -89,7 +89,9 @@ namespace ISpan.InseparableCore.Models
         /// </summary>
         public DateTime? FSignUpTime { get; set; }
 
+        public virtual TAccountStatuses FAccountStatusNavigation { get; set; }
         public virtual TAreas FAreaZipCodeNavigation { get; set; }
+        public virtual TGenders FGender { get; set; }
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }

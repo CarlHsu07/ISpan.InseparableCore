@@ -5,8 +5,13 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models
 {
-    public partial class TAccountStatus
+    public partial class TAccountStatuses
     {
+        public TAccountStatuses()
+        {
+            TMembers = new HashSet<TMembers>();
+        }
+
         /// <summary>
         /// 會員狀態ID
         /// </summary>
@@ -19,5 +24,7 @@ namespace ISpan.InseparableCore.Models
         /// 會員狀態的說明
         /// </summary>
         public string FDescription { get; set; }
+
+        public virtual ICollection<TMembers> TMembers { get; set; }
     }
 }
