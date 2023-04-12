@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ISpan.InseparableCore.ViewModels;
+using System.Text;
 using ISpan.InseparableCore.Models;
-using ISpan.InseparableCoreMVC.ViewModels;
+using ISpan.InseparableCore.Models.my;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -84,22 +86,47 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers tMember)
+        public async Task<IActionResult> Create([Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers MemberIn)
         {
             if (ModelState.IsValid)
             {
                 // 產生會員ID
-                tMember.FMemberId = GenerateFMemberId();
+                MemberIn.FMemberId = GenerateFMemberId();
+
                 // 產生會員註冊時間
-                tMember.FSignUpTime = DateTime.Now;
-                _context.Add(tMember);
+                MemberIn.FSignUpTime = DateTime.Now;
+
+                // 產生會員點數
+                if (MemberIn.FTotalMemberPoint == null)
+                {
+                    MemberIn.FTotalMemberPoint = 0;
+                }
+                
+
+                // 加密密碼
+                # region
+                string password = MemberIn.FPasswordHash; // 要加密的密碼
+
+                // 產生鹽值
+                byte[] salt = CPasswordHelper.GenerateSalt();
+
+                // 將密碼與鹽值結合後進行加密
+                byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
+
+                // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                MemberIn.FPasswordSalt = Convert.ToBase64String(salt);
+                MemberIn.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                #endregion
+
+
+                _context.Add(MemberIn);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMember.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMember.FAreaZipCode);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMember.FGenderId);
-            return View(tMember);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaZipCode);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
+            return View(MemberIn);
         }
 
         // GET: AdminMember/Edit/5
@@ -126,9 +153,9 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint,FSignUpTime")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers tMembers)
         {
-            if (id != tMembers.FId)
+            if (id != tMembers.FId) // todo 有問題，tMembers.FId為0
             {
                 return NotFound();
             }
@@ -213,17 +240,35 @@ namespace ISpan.InseparableCore.Controllers
             // 查詢當日已經新增的會員數量
             int memberCount = _context.TMembers.Count(m => m.FSignUpTime.Value.Date == now.Date);
 
-            // 新的序號為會員數量加一
-            int newSequence = memberCount + 1;
+            int newSequence = 0;
+
+            if (memberCount == 0)
+            {
+                // 新的序號為會員數量加1
+                newSequence = memberCount + 1;
+            }
+            else
+            {
+                string lastMemberSequence = _context.TMembers
+                    .OrderByDescending(m => m.FSignUpTime.Value.Date == now.Date)
+                    .FirstOrDefault().FMemberId;
+
+                int length = lastMemberSequence.Length;
+                string lastFiveChars = length >= 5 ? lastMemberSequence.Substring(length - 5) : lastMemberSequence;
+            }
+
+            
 
             // 將序號轉換為固定長度的字串，補足至 5 位數，補足的字元為 0
             string sequenceString = newSequence.ToString().PadLeft(5, '0');
 
             // 將日期和序號結合，形成 FMemberId，格式為 yyyyMMdd-序號
-            string fMemberId = now.ToString("yyyyMMdd") + sequenceString;
+            string fMemberId = "M" + now.ToString("yyyyMMdd") + sequenceString;
 
             // 回傳 FMemberId
             return fMemberId;
         }
+
+
     }
 }

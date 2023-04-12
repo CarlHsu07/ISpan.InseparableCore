@@ -11,12 +11,14 @@ namespace ISpan.InseparableCore.Models
         public int FTicketItemNo { get; set; }
         public int FOrderId { get; set; }
         public int FMovieId { get; set; }
+        public string FMovieName { get; set; }
         public int FSessionId { get; set; }
         public int FSeatId { get; set; }
         public int FRoomId { get; set; }
         public decimal FTicketUnitprice { get; set; }
         public decimal FTicketDiscount { get; set; }
         public decimal FTicketSubtotal { get; set; }
+        public bool FStatus { get; set; }
 
         public virtual TMovies FMovie { get; set; }
         public virtual TOrders FOrder { get; set; }

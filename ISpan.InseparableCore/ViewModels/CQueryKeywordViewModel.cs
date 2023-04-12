@@ -1,4 +1,4 @@
-﻿namespace ISpan.InseparableCoreMVC.ViewModels
+﻿namespace ISpan.InseparableCore.ViewModels
 {
     public class CQueryKeywordViewModel
     {

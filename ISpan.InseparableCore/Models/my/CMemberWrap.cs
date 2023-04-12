@@ -1,7 +1,7 @@
 ﻿using ISpan.InseparableCore.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace ISpan.InseparableCoreMVC.Models
+namespace ISpan.InseparableCore.Models.my
 {
     public class CMemberWrap
     {
@@ -18,11 +18,18 @@ namespace ISpan.InseparableCoreMVC.Models
             _member = new TMembers();
         }
 
-        [Display(Name = "會員編號")]
+        [Display(Name = "會員流水號")]
         public int FId
         {
             get { return _member.FId; }
             set { _member.FId = value; }
+        }
+
+        [Display(Name = "會員ID")]
+        public string FMemberId
+        {
+            get { return _member.FMemberId; }
+            set { _member.FMemberId = value; }
         }
 
         [Display(Name = "會員姓氏")]

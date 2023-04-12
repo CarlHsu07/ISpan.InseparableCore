@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FLastName" class="control-label">姓氏</label>
@@ -28,14 +28,9 @@
                 <span asp-validation-for="FEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FPasswordHash" class="control-label"></label>
+                <label asp-for="FPasswordHash" class="control-label">密碼</label>
                 <input asp-for="FPasswordHash" class="form-control" />
                 <span asp-validation-for="FPasswordHash" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FPasswordSalt" class="control-label"></label>
-                <input asp-for="FPasswordSalt" class="form-control" />
-                <span asp-validation-for="FPasswordSalt" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FDateOfBirth" class="control-label">生日</label>

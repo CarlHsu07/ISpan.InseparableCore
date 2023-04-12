@@ -34,23 +34,30 @@
                 @Html.DisplayNameFor(model => model.FEmail)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FDateOfBirth)
+                @*@Html.DisplayNameFor(model => model.FGender)*@
+                性別
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FCellphone)
+                @*@Html.DisplayNameFor(model => model.FDateOfBirth)*@
+                生日
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FTotalMemberPoint)
+                @*@Html.DisplayNameFor(model => model.FCellphone)*@
+                手機號碼
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FAccountStatusNavigation)
+                @*@Html.DisplayNameFor(model => model.FTotalMemberPoint)*@
+                會員點數
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)
+                @*@Html.DisplayNameFor(model => model.FAccountStatusNavigation)*@
+                會員狀態
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FGender)
+                @*@Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)*@
+                區域
             </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -76,6 +83,9 @@
                 @Html.DisplayFor(modelItem => item.FEmail)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.FGender.FGenderType)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.FDateOfBirth)
             </td>
             <td>
@@ -89,9 +99,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FAreaZipCodeNavigation.FAreaName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FGender.FGenderType)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |

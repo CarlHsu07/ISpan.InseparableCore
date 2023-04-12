@@ -54,14 +54,6 @@ namespace ISpan.InseparableCore.Models
         public virtual DbSet<TSessions> TSessions { get; set; }
         public virtual DbSet<TTicketOrderDetails> TTicketOrderDetails { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("Chinese_Taiwan_Stroke_CI_AS");
@@ -656,7 +648,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("手機號碼");
 
                 entity.Property(e => e.FDateOfBirth)
-                    .HasColumnType("datetime")
+                    .HasColumnType("date")
                     .HasColumnName("fDateOfBirth")
                     .HasComment("生日");
 
@@ -947,9 +939,7 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnType("datetime")
                     .HasColumnName("fOrderDate");
 
-                entity.Property(e => e.FStatus)
-                    .HasMaxLength(50)
-                    .HasColumnName("fStatus");
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTotalMoney)
                     .HasColumnType("money")
@@ -1188,6 +1178,10 @@ namespace ISpan.InseparableCore.Models
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
+                entity.Property(e => e.FMovieName)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMovieName");
+
                 entity.Property(e => e.FOrderId).HasColumnName("fOrderID");
 
                 entity.Property(e => e.FRoomId).HasColumnName("fRoomID");
@@ -1195,6 +1189,8 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FSeatId).HasColumnName("fSeatID");
 
                 entity.Property(e => e.FSessionId).HasColumnName("fSessionID");
+
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTicketDiscount)
                     .HasColumnType("decimal(18, 2)")
