@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.ViewModels;
+using NuGet.Protocol;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -24,7 +25,7 @@ namespace ISpan.InseparableCore.Controllers
 		// GET: TMovies
 		public async Task<IActionResult> Index()
 		{
-			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel).Take(2);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(await inseparableContext.ToListAsync());
 		}
@@ -38,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers
 
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 
-			return View(inseparableContext.ToList());
+			return Ok(inseparableContext.ToList().Skip(((int)condition.Page-1)*2).ToJson());
 		}
 
 		// GET: TMovies/Details/5
@@ -73,7 +74,7 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(MovieCreateVm movieCreateVm)
+		public async Task<IActionResult> Create(MovieVm movieCreateVm)
 		{
 			if (ModelState.IsValid)
 			{
@@ -124,7 +125,7 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
-			MovieCreateVm vm = tMovies.ModelToVm();
+			MovieVm vm = tMovies.ModelToVm();
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(vm);
@@ -135,7 +136,7 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, MovieCreateVm movieCreateVm)
+		public async Task<IActionResult> Edit(int id, MovieVm movieCreateVm)
 		{
 			//if (id != movieCreateVm.FMovieId)
 			//{

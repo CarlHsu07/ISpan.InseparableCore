@@ -3,6 +3,6 @@
 	public class MovieCategoryDetailCreateVm
 	{
 		public int FMovieId { get; set; }
-		public string CategoryIds { get; set; }
+		public string? CategoryIds { get; set; }
 	}
 }

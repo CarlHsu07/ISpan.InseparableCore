@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.Models.TArticles
+﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
 
 @{
     ViewData["Title"] = "Details";
@@ -41,19 +41,71 @@
             @Html.DisplayFor(model => model.FArticleContent)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleCategory)
+            @Html.DisplayNameFor(model => model.articles.FArticleCategory)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleCategory.FMovieCategoryName)
+			@Html.DisplayFor(model => model.articles.FArticleCategory.FMovieCategoryName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMember)
+			@Html.DisplayNameFor(model => model.articles.FMember)
         </dt>
         <dd class = "col-sm-10">
-			@Html.DisplayFor(model => model.FMember.FFirstName)
+			@Html.DisplayFor(model => model.articles.FMember.FFirstName)
         </dd>
     </dl>
 </div>
+@foreach (var comment in Model.Comments)
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>
+					@Html.DisplayNameFor(model => comment.FItemNumber)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => comment.FCommentPostingDate)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => comment.FCommentLikes)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => comment.FMember)
+				</th>
+				<th>
+					@Html.DisplayNameFor(model => comment.FCommentContent)
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.Comments)
+			{
+				<tr>
+					<td>
+						@Html.DisplayFor(modelItem => comment.FItemNumber)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => comment.FCommentPostingDate)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => comment.FCommentLikes)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => comment.FMember.FLastName)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => comment.FCommentContent)
+					</td>
+					<td>
+						<a asp-action="Edit" asp-route-id="@comment.FCommentId">Edit</a> |
+						<a asp-action="Details" asp-route-id="@comment.FCommentId">Details</a> |
+						<a asp-action="Delete" asp-route-id="@comment.FCommentId">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>	
+}
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.FArticleId">Edit</a> |
     <a asp-action="Index">Back to List</a>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-	public class MovieCreateVm
+	public class MovieVm
 	{
 		public int FMovieId { get; set; }
 		public string? FMovieName { get; set; }
@@ -22,9 +22,9 @@ namespace ISpan.InseparableCore.ViewModels
 	}
 	public static class MovieVmExtensions
 	{
-		public static MovieCreateVm ModelToVm(this TMovies tMovies)
+		public static MovieVm ModelToVm(this TMovies tMovies)
 		{
-			MovieCreateVm vm = new MovieCreateVm()
+			MovieVm vm = new MovieVm()
 			{
 				FMovieId = tMovies.FMovieId,
 				FMovieIntroduction = tMovies.FMovieIntroduction,
@@ -41,7 +41,7 @@ namespace ISpan.InseparableCore.ViewModels
 			vm.MovieDirectorDetails = (new InseparableContext()).TMovieDirectorDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
 			return vm;
 		}
-		public static TMovies VmToModel(this MovieCreateVm vm)
+		public static TMovies VmToModel(this MovieVm vm)
 		{
 			var movie = new TMovies()
 			{

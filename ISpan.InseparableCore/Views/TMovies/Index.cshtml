@@ -9,15 +9,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<div class="row">
+<div class="row" >
 	<div class="col-md-4">
-		<form asp-action="Index" method="post">
+		<form asp-action="Index" method="post" id="formSearch">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="form-group">
-@*				<label name="Key" class="control-label"></label>
-*@				<input name="Key" class="form-control" />
+				<label name="Key" class="control-label"></label>
+				<input name="Key" class="form-control" />
 			</div>
-@*			<div class="form-group">
+			<div class="form-group">
+				<label name="Page" class="control-label"></label>
+				<input name="Page" class="form-control"/>
+			</div>
+@*			
+			<div class="form-group">
 				<label name="CategoryId" class="control-label"></label>
 				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
@@ -31,7 +36,32 @@
 		</form>
 	</div>
 </div>
-<table class="table">
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+	$("#formSearch").submit(function (event) {
+		event.preventDefault();
+		$.ajax({
+			method: "post",
+			url: $(this).attr("action"),
+			data: $("#formSearch").serialize(),
+			beforeSend: function () {
+				return confirm($("#formSearch").serialize());
+			},
+			success: function (data) {
+				let context = JSON.parse(data);
+				//$("#tableSearch").html(context[1].FMovieName)
+				//alert(context[0])
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+			},
+		})
+	})
+
+</script>
+<table class="table" id="tableSearch">
     <thead>
         <tr>
             <th>
@@ -98,3 +128,5 @@
 }
     </tbody>
 </table>
+
+
