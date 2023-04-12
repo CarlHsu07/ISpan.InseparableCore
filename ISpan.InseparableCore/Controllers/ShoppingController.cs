@@ -243,7 +243,7 @@ namespace ISpan.InseparableCore.Controllers
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = 1; //todo目前尚未解決登入
+            vm.FMemberId = 1; //todo 目前尚未解決登入
             vm.FStatus = true;
             
 
