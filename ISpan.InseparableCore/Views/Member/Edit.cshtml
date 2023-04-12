@@ -1,0 +1,109 @@
+﻿@model ISpan.InseparableCore.Models.TMembers
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TMembers</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FId" />
+            <div class="form-group">
+                <label asp-for="FMemberId" class="control-label"></label>
+                <input asp-for="FMemberId" class="form-control" />
+                <span asp-validation-for="FMemberId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FLastName" class="control-label"></label>
+                <input asp-for="FLastName" class="form-control" />
+                <span asp-validation-for="FLastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FFirstName" class="control-label"></label>
+                <input asp-for="FFirstName" class="form-control" />
+                <span asp-validation-for="FFirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FEmail" class="control-label"></label>
+                <input asp-for="FEmail" class="form-control" />
+                <span asp-validation-for="FEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FPasswordHash" class="control-label"></label>
+                <input asp-for="FPasswordHash" class="form-control" />
+                <span asp-validation-for="FPasswordHash" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FPasswordSalt" class="control-label"></label>
+                <input asp-for="FPasswordSalt" class="form-control" />
+                <span asp-validation-for="FPasswordSalt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FDateOfBirth" class="control-label"></label>
+                <input asp-for="FDateOfBirth" class="form-control" />
+                <span asp-validation-for="FDateOfBirth" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FGenderId" class="control-label"></label>
+                <select asp-for="FGenderId" class="form-control" asp-items="ViewBag.FGenderId"></select>
+                <span asp-validation-for="FGenderId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCellphone" class="control-label"></label>
+                <input asp-for="FCellphone" class="form-control" />
+                <span asp-validation-for="FCellphone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FAddress" class="control-label"></label>
+                <input asp-for="FAddress" class="form-control" />
+                <span asp-validation-for="FAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FAreaZipCode" class="control-label"></label>
+                <select asp-for="FAreaZipCode" class="form-control" asp-items="ViewBag.FAreaZipCode"></select>
+                <span asp-validation-for="FAreaZipCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FPhotoPath" class="control-label"></label>
+                <input asp-for="FPhotoPath" class="form-control" />
+                <span asp-validation-for="FPhotoPath" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FIntroduction" class="control-label"></label>
+                <input asp-for="FIntroduction" class="form-control" />
+                <span asp-validation-for="FIntroduction" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FAccountStatus" class="control-label"></label>
+                <select asp-for="FAccountStatus" class="form-control" asp-items="ViewBag.FAccountStatus"></select>
+                <span asp-validation-for="FAccountStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FTotalMemberPoint" class="control-label"></label>
+                <input asp-for="FTotalMemberPoint" class="form-control" />
+                <span asp-validation-for="FTotalMemberPoint" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FSignUpTime" class="control-label"></label>
+                <input asp-for="FSignUpTime" class="form-control" />
+                <span asp-validation-for="FSignUpTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
