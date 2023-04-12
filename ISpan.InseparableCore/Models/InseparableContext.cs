@@ -648,7 +648,7 @@ namespace ISpan.InseparableCore.Models
                     .HasComment("手機號碼");
 
                 entity.Property(e => e.FDateOfBirth)
-                    .HasColumnType("datetime")
+                    .HasColumnType("date")
                     .HasColumnName("fDateOfBirth")
                     .HasComment("生日");
 
@@ -939,9 +939,7 @@ namespace ISpan.InseparableCore.Models
                     .HasColumnType("datetime")
                     .HasColumnName("fOrderDate");
 
-                entity.Property(e => e.FStatus)
-                    .HasMaxLength(50)
-                    .HasColumnName("fStatus");
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTotalMoney)
                     .HasColumnType("money")
@@ -1191,6 +1189,8 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FSeatId).HasColumnName("fSeatID");
 
                 entity.Property(e => e.FSessionId).HasColumnName("fSessionID");
+
+                entity.Property(e => e.FStatus).HasColumnName("fStatus");
 
                 entity.Property(e => e.FTicketDiscount)
                     .HasColumnType("decimal(18, 2)")

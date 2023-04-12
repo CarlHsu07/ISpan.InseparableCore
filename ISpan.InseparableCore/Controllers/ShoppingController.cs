@@ -29,6 +29,7 @@ namespace ISpan.InseparableCore.Controllers
                 vm.movie = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId).Select(t => t.FMovie).Distinct();
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
+            //todo 電影也要加上時間篩選
             if (vm.movieId != 0)
             {
                 var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
@@ -113,7 +114,7 @@ namespace ISpan.InseparableCore.Controllers
                 return View();
             vm.solid = new List<int>();
 
-            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid);
+            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid && t.FStatus==true);
             foreach (var item in solid)
             {
                 vm.solid.Add(item.FSeatId);
@@ -240,7 +241,8 @@ namespace ISpan.InseparableCore.Controllers
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
             vm.FMemberId = 1; //todo目前尚未解決登入
-
+            vm.FStatus = true;
+            
 
             _db.TOrders.Add(vm.orders);
             _db.SaveChanges();
@@ -251,7 +253,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 //驗證位置是否未售出
-                var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId).FirstOrDefault(t => t.FSeatId == item.FSeatId);
+                var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId &&t.FStatus==true).FirstOrDefault(t => t.FSeatId == item.FSeatId);
                 if (solid != null && solid.FOrderId != orderid)
                 {
                     ViewBag.error = "位置已售出請重新選擇!";
@@ -260,6 +262,7 @@ namespace ISpan.InseparableCore.Controllers
                 }
 
                 item.FOrderId = orderid;
+                item.Fstatus = true;
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;

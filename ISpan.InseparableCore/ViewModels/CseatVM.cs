@@ -14,5 +14,6 @@ namespace ISpan.InseparableCore.ViewModels
 
         public TSessions sessions { get; set; }
         public IEnumerable<TMovies> movie { get; set; }
+        public bool FStatus { get; set; }
     }
 }

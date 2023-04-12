@@ -30,6 +30,7 @@
         }
         <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.session.FSessionDate.ToString("yyyy/MM/dd") @Model.session.FSessionTime.Hours : @Model.session.FSessionTime.Minutes.ToString("D2")</h4>
         <h4>
+            <img src="https://img.icons8.com/ios-filled/50/228BE6/aircraft-seat-middle.png" />
             @foreach (var item in Model.seats)
             {
                 <span>@item.Value</span>

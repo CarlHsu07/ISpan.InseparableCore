@@ -18,6 +18,7 @@ namespace ISpan.InseparableCore.Models
         public decimal FTicketUnitprice { get; set; }
         public decimal FTicketDiscount { get; set; }
         public decimal FTicketSubtotal { get; set; }
+        public bool FStatus { get; set; }
 
         public virtual TMovies FMovie { get; set; }
         public virtual TOrders FOrder { get; set; }

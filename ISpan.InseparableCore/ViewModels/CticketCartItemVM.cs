@@ -25,5 +25,6 @@ namespace ISpan.InseparableCore.ViewModels
         public decimal FTicketUnitprice { get { return _ticketOrderDetails.FTicketUnitprice; } set { _ticketOrderDetails.FTicketUnitprice = value; } }
         public decimal FTicketDiscount { get { return _ticketOrderDetails.FTicketDiscount; } set { _ticketOrderDetails.FTicketDiscount = value; } }
         public decimal FTicketSubtotal { get { return _ticketOrderDetails.FTicketSubtotal; }set { _ticketOrderDetails.FTicketSubtotal = value; } }
+        public bool Fstatus { get { return _ticketOrderDetails.FStatus; } set { _ticketOrderDetails.FStatus = value; } }
     }
 }
