@@ -23,23 +23,44 @@ namespace ISpan.InseparableCore.Controllers
 		}
 
 		// GET: TMovies
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> IndexMaintain()
 		{
-			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel).Take(2);
+			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(await inseparableContext.ToListAsync());
+		}
+		public IActionResult Index()
+		{
+			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+			List<MovieVm> movies = new List<MovieVm>();
+			foreach (var movie in inseparableContext)
+			{
+				movies.Add(movie.ModelToVm());
+			}
+
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View(movies);
 		}
 		[HttpPost]
 		public IActionResult Index(MovieSearchCondition condition)
 		{
-			IEnumerable<TMovies> inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+			var inseparableContext = _context.TMovies;
+			//.Include(t => t.FMovieLevel);
+			List<MovieVm> movies = new List<MovieVm>();
+			foreach (var movie in inseparableContext)
+			{
+				movies.Add(movie.ModelToVm());
+			}
+			
 
-			if (!string.IsNullOrEmpty(condition.Key)) inseparableContext = inseparableContext.Where(t => t.FMovieName.Contains(condition.Key));
+			//if (!string.IsNullOrEmpty(condition.Key)) inseparableContext = inseparableContext.Where(t => t.FMovieName.Contains(condition.Key));
 			//if (condition.MovieId.HasValue) inseparableContext = inseparableContext.Where(t => t.FMovieId == condition.MovieId);
-
+			//inseparableContext = inseparableContext.Skip(2 * (condition.Page - 1)).Take(2);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 
-			return Ok(inseparableContext.ToList().Skip(((int)condition.Page-1)*2).ToJson());
+			return Ok(movies.ToJson());
+			//return View(inseparableContext.ToList());
 		}
 
 		// GET: TMovies/Details/5

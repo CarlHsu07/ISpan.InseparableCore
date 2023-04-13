@@ -1,23 +1,35 @@
 ﻿using ISpan.InseparableCore.Models;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
+using System.ComponentModel;
 
 namespace ISpan.InseparableCore.ViewModels
 {
 	public class MovieVm
 	{
+		[DisplayName("電影ID")]
 		public int FMovieId { get; set; }
+		[DisplayName("名稱")]
 		public string? FMovieName { get; set; }
+		[DisplayName("簡介")]
 		public string? FMovieIntroduction { get; set; }
+		[DisplayName("分級")]
 		public int FMovieLevelId { get; set; }
+		[DisplayName("上映日期")]
 		public DateTime FMovieOnDate { get; set; }
+		[DisplayName("下映日期")]
 		public DateTime? FMovieOffDate { get; set; }
+		[DisplayName("片長")]
 		public int FMovieLength { get; set; }
+		[DisplayName("圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }
-		public int FMovieScore { get; set; }
+		[DisplayName("會員評分")]
+		public int? FMovieScore { get; set; } = 0;
+		[DisplayName("電影類別")]
 		public string? CategoryIds { get; set; }
 		public List<TMovieCategoryDetails>? CategoryDetails { get; set; }
 		public List<TMovieActorDetails>? MovieActorDetails { get; set; }
 		public List<TMovieDirectorDetails>? MovieDirectorDetails { get; set; }
+		[DisplayName("宣傳照")]
 		public IFormFile? Image { get; set; }
 	}
 	public static class MovieVmExtensions
@@ -36,9 +48,9 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieScore = tMovies.FMovieScore,
 				FMovieImagePath = tMovies.FMovieImagePath,
 			};
-			vm.CategoryDetails = (new InseparableContext()).TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
-			vm.MovieActorDetails = (new InseparableContext()).TMovieActorDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
-			vm.MovieDirectorDetails = (new InseparableContext()).TMovieDirectorDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
+			//vm.CategoryDetails = (new InseparableContext()).TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
+			//vm.MovieActorDetails = (new InseparableContext()).TMovieActorDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
+			//vm.MovieDirectorDetails = (new InseparableContext()).TMovieDirectorDetails.Where(t => t.FMovieId == tMovies.FMovieId).ToList();
 			return vm;
 		}
 		public static TMovies VmToModel(this MovieVm vm)
@@ -50,9 +62,9 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieName = vm.FMovieName,
 				FMovieLevelId = vm.FMovieLevelId,
 				FMovieOnDate = vm.FMovieOnDate,
-				FMovieOffDate = vm.FMovieOffDate,
+				FMovieOffDate = vm.FMovieOnDate.AddMonths(1),
 				FMovieLength = vm.FMovieLength,
-				FMovieScore = vm.FMovieScore,
+				FMovieScore = (int)vm.FMovieScore,
 				FMovieImagePath = vm.FMovieImagePath,
 			};
 			return movie;

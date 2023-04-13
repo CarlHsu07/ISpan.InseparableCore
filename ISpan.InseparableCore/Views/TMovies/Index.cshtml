@@ -1,40 +1,89 @@
-﻿@model IEnumerable<ISpan.InseparableCore.Models.TMovies>
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieVm>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+<style>
+	.divContainer{
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+	.divBorder{
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<div class="row" >
-	<div class="col-md-4">
-		<form asp-action="Index" method="post" id="formSearch">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label name="Key" class="control-label"></label>
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+	.divBlock{
+		margin: 20px
+	}
+	.inDivBottom{
+		position: absolute;
+		bottom: 0px;
+		right: -100px;
+	}
+</style>
+
+<div class="row divBlock" >
+
+	<form asp-action="Index" method="post" id="formSearch">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="divContainer " >
+			<div class="form-group divBlock" >
+				<label name="Key" class="control-label">關鍵字</label>
 				<input name="Key" class="form-control" />
 			</div>
-			<div class="form-group">
-				<label name="Page" class="control-label"></label>
+			<div class="form-group divBlock" >
+				<label name="Page" class="control-label">頁數</label>
 				<input name="Page" class="form-control"/>
 			</div>
-@*			
-			<div class="form-group">
-				<label name="CategoryId" class="control-label"></label>
-				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
+			<div class="form-group divBlock" style="position:relative">
+				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
 			</div>
-			<div class="form-group">
-				<label name="MovieId" class="control-label"></label>
-				<input name="MovieId" class="form-control">
-			</div>
-*@			<div class="form-group">
-				<input type="submit" value="search" class="btn btn-primary" />
-			</div>
-		</form>
+		</div>
+	</form>
+
+</div>
+
+<div class="divBlock" id="divSearch">
+
+@foreach (var item in Model) {
+		<div class="divContainer divBorder">
+		<div style="margin:0 20px 0 0" >
+            <p>
+				<img src="~/images/@item.FMovieImagePath" width="250">
+            </p>
+		</div>
+
+		<div >
+            <p>
+			<a asp-action="Details" asp-route-id="@item.FMovieId">
+                @Html.DisplayFor(modelItem => item.FMovieName)
+            </a> 
+            </p>
+            <p>
+				@Html.DisplayNameFor(model => model.FMovieOnDate) :
+				@item.FMovieOnDate.ToString("yyyy/MM/dd")
+            </p>
+            <p>
+				@Html.DisplayNameFor(model => model.FMovieLength) :
+                @Html.DisplayFor(modelItem => item.FMovieLength)
+            </p>
+            <p>
+				@Html.DisplayNameFor(model => model.FMovieScore) :
+                @Html.DisplayFor(modelItem => item.FMovieScore)
+            </p>
+@*            <p>
+				@Html.DisplayNameFor(model => model.FMovieLevel) :
+                @Html.DisplayFor(modelItem => item.FMovieLevel.FLevelName)
+            </p>
+*@		</div>
 	</div>
+}
+
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -48,12 +97,38 @@
 			url: $(this).attr("action"),
 			data: $("#formSearch").serialize(),
 			beforeSend: function () {
-				return confirm($("#formSearch").serialize());
 			},
 			success: function (data) {
 				let context = JSON.parse(data);
-				//$("#tableSearch").html(context[1].FMovieName)
-				//alert(context[0])
+				alert(context[0].FMovieName)
+				$("#divSearch").html(``)
+				$.each(context, function(index, value){
+					$("#divSearch").append(`
+	<div class="divContainer divBorder">
+		<div style="margin:0 20px 0 0">
+			<p>
+				<img src="images/${value.FMovieImagePath}" width="250">
+			</p>
+		</div>
+
+		<div>
+			<p>
+				<a asp-action="Details" asp-route-id="${value.FMovieId}">
+					${value.FMovieName}
+				</a>
+			</p>
+			<p>
+				@Html.DisplayNameFor(model => model.FMovieOnDate) :	${value.FMovieOnDate}
+			</p>
+			<p>
+				@Html.DisplayNameFor(model => model.FMovieLength) :	${value.FMovieLength}
+			</p>
+			<p>
+				@Html.DisplayNameFor(model => model.FMovieScore) : ${value.FMovieScore}
+			</p>
+		</div>
+	</div>`)
+				})
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 			},
@@ -61,72 +136,9 @@
 	})
 
 </script>
-<table class="table" id="tableSearch">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FMovieName)
-            </th>
-@*            <th>
-                @Html.DisplayNameFor(model => model.FMovieIntroduction)
-            </th>
-*@            <th>
-                @Html.DisplayNameFor(model => model.FMovieOnDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FMovieOffDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FMovieLength)
-            </th>
-            <th>
-				MovieImage
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FMovieScore)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FMovieLevel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieName)
-            </td>
-@*            <td>
-                @Html.DisplayFor(modelItem => item.FMovieIntroduction)
-            </td>
-*@            <td>
-                @Html.DisplayFor(modelItem => item.FMovieOnDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieOffDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieLength)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieImagePath)
-				<img src="~/images/@item.FMovieImagePath" width="150">
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieScore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovieLevel.FLevelName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FMovieId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FMovieId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FMovieId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
 
+<div id="divSearch"> > </div>
 
+@section Scripts {
+
+	}
