@@ -1,4 +1,5 @@
 ﻿using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.Models.my

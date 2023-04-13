@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ISpan.InseparableCore.Models.TMembers>
+﻿@model IEnumerable<ISpan.InseparableCore.Models.DAL.TMembers>
 
 @{
     ViewData["Title"] = "Index";
@@ -22,16 +22,20 @@
                 序號
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FMemberId)
+                @*@Html.DisplayNameFor(model => model.FMemberId)*@
+                會員ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FLastName)
+                @*@Html.DisplayNameFor(model => model.FLastName)*@
+                姓氏
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FFirstName)
+                @*@Html.DisplayNameFor(model => model.FFirstName)*@
+                名字
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FEmail)
+                @*@Html.DisplayNameFor(model => model.FEmail)*@
+                Email
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.FGender)*@
@@ -43,7 +47,7 @@
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.FCellphone)*@
-                手機號碼
+                手機
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.FTotalMemberPoint)*@
@@ -57,8 +61,6 @@
                 @*@Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)*@
                 區域
             </th>
-            
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -66,6 +68,13 @@
     int count = 0;
     foreach (var item in Model) {
         count++;
+
+        var dateOfBirth = "";
+        if (item.FDateOfBirth.HasValue)
+        {
+            dateOfBirth = item.FDateOfBirth.Value.ToString("yyyy-MM-dd");
+        }
+
         <tr>
             <td>
                 @count
@@ -86,7 +95,7 @@
                 @Html.DisplayFor(modelItem => item.FGender.FGenderType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FDateOfBirth)
+                @Html.DisplayFor(modelItem => dateOfBirth)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FCellphone)

@@ -9,6 +9,7 @@ using ISpan.InseparableCore.Models;
 using System.Reflection;
 using System.Text;
 using ISpan.InseparableCore.Models.BLL;
+using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -68,7 +69,7 @@ namespace ISpan.InseparableCore.Controllers
             if (ModelState.IsValid)
             {
                 // 產生會員ID
-                //MemberIn.FMemberId = GenerateFMemberId();
+                //MemberIn.FMemberId = GenerateMemberId();
 
                 // 產生會員註冊時間
                 MemberIn.FSignUpTime = DateTime.Now;

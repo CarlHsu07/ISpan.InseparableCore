@@ -1,4 +1,5 @@
 using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.DAL;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

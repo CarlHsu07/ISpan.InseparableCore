@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.ViewModels;
 using System.Text;
-using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers
@@ -90,12 +90,13 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (ModelState.IsValid)
             {
+                MemberService memberService = new MemberService(_context);
+
                 // 產生會員ID
-                MemberService service = new MemberService(_context);
-                MemberIn.FMemberId = service.GenerateFMemberId();
+                MemberIn.FMemberId = memberService.GenerateMemberId();
 
                 // 產生會員註冊時間
-                MemberIn.FSignUpTime = DateTime.Now;
+                MemberIn.FSignUpTime = memberService.GenerateSignUpTime();
 
                 // 產生會員點數
                 if (MemberIn.FTotalMemberPoint == null)
@@ -103,8 +104,7 @@ namespace ISpan.InseparableCore.Controllers
                     MemberIn.FTotalMemberPoint = 0;
                 }
                 
-
-                // 加密密碼
+                // 加密會員密碼
                 # region
                 string password = MemberIn.FPasswordHash; // 要加密的密碼
 
@@ -119,12 +119,12 @@ namespace ISpan.InseparableCore.Controllers
                 MemberIn.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
 
-
                 _context.Add(MemberIn);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
+            // todo 改成顯示縣市；區域用ajax處理
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaZipCode);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
             return View(MemberIn);
@@ -231,8 +231,6 @@ namespace ISpan.InseparableCore.Controllers
         {
           return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
         }
-
-
 
     }
 }
