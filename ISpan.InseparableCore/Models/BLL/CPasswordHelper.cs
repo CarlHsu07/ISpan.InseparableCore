@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ISpan.InseparableCore.Models.my
+namespace ISpan.InseparableCore.Models.BLL
 {
     public class CPasswordHelper
     {
@@ -9,7 +9,7 @@ namespace ISpan.InseparableCore.Models.my
         public static byte[] GenerateSalt()
         {
             byte[] salt = new byte[16]; // 推薦使用 16 個位元組 (128 位元) 的鹽值
-            using (var rng = new RNGCryptoServiceProvider())
+            using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
             }
@@ -19,7 +19,7 @@ namespace ISpan.InseparableCore.Models.my
         // 將密碼與鹽值結合後進行加密
         public static byte[] HashPasswordWithSalt(byte[] password, byte[] salt)
         {
-            using (var sha256 = new SHA256Managed())
+            using (var sha256 = SHA256.Create())
             {
                 byte[] saltedPassword = new byte[password.Length + salt.Length];
                 Buffer.BlockCopy(password, 0, saltedPassword, 0, password.Length);

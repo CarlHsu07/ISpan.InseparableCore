@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
 using System.Reflection;
-using ISpan.InseparableCore.Models.my;
 using System.Text;
+using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -68,7 +68,7 @@ namespace ISpan.InseparableCore.Controllers
             if (ModelState.IsValid)
             {
                 // 產生會員ID
-                MemberIn.FMemberId = GenerateFMemberId();
+                //MemberIn.FMemberId = GenerateFMemberId();
 
                 // 產生會員註冊時間
                 MemberIn.FSignUpTime = DateTime.Now;
