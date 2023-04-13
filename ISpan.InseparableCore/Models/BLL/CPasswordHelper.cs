@@ -8,7 +8,7 @@ namespace ISpan.InseparableCore.Models.BLL
         // 生成隨機的鹽值
         public static byte[] GenerateSalt()
         {
-            byte[] salt = new byte[16]; // 推薦使用 16 個位元組 (128 位元) 的鹽值
+            byte[] salt = new byte[16]; // 推薦使用16個位元組(128位元)的鹽值
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);

@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -50,8 +51,8 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // GET: Members/Create
-        public IActionResult Create()
+        // GET: Members/Register
+        public IActionResult Register()
         {
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
@@ -59,30 +60,34 @@ namespace ISpan.InseparableCore.Controllers
             return View();
         }
 
-        // POST: Members/Create
+        // POST: Members/Register
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind(",FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FSignUpTime")] TMembers MemberIn)
+        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CRegisterViewModel MemberIn)
         {
+            TMembers newMember = new TMembers();
+
             if (ModelState.IsValid)
             {
+                MemberService memberService = new MemberService(_context);
+
                 // 產生會員ID
-                //MemberIn.FMemberId = GenerateMemberId();
+                newMember.FMemberId = memberService.GenerateMemberId();
 
                 // 產生會員註冊時間
-                MemberIn.FSignUpTime = DateTime.Now;
+                newMember.FSignUpTime = memberService.GenerateSignUpTime();
 
                 // 產生會員點數
-                if (MemberIn.FTotalMemberPoint == null)
+                if (newMember.FTotalMemberPoint == null)
                 {
-                    MemberIn.FTotalMemberPoint = 0;
+                    newMember.FTotalMemberPoint = 0;
                 }
 
-                // 加密密碼
-                # region
-                string password = MemberIn.FPasswordHash; // 要加密的密碼
+                // 加密會員密碼
+                #region
+                string password = MemberIn.Password; // 要加密的密碼
 
                 // 產生鹽值
                 byte[] salt = CPasswordHelper.GenerateSalt();
@@ -91,17 +96,19 @@ namespace ISpan.InseparableCore.Controllers
                 byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
 
                 // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
-                MemberIn.FPasswordSalt = Convert.ToBase64String(salt);
-                MemberIn.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                newMember.FPasswordSalt = Convert.ToBase64String(salt);
+                newMember.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
 
-                _context.Add(MemberIn);
+
+
+                _context.Add(newMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaZipCode);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaZipCode);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", newMember.FGenderId);
             return View(MemberIn);
         }
 

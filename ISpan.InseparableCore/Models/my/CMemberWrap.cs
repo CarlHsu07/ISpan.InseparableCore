@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.Models.my
 {
-    public class CMemberWrap
+    public class CMemberWrap // todo 不使用，改用ViewModel
     {
         private TMembers _member;
 
@@ -33,14 +33,14 @@ namespace ISpan.InseparableCore.Models.my
             set { _member.FMemberId = value; }
         }
 
-        [Display(Name = "會員姓氏")]
+        [Display(Name = "姓氏")]
         public string FLastName
         {
             get { return _member.FLastName; }
             set { _member.FLastName = value; }
         }
 
-        [Display(Name = "會員名字")]
+        [Display(Name = "名字")]
         public string FFirstName
         {
             get { return _member.FFirstName; }

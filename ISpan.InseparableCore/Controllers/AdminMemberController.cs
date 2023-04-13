@@ -71,7 +71,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // GET: AdminMember/Create
+        // GET: AdminMember/Register
         public IActionResult Create()
         {
             // todo 居住區域選單，要改成縣市跟區域，先選縣市再顯示區域
@@ -81,7 +81,7 @@ namespace ISpan.InseparableCore.Controllers
             return View();
         }
 
-        // POST: AdminMember/Create
+        // POST: AdminMember/Register
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
