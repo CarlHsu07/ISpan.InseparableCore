@@ -13,6 +13,10 @@ namespace ISpan.InseparableCore.Models
         }
 
         /// <summary>
+        /// 鄉鎮市區的流水號
+        /// </summary>
+        public int FId { get; set; }
+        /// <summary>
         /// 鄉鎮市區的郵遞區號
         /// </summary>
         public int FZipCode { get; set; }

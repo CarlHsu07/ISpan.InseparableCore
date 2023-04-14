@@ -65,9 +65,9 @@ namespace ISpan.InseparableCore.Models
         /// </summary>
         public string FAddress { get; set; }
         /// <summary>
-        /// 區域郵遞區號
+        /// 區域ID
         /// </summary>
-        public int? FAreaZipCode { get; set; }
+        public int? FAreaId { get; set; }
         /// <summary>
         /// 大頭貼的檔案路徑
         /// </summary>
@@ -90,7 +90,7 @@ namespace ISpan.InseparableCore.Models
         public DateTime? FSignUpTime { get; set; }
 
         public virtual TAccountStatuses FAccountStatusNavigation { get; set; }
-        public virtual TAreas FAreaZipCodeNavigation { get; set; }
+        public virtual TAreas FArea { get; set; }
         public virtual TGenders FGender { get; set; }
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
