@@ -362,6 +362,14 @@ namespace ISpan.InseparableCore.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fCinemaTel");
+
+                entity.Property(e => e.FLat).HasColumnName("fLat");
+
+                entity.Property(e => e.FLng).HasColumnName("fLng");
+
+                entity.Property(e => e.FTraffic)
+                    .HasMaxLength(300)
+                    .HasColumnName("fTraffic");
             });
 
             modelBuilder.Entity<TCities>(entity =>
@@ -705,7 +713,6 @@ namespace ISpan.InseparableCore.Models
                 entity.Property(e => e.FSignUpTime)
                     .HasColumnType("datetime")
                     .HasColumnName("fSignUpTime")
-                    .HasDefaultValueSql("(getdate())")
                     .HasComment("會員註冊時間");
 
                 entity.Property(e => e.FTotalMemberPoint)

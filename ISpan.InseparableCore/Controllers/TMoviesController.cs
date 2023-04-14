@@ -23,23 +23,109 @@ namespace ISpan.InseparableCore.Controllers
 		}
 
 		// GET: TMovies
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> IndexMaintain()
 		{
-			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel).Take(2);
+			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(await inseparableContext.ToListAsync());
+		}
+
+		public IActionResult Index()
+		{
+			var inseparableContext = _context.TMovies.ToList();
+
+			List<MovieVm> movies = new List<MovieVm>();
+			foreach (var movieModel in inseparableContext)
+			{
+				MovieVm vm = movieModel.ModelToVm();
+				var levelName = _context.TMovies.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+				vm.Level = levelName;
+
+				IEnumerable<TMovieCategoryDetails> categorydetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == vm.FMovieId);
+				//_context.Database.CloseConnection();
+				if (categorydetails != null)
+				{
+					List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
+
+					List<string> categories = _context.TMovieCategories.Where(t => categoryIds.Contains(t.FMovieCategoryId)).Select(t => t.FMovieCategoryName).ToList();
+					vm.Categories = String.Join(", ", categories.ToArray());
+				}
+				movies.Add(vm);
+			}
+
+			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
+			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
+			categorySelectList.Add(defaultCategory);
+			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
+
+			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			List<MovieDateCategory> dateCategorySelectList = dateCategories.ToSelectList();
+			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Id", "DateCategory", 0);
+
+			return View(movies);
 		}
 		[HttpPost]
 		public IActionResult Index(MovieSearchCondition condition)
 		{
-			IEnumerable<TMovies> inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
+			var inseparableContext = _context.TMovies.ToList();
 
-			if (!string.IsNullOrEmpty(condition.Key)) inseparableContext = inseparableContext.Where(t => t.FMovieName.Contains(condition.Key));
-			//if (condition.MovieId.HasValue) inseparableContext = inseparableContext.Where(t => t.FMovieId == condition.MovieId);
+			if (condition.DateCategoryId == 1)//熱映中
+			{
+				inseparableContext = inseparableContext.Where(t => t.FMovieOnDate < DateTime.Now 
+																&& t.FMovieOffDate > DateTime.Now).ToList();
+			}
+			else if (condition.DateCategoryId == 2)//即將上映
+			{
+				inseparableContext = inseparableContext.Where(t => t.FMovieOnDate > DateTime.Now).ToList();
+			}
+			else if (condition.DateCategoryId == 3)//已下映
+			{
+				inseparableContext = inseparableContext.Where(t => t.FMovieOffDate < DateTime.Now).ToList();
+			}
 
-			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			List<MovieVm> movies = new List<MovieVm>();
+			foreach (var movieModel in inseparableContext)
+			{
+				MovieVm vm = movieModel.ModelToVm();
+				var levelName = _context.TMovies.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+				vm.Level = levelName;
 
-			return Ok(inseparableContext.ToList().Skip(((int)condition.Page-1)*2).ToJson());
+				IEnumerable<TMovieCategoryDetails> categorydetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == vm.FMovieId);
+				//_context.Database.CloseConnection();
+				if (categorydetails != null)
+				{
+
+					List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
+
+					List<string> categories = _context.TMovieCategories.Where(t => categoryIds.Contains(t.FMovieCategoryId)).Select(t => t.FMovieCategoryName).ToList();
+					vm.Categories = String.Join(", ", categories.ToArray());
+				}
+				movies.Add(vm);
+			}
+
+			if (!string.IsNullOrEmpty(condition.Key)) movies = movies.Where(t => t.FMovieName.Contains(condition.Key)).ToList();
+
+			if (condition.CategoryId != 0)
+			{
+				var movieCategoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieCategoryId == condition.CategoryId);
+				List<int> movieIds = movieCategoryDetails.Select(t => t.FMovieId).ToList();
+
+				movies = movies.Where(t => movieIds.Contains(t.FMovieId)).ToList();
+			}
+			movies = movies.Skip(2 * (condition.Page - 1)).Take(2).ToList();
+			ViewData["Page"] = condition.Page;
+
+			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
+			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
+			categorySelectList.Add(defaultCategory);
+			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
+
+			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			List<MovieDateCategory> dateCategorySelectList = dateCategories.ToSelectList();
+			ViewData["FMovieCategoryId"] = new SelectList(dateCategorySelectList, "Id", "DateCategory", 0);
+
+			return Ok(movies.ToJson());
 		}
 
 		// GET: TMovies/Details/5
@@ -136,7 +222,7 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, MovieVm movieCreateVm)
+		public async Task<IActionResult> Edit(int id, MovieVm vm)
 		{
 			//if (id != movieCreateVm.FMovieId)
 			//{
@@ -145,12 +231,12 @@ namespace ISpan.InseparableCore.Controllers
 
 			if (ModelState.IsValid)
 			{
-				TMovies movie = movieCreateVm.VmToModel(); 
-				if (movieCreateVm.Image != null)
+				TMovies movie = vm.VmToModel();
+				if (vm.Image != null)
 				{
 					string imageName = Guid.NewGuid().ToString() + ".jpg";
 					string path = enviro.WebRootPath + "/images/" + imageName;
-					movieCreateVm.Image.CopyTo(new FileStream(path, FileMode.Create));
+					vm.Image.CopyTo(new FileStream(path, FileMode.Create));
 					movie.FMovieImagePath = imageName;
 				}
 
@@ -159,7 +245,7 @@ namespace ISpan.InseparableCore.Controllers
 					_context.Update(movie);
 					_context.SaveChanges();
 
-					int movieId = _context.TMovies.First(t => t.FMovieName == movieCreateVm.FMovieName).FMovieId;
+					int movieId = _context.TMovies.First(t => t.FMovieName == vm.FMovieName).FMovieId;
 
 					IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == movieId);
 					foreach (TMovieCategoryDetails detail in categoryDetails)
@@ -167,9 +253,9 @@ namespace ISpan.InseparableCore.Controllers
 						_context.Remove(detail);
 					}
 
-					if (!string.IsNullOrEmpty(movieCreateVm.CategoryIds))
+					if (!string.IsNullOrEmpty(vm.CategoryIds))
 					{
-						List<int> categoryIds = movieCreateVm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToList();
+						List<int> categoryIds = vm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(i => int.Parse(i)).ToList();
 						foreach (var categoryId in categoryIds)
 						{
 							TMovieCategoryDetails detail = new TMovieCategoryDetails()
@@ -196,8 +282,8 @@ namespace ISpan.InseparableCore.Controllers
 				}
 				return RedirectToAction(nameof(Index));
 			}
-			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", movieCreateVm.FMovieLevelId);
-			return View(movieCreateVm);
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			return View(vm);
 		}
 
 		// GET: TMovies/Delete/5
