@@ -51,9 +51,10 @@
                 <input asp-for="FAddress" class="form-control" />
                 <span asp-validation-for="FAddress" class="text-danger"></span>
             </div>
+            @*todo 改成適用於AJAX的樣子*@
             <div class="form-group">
-                <label asp-for="FAreaZipCode" class="control-label">居住地區</label>
-                <select asp-for="FAreaZipCode" class ="form-control" asp-items="ViewBag.FAreaZipCode"></select>
+                <label asp-for="FAreaId" class="control-label">居住地區</label>
+                <select asp-for="FAreaId" class ="form-control" asp-items="ViewBag.FAreaZipCode"></select>
             </div>
             <div class="form-group">
                 <label asp-for="FPhotoPath" class="control-label"></label>

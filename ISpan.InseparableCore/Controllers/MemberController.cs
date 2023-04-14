@@ -26,7 +26,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Members
         public async Task<IActionResult> Index()
         {
-            var inseparableContext = _context.TMembers.Include(t => t.FAccountStatusNavigation).Include(t => t.FAreaZipCodeNavigation).Include(t => t.FGender);
+            var inseparableContext = _context.TMembers.Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
             return View(await inseparableContext.ToListAsync());
         }
 
@@ -40,7 +40,7 @@ namespace ISpan.InseparableCore.Controllers
 
             var tMembers = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FAreaZipCodeNavigation)
+                .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)
@@ -54,8 +54,10 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Members/Register
         public IActionResult Register()
         {
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
+            // 縣市
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName");
+
+            //ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
             return View();
         }
@@ -85,6 +87,13 @@ namespace ISpan.InseparableCore.Controllers
                     newMember.FTotalMemberPoint = 0;
                 }
 
+                newMember.FLastName = MemberIn.LastName;
+                newMember.FFirstName = MemberIn.FirstName;
+                newMember.FEmail = MemberIn.Email;
+                newMember.FDateOfBirth = MemberIn.DateOfBirth;
+                newMember.FGenderId = MemberIn.GenderId;
+                newMember.FAreaId = MemberIn.Area;
+
                 // 加密會員密碼
                 #region
                 string password = MemberIn.Password; // 要加密的密碼
@@ -107,7 +116,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", newMember.FGenderId);
             return View(MemberIn);
         }
@@ -126,7 +135,7 @@ namespace ISpan.InseparableCore.Controllers
                 return NotFound();
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
             return View(tMembers);
         }
@@ -164,7 +173,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
             return View(tMembers);
         }
@@ -179,7 +188,7 @@ namespace ISpan.InseparableCore.Controllers
 
             var tMembers = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FAreaZipCodeNavigation)
+                .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)
@@ -212,6 +221,24 @@ namespace ISpan.InseparableCore.Controllers
         private bool TMembersExists(int id)
         {
           return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
+        }
+
+        // 取得指定縣市的區域(鄉鎮市區)
+        [HttpPost]
+        public IActionResult GetAreas(int cityId)
+        {
+            // 根據縣市值，查詢對應的區域資料
+            var areas = _context.TAreas
+                .Where(a => a.FCityId == cityId)
+                .Select(a => new
+                {
+                    zipCode = a.FZipCode,
+                    areaName = a.FAreaName
+                })
+                .ToList();
+
+            // 將區域資料轉換成 JSON 格式回傳給前端
+            return Json(areas);
         }
     }
 }

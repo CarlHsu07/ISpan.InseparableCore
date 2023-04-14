@@ -28,7 +28,7 @@ namespace ISpan.InseparableCore.Controllers
             {
                 var inseparableContext = _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FAreaZipCodeNavigation)
+                .Include(t => t.FArea)
                 .Include(t => t.FGender);
 
                 return View(await inseparableContext.ToListAsync());
@@ -43,7 +43,7 @@ namespace ISpan.InseparableCore.Controllers
                     m.FMemberId.Contains(vm.txtKeyword)
                     )
                     .Include(t => t.FAccountStatusNavigation)
-                    .Include(t => t.FAreaZipCodeNavigation)
+                    .Include(t => t.FArea)
                     .Include(t => t.FGender);
 
                 return View(await inseparableContext.ToListAsync());
@@ -60,7 +60,7 @@ namespace ISpan.InseparableCore.Controllers
 
             var tMembers = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FAreaZipCodeNavigation)
+                .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)
@@ -125,7 +125,7 @@ namespace ISpan.InseparableCore.Controllers
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
             // todo 改成顯示縣市；區域用ajax處理
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
             return View(MemberIn);
         }
@@ -144,7 +144,7 @@ namespace ISpan.InseparableCore.Controllers
                 return NotFound();
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
             return View(tMembers);
         }
@@ -182,7 +182,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaZipCode);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
             return View(tMembers);
         }
@@ -197,7 +197,7 @@ namespace ISpan.InseparableCore.Controllers
 
             var tMembers = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FAreaZipCodeNavigation)
+                .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)

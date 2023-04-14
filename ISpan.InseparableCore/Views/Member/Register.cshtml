@@ -13,17 +13,17 @@
         <form asp-action="Register">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label">姓氏</label>
+                <label asp-for="LastName" class="control-label"></label>
                 <input asp-for="LastName" class="form-control text-white" placeholder="請輸入姓氏" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label">名字</label>
+                <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" placeholder="請輸入名字" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label">Email</label>
+                <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" placeholder="請輸入Email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
@@ -43,18 +43,29 @@
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="GenderId" class="control-label">性別</label>
+                <label asp-for="GenderId" class="control-label"></label>
                 <select asp-for="GenderId" class ="form-control" asp-items="ViewBag.FGenderId"></select>
             </div>
+            <div class="form-row">
+                <label asp-for="Address" class="control-label"></label>
+                <div class="col-sm-3">
+                    <select asp-for="City" class="form-control" asp-items="ViewBag.Cities" id="citySelect">
+                        <option value="">請選擇縣市</option>
+                    </select>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="col-sm-3">
+                    <select asp-for="Area" class="form-control" id="areaSelect">
+                        <option value="">請選擇區域</option>
+                    </select>
+                    <span asp-validation-for="Area" class="text-danger"></span>
+                </div>
+            </div>
             <div class="form-group">
-                <label asp-for="Address" class="control-label">住址</label>
                 <input asp-for="Address" class="form-control" placeholder="請輸入住址" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AreaZipCode" class="control-label"></label>
-                <select asp-for="AreaZipCode" class ="form-control" asp-items="ViewBag.FAreaZipCode"></select>
-            </div>
+            
             
             <div class="form-group">
                 <input type="submit" value="確定" class="btn btn-primary" />
@@ -68,5 +79,47 @@
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#citySelect").change(function () { UpdateAreas(); });
+        });
+
+        // 更新區域選單
+        function UpdateAreas() {
+            var selectedValue = $("#citySelect option:selected").val();
+            if ($.trim(selectedValue).length > 0) {
+                GetAreas(selectedValue);
+            }
+        }
+
+        // 取得並顯示區域的內容
+        function GetAreas(cityID) {
+            $.ajax({
+                url: 'Member/GetAreas',
+                data: { cityID: cityID },
+                type: 'post',
+                cache: false,
+                async: false,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length > 0) {
+                        $('#areaSelect').empty(); // 清空區域選單的選項
+                        $('#areaSelect').append($('<option></option>').val('').text('請選擇區域'));
+                        // 將後端回傳的區域資料動態新增到區域選單
+                        $.each(data, function (i, item) {
+                            $('#areaSelect').append($('<option></option>').val(item.zipCode).text(item.areaName));
+                        });
+                    }
+                },
+                error: function () {
+                    // 處理錯誤
+                    console.log("取得區域發生錯誤，請稍後再試。");
+                }
+            });
+        }
+    </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

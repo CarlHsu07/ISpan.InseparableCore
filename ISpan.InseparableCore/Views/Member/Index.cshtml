@@ -55,7 +55,7 @@
                 @Html.DisplayNameFor(model => model.FAccountStatusNavigation)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)
+                @Html.DisplayNameFor(model => model.FArea)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FGender)
@@ -79,10 +79,10 @@
                 @Html.DisplayFor(modelItem => item.FEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FPasswordHash)
+                
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FPasswordSalt)
+                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FDateOfBirth)
@@ -109,7 +109,7 @@
                 @Html.DisplayFor(modelItem => item.FAccountStatusNavigation.FStatus)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FAreaZipCodeNavigation.FAreaName)
+                @Html.DisplayFor(modelItem => item.FArea.FAreaName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FGender.FGenderType)

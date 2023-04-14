@@ -231,14 +231,13 @@ namespace ISpan.InseparableCore.Models.DAL
 
             modelBuilder.Entity<TAreas>(entity =>
             {
-                entity.HasKey(e => e.FZipCode);
+                entity.HasKey(e => e.FId);
 
                 entity.ToTable("tAreas");
 
-                entity.Property(e => e.FZipCode)
-                    .ValueGeneratedNever()
-                    .HasColumnName("fZipCode")
-                    .HasComment("鄉鎮市區的郵遞區號");
+                entity.Property(e => e.FId)
+                    .HasColumnName("fID")
+                    .HasComment("鄉鎮市區的流水號");
 
                 entity.Property(e => e.FAreaName)
                     .IsRequired()
@@ -249,6 +248,10 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FCityId)
                     .HasColumnName("fCityID")
                     .HasComment("鄉鎮市區所屬縣市");
+
+                entity.Property(e => e.FZipCode)
+                    .HasColumnName("fZipCode")
+                    .HasComment("鄉鎮市區的郵遞區號");
 
                 entity.HasOne(d => d.FCity)
                     .WithMany(p => p.TAreas)
@@ -362,6 +365,14 @@ namespace ISpan.InseparableCore.Models.DAL
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fCinemaTel");
+
+                entity.Property(e => e.FLat).HasColumnName("fLat");
+
+                entity.Property(e => e.FLng).HasColumnName("fLng");
+
+                entity.Property(e => e.FTraffic)
+                    .HasMaxLength(500)
+                    .HasColumnName("fTraffic");
             });
 
             modelBuilder.Entity<TCities>(entity =>
@@ -638,9 +649,9 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fAddress")
                     .HasComment("住址");
 
-                entity.Property(e => e.FAreaZipCode)
-                    .HasColumnName("fAreaZipCode")
-                    .HasComment("區域郵遞區號");
+                entity.Property(e => e.FAreaId)
+                    .HasColumnName("fAreaID")
+                    .HasComment("區域ID");
 
                 entity.Property(e => e.FCellphone)
                     .HasMaxLength(50)
@@ -716,9 +727,9 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasForeignKey(d => d.FAccountStatus)
                     .HasConstraintName("FK_tMembers_tAccountStatuses");
 
-                entity.HasOne(d => d.FAreaZipCodeNavigation)
+                entity.HasOne(d => d.FArea)
                     .WithMany(p => p.TMembers)
-                    .HasForeignKey(d => d.FAreaZipCode)
+                    .HasForeignKey(d => d.FAreaId)
                     .HasConstraintName("FK_tMembers_tAreas");
 
                 entity.HasOne(d => d.FGender)

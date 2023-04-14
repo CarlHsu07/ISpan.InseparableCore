@@ -97,8 +97,8 @@ namespace ISpan.InseparableCore.Models.my
         [Display(Name = "居住地區")]
         public int? FAreaZipCode
         {
-            get { return _member.FAreaZipCode; }
-            set { _member.FAreaZipCode = value; }
+            get { return _member.FAreaId; }
+            set { _member.FAreaId = value; }
         }
 
 
