@@ -7,7 +7,7 @@
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": null,
-   "OutputPath": "Models",
+   "OutputPath": "Models\/DAL",
    "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "ISpan.InseparableCore",
    "Schemas": null,

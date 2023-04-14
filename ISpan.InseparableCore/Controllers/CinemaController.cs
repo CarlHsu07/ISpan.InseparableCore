@@ -27,7 +27,7 @@ namespace ISpan.InseparableCore.Controllers
         }
 
 
-        //Ajax傳輸
+        //電影院Ajax傳輸
         public IActionResult City(string city)
         {
             var data = _db.TCinemas.Where(t => t.FCinemaRegion == city).ToJson();
@@ -37,6 +37,18 @@ namespace ISpan.InseparableCore.Controllers
         {
             var data = _db.TCinemas.Where(t => t.FCinemaName.Contains(brand)).ToJson();
             return Ok(data);
+        }
+        public IActionResult Map(int? id)
+        {
+            CMapVM vm = new CMapVM();
+            var data = _db.TCinemas.FirstOrDefault(t => t.FCinemaId == id);
+
+            vm.Name = data.FCinemaName;
+            vm.FLat = data.FLat;
+            vm.FLng = data.FLng;
+            vm.FTraffic = data.FTraffic.Split("<br>").ToList();
+            vm.Key = "ZPyRU3c5rVSNfr62GfzHZ5HzQnb01eaHY6z11OZ_Ke0";
+            return Ok(vm.ToJson());
         }
     }
 }

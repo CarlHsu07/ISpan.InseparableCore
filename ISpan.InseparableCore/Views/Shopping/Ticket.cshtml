@@ -86,9 +86,9 @@
             var session = $(this).attr('session');
 
             $('#form').append(`<form action="/Shopping/Booking" method="post" id="ticketform">
-                    <input type="hidden" name="cinema" value="${cinema}" />
-                    <input type="hidden" name="session" value="${session}" />
-                    </form>`);
+                            <input type="hidden" name="cinema" value="${cinema}" />
+                            <input type="hidden" name="session" value="${session}" />
+                            </form>`);
             $('#ticketform').submit();
         });
     </script>
