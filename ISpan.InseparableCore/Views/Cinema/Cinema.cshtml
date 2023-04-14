@@ -5,43 +5,45 @@
 
 <h1>影城介紹</h1>
 @section Styles{
-        <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
-        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
-        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
-        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
-        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
     <style>
         .city, .brand {
-            margin:5px;
-        }
-        p{
-            margin:0px;
-            font-size:15px;
+            margin: 5px;
         }
 
-        .showcinema{
+        p {
+            margin: 0px;
+            font-size: 15px;
+        }
+
+        .showcinema {
             border: solid 1px #C4E1E1;
         }
-            #cinema {
-                margin: 5px;
-                width: 69%;
-            }
 
-            #show {
-                margin: 5px;
-                width: 30%;
-                border: solid 2.5px #C4E1E1;
-                overflow: auto;
-            }
+        #cinema {
+            margin: 5px;
+            width: 69%;
+        }
 
-            #map {
-                width: 100%;
-                height: 200px;
-            }
+        #show {
+            margin: 5px;
+            width: 30%;
+            border: solid 2.5px #C4E1E1;
+            overflow: auto;
+        }
 
-            .color:hover {
-                color: brown;
-            }
+        #map {
+            width: 100%;
+            height: 200px;
+        }
+
+        .color:hover {
+            color: brown;
+        }
     </style>
 }
     <div>
@@ -82,10 +84,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                            $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                 <p>${value.FCinemaAddress}</p>
-                                                 <p>${value.FCinemaTel}</p>
-                                                 </span></div>`)
+                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
+                                                         <p>${value.FCinemaAddress}</p>
+                                                         <p>${value.FCinemaTel}</p>
+                                                         </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -97,7 +99,7 @@
         $('#city button').click(function () {
             $('#cinema').html('');
             var city = $(this).attr('value');
-           
+
             $.ajax({
                 method: 'POST',
                 url: '/Cinema/City',
@@ -108,10 +110,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                            $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                     <p>${value.FCinemaAddress}</p>
-                                                     <p>${value.FCinemaTel}</p>
-                                                     </span></div>`)
+                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
+                                                             <p>${value.FCinemaAddress}</p>
+                                                             <p>${value.FCinemaTel}</p>
+                                                             </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -133,10 +135,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                            $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                 <p>${value.FCinemaAddress}</p>
-                                                 <p>${value.FCinemaTel}</p>
-                                                 </span></div>`)
+                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
+                                                         <p>${value.FCinemaAddress}</p>
+                                                         <p>${value.FCinemaTel}</p>
+                                                         </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -145,88 +147,88 @@
                 }
             });
         });
-            //map
-            function sendAjaxRequest(id) {
-                return new Promise(
-                    function (resolve, reject) {
-                        $.ajax({
-                            method: 'POST',
-                            url: '/Cinema/Map',
-                            data: { id },
-                            success: function (data) {
-                                resolve(data);
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                reject(`${textStatus} ${jqXHR.status} ${errorThrown}`);
-                            }
-                        });
+        //map
+        function sendAjaxRequest(id) {
+            return new Promise(
+                function (resolve, reject) {
+                    $.ajax({
+                        method: 'POST',
+                        url: '/Cinema/Map',
+                        data: { id },
+                        success: function (data) {
+                            resolve(data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            reject(`${textStatus} ${jqXHR.status} ${errorThrown}`);
+                        }
                     });
-            }
+                });
+        }
 
 
-            function mapshow(id) {
-                $('#map').html('');
-                $('#traffic').html('');
-                sendAjaxRequest(id)
-                    .then(function (data) {
-                        var cinema = JSON.parse(data);
-                        traffic = cinema.FTraffic;
-                        traffic.forEach(function (value, index) {
-                            $('#traffic').append(`<p>${value}</p>`)
-                        })
-                        return cinema;
+        function mapshow(id) {
+            $('#map').html('');
+            $('#traffic').html('');
+            sendAjaxRequest(id)
+                .then(function (data) {
+                    var cinema = JSON.parse(data);
+                    traffic = cinema.FTraffic;
+                    traffic.forEach(function (value, index) {
+                        $('#traffic').append(`<p>${value}</p>`)
                     })
-                    .then(function(value){
-                        //map
-                        var lat = value.FLat ;
-                        var lng = value.FLng
-                        var platform = new H.service.Platform({
+                    return cinema;
+                })
+                .then(function (value) {
+                    //map
+                    var lat = value.FLat;
+                    var lng = value.FLng
+                    var platform = new H.service.Platform({
                         apikey: value.Key
-                        });
-
-                        var pixelRatio = window.devicePixelRatio || 1;
-                        var defaultLayers = platform.createDefaultLayers({
-                            tileSize: pixelRatio === 1 ? 256 : 512,
-                            ppi: pixelRatio === 1 ? undefined : 320
-                        });
-                        var map = new H.Map(document.getElementById('map'),
-                            defaultLayers.vector.normal.map, {
-                            center: { lat, lng },
-                            zoom: 4,
-                            pixelRatio: pixelRatio
-                        });
-
-                        window.addEventListener('resize', () => map.getViewPort().resize());
-                        var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
-                        var ui = H.ui.UI.createDefault(map, defaultLayers);
-                        switchMapLanguage(map, platform);
-
-                        moveMapToBerlin(map,lat,lng);
-                        addMarkersToMap(map, lat, lng);
                     });
 
-            }
-                        //放大縮小
-            function moveMapToBerlin(map, lat, lng) {
-                    map.setCenter({ lat, lng });
-                    map.setZoom(16);
-            };
-
-                //標記
-            function addMarkersToMap(map, lat, lng) {
-                    var parisMarker = new H.map.Marker({ lat, lng });
-                    map.addObject(parisMarker);
-            };
-
-                //變中文
-                function switchMapLanguage(map, platform) {
-                    let defaultLayers = platform.createDefaultLayers({
-                        lg: 'zh-tw'
+                    var pixelRatio = window.devicePixelRatio || 1;
+                    var defaultLayers = platform.createDefaultLayers({
+                        tileSize: pixelRatio === 1 ? 256 : 512,
+                        ppi: pixelRatio === 1 ? undefined : 320
+                    });
+                    var map = new H.Map(document.getElementById('map'),
+                        defaultLayers.vector.normal.map, {
+                        center: { lat, lng },
+                        zoom: 4,
+                        pixelRatio: pixelRatio
                     });
 
-                    map.setBaseLayer(defaultLayers.vector.normal.map);
-                    var ui = H.ui.UI.createDefault(map, defaultLayers, 'zh-CN');
-                    ui.removeControl('mapsettings');
-                };
+                    window.addEventListener('resize', () => map.getViewPort().resize());
+                    var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+                    var ui = H.ui.UI.createDefault(map, defaultLayers);
+                    switchMapLanguage(map, platform);
+
+                    moveMapToBerlin(map, lat, lng);
+                    addMarkersToMap(map, lat, lng);
+                });
+
+        }
+        //放大縮小
+        function moveMapToBerlin(map, lat, lng) {
+            map.setCenter({ lat, lng });
+            map.setZoom(16);
+        };
+
+        //標記
+        function addMarkersToMap(map, lat, lng) {
+            var parisMarker = new H.map.Marker({ lat, lng });
+            map.addObject(parisMarker);
+        };
+
+        //變中文
+        function switchMapLanguage(map, platform) {
+            let defaultLayers = platform.createDefaultLayers({
+                lg: 'zh-tw'
+            });
+
+            map.setBaseLayer(defaultLayers.vector.normal.map);
+            var ui = H.ui.UI.createDefault(map, defaultLayers, 'zh-CN');
+            ui.removeControl('mapsettings');
+        };
     </script>
 }

@@ -27,7 +27,7 @@ namespace ISpan.InseparableCore.Controllers
         }
 
 
-        //Ajax傳輸
+        //電影院Ajax傳輸
         public IActionResult City(string city)
         {
             var data = _db.TCinemas.Where(t => t.FCinemaRegion == city).ToJson();
