@@ -1,4 +1,5 @@
 using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.DAL;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=AdminMember}/{action=Index}/{id?}");
+    pattern: "{controller=Member}/{action=Register}/{id?}");
 
 app.Run();
