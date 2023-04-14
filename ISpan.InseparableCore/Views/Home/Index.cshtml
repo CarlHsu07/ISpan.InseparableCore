@@ -1,8 +1,114 @@
-﻿@{
+﻿@model ISpan.InseparableCore.ViewModels.ChomeIndexVM
+@{
     ViewData["Title"] = "Home Page";
 }
+@section Styles{
+    <style>
+        .h-380 {
+            max-height: 380px;
+        }
+    </style>
+}
+<section id="center" class="center_home">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="~/images/mario.jpg" class="d-block w-100 h-380" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/Suzume.jpg" class="d-block w-100 h-380" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/3.jpg" class="d-block w-100 h-380" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="~/images/4.jpg" class="d-block w-100 h-380" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+<section id="upcome" class="pt-4 pb-5">
+    <div class="container">
+        <div class="row trend_1">
+            <div class="col-md-6 col-6">
+                <div class="trend_1l">
+                    <h4 class="mb-0"><i class="fa fa-youtube-play align-middle col_red me-1"></i> <span class="col_red">現正熱映</span></h4>
+                </div>
+            </div>
+            <div class="col-md-6 col-6">
+                <div class="trend_1r text-end">
+                    <h6 class="mb-0"><a class="button" href="~/TMovies/Index">瀏覽所有電影</a></h6>
+                </div>
+            </div>
+        </div>
+        <div class="row trend_2 mt-4">
+            <div id="carouselExampleCaptions2" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
+                </div>
+                <div class="carousel-inner">
+                    @foreach (var item in Model.showing.Take(3))
+                    {
+                        <div class="carousel-item active">
+                            <div class="trend_2i row">
+                                <div class="col-md-4">
+                                    <div class="trend_2im clearfix position-relative">
+                                        <div class="trend_2im1 clearfix">
+                                            <div class="grid">
+                                                <figure class="effect-jazz mb-0">
+                                                    <a><img src="~/images/@item.FMovieImagePath " class="w-100" alt="img25"></a>
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="trend_2ilast bg_grey p-3 clearfix">
+                                        <h5><a class="col_red">@item.FMovieName</a></h5>
+                                        <p class="mb-2 ">@item.FMovieIntroduction.Substring(0, 30)....</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                     }
+                    @foreach (var item in Model.showing.Skip(3))
+                        {
+                    <div class="carousel-item">
+                        <div class="trend_2i row">
+                            <div class="col-md-4">
+                                <div class="trend_2im clearfix position-relative">
+                                    <div class="trend_2im1 clearfix">
+                                        <div class="grid">
+                                            <figure class="effect-jazz mb-0">
+                                                <a><img src="~/imges/@item.FMovieImagePath" class="w-100" alt="img25"></a>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="trend_2ilast bg_grey p-3 clearfix">
+                                    <h5><a class="col_red">@item.FMovieName</a></h5>
+                                    <p class="mb-2">@item.FMovieIntroduction.Substring(0, 30)....</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+            </div>
+        </div>
+    </div>
+</section>
