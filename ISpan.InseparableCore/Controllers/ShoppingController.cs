@@ -1,4 +1,4 @@
-﻿using ISpan.InseparableCore.Models;
+﻿using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;

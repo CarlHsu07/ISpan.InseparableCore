@@ -1,4 +1,4 @@
-﻿using ISpan.InseparableCore.Models;
+﻿using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.ViewModels
 {

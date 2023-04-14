@@ -1,4 +1,4 @@
-﻿using ISpan.InseparableCore.Models;
+﻿using ISpan.InseparableCore.Models.DAL;
 using System.Security.Cryptography.Xml;
 
 namespace ISpan.InseparableCore.ViewModels
