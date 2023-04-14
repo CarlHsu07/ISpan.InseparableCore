@@ -29,7 +29,7 @@
             width: 69%;
         }
 
-        #show {
+        .show {
             margin: 5px;
             width: 30%;
             border: solid 2.5px #C4E1E1;
@@ -65,7 +65,7 @@
 <div style="display:flex;">
     <div id="cinema"></div>
     <div id="show">
-        <p>交通資訊：</p>
+        <h5></h5>
         <div id="map"></div>
         <div id="traffic"></div>
     </div>
@@ -84,10 +84,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                         <p>${value.FCinemaAddress}</p>
-                                                         <p>${value.FCinemaTel}</p>
-                                                         </span></div>`)
+                        $('#cinema').append(`<div class="showcinema color" onclick="mapshow(${value.FCinemaId})"><span><a >${value.FCinemaName}</a>
+                                             <p>${value.FCinemaAddress}</p>
+                                             <p>${value.FCinemaTel}</p>
+                                             </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -110,10 +110,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                             <p>${value.FCinemaAddress}</p>
-                                                             <p>${value.FCinemaTel}</p>
-                                                             </span></div>`)
+                        $('#cinema').append(`<div class="showcinema color" onclick="mapshow(${value.FCinemaId})"><span><a >${value.FCinemaName}</a>
+                                             <p>${value.FCinemaAddress}</p>
+                                             <p>${value.FCinemaTel}</p>
+                                             </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -135,10 +135,10 @@
                 success: function (data) {
                     var cinema = JSON.parse(data);
                     cinema.forEach(function (value, index) {
-                        $('#cinema').append(`<div class="showcinema"><span><a class="color" onclick="mapshow(${value.FCinemaId})">${value.FCinemaName}</a>
-                                                         <p>${value.FCinemaAddress}</p>
-                                                         <p>${value.FCinemaTel}</p>
-                                                         </span></div>`)
+                        $('#cinema').append(`<div class="showcinema color" onclick="mapshow(${value.FCinemaId})"><span><a >${value.FCinemaName}</a>
+                                             <p>${value.FCinemaAddress}</p>
+                                             <p>${value.FCinemaTel}</p>
+                                             </span></div>`)
                     })
                     console.log('pass');
                 },
@@ -167,8 +167,12 @@
 
 
         function mapshow(id) {
+            $('#show h5').html(``);
+            $('#show h5').append(`交通資訊：`);
             $('#map').html('');
             $('#traffic').html('');
+            $('#show').addClass('show');
+            
             sendAjaxRequest(id)
                 .then(function (data) {
                     var cinema = JSON.parse(data);
@@ -211,7 +215,7 @@
         //放大縮小
         function moveMapToBerlin(map, lat, lng) {
             map.setCenter({ lat, lng });
-            map.setZoom(16);
+            map.setZoom(15);
         };
 
         //標記
