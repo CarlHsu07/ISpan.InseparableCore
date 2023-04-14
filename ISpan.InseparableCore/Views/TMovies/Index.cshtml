@@ -1,44 +1,50 @@
 ﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieVm>
 
-@{
-    ViewData["Title"] = "Index";
-}
-
-<h1>Index</h1>
 <style>
-	.divContainer{
+	.divContainer {
 		display: flex;
 		flex-direction: row;
 		padding: 5px;
 	}
-	.divBorder{
 
+	.divBorder {
 		border-color: white;
 		border-width: 3px;
 		border-style: solid;
 	}
-	.divBlock{
+
+	.divBlock {
 		margin: 20px
 	}
-	.inDivBottom{
+
+	.inDivBottom {
 		position: absolute;
 		bottom: 0px;
 		right: -100px;
 	}
 </style>
+<h1>電影搜尋</h1>
+<a asp-action="IndexMaintain">IndexMaintain</a>
 
-<div class="row divBlock" >
+
+<div class="row divBlock">
 
 	<form asp-action="Index" method="post" id="formSearch">
+		<input type="hidden" name="Page" value="ViewBag.Page" id="Page" />
+
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-		<div class="divContainer " >
-			<div class="form-group divBlock" >
+		<div class="divContainer ">
+			<div class="form-group divBlock">
 				<label name="Key" class="control-label">關鍵字</label>
 				<input name="Key" class="form-control" />
 			</div>
-			<div class="form-group divBlock" >
-				<label name="Page" class="control-label">頁數</label>
-				<input name="Page" class="form-control"/>
+			<div class="form-group divBlock">
+				<label name="CategoryId" class="control-label">類別</label>
+				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
+			</div>
+			<div class="form-group divBlock">
+				<label name="DateCategoryId" class="control-label">類別</label>
+				<select name="DateCategoryId" class="form-control" asp-items="ViewBag.DateCategoryId"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
@@ -50,95 +56,122 @@
 
 <div class="divBlock" id="divSearch">
 
-@foreach (var item in Model) {
+	@foreach (var item in Model)
+	{
 		<div class="divContainer divBorder">
-		<div style="margin:0 20px 0 0" >
-            <p>
-				<img src="~/images/@item.FMovieImagePath" width="250">
-            </p>
-		</div>
+			<div style="margin:0 20px 0 0">
+				<p>
+					<img src="~/images/@item.FMovieImagePath" width="250">
+				</p>
+			</div>
 
-		<div >
-            <p>
-			<a asp-action="Details" asp-route-id="@item.FMovieId">
-                @Html.DisplayFor(modelItem => item.FMovieName)
-            </a> 
-            </p>
-            <p>
-				@Html.DisplayNameFor(model => model.FMovieOnDate) :
-				@item.FMovieOnDate.ToString("yyyy/MM/dd")
-            </p>
-            <p>
-				@Html.DisplayNameFor(model => model.FMovieLength) :
-                @Html.DisplayFor(modelItem => item.FMovieLength)
-            </p>
-            <p>
-				@Html.DisplayNameFor(model => model.FMovieScore) :
-                @Html.DisplayFor(modelItem => item.FMovieScore)
-            </p>
-@*            <p>
-				@Html.DisplayNameFor(model => model.FMovieLevel) :
-                @Html.DisplayFor(modelItem => item.FMovieLevel.FLevelName)
-            </p>
-*@		</div>
-	</div>
-}
+			<div>
+				<p>
+					<a asp-action="Details" asp-route-id="@item.FMovieId">
+						@Html.DisplayFor(modelItem => item.FMovieName)
+					</a>
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.OnDate) : @item.OnDate
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieLength) : @item.FMovieLength 分
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieScore) : @item.FMovieScore
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.Categories) : @item.Categories
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.Level) : @item.Level
+				</p>
+			</div>
+		</div>
+	}
 
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
 
-<script>
-	$("#formSearch").submit(function (event) {
-		event.preventDefault();
-		$.ajax({
-			method: "post",
-			url: $(this).attr("action"),
-			data: $("#formSearch").serialize(),
-			beforeSend: function () {
-			},
-			success: function (data) {
-				let context = JSON.parse(data);
-				alert(context[0].FMovieName)
-				$("#divSearch").html(``)
-				$.each(context, function(index, value){
-					$("#divSearch").append(`
-	<div class="divContainer divBorder">
-		<div style="margin:0 20px 0 0">
-			<p>
-				<img src="images/${value.FMovieImagePath}" width="250">
-			</p>
-		</div>
-
-		<div>
-			<p>
-				<a asp-action="Details" asp-route-id="${value.FMovieId}">
-					${value.FMovieName}
-				</a>
-			</p>
-			<p>
-				@Html.DisplayNameFor(model => model.FMovieOnDate) :	${value.FMovieOnDate}
-			</p>
-			<p>
-				@Html.DisplayNameFor(model => model.FMovieLength) :	${value.FMovieLength}
-			</p>
-			<p>
-				@Html.DisplayNameFor(model => model.FMovieScore) : ${value.FMovieScore}
-			</p>
-		</div>
-	</div>`)
-				})
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-			},
-		})
-	})
-
-</script>
-
+<a href="#" onclick="changePage()"></a>
 <div id="divSearch"> > </div>
 
 @section Scripts {
+	<script>
+		//function changePage() {
+		//	$("#Page").val(Page + 1);
+		//	alert($("#Page").val())
+
+		//	$.ajax({
+		//		method: "post",
+		//		url: $(this).attr("action"),
+		//		data: $("#formSearch").serialize(),
+		//		beforeSend: function () {
+		//		},
+		//		success: function (data) {
+		//			let context = JSON.parse(data);
+		//			alert(context[0].FMovieName)
+		//			$("#divSearch").html(``)
+		//			$.each(context, function (index, value) {
+		//				$("#divSearch").append(
+		//					})
+		//		},
+		//		error: function (jqXHR, textStatus, errorThrown) {
+		//		},
+		//	})
+
+		//}
+
+		$("#formSearch").submit(function (event) {
+			event.preventDefault();
+			$.ajax({
+				method: "post",
+				url: $(this).attr("action"),
+				data: $("#formSearch").serialize(),
+				beforeSend: function () {
+				},
+				success: function (data) {
+					let context = JSON.parse(data);
+					alert(context[0].FMovieName)
+					$("#divSearch").html(``)
+					$.each(context, function (index, value) {
+						$("#divSearch").append(`
+			<div class="divContainer divBorder">
+				<div style="margin:0 20px 0 0">
+					<p>
+						<img src="images/${value.FMovieImagePath}" width="250">
+					</p>
+				</div>
+
+				<div>
+					<p>
+						<a asp-action="Details" asp-route-id="${value.FMovieId}">
+							${value.FMovieName}
+						</a>
+					</p>
+					<p>
+		@Html.DisplayNameFor(model => model.FMovieOnDate) :	${value.OnDate}
+					</p>
+					<p>
+		@Html.DisplayNameFor(model => model.FMovieLength) :	${value.FMovieLength}分
+					</p>
+					<p>
+		@Html.DisplayNameFor(model => model.FMovieScore) : ${value.FMovieScore}
+					</p>
+					<p>
+		@Html.DisplayNameFor(model => model.Categories) : ${value.Categories}
+					</p>
+					<p>
+		@Html.DisplayNameFor(model => model.Level) : ${value.Level}
+					</p>
+				</div>
+			</div>`)
+					})
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		})
+
+	</script>
 
 	}
