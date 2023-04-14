@@ -1,4 +1,4 @@
-﻿using ISpan.InseparableCore.Models;
+﻿using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace ISpan.InseparableCore.ViewModels

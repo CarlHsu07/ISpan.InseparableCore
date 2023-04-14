@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.ViewModels;
 using NuGet.Protocol;
+using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.Controllers
 {

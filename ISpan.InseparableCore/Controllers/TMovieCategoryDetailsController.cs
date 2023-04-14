@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.ViewModels;
+using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.Controllers
 {

@@ -1,4 +1,5 @@
 ﻿using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using System.ComponentModel;
 
