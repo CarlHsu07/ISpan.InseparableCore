@@ -6,5 +6,6 @@
         public double? FLng { get; set; }
         public List<string> FTraffic { get; set; }
         public string Key { get; set; }
+        public string Name { get; set; }
     }
 }

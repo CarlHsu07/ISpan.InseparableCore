@@ -43,7 +43,7 @@ namespace ISpan.InseparableCore.Controllers
             CMapVM vm = new CMapVM();
             var data = _db.TCinemas.FirstOrDefault(t => t.FCinemaId == id);
 
-
+            vm.Name = data.FCinemaName;
             vm.FLat = data.FLat;
             vm.FLng = data.FLng;
             vm.FTraffic = data.FTraffic.Split("<br>").ToList();
