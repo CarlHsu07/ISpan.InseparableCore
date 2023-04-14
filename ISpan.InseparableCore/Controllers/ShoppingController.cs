@@ -62,6 +62,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(vm);
         }
 
+        //Ajax
         public IActionResult CartItem(int? productId, int? quantity)
         {
             //產品紀錄在session
@@ -135,6 +136,8 @@ namespace ISpan.InseparableCore.Controllers
             vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
             return View(vm);
         }
+
+        //Ajax
         public IActionResult TicketItem(int? seatId, int? Qty, int? sessionId)
         {
             //將票券座位記錄在session
@@ -219,6 +222,7 @@ namespace ISpan.InseparableCore.Controllers
 
             return View(vm);
         }
+
         //todo 如何知道下單的是誰
         //todo 訂單紀錄
         public IActionResult Pay(CorderVM vm)
