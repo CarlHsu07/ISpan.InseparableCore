@@ -1,0 +1,23 @@
+﻿div.loadingdiv {
+    height: 100%;
+    width: 100%;
+    /*100%覆蓋網頁內容, 避免user在loading時進行其他操作*/
+    position: fixed;
+    z-index: 99999;
+    /*須大於網頁內容*/
+    top: 0;
+    left: 0;
+    display: block;
+    background-color: black;
+    background: #000;
+    opacity: 0.6;
+    text-align: center;
+}
+
+    div.loadingdiv img {
+        position: relative;
+        vertical-align: middle;
+        text-align: center;
+        margin: 0 auto;
+        margin-top: 50vh;
+    }

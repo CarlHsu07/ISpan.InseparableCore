@@ -4,6 +4,7 @@
     ViewData["Title"] = "Ticket";
 }
 @section Styles{
+    <link href="~/css/loading.css" rel="stylesheet"/>
     <style>
         .mydiv {
             margin-left: 100px;
@@ -28,8 +29,10 @@
 }
 @using (Html.BeginForm())
 {
+    <div class="loadingdiv" id="loading" >
+        <img src="~/images/Infinity-1s-200px.gif" />
+    </div>
     <h1>購票系統</h1>
-
     <div class="mydiv">
 
         <h3>
@@ -77,6 +80,9 @@
 @section Scripts{
     <script>
         $(function () {
+            setTimeout(function () {
+            $('#loading').css("display", "none");
+            }, 500);
             $("#cinema").val(@Model.cinemaId);
             $("#movie").val(@Model.movieId);
 

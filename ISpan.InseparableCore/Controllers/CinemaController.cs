@@ -28,14 +28,14 @@ namespace ISpan.InseparableCore.Controllers
 
 
         //電影院Ajax傳輸
-        public IActionResult City(string city)
+        public IActionResult City(string name)
         {
-            var data = _db.TCinemas.Where(t => t.FCinemaRegion == city).ToJson();
+            var data = _db.TCinemas.Where(t => t.FCinemaRegion == name).ToJson();
             return Ok(data);
         }
-        public IActionResult Brand(string brand)
+        public IActionResult Brand(string name)
         {
-            var data = _db.TCinemas.Where(t => t.FCinemaName.Contains(brand)).ToJson();
+            var data = _db.TCinemas.Where(t => t.FCinemaName.Contains(name)).ToJson();
             return Ok(data);
         }
         public IActionResult Map(int? id)

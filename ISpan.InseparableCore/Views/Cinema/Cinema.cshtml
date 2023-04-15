@@ -5,6 +5,7 @@
 
 <h1>影城介紹</h1>
 @section Styles{
+    <link href="~/css/loading.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
@@ -46,13 +47,15 @@
 
         .color:hover {
             color: #ffc107;
-            transform:scale(1.1);
+            transform: scale(1.1);
         }
-
     </style>
 }
-    <div>
-        <div id="city">
+<div>
+    <div class="loadingdiv" id="loading" style="display: none">
+        <img src="~/images/Infinity-1s-200px.gif" />
+    </div>
+    <div id="city">
         @foreach (var item in Model.city)
         {
 
@@ -75,16 +78,26 @@
         <div id="traffic"></div>
     </div>
 </div>
+
 @section Scripts{
     <script>
         $(function () {
             var city = "臺北市";
+            var url= '/Cinema/City';
             //todo 要先預設選擇台北button???
+            getCinema(url, city);
+        });
+
+        //取得電影院
+        function getCinema(url,name) {
             $.ajax({
+                //beforeSend: function () {
+                //    $('#loading').css("display", "");
+                //}, 
                 method: 'POST',
-                url: '/Cinema/City',
+                url,
                 data: {
-                    city
+                    name
                 },
                 datatype: 'text',
                 success: function (data) {
@@ -99,10 +112,12 @@
                 },
                 error: function () {
                     console.log('QQ');
-                }
+                },
+                //complete: function () {
+                //    $('#loading').css("display", "none");
+                //} 
             });
-        });
-
+        }
         $('button').click(function(){
             //單選換class
             $('.btn-primary').addClass('btn-outline-primary');
@@ -121,29 +136,9 @@
             $('#show').removeClass('show');
             
             var city = $(this).attr('value');
-
-
-            $.ajax({
-                method: 'POST',
-                url: '/Cinema/City',
-                data: {
-                    city
-                },
-                datatype: 'text',
-                success: function (data) {
-                    var cinema = JSON.parse(data);
-                    cinema.forEach(function (value, index) {
-                        $('#cinema').append(`<div class="showcinema color" onclick="mapshow(${value.FCinemaId})"><span><a ><h4>${value.FCinemaName}</h4></a>
-                                             <p>${value.FCinemaAddress}</p>
-                                             <p>${value.FCinemaTel}</p>
-                                             </span></div>`)
-                    })
-                    console.log('pass');
-                },
-                error: function () {
-                    console.log('QQ');
-                }
-            });
+            var url= '/Cinema/City';
+            getCinema(url, city);
+            
         });
         $('#brand button').click(function () {
             $('#cinema').html('');
@@ -154,33 +149,18 @@
             $('#show').removeClass('show');
 
             var brand = $(this).attr('value');
-            $.ajax({
-                method: 'POST',
-                url: '/Cinema/Brand',
-                data: {
-                    brand
-                },
-                datatype: 'text',
-                success: function (data) {
-                    var cinema = JSON.parse(data);
-                    cinema.forEach(function (value, index) {
-                        $('#cinema').append(`<div class="showcinema color" onclick="mapshow(${value.FCinemaId})"><span><a ><h4>${value.FCinemaName}</h4></a>
-                                             <p>${value.FCinemaAddress}</p>
-                                             <p>${value.FCinemaTel}</p>
-                                             </span></div>`)
-                    })
-                    console.log('pass');
-                },
-                error: function () {
-                    console.log('QQ');
-                }
-            });
+            var url= '/Cinema/Brand';
+            getCinema(url, brand);
+     
         });
         //map
-        function sendAjaxRequest(id) {
+        function sendmapRequest(id) {
             return new Promise(
                 function (resolve, reject) {
                     $.ajax({
+                        beforeSend: function () {
+                            $('#loading').css("display", "");
+                        },
                         method: 'POST',
                         url: '/Cinema/Map',
                         data: { id },
@@ -189,6 +169,10 @@
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             reject(`${textStatus} ${jqXHR.status} ${errorThrown}`);
+                        },
+                        complete: function () {
+                            setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
+
                         }
                     });
                 });
@@ -203,7 +187,7 @@
             $('#traffic').html('');
             $('#show').addClass('show');
             
-            sendAjaxRequest(id)
+            sendmapRequest(id)
                 .then(function (data) {
                     var cinema = JSON.parse(data);
                     $('#show').prepend(`<h4>${cinema.Name}</h4>`);
