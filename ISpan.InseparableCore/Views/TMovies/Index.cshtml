@@ -93,6 +93,12 @@
 				<p>
 					@Html.DisplayNameFor(model => model.Level) : @item.Level
 				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieActors) : @item.FMovieActors
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieDirectors) : @item.FMovieDirectors
+				</p>
 			</div>
 		</div>
 	}
@@ -142,6 +148,13 @@
 							<p>
 		@Html.DisplayNameFor(model => model.Level) : ${value.Level}
 							</p>
+							<p>
+		@Html.DisplayNameFor(model => model.FMovieActors) : ${value.FMovieActors}
+							</p>
+							<p>
+		@Html.DisplayNameFor(model => model.FMovieDirectors) : ${value.FMovieDirectors}
+							</p>
+
 						</div>
 					</div>`)
 					})

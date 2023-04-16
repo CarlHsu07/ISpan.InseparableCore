@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TMovies
+﻿@model ISpan.InseparableCore.ViewModels.MovieVm
 
 @{
     ViewData["Title"] = "Details";
@@ -23,16 +23,16 @@
             @Html.DisplayFor(model => model.FMovieIntroduction)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieOnDate)
+            @Html.DisplayNameFor(model => model.OnDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieOnDate)
+            @Html.DisplayFor(model => model.OnDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieOffDate)
+            @Html.DisplayNameFor(model => model.OffDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieOffDate)
+            @Html.DisplayFor(model => model.OffDate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FMovieLength)
@@ -41,22 +41,39 @@
             @Html.DisplayFor(model => model.FMovieLength)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieImagePath)
-        </dt>
-        <dd class = "col-sm-10">
-			<img src="~/images/@Model.FMovieImagePath" width="150">
-		</dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FMovieScore)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FMovieScore)
+			<div class="form-group">
+				<select name="FScore" class="form-control" asp-items="ViewBag.FScore"></select>
+				<select name="FMemberId" class="form-control" asp-items="ViewBag.FMemberId"></select>
+@*				<span asp-validation-for="FMovieScore" class="text-danger"></span>
+*@			</div>
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieLevel)
+            @Html.DisplayNameFor(model => model.Level)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieLevel.FLevelName)
+            @Html.DisplayFor(model => model.Level)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Categories)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Categories)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FMovieActors)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FMovieActors)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FMovieDirectors)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FMovieDirectors)
         </dd>
     </dl>
 </div>

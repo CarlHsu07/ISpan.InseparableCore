@@ -59,9 +59,9 @@ namespace ISpan.InseparableCore.Controllers
 			LevelSelectList.Add(defaultLevel);
 			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", 0);
 
-			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
-			List<MovieDateCategory> dateCategorySelectList = dateCategories.ToSelectList();
-			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Id", "DateCategory", 0);
+			//List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			//SelectList dateCategorySelectList = dateCategories.ToSelectList();
+			//ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 
 			return View(movies);
 		}
@@ -94,10 +94,10 @@ namespace ISpan.InseparableCore.Controllers
 			LevelSelectList.Add(defaultLevel);
 			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", condition.LevelId);
 
-			//為上下映日期SelectList加入預設值
-			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
-			List<MovieDateCategory> dateCategorySelectList = dateCategories.ToSelectList();
-			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Id", "DateCategory", condition.DateCategoryId);
+			////為上下映日期SelectList加入預設值
+			//List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			//SelectList dateCategorySelectList = dateCategories.ToSelectList();
+			//ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
 
 			return Ok(movies.ToJson());
 		}
@@ -111,15 +111,33 @@ namespace ISpan.InseparableCore.Controllers
 				return NotFound();
 			}
 
-			var tMovies = await _context.TMovies
-				.Include(t => t.FMovieLevel)
-				.FirstOrDefaultAsync(m => m.FMovieId == id);
-			if (tMovies == null)
+			MovieVm vm = repo.GetVmById((int)id);
+			if (vm == null)
 			{
 				return NotFound();
 			}
 
-			return View(tMovies);
+			List<string> scoreList = new List<string>();
+			for (int i = 0; i <= 10; i++) scoreList.Add(i.ToString());
+			
+			//SelectList scoreSelectList = scoreList.ToSelectList();
+			//ViewData["DateCategoryId"] = new SelectList(scoreSelectList, "Value", "Text");
+
+			return View(vm);
+		}
+		[HttpPost]
+		public async Task<IActionResult> Details(TMovieScoreDetails detail)
+		{
+			detail.FMemberId = 1;
+			TMovieScoreDetails detailInDb = _context.TMovieScoreDetails.FirstOrDefault(t => t.FMovieId == detail.FMovieId
+																		 && t.FMemberId == detail.FMemberId);
+			if (detailInDb == null) _context.Add(detail);
+			else
+			{
+				detailInDb.FScore = detail.FScore;
+				_context.Update(detailInDb);
+			}
+			return Ok();
 		}
 
 		// GET: TMovies/Create

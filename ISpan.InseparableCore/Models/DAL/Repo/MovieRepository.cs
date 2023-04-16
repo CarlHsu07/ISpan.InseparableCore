@@ -1,4 +1,5 @@
-﻿using ISpan.InseparableCore.ViewModels;
+﻿using AspNetCore;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ISpan.InseparableCore.Models.DAL
@@ -21,7 +22,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			if (condition == null) return ModelToVms(movies);
 
 			//電影等級
-			if (condition.LevelId != 0) movies = movies.Where(t=> t.FMovieLevelId == condition.LevelId).ToList();
+			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId).ToList();
 
 			//上下映日期
 			if (condition.DateCategoryId == 1)//熱映中
@@ -41,7 +42,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
-				movies = movies.Where(t => t.FMovieName.Contains(condition.Key)).ToList();
+				movies = movies.Where(t => t.FMovieName.Contains(condition.Key) || t.FMovieActors.Contains(condition.Key) || t.FMovieDirectors.Contains(condition.Key)).ToList();
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)
@@ -82,6 +83,28 @@ namespace ISpan.InseparableCore.Models.DAL
 			return vms;
 		}
 
+		public MovieVm GetVmById(int id)
+		{
+			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieId == id);
+			MovieVm vm = movie.ModelToVm();
+			vm.Level = context.TMovies.Include(t => t.FMovieLevel)
+				.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+
+			//獲得電影類別
+			IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
+															.Where(t => t.FMovieId == vm.FMovieId);
+			//context.Database.CloseConnection();
+			if (categorydetails != null)
+			{
+				List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
+
+				List<string> categories = context.TMovieCategories
+					.Where(t => categoryIds.Contains(t.FMovieCategoryId))
+					.Select(t => t.FMovieCategoryName).ToList();
+				vm.Categories = String.Join(", ", categories.ToArray());
+			}
+			return vm;
+		}
 		public async Task CreateAsync(MovieVm vm)
 		{
 			//新增Movie
@@ -167,5 +190,13 @@ namespace ISpan.InseparableCore.Models.DAL
 			}
 		}
 
+		public void CreateMovieScore(TMovieScoreDetails detail)
+		{
+			context.Add(detail);
+		}
+		public void EditMovieScore(TMovieScoreDetails detail)
+		{
+			context.Update(detail);
+		}
 	}
 }

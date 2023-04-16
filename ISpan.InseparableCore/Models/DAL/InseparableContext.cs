@@ -897,9 +897,7 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasIndex(e => new { e.FMemberId, e.FMovieId }, "IX_tMovieScoreDetails")
                     .IsUnique();
 
-                entity.Property(e => e.FSerialNumber)
-                    .ValueGeneratedNever()
-                    .HasColumnName("fSerialNumber");
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
 
@@ -929,6 +927,14 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
+                entity.Property(e => e.FMovieActors)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMovieActors");
+
+                entity.Property(e => e.FMovieDirectors)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMovieDirectors");
+
                 entity.Property(e => e.FMovieImagePath)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -936,7 +942,6 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasDefaultValueSql("('no image')");
 
                 entity.Property(e => e.FMovieIntroduction)
-                    .IsRequired()
                     .HasMaxLength(4000)
                     .HasColumnName("fMovieIntroduction");
 

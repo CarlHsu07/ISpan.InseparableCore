@@ -27,6 +27,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public int FMovieLength { get; set; }
         public string FMovieImagePath { get; set; }
         public int FMovieScore { get; set; }
+        public string FMovieActors { get; set; }
+        public string FMovieDirectors { get; set; }
 
         public virtual TMovieLevels FMovieLevel { get; set; }
         public virtual ICollection<TMovieActorDetails> TMovieActorDetails { get; set; }
