@@ -17,6 +17,7 @@ namespace ISpan.InseparableCore.Models.DAL
             TMemberPoints = new HashSet<TMemberPoints>();
             TMemberReportsFReportMember = new HashSet<TMemberReports>();
             TMemberReportsFReportedMember = new HashSet<TMemberReports>();
+            TMovieScoreDetails = new HashSet<TMovieScoreDetails>();
             TOrders = new HashSet<TOrders>();
         }
 
@@ -100,6 +101,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual ICollection<TMemberPoints> TMemberPoints { get; set; }
         public virtual ICollection<TMemberReports> TMemberReportsFReportMember { get; set; }
         public virtual ICollection<TMemberReports> TMemberReportsFReportedMember { get; set; }
+        public virtual ICollection<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual ICollection<TOrders> TOrders { get; set; }
     }
 }

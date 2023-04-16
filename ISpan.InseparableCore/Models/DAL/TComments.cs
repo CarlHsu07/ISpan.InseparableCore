@@ -14,6 +14,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public DateTime FCommentPostingDate { get; set; }
         public int FCommentLikes { get; set; }
         public string FCommentContent { get; set; }
+        public bool FDeleted { get; set; }
 
         public virtual TArticles FArticle { get; set; }
         public virtual TMembers FMember { get; set; }

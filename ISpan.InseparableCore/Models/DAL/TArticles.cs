@@ -21,6 +21,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public int FArticleLikes { get; set; }
         public int FArticleClicks { get; set; }
         public string FArticleContent { get; set; }
+        public bool FDeleted { get; set; }
 
         public virtual TMovieCategories FArticleCategory { get; set; }
         public virtual TMembers FMember { get; set; }

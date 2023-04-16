@@ -119,6 +119,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[tMovieScoreDetails]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tOrders]",
          "ObjectType": 0
       },

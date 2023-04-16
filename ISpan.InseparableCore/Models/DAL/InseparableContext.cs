@@ -43,6 +43,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TMovieDirectorDetails> TMovieDirectorDetails { get; set; }
         public virtual DbSet<TMovieKeywordDetails> TMovieKeywordDetails { get; set; }
         public virtual DbSet<TMovieLevels> TMovieLevels { get; set; }
+        public virtual DbSet<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual DbSet<TMovies> TMovies { get; set; }
         public virtual DbSet<TOrders> TOrders { get; set; }
         public virtual DbSet<TProductCategories> TProductCategories { get; set; }
@@ -319,6 +320,8 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasMaxLength(50)
                     .HasColumnName("fArticleTitle");
 
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
+
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
 
                 entity.HasOne(d => d.FArticleCategory)
@@ -371,6 +374,7 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FLng).HasColumnName("fLng");
 
                 entity.Property(e => e.FTraffic)
+                    .IsRequired()
                     .HasMaxLength(500)
                     .HasColumnName("fTraffic");
             });
@@ -413,6 +417,8 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnType("datetime")
                     .HasColumnName("fCommentPostingDate")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
 
                 entity.Property(e => e.FItemNumber).HasColumnName("fItemNumber");
 
@@ -882,6 +888,38 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fLevelName");
             });
 
+            modelBuilder.Entity<TMovieScoreDetails>(entity =>
+            {
+                entity.HasKey(e => e.FSerialNumber);
+
+                entity.ToTable("tMovieScoreDetails");
+
+                entity.HasIndex(e => new { e.FMemberId, e.FMovieId }, "IX_tMovieScoreDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber)
+                    .ValueGeneratedNever()
+                    .HasColumnName("fSerialNumber");
+
+                entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
+
+                entity.Property(e => e.FMovieId).HasColumnName("fMovieId");
+
+                entity.Property(e => e.FScore).HasColumnName("fScore");
+
+                entity.HasOne(d => d.FMember)
+                    .WithMany(p => p.TMovieScoreDetails)
+                    .HasForeignKey(d => d.FMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMovieScoreDetails_tMembers");
+
+                entity.HasOne(d => d.FMovie)
+                    .WithMany(p => p.TMovieScoreDetails)
+                    .HasForeignKey(d => d.FMovieId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMovieScoreDetails_tMovies");
+            });
+
             modelBuilder.Entity<TMovies>(entity =>
             {
                 entity.HasKey(e => e.FMovieId)
@@ -1049,6 +1087,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fProductName");
 
                 entity.Property(e => e.FProductPicturePath)
+                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fProductPicturePath");
 
@@ -1189,6 +1228,7 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
                 entity.Property(e => e.FMovieName)
+                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fMovieName");
 

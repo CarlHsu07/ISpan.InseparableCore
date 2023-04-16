@@ -30,7 +30,6 @@
 <div class="row divBlock">
 
 	<form asp-action="Index" method="post" id="formSearch">
-		<input type="hidden" name="Page" value="ViewBag.Page" id="Page" />
 
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="divContainer ">
@@ -45,6 +44,14 @@
 			<div class="form-group divBlock">
 				<label name="DateCategoryId" class="control-label">類別</label>
 				<select name="DateCategoryId" class="form-control" asp-items="ViewBag.DateCategoryId"></select>
+			</div>
+			<div class="form-group divBlock">
+				<label name="LevelId" class="control-label">類別</label>
+				<select name="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
+			</div>
+			<div class="form-group divBlock">
+				<label name="Page" class="control-label">頁數</label>
+				<select name="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
@@ -92,37 +99,9 @@
 
 </div>
 
-<a href="#" onclick="changePage()"></a>
-<div id="divSearch"> > </div>
-
 @section Scripts {
 	<script>
-		//function changePage() {
-		//	$("#Page").val(Page + 1);
-		//	alert($("#Page").val())
-
-		//	$.ajax({
-		//		method: "post",
-		//		url: $(this).attr("action"),
-		//		data: $("#formSearch").serialize(),
-		//		beforeSend: function () {
-		//		},
-		//		success: function (data) {
-		//			let context = JSON.parse(data);
-		//			alert(context[0].FMovieName)
-		//			$("#divSearch").html(``)
-		//			$.each(context, function (index, value) {
-		//				$("#divSearch").append(
-		//					})
-		//		},
-		//		error: function (jqXHR, textStatus, errorThrown) {
-		//		},
-		//	})
-
-		//}
-
-		$("#formSearch").submit(function (event) {
-			event.preventDefault();
+		function show() {
 			$.ajax({
 				method: "post",
 				url: $(this).attr("action"),
@@ -135,43 +114,49 @@
 					$("#divSearch").html(``)
 					$.each(context, function (index, value) {
 						$("#divSearch").append(`
-			<div class="divContainer divBorder">
-				<div style="margin:0 20px 0 0">
-					<p>
-						<img src="../images/${value.FMovieImagePath}" width="250">
-					</p>
-				</div>
+					<div class="divContainer divBorder">
+						<div style="margin:0 20px 0 0">
+							<p>
+								<img src="../images/${value.FMovieImagePath}" width="250">
+							</p>
+						</div>
 
-				<div>
-					<p>
-						<a asp-action="Details" asp-route-id="${value.FMovieId}">
-							${value.FMovieName}
-						</a>
-					</p>
-					<p>
+						<div>
+							<p>
+								<a href="/TMovies/Details/${value.FMovieId}">
+									${value.FMovieName}
+								</a>
+							</p>
+							<p>
 		@Html.DisplayNameFor(model => model.FMovieOnDate) :	${value.OnDate}
-					</p>
-					<p>
+							</p>
+							<p>
 		@Html.DisplayNameFor(model => model.FMovieLength) :	${value.FMovieLength}分
-					</p>
-					<p>
+							</p>
+							<p>
 		@Html.DisplayNameFor(model => model.FMovieScore) : ${value.FMovieScore}
-					</p>
-					<p>
+							</p>
+							<p>
 		@Html.DisplayNameFor(model => model.Categories) : ${value.Categories}
-					</p>
-					<p>
+							</p>
+							<p>
 		@Html.DisplayNameFor(model => model.Level) : ${value.Level}
-					</p>
-				</div>
-			</div>`)
+							</p>
+						</div>
+					</div>`)
 					})
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
 			})
+
+		}
+
+		$("#formSearch").submit(function (event) {
+			event.preventDefault();
+			show();
 		})
 
 	</script>
 
-	}
+}
