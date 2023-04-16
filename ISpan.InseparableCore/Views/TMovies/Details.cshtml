@@ -43,13 +43,8 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FMovieScore)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class = "col-sm-10" id="Score">
             @Html.DisplayFor(model => model.FMovieScore)
-			<div class="form-group">
-				<select name="FScore" class="form-control" asp-items="ViewBag.FScore"></select>
-				<select name="FMemberId" class="form-control" asp-items="ViewBag.FMemberId"></select>
-@*				<span asp-validation-for="FMovieScore" class="text-danger"></span>
-*@			</div>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Level)
@@ -77,7 +72,54 @@
         </dd>
     </dl>
 </div>
+<div class="form-group">
+	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
+</div>
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+	<div class="btn-group me-2" role="group" aria-label="First group">
+		<button type="button" class="btn btn-secondary" value="1">1</button>
+		<button type="button" class="btn btn-secondary" value="2">2</button>
+		<button type="button" class="btn btn-secondary" value="3">3</button>
+		<button type="button" class="btn btn-secondary" value="4">4</button>
+		<button type="button" class="btn btn-secondary" value="5">5</button>
+	</div>
+</div>
+<button type="button" id="go">go</button>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.FMovieId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section Scripts{
+	<script>
+		function Score(memberId, score, movieId) {
+			$.ajax({
+				method: "post",
+				url: "/TMovies/Details",
+				data: { memberId, score, movieId},
+				success: function (data) {
+					let context = JSON.parse(data);
+					alert("go")
+					$("#Score").html(`${context.FScore},${context.FMemberId},${context.FMoiveId}`);
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		}
+		$('.btn').click(function () {
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(this).removeClass('btn-secondary');
+			$(this).addClass('btn-primary');
+		});
+		$("#go").click(function() {
+			let score = $('.btn-primary').attr("value");
+			let memberId = $("#FMemberId").find(":selected").attr("value")
+			alert(score + memberId +@Model.FMovieId)
+			Score(memberId, score, movieId)
+		})
+	</script>
+
+}

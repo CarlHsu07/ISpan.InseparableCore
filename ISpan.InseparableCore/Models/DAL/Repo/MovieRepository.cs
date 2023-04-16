@@ -1,5 +1,4 @@
-﻿using AspNetCore;
-using ISpan.InseparableCore.ViewModels;
+﻿using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ISpan.InseparableCore.Models.DAL
@@ -152,14 +151,14 @@ namespace ISpan.InseparableCore.Models.DAL
 			context.Update(movie);
 			context.SaveChanges();
 
-			IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == vm.FMovieId);
-			foreach (TMovieCategoryDetails detail in categoryDetails)
-			{
-				context.Remove(detail);
-			}
-
 			if (!string.IsNullOrEmpty(vm.CategoryIds))
 			{
+				IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == vm.FMovieId);
+				foreach (TMovieCategoryDetails detail in categoryDetails)
+				{
+					context.Remove(detail);
+				}
+
 				List<int> categoryIds = vm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
 														.Select(i => int.Parse(i)).ToList();
 				foreach (var categoryId in categoryIds)
@@ -171,7 +170,6 @@ namespace ISpan.InseparableCore.Models.DAL
 					};
 					context.Add(detail);
 				}
-
 			}
 			await context.SaveChangesAsync();
 
