@@ -54,7 +54,7 @@ namespace ISpan.InseparableCore.ViewModels
 				OnDate = tMovies.FMovieOnDate.ToString("yyyy-MM-dd"),
 				FMovieOffDate = tMovies.FMovieOffDate,
 				FMovieLength = tMovies.FMovieLength,
-				FMovieScore = tMovies.FMovieScore,
+				FMovieScore = (int?)tMovies.FMovieScore,
 				FMovieImagePath = tMovies.FMovieImagePath,
 			};
 			return vm;

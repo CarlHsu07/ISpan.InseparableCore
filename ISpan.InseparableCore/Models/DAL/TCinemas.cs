@@ -20,8 +20,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public string FCinemaRegion { get; set; }
         public string FCinemaAddress { get; set; }
         public string FCinemaTel { get; set; }
-        public double? FLat { get; set; }
-        public double? FLng { get; set; }
+        public double FLat { get; set; }
+        public double FLng { get; set; }
         public string FTraffic { get; set; }
 
         public virtual ICollection<TOrders> TOrders { get; set; }

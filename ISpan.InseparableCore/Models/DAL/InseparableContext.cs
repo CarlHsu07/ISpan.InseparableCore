@@ -319,6 +319,8 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasMaxLength(50)
                     .HasColumnName("fArticleTitle");
 
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
+
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
 
                 entity.HasOne(d => d.FArticleCategory)
@@ -371,6 +373,7 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FLng).HasColumnName("fLng");
 
                 entity.Property(e => e.FTraffic)
+                    .IsRequired()
                     .HasMaxLength(500)
                     .HasColumnName("fTraffic");
             });
@@ -413,6 +416,8 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnType("datetime")
                     .HasColumnName("fCommentPostingDate")
                     .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
 
                 entity.Property(e => e.FItemNumber).HasColumnName("fItemNumber");
 
@@ -891,6 +896,18 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
+                entity.Property(e => e.FDeleted)
+                    .HasColumnName("fDeleted")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.FMovieActors)
+                    .HasMaxLength(4000)
+                    .HasColumnName("fMovieActors");
+
+                entity.Property(e => e.FMovieDirectors)
+                    .HasMaxLength(2000)
+                    .HasColumnName("fMovieDirectors");
+
                 entity.Property(e => e.FMovieImagePath)
                     .IsRequired()
                     .HasMaxLength(50)
@@ -898,7 +915,6 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasDefaultValueSql("('no image')");
 
                 entity.Property(e => e.FMovieIntroduction)
-                    .IsRequired()
                     .HasMaxLength(4000)
                     .HasColumnName("fMovieIntroduction");
 
@@ -919,7 +935,9 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnType("date")
                     .HasColumnName("fMovieOnDate");
 
-                entity.Property(e => e.FMovieScore).HasColumnName("fMovieScore");
+                entity.Property(e => e.FMovieScore)
+                    .HasColumnType("decimal(2, 1)")
+                    .HasColumnName("fMovieScore");
 
                 entity.HasOne(d => d.FMovieLevel)
                     .WithMany(p => p.TMovies)
@@ -1049,6 +1067,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fProductName");
 
                 entity.Property(e => e.FProductPicturePath)
+                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fProductPicturePath");
 
@@ -1189,6 +1208,7 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
                 entity.Property(e => e.FMovieName)
+                    .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fMovieName");
 

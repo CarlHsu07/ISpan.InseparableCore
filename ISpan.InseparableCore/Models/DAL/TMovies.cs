@@ -25,7 +25,10 @@ namespace ISpan.InseparableCore.Models.DAL
         public DateTime? FMovieOffDate { get; set; }
         public int FMovieLength { get; set; }
         public string FMovieImagePath { get; set; }
-        public int FMovieScore { get; set; }
+        public decimal FMovieScore { get; set; }
+        public string FMovieActors { get; set; }
+        public string FMovieDirectors { get; set; }
+        public bool? FDeleted { get; set; }
 
         public virtual TMovieLevels FMovieLevel { get; set; }
         public virtual ICollection<TMovieActorDetails> TMovieActorDetails { get; set; }

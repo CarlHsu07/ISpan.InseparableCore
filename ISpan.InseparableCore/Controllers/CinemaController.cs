@@ -47,7 +47,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.FLat = data.FLat;
             vm.FLng = data.FLng;
             vm.FTraffic = data.FTraffic.Split("<br>").ToList();
-            vm.Key = "ZPyRU3c5rVSNfr62GfzHZ5HzQnb01eaHY6z11OZ_Ke0";
+            vm.Key = "ZPyRU3c5rVSNfr62GfzHZ5HzQnb01eaHY6z11OZ_Ke0"; //改存到appsetting
             return Ok(vm.ToJson());
         }
     }

@@ -2,8 +2,14 @@
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
+using System.Web;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -21,7 +27,7 @@ namespace ISpan.InseparableCore.Controllers
 
             //限制時間區間
             var start = DateTime.Now.Date;
-            var starttime=DateTime.Now.TimeOfDay;
+            var starttime = DateTime.Now.TimeOfDay;
             var end = DateTime.Now.Date.AddDays(7);
             //todo時間限制還沒放
             if (vm.cinemaId != 0)
@@ -30,10 +36,10 @@ namespace ISpan.InseparableCore.Controllers
                 // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
-            
+
             if (vm.movieId != 0)
             {
-                var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId ).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
@@ -118,7 +124,7 @@ namespace ISpan.InseparableCore.Controllers
                 return View();
             vm.solid = new List<int>();
 
-            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid && t.FStatus==true);
+            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid && t.FStatus == true);
             foreach (var item in solid)
             {
                 vm.solid.Add(item.FSeatId);
@@ -203,10 +209,12 @@ namespace ISpan.InseparableCore.Controllers
                 json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
                 ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
+
             vm.seats = new Dictionary<int, string>();
             var seats = ticket.Select(t => t.FSeatId);
             foreach (var item in seats)
             {
+
                 var seat = _db.TSeats.Where(t => t.FSeatId == item);
                 foreach (var name in seat)
                 {
@@ -224,9 +232,28 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         //todo 如何知道下單的是誰
-        //todo 訂單紀錄
+        //todo DB跟綠界順序
+
+        //綠界API
         public IActionResult Pay(CorderVM vm)
         {
+            ////先將order資料記錄在session
+            //string json = string.Empty;
+            //if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_ORDER_LIST))
+            //{
+            //    ViewBag.error = "操作錯誤...將重導回訂購畫面!!";
+            //    return View();
+            //}
+
+            //vm.FOrderDate = DateTime.Now;
+            //vm.FModifiedTime = DateTime.Now;
+            //vm.FMemberId = 1; //todo 目前尚未解決登入
+            //vm.FStatus = true;
+
+            //json = JsonSerializer.Serialize(vm);
+            //HttpContext.Session.SetString(CDitionary.SK_PURCHASED_ORDER_LIST, json);
+
+            //todo 先存DB????
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
             string json = string.Empty;
@@ -249,7 +276,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.FModifiedTime = DateTime.Now;
             vm.FMemberId = 1; //todo 目前尚未解決登入
             vm.FStatus = true;
-            
+
 
             _db.TOrders.Add(vm.orders);
             _db.SaveChanges();
@@ -260,7 +287,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 //驗證位置是否未售出
-                var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId &&t.FStatus==true).FirstOrDefault(t => t.FSeatId == item.FSeatId);
+                var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId && t.FStatus == true).FirstOrDefault(t => t.FSeatId == item.FSeatId);
                 if (solid != null && solid.FOrderId != orderid)
                 {
                     ViewBag.error = "位置已售出請重新選擇!";
@@ -299,10 +326,45 @@ namespace ISpan.InseparableCore.Controllers
 
             HttpContext.Session.Clear();
 
+            //綠界
+            var orderId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+            var web = "https://localhost:7021/"; //todo 上線要改
+            var order = new Dictionary<string, string>
+            {
+                { "MerchantID",  "3002607"},
+                { "MerchantTradeNo",orderId},
+                { "MerchantTradeDate",DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
+                { "PaymentType","aio"},
+                { "TotalAmount",$"{vm.FTotalMoney}"},
+                { "TradeDesc","無"},
+                { "ItemName","電影票"},
+                { "ReturnURL",$"{web}Shopping/AddPayInfo"},
+                { "OrderResultURL",$"{web}Shopping/Paydone"},
+                { "ChoosePayment","Credit"},
+                { "EncryptType","1"},
+            };
+            order["CheckMacValue"] = GetCheckMacValue(order);
+            return View(order);
 
+        }
+        [HttpPost]
+        public HttpResponseMessage AddPayInfo(JObject info)
+        {
+
+            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_ORDER_LIST))
+            {
+                return ResponseOK();
+            }
+            else
+            {
+                return ResponseError();
+            }       
+        }
+        public IActionResult Paydone()
+        {
             return View();
         }
-
+        
         //清除session
         public IActionResult Clearticket()
         {
@@ -315,6 +377,56 @@ namespace ISpan.InseparableCore.Controllers
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
                 HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
             return Ok();
+        }
+
+        //綠界雜湊
+        private string GetCheckMacValue(Dictionary<string, string> order)
+        {
+            var param = order.Keys.OrderBy(x => x).Select(key => key + "=" + order[key]).ToList();
+
+            var checkValue = string.Join("&", param);
+
+            //測試用的 HashKey
+            var hashKey = "pwFHCqoQZGmho4w6";
+
+            //測試用的 HashIV
+            var HashIV = "EkRm7iFT261dpevs";
+
+            checkValue = $"HashKey={hashKey}" + "&" + checkValue + $"&HashIV={HashIV}";
+
+            checkValue = HttpUtility.UrlEncode(checkValue).ToLower();
+
+            checkValue = GetSHA256(checkValue);
+
+            return checkValue.ToUpper();
+        }
+        private string GetSHA256(string value)
+        {
+            var result = new StringBuilder();
+            var sha256 = SHA256.Create();
+            var bts = Encoding.UTF8.GetBytes(value);
+            var hash = sha256.ComputeHash(bts);
+
+            for (int i = 0; i < hash.Length; i++)
+            {
+                result.Append(hash[i].ToString("X2"));
+            }
+
+            return result.ToString();
+        }
+        private HttpResponseMessage ResponseError()
+        {
+            var response = new HttpResponseMessage();
+            response.Content = new StringContent("0|Error");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
+        }
+        private HttpResponseMessage ResponseOK()
+        {
+            var response = new HttpResponseMessage();
+            response.Content = new StringContent("1|OK");
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
         }
     }
 }
