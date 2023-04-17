@@ -233,11 +233,93 @@ namespace ISpan.InseparableCore.Controllers
 
         //todo 如何知道下單的是誰
         //todo DB跟綠界順序
-
-        //綠界API
-        public IActionResult Pay(CorderVM vm)
+        public IActionResult CashPay(CorderVM vm)
         {
-            //todo 先存DB????
+            var orderid = DbSave(vm);
+            if (orderid == null)
+            {
+                ViewBag.error = "資料有誤！！";
+                return View();
+            }
+            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == orderid);
+            order.FStatus = true;
+
+            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == orderid);
+            foreach (var item in ticket)
+            {
+                item.FStatus = true;
+            }
+
+            _db.SaveChanges();
+            HttpContext.Session.Clear();
+            return View(order);
+        }
+        //綠界API
+        public IActionResult CreditPay(CorderVM vm)
+        {
+            var orderid =DbSave(vm);
+            if (orderid == null)
+            {
+                ViewBag.errpr = "位置已售出請重新選擇!";
+                return View();
+            }
+            //綠界
+            var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+            var web = "https://localhost:7021/"; //todo 上線要改
+            var order = new Dictionary<string, string>
+            {
+                { "MerchantID",  "3002607"},
+                { "MerchantTradeNo",TradeNo},
+                { "MerchantTradeDate",DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
+                { "PaymentType","aio"},
+                { "TotalAmount",$"{vm.FTotalMoney}"},
+                { "TradeDesc","無"},
+                { "ItemName","電影票"},
+                { "ReturnURL",$"{web}Shopping/AddPayInfo"},
+                { "OrderResultURL",$"{web}Shopping/Paydone/{orderid}"},
+                { "ChoosePayment","Credit"},
+                { "EncryptType","1"},
+            };
+            order["CheckMacValue"] = GetCheckMacValue(order);
+            return View(order);
+
+        }
+        [HttpPost]
+        public HttpResponseMessage AddPayInfo(JObject info)
+        {
+
+            if (!HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            {
+                return ResponseOK();
+            }
+            else
+            {
+                return ResponseError();
+            }       
+        }
+        public IActionResult Paydone(int? id)
+        {
+            if (id == null)
+            {
+                ViewBag.error = "資料有誤！！";
+                return View();
+            }
+            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
+            order.FStatus = true;
+
+            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);
+            foreach(var item in ticket)
+            {
+                item.FStatus = true;
+            }
+
+            _db.SaveChanges();
+            HttpContext.Session.Clear();
+            return View(order);
+        }
+        //db儲存
+        public int? DbSave(CorderVM vm)
+        {
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
             string json = string.Empty;
@@ -259,7 +341,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
             vm.FMemberId = 1; //todo 目前尚未解決登入
-            vm.FStatus = true;
+            vm.FStatus = false;
 
 
             _db.TOrders.Add(vm.orders);
@@ -274,13 +356,13 @@ namespace ISpan.InseparableCore.Controllers
                 var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId && t.FStatus == true).FirstOrDefault(t => t.FSeatId == item.FSeatId);
                 if (solid != null && solid.FOrderId != orderid)
                 {
-                    ViewBag.error = "位置已售出請重新選擇!";
                     HttpContext.Session.Clear();
-                    return View();
+                    //throw new Exception("位置已售出請重新選擇!");
+                    return null;
                 }
 
                 item.FOrderId = orderid;
-                item.Fstatus = true;
+                item.Fstatus = false;
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -307,48 +389,10 @@ namespace ISpan.InseparableCore.Controllers
                 _db.TProductOrderDetails.Add(item.ProductOrderDetails);
                 _db.SaveChanges();
             }
-
+            return orderid;
             HttpContext.Session.Clear();
-
-            //綠界
-            var orderId = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
-            var web = "https://localhost:7021/"; //todo 上線要改
-            var order = new Dictionary<string, string>
-            {
-                { "MerchantID",  "3002607"},
-                { "MerchantTradeNo",orderId},
-                { "MerchantTradeDate",DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
-                { "PaymentType","aio"},
-                { "TotalAmount",$"{vm.FTotalMoney}"},
-                { "TradeDesc","無"},
-                { "ItemName","電影票"},
-                { "ReturnURL",$"{web}Shopping/AddPayInfo"},
-                { "OrderResultURL",$"{web}Shopping/Paydone"},
-                { "ChoosePayment","Credit"},
-                { "EncryptType","1"},
-            };
-            order["CheckMacValue"] = GetCheckMacValue(order);
-            return View(order);
-
         }
-        [HttpPost]
-        public HttpResponseMessage AddPayInfo(JObject info)
-        {
 
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_ORDER_LIST))
-            {
-                return ResponseOK();
-            }
-            else
-            {
-                return ResponseError();
-            }       
-        }
-        public IActionResult Paydone()
-        {
-            return View();
-        }
-        
         //清除session
         public IActionResult Clearticket()
         {

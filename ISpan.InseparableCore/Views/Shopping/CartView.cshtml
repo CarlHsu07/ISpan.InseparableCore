@@ -10,15 +10,15 @@
             font-size: 20px;
             padding: 3px;
         }
-        .center{
+
+        .center {
             margin-top: 10px;
-            text-align:center;
+            text-align: center;
         }
     </style>
 }
-
-    <h1>確認訂單</h1>
-@using (Html.BeginForm("Pay", "Shopping"))
+<h1>確認訂單</h1>
+@using (Html.BeginForm("CreditPay", "Shopping", FormMethod.Post, new { id = "form" }))
 {
     <div>
         <input type="hidden" name="FSessionId" value="@Model.session.FSessionId">
@@ -99,12 +99,12 @@
     <div>
     </div>
     <div class="center">
-        <input type="submit" value="結帳" class="btn btn-primary" />
+        <input type="button" value="臨櫃付款" class="btn btn-primary" onclick="cashpay()" />
+        <input type="submit" value="信用卡結帳" class="btn btn-primary" />
     </div>
 }
 @section Scripts{
-    <script>
-        $(function () {
+    <script>$(function () {
             var total = 0;
             var regular = ($('#regularsub').html() == null) ? 0 : parseInt($('#regularsub').html());
             var concession = ($('#concessionsub').html() == null) ? 0 : parseInt($('#concessionsub').html());
@@ -119,7 +119,11 @@
 
             $('#total').html(total);
             $('#money').val(total);
-            
+
         });
-    </script>
+
+        function cashpay() {
+            $('#form').attr('action', 'CashPay');
+            $('#form').submit();
+        };</script>
 }
