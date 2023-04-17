@@ -22,7 +22,7 @@
     <Folder Include="Models\BLL\DTOs\" />
     <Folder Include="Models\BLL\Interfaces\" />
     <Folder Include="Models\DAL\" />
-    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\images\memberProfilePhotos\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

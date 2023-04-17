@@ -4,22 +4,21 @@
     ViewData["Title"] = "EditProfile";
 }
 
-<h1>EditProfile</h1>
+<h1>會員資料</h1>
 
-<h4>CEditProfileViewModel</h4>
+<h4>編輯會員資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="EditProfile">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
                 <input asp-for="Id" class="form-control" type="hidden" />
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="MemberId" class="control-label"></label>
-                <input asp-for="MemberId" class="form-control" disabled />
+                <span class="form-control">@Model.MemberId</span>
                 <span asp-validation-for="MemberId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -61,16 +60,21 @@
                 <input asp-for="Cellphone" class="form-control" type="tel" />
                 <span asp-validation-for="Cellphone" class="text-danger"></span>
             </div>
-            @*// todo 改成OK的地址輸入方式*@
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Area" class="control-label"></label>
-                <input asp-for="Area" class="form-control" />
-                <span asp-validation-for="Area" class="text-danger"></span>
+            @*// todo 地址輸入樣式*@
+            <div class="form-row">
+                <label asp-for="Address" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-5">
+                    <select asp-for="City" class="form-control f-3" asp-items="ViewBag.Cities" id="citySelect">
+                        <option value="">請選擇縣市</option>
+                    </select>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="col-sm-5">
+                    <select asp-for="Area" class="form-control f-3" id="areaSelect">
+                        <option value="">請選擇區域</option>
+                    </select>
+                    <span asp-validation-for="Area" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Address" class="control-label"></label>
@@ -79,25 +83,35 @@
             </div>
             <div class="form-group">
                 <label asp-for="PhotoPath" class="control-label"></label>
-                <input asp-for="PhotoPath" class="form-control" />
+                <img src="..." class="rounded" alt="會員大頭貼">
                 <span asp-validation-for="PhotoPath" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input type="file" name="photo" class="form-control" accept="image/*" />
+            </div>
+            <div class="form-group">
                 <label asp-for="Introduction" class="control-label"></label>
-                <input asp-for="Introduction" class="form-control" type="text" />
+                <textarea asp-for="Introduction" class="form-control" rows="5" ></textarea>
                 <span asp-validation-for="Introduction" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="儲存" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">取消</a>
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="~/js/address.js"></script>
+
+    <script>
+
+    </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
