@@ -23,14 +23,14 @@ namespace ISpan.InseparableCore.Controllers
             _context = context;
         }
 
-        // GET: Members
+        // GET: Member
         public async Task<IActionResult> Index()
         {
             var inseparableContext = _context.TMembers.Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
             return View(await inseparableContext.ToListAsync());
         }
 
-        // GET: Members/Details/5
+        // GET: Member/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.TMembers == null)
@@ -51,8 +51,29 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // GET: Members/Register
-        public IActionResult Register()
+		// GET: Member/ViewProfile/5
+		public async Task<IActionResult> ViewProfile(int? id)
+		{
+			if (id == null || _context.TMembers == null)
+			{
+				return NotFound();
+			}
+
+			var tMembers = await _context.TMembers
+				.Include(t => t.FAccountStatusNavigation)
+				.Include(t => t.FArea)
+				.Include(t => t.FGender)
+				.FirstOrDefaultAsync(m => m.FId == id);
+			if (tMembers == null)
+			{
+				return NotFound();
+			}
+
+			return View(tMembers);
+		}
+
+		// GET: Member/Register
+		public IActionResult Register()
         {
             // 縣市
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName");
@@ -75,11 +96,8 @@ namespace ISpan.InseparableCore.Controllers
             {
                 MemberService memberService = new MemberService(_context);
 
-                // 產生會員ID
-                newMember.FMemberId = memberService.GenerateMemberId();
-
-                // 產生會員註冊時間
-                newMember.FSignUpTime = memberService.GenerateSignUpTime();
+                newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
+                newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
 
                 // 產生會員點數
                 if (newMember.FTotalMemberPoint == null)
@@ -121,7 +139,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(MemberIn);
         }
 
-        // GET: Members/Edit/5
+        // GET: Member/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.TMembers == null)
@@ -140,7 +158,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // POST: Members/Edit/5
+        // POST: Member/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -178,8 +196,45 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // GET: Members/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+		// GET: Member/EditProfile/5
+		public async Task<IActionResult> EditProfile(int? id)
+		{
+			if (id == null || _context.TMembers == null)
+			{
+				return NotFound();
+			}
+
+			var tMembers = await _context.TMembers.FindAsync(id);
+			if (tMembers == null)
+			{
+				return NotFound();
+			}
+
+			// 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
+			var viewModel = new CEditProfileViewModel
+			{
+				// 設定 ViewModel 的屬性值
+				Id = tMembers.FId,
+				LastName = tMembers.FLastName,
+                FirstName = tMembers.FFirstName,
+				Email = tMembers.FEmail,
+                Password = "",
+				DateOfBirth = tMembers.FDateOfBirth,
+				GenderId = tMembers.FGenderId,
+				Cellphone = tMembers.FCellphone,
+				Address = tMembers.FAddress,
+                Introduction = tMembers.FIntroduction
+
+            };
+
+			ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
+			ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
+			ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
+			return View(viewModel);
+		}
+
+		// GET: Member/Delete/5
+		public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.TMembers == null)
             {
@@ -199,7 +254,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // POST: Members/Delete/5
+        // POST: Member/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -224,7 +279,6 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // 取得指定縣市的區域(鄉鎮市區)
-        [HttpPost]
         public IActionResult GetAreas(int cityId)
         {
             // 根據縣市值，查詢對應的區域資料
