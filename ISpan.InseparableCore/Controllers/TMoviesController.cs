@@ -9,6 +9,7 @@ using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.ViewModels;
 using NuGet.Protocol;
 using ISpan.InseparableCore.Models.DAL;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -125,19 +126,29 @@ namespace ISpan.InseparableCore.Controllers
 		public async Task<IActionResult> MovieComment(TMovieCommentDetails comment)
 		{
 			List<MovieDetailVm> vms = new List<MovieDetailVm>();
+			//無參數=>預設顯示
 			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FComment))
 			{
 				vms = _context.TMovieCommentDetails
-	.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
+						.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
 				foreach (var vm in vms)
 				{
 					vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
 				}
 				return Ok(vms.ToJson());
 			}
-
-			_context.Add(comment);
-			_context.SaveChanges();
+			else if (comment.FSerialNumber != 0)//comment已存在=>跟新
+			{
+				var commentInDb = await _context.TMovieCommentDetails.FindAsync(comment.FSerialNumber);
+				commentInDb.FComment = comment.FComment;
+				_context.Update(commentInDb);
+				_context.SaveChanges();
+			}
+			else // 新comment=>新增
+			{
+				_context.Add(comment);
+				_context.SaveChanges();
+			}
 
 			vms = _context.TMovieCommentDetails
 				.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();

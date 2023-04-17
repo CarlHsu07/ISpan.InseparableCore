@@ -27,7 +27,7 @@ namespace ISpan.InseparableCore.ViewModels
 				FComment = model.FComment,
 				FDeleted = model.FDeleted,
 				FPostingDate = model.FPostingDate,
-				PostDate = model.FPostingDate.ToString("yy-MM-dd HH:mm:ss"),
+				PostDate = model.FPostingDate.ToString("yyyy-MM-dd HH:mm:ss"),
 			};
 		}
 		public static TMovieCommentDetails VmToModel(this MovieDetailVm vm)

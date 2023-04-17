@@ -1,7 +1,13 @@
 ﻿@model ISpan.InseparableCore.ViewModels.MovieVm
 
 <style>
+	.btnEditComment{
+
+	}
 	.Editable{
+
+	}
+	.unEditable{
 
 	}
 	.chosen {
@@ -59,10 +65,10 @@
 				</p>
 				<p>
 					<div class="divContainer">
-						<div>
-							@Html.DisplayNameFor(model => model.FMovieScore) :
+						<div style="font-size:larger">
+							@Html.DisplayNameFor(model => model.FMovieScore) : 
 						</div>
-						<div id="AverageScore" style="font-size:large">
+						<div id="AverageScore" style="font-size:larger">
 							@Model.FMovieScore
 						</div>
 						<div class="btn-toolbar inDivPosition" role="toolbar" aria-label="Toolbar with button groups">
@@ -96,11 +102,13 @@
 		</div>
 	</div>
 </div>
-
+@*存放評論*@
 <div id="divComment"></div>
+
 <div class="form-group">
 	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
 </div>
+
 <div class="divContainer">
 	<div class="input-group">
 		<span class="input-group-text">評論</span>
@@ -112,16 +120,16 @@
 </div>
 
 <div>
-	<a asp-action="Edit" asp-route-id="@Model?.FMovieId">Edit</a> |
-	<a asp-action="Index">Back to List</a>
+	<a asp-action="Index">返回</a>
 </div>
 @section Scripts{
 	<script>
-		function CommentDetail(FMemberId, FMovieId, FComment) {
+		//送出評論及展示評論ajax函數
+		function CommentDetail(FSerialNumber, FMemberId, FMovieId, FComment) {
 			$.ajax({
 				method: "post",
 				url: "/TMovies/MovieComment",
-				data: { FMemberId, FMovieId, FComment },
+				data: { FSerialNumber, FMemberId, FMovieId, FComment },
 				success: function (data) {
 					let context = JSON.parse(data);
 					//alert(data)
@@ -129,34 +137,41 @@
 
 					$("#divComment").html("")
 					$.each(context, function (index, value) {
+						if (value.FMemberId == memberId){
 						$("#divComment").append(`
-	<div class=" divBorder">
-		<div style="font-size:large; margin:10px 0 0 10px;" >
-			<div style="margin:5px" class="Editable">
-				${value.MemberName}	 ${value.PostDate}
-			</div>
-			<hr style="margin:0"/>
-			<div style="margin:5px">
-				${value.FComment}
-			</div>
-
-		</div>
-	</div>`
-						)
-						if (value.FMemberId == memberId)
-						{
-							$(".Editable").append(`
-		<button align="right" type="button" id="btnCommentEdit" class="btn btn-secondary">修改</button>
-
-							`)
-						}
+							<div class=" divBorder">
+								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
+									<div style="margin:5px" >
+										${value.MemberName}	 ${value.PostDate}
+							<button type="button" class="btn btn-secondary btnEditComment" value="${value.FSerialNumber}">修改</button>
+									</div>
+									<hr style="margin:0"/>
+									<div style="margin:5px" id="commentText">
+										${value.FComment}
+									</div>
+								</div>
+							</div>`
+						)}
+						else{
+						$("#divComment").append(`
+							<div class=" divBorder">
+								<div style="font-size:large; margin:10px 0 0 10px" >
+									<div style="margin:5px">
+										${value.MemberName}	 ${value.PostDate}
+									</div>
+									<hr style="margin:0"/>
+									<div style="margin:5px">${value.FComment}</div>
+								</div>
+							</div>`
+						)}
+						
 					})
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
 			})
 		}
-
+		//評分ajax
 		function ScoreDetail(FMemberId, FMovieId, FScore) {
 			$.ajax({
 				method: "post",
@@ -170,15 +185,34 @@
 				},
 			})
 		}
-
+		//開始編輯評論，生成編輯textarea
+		$(document).on('click', '.btnEditComment', function () {
+			let serialNumber = $(this).attr("value")
+			let text = $.trim($(`#F${serialNumber} #commentText`).text())
+			//alert(serialNumber+text)
+			$(`#F${serialNumber}`).html(`
+		<div class="divContainer">
+			<div class="input-group">
+				<span class="input-group-text">評論</span>
+				<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
+			</div>
+			<div>
+				<button type="button" id="btnComment" class="btn btn-secondary" value="${serialNumber}">留言</button>
+			</div>
+		</div>
+			`)
+		});
+		//送出評分
 		$('#Score').click(function () {
 			let score = $('.chosen').attr("value");
 			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FMovieId
-				$(this).html(score);
+			$(this).html(score);
 
 			ScoreDetail(memberId, movieId, score)
 		});
+
+		//單選按鈕組，按下時改變顏色
 		$('.btn').click(function () {
 			$('.btn-primary').addClass('btn-secondary');
 			$('.btn-secondary').removeClass('btn-primary');
@@ -186,19 +220,23 @@
 			$(this).removeClass('btn-secondary');
 			$(this).addClass('btn-primary');
 		});
+		//確認已選擇的單選按鈕
 		$('.btnScore').click(function () {
 			$('.btnScore').removeClass('chosen');
 
 			$(this).addClass('chosen');
 		});
-		$("#btnComment").click(function () {
+		//送出評論
+		$(document).on('click', '#btnComment', function () {
+			let serialNumber = $(this).attr("value")
 			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FMovieId
-				let comment = $("#FComment").val();
-			//alert(score + memberId + movieId + comment)
-			CommentDetail(memberId, movieId, comment)
+			let comment = $("#FComment").val();
+			alert(serialNumber)
+			CommentDetail(serialNumber, memberId, movieId, comment)
 		})
-		CommentDetail(0, @Model.FMovieId, "")
+		//展示評論
+		CommentDetail(0, 0, @Model.FMovieId, "")
 	</script>
 
 }
