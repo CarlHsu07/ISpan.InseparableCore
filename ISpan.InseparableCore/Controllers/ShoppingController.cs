@@ -237,22 +237,6 @@ namespace ISpan.InseparableCore.Controllers
         //綠界API
         public IActionResult Pay(CorderVM vm)
         {
-            ////先將order資料記錄在session
-            //string json = string.Empty;
-            //if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_ORDER_LIST))
-            //{
-            //    ViewBag.error = "操作錯誤...將重導回訂購畫面!!";
-            //    return View();
-            //}
-
-            //vm.FOrderDate = DateTime.Now;
-            //vm.FModifiedTime = DateTime.Now;
-            //vm.FMemberId = 1; //todo 目前尚未解決登入
-            //vm.FStatus = true;
-
-            //json = JsonSerializer.Serialize(vm);
-            //HttpContext.Session.SetString(CDitionary.SK_PURCHASED_ORDER_LIST, json);
-
             //todo 先存DB????
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;

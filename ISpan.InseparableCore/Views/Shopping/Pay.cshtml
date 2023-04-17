@@ -4,7 +4,7 @@
 }
 
 <link href="~/css/loading.css" rel="stylesheet" />
-<div class="loadingdiv" id="loading" style="display: none">
+<div class="loadingdiv" id="loading" style="opacity: 1;">
     <img src="~/images/Infinity-1s-200px.gif" />
 </div>
 <form id="form" name="form" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="POST" enctype="application/x-www-form-urlencoded">
@@ -17,7 +17,6 @@
 </form>
 <script type="text/javascript">
     window.onload = function () {
-        $('#loading').css("display", ""); //before submit
         document.getElementById("form").submit();
     }
 </script>
