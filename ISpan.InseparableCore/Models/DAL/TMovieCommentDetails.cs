@@ -5,12 +5,14 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models.DAL
 {
-    public partial class TmovieScoreDetails
+    public partial class TMovieCommentDetails
     {
         public int FSerialNumber { get; set; }
         public int FMovieId { get; set; }
         public int FMemberId { get; set; }
-        public int FScore { get; set; }
+        public string FComment { get; set; }
+        public DateTime FPostingDate { get; set; }
+        public bool FDeleted { get; set; }
 
         public virtual TMembers FMember { get; set; }
         public virtual TMovies FMovie { get; set; }

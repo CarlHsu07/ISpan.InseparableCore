@@ -28,7 +28,7 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }
 		[DisplayName("會員評分")]
-		public int? FMovieScore { get; set; } = 0;
+		public decimal? FMovieScore { get; set; } = 0;
 		public string? CategoryIds { get; set; }
 
 		[DisplayName("電影類別")]

@@ -118,21 +118,57 @@ namespace ISpan.InseparableCore.Controllers
 			}
 
 			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
-			
+
 			return View(vm);
 		}
 		[HttpPost]
-		public async Task<IActionResult> Details(TMovieScoreDetails detail)
+		public async Task<IActionResult> MovieComment(TMovieCommentDetails comment)
 		{
-			//TMovieScoreDetails detailInDb = _context.TMovieScoreDetails.FirstOrDefault(t => t.FMovieId == detail.FMovieId
-			//															 && t.FMemberId == detail.FMemberId);
-			//if (detailInDb == null) _context.Add(detail);
-			//else
-			//{
-			//	detailInDb.FScore = detail.FScore;
-			//	_context.Update(detailInDb);
-			//}
-			return Ok(detail.ToJson());
+			List<MovieDetailVm> vms = new List<MovieDetailVm>();
+			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FComment))
+			{
+				vms = _context.TMovieCommentDetails
+	.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
+				foreach (var vm in vms)
+				{
+					vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
+				}
+				return Ok(vms.ToJson());
+			}
+
+			_context.Add(comment);
+			_context.SaveChanges();
+
+			vms = _context.TMovieCommentDetails
+				.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
+			foreach (var vm in vms)
+			{
+				vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
+			}
+			return Ok(vms.ToJson());
+		}
+
+		public async Task<IActionResult> MovieScore(TmovieScoreDetails score)
+		{
+			TmovieScoreDetails scoreInDb = _context.TmovieScoreDetails.FirstOrDefault(t => t.FMovieId == score.FMovieId && t.FMemberId == score.FMemberId);
+			if (scoreInDb == null)
+			{
+				_context.Add(score);
+			}
+			else
+			{
+				scoreInDb.FScore = score.FScore;
+				_context.Update(scoreInDb);
+			}
+			_context.SaveChanges();
+			//計算電影評分
+			var movie = await _context.TMovies.FindAsync(score.FMovieId);
+			movie.FMovieScore = (decimal)_context.TmovieScoreDetails
+				.Where(t => t.FMovieId == score.FMovieId).Average(t => t.FScore);
+			_context.Update(movie);
+			_context.SaveChanges();
+
+			return Ok(movie.FMovieScore.ToString("f1"));
 		}
 
 		// GET: TMovies/Create

@@ -103,6 +103,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[tMovieCommentDetails]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tMovieDirectorDetails]",
          "ObjectType": 0
       },
@@ -119,7 +123,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tMovieScoreDetails]",
+         "Name": "[dbo].[TMovieScoreDetails]",
          "ObjectType": 0
       },
       {

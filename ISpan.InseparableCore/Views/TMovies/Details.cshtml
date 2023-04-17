@@ -1,112 +1,184 @@
 ﻿@model ISpan.InseparableCore.ViewModels.MovieVm
 
-@{
-    ViewData["Title"] = "Details";
-}
+<style>
+	.Editable{
 
-<h1>Details</h1>
+	}
+	.chosen {
+	}
 
-<div>
-    <h4>TMovies</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieIntroduction)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieIntroduction)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OnDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OnDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OffDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OffDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieLength)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieLength)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieScore)
-        </dt>
-        <dd class = "col-sm-10" id="Score">
-            @Html.DisplayFor(model => model.FMovieScore)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Level)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Level)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Categories)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Categories)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieActors)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieActors)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovieDirectors)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovieDirectors)
-        </dd>
-    </dl>
+	.btnScore {
+	}
+
+	.divContainer {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+	.divBorder {
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -20px;
+	}
+</style>
+
+<div style="margin-top:20px">
+	<h1>
+		@Html.DisplayFor(model => model.FMovieName)
+	</h1>
+
+	<div class="divContainer divBorder">
+		<hr />
+		<div class="divContainer ">
+			<div style="margin:0 20px 0 0">
+				<p>
+					<img src="~/images/@Model.FMovieImagePath" width="400">
+				</p>
+			</div>
+
+			<div>
+				<p>
+					@Html.DisplayNameFor(model => model.OnDate) : @Model.OnDate
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.OffDate) : @Model.OffDate
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieLength) : @Model.FMovieLength 分
+				</p>
+				<p>
+					<div class="divContainer">
+						<div>
+							@Html.DisplayNameFor(model => model.FMovieScore) :
+						</div>
+						<div id="AverageScore" style="font-size:large">
+							@Model.FMovieScore
+						</div>
+						<div class="btn-toolbar inDivPosition" role="toolbar" aria-label="Toolbar with button groups">
+							<div class="btn-group me-2" role="group" aria-label="First group">
+								<button type="button" class="btn btn-secondary btnScore" value="1">1</button>
+								<button type="button" class="btn btn-secondary btnScore" value="2">2</button>
+								<button type="button" class="btn btn-secondary btnScore" value="3">3</button>
+								<button type="button" class="btn btn-secondary btnScore" value="4">4</button>
+								<button type="button" class="btn btn-secondary btnScore" value="5">5</button>
+							</div>
+							<button type="button" class="btn btn-secondary" id="Score">評分</button>
+						</div>
+					</div>
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.Categories) : @Model.Categories
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.Level) : @Model.Level
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieActors) : @Model.FMovieActors
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieDirectors) : @Model.FMovieDirectors
+				</p>
+				<p>
+					@Html.DisplayNameFor(model => model.FMovieIntroduction) : @Model.FMovieIntroduction
+				</p>
+			</div>
+		</div>
+	</div>
 </div>
+
+<div id="divComment"></div>
 <div class="form-group">
 	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
 </div>
-<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-	<div class="btn-group me-2" role="group" aria-label="First group">
-		<button type="button" class="btn btn-secondary" value="1">1</button>
-		<button type="button" class="btn btn-secondary" value="2">2</button>
-		<button type="button" class="btn btn-secondary" value="3">3</button>
-		<button type="button" class="btn btn-secondary" value="4">4</button>
-		<button type="button" class="btn btn-secondary" value="5">5</button>
+<div class="divContainer">
+	<div class="input-group">
+		<span class="input-group-text">評論</span>
+		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
+	</div>
+	<div>
+		<button type="button" id="btnComment" class="btn btn-secondary">留言</button>
 	</div>
 </div>
-<button type="button" id="go">go</button>
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FMovieId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Edit" asp-route-id="@Model?.FMovieId">Edit</a> |
+	<a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts{
 	<script>
-		function Score(memberId, score, movieId) {
+		function CommentDetail(FMemberId, FMovieId, FComment) {
 			$.ajax({
 				method: "post",
-				url: "/TMovies/Details",
-				data: { memberId, score, movieId},
+				url: "/TMovies/MovieComment",
+				data: { FMemberId, FMovieId, FComment },
 				success: function (data) {
 					let context = JSON.parse(data);
-					alert("go")
-					$("#Score").html(`${context.FScore},${context.FMemberId},${context.FMoiveId}`);
+					//alert(data)
+					let memberId = $("#FMemberId").find(":selected").attr("value")
+
+					$("#divComment").html("")
+					$.each(context, function (index, value) {
+						$("#divComment").append(`
+	<div class=" divBorder">
+		<div style="font-size:large; margin:10px 0 0 10px;" >
+			<div style="margin:5px" class="Editable">
+				${value.MemberName}	 ${value.PostDate}
+			</div>
+			<hr style="margin:0"/>
+			<div style="margin:5px">
+				${value.FComment}
+			</div>
+
+		</div>
+	</div>`
+						)
+						if (value.FMemberId == memberId)
+						{
+							$(".Editable").append(`
+		<button align="right" type="button" id="btnCommentEdit" class="btn btn-secondary">修改</button>
+
+							`)
+						}
+					})
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
 			})
 		}
+
+		function ScoreDetail(FMemberId, FMovieId, FScore) {
+			$.ajax({
+				method: "post",
+				url: "/TMovies/MovieScore",
+				data: { FMemberId, FMovieId, FScore },
+				success: function (data) {
+					let context = JSON.parse(data);
+					$("#AverageScore").html(context);
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		}
+
+		$('#Score').click(function () {
+			let score = $('.chosen').attr("value");
+			let memberId = $("#FMemberId").find(":selected").attr("value")
+			let movieId = @Model.FMovieId
+				$(this).html(score);
+
+			ScoreDetail(memberId, movieId, score)
+		});
 		$('.btn').click(function () {
 			$('.btn-primary').addClass('btn-secondary');
 			$('.btn-secondary').removeClass('btn-primary');
@@ -114,12 +186,19 @@
 			$(this).removeClass('btn-secondary');
 			$(this).addClass('btn-primary');
 		});
-		$("#go").click(function() {
-			let score = $('.btn-primary').attr("value");
+		$('.btnScore').click(function () {
+			$('.btnScore').removeClass('chosen');
+
+			$(this).addClass('chosen');
+		});
+		$("#btnComment").click(function () {
 			let memberId = $("#FMemberId").find(":selected").attr("value")
-			alert(score + memberId +@Model.FMovieId)
-			Score(memberId, score, movieId)
+			let movieId = @Model.FMovieId
+				let comment = $("#FComment").val();
+			//alert(score + memberId + movieId + comment)
+			CommentDetail(memberId, movieId, comment)
 		})
+		CommentDetail(0, @Model.FMovieId, "")
 	</script>
 
 }

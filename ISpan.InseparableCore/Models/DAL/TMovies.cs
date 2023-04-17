@@ -11,11 +11,12 @@ namespace ISpan.InseparableCore.Models.DAL
         {
             TMovieActorDetails = new HashSet<TMovieActorDetails>();
             TMovieCategoryDetails = new HashSet<TMovieCategoryDetails>();
+            TMovieCommentDetails = new HashSet<TMovieCommentDetails>();
             TMovieDirectorDetails = new HashSet<TMovieDirectorDetails>();
             TMovieKeywordDetails = new HashSet<TMovieKeywordDetails>();
-            TMovieScoreDetails = new HashSet<TMovieScoreDetails>();
             TSessions = new HashSet<TSessions>();
             TTicketOrderDetails = new HashSet<TTicketOrderDetails>();
+            TmovieScoreDetails = new HashSet<TmovieScoreDetails>();
         }
 
         public int FMovieId { get; set; }
@@ -26,17 +27,19 @@ namespace ISpan.InseparableCore.Models.DAL
         public DateTime? FMovieOffDate { get; set; }
         public int FMovieLength { get; set; }
         public string FMovieImagePath { get; set; }
-        public int FMovieScore { get; set; }
+        public decimal FMovieScore { get; set; }
         public string FMovieActors { get; set; }
         public string FMovieDirectors { get; set; }
+        public bool? FDeleted { get; set; }
 
         public virtual TMovieLevels FMovieLevel { get; set; }
         public virtual ICollection<TMovieActorDetails> TMovieActorDetails { get; set; }
         public virtual ICollection<TMovieCategoryDetails> TMovieCategoryDetails { get; set; }
+        public virtual ICollection<TMovieCommentDetails> TMovieCommentDetails { get; set; }
         public virtual ICollection<TMovieDirectorDetails> TMovieDirectorDetails { get; set; }
         public virtual ICollection<TMovieKeywordDetails> TMovieKeywordDetails { get; set; }
-        public virtual ICollection<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual ICollection<TSessions> TSessions { get; set; }
         public virtual ICollection<TTicketOrderDetails> TTicketOrderDetails { get; set; }
+        public virtual ICollection<TmovieScoreDetails> TmovieScoreDetails { get; set; }
     }
 }

@@ -188,13 +188,5 @@ namespace ISpan.InseparableCore.Models.DAL
 			}
 		}
 
-		public void CreateMovieScore(TMovieScoreDetails detail)
-		{
-			context.Add(detail);
-		}
-		public void EditMovieScore(TMovieScoreDetails detail)
-		{
-			context.Update(detail);
-		}
 	}
 }
