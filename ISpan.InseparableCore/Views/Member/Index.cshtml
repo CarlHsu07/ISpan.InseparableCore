@@ -1,125 +1,55 @@
-﻿@model IEnumerable<ISpan.InseparableCore.Models.DAL.TMembers>
+﻿@model ISpan.InseparableCore.ViewModels.CMemberProfileViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>會員中心</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FMemberId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FLastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FFirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FEmail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FPasswordHash)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FPasswordSalt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FDateOfBirth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FCellphone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FPhotoPath)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FIntroduction)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FTotalMemberPoint)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FSignUpTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FAccountStatusNavigation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FArea)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FGender)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMemberId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FLastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FFirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FEmail)
-            </td>
-            <td>
-                
-            </td>
-            <td>
-                
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FDateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FCellphone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FPhotoPath)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FIntroduction)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FTotalMemberPoint)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FSignUpTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FAccountStatusNavigation.FStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArea.FAreaName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FGender.FGenderType)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<h5 class="card-title">個人資料</h5>
+
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.MemberId</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="Gender" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Gender</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Address</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
+</div>
+<div class="row">
+    <div class="col-lg-3 col-md-4 label "><label asp-for="TotalMemberPoint" class="control-label"></label></div>
+    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.TotalMemberPoint</span></div>
+</div>
+

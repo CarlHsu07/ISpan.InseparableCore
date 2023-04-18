@@ -128,7 +128,7 @@ namespace ISpan.InseparableCore.ViewModels
         //	set { _member.FSignUpTime = value; }
         //}
 
-        [Display(Name = "大頭貼照")]
+        [Display(Name = "上傳新大頭貼照")]
         public IFormFile? MemberPhoto { get; set; }
 
 	}

@@ -82,7 +82,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="PhotoPath" class="control-label"></label>
-                <img src="..." class="rounded" alt="會員大頭貼">
+                <div>
+                    @{
+                    if (!String.IsNullOrEmpty(Model.PhotoPath))
+                        {
+                            <img src="/images/memberProfilePhotos/@Model.PhotoPath" asp-append-version="true" class="rounded" alt="會員大頭貼" height="100">
+                        }
+                        else
+                        {
+                            <label class="control-label">還沒上傳大頭貼</label>
+                        }
+                    }
+                    
+                </div>
                 <span asp-validation-for="PhotoPath" class="text-danger"></span>
             </div>
             <div class="form-group">

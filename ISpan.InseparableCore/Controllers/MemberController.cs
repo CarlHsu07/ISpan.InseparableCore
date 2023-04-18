@@ -26,11 +26,94 @@ namespace ISpan.InseparableCore.Controllers
             _enviro = enviro;
         }
 
-        // GET: Member
-        public async Task<IActionResult> Index()
+        // GET: Member/Index/2
+        public async Task<IActionResult> Index(int? id)
         {
-            var inseparableContext = _context.TMembers.Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
-            return View(await inseparableContext.ToListAsync());
+            string gender = string.Empty;
+            string city = string.Empty;
+            string area = string.Empty;
+            string accountStatus = string.Empty;
+
+            if (id == null || _context.TMembers == null)
+            {
+                return NotFound();
+            }
+
+            //var member = _context.TMembers
+            //    .Where(m=>m.FId == id)
+            //    .Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
+
+            var member = await _context.TMembers.FindAsync(id);
+
+            if (member == null) // 沒找到會員
+            {
+                return NotFound();
+            }
+
+            if (member.FGenderId != null) // 取性別
+            {
+                gender = _context.TGenders
+                    .Where(g => g.FGenderId == member.FGenderId)
+                    .Select(x => x.FGenderType)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAreaId != null) // 取縣市
+            {
+                city = _context.TAreas
+                    .Where(a => a.FId == member.FAreaId)
+                    .Select(x => x.FCity)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAreaId != null) // 取地區
+            {
+                area = _context.TAreas
+                    .Where(a => a.FId == member.FAreaId)
+                    .Select(x => x.FAreaName)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAccountStatus != null) // 取會員狀態
+            {
+                accountStatus = _context.TAccountStatuses
+                    .Where(s => s.FStatusId == member.FAccountStatus)
+                    .Select(x => x.FStatus)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
+            var viewModel = new CMemberProfileViewModel
+            {
+                // 設定 ViewModel 的屬性值
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
+                DateOfBirth = member.FDateOfBirth,
+                Gender = gender,
+                Cellphone = member.FCellphone,
+                City = city,
+                Area = area,
+                Address = member.FAddress,
+                PhotoPath = member.FPhotoPath,
+                Introduction = member.FIntroduction,
+                AccountStatus = accountStatus,
+                TotalMemberPoint = member.FTotalMemberPoint,
+                SignUpTime = member.FSignUpTime
+
+            };
+
+            //ViewData["Gender"] = gender; // 性別
+            //ViewData["City"] = city; // 縣市
+            //ViewData["Area"] = area; // 區域
+
+            return View(viewModel);
         }
 
         // GET: Member/Details/5
@@ -147,7 +230,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             var member = await _context.TMembers.FindAsync(id);
-            if (member == null) // 用id沒找到會員
+            if (member == null) // 沒找到會員
             {
                 return NotFound();
             }
@@ -168,6 +251,7 @@ namespace ISpan.InseparableCore.Controllers
                 Cellphone = member.FCellphone,
                 Area = member.FAreaId,
                 Address = member.FAddress,
+                PhotoPath = member.FPhotoPath,
                 Introduction = member.FIntroduction
 
             };
@@ -181,7 +265,6 @@ namespace ISpan.InseparableCore.Controllers
             ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
 
-            //ViewData["Cities"] = ; // 
             return View(viewModel);
         }
 
@@ -204,10 +287,10 @@ namespace ISpan.InseparableCore.Controllers
                     TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
                     if (member != null)
                     {
-                        if (MemberIn.MemberPhoto != null) // todo 圖片不會正確存
+                        if (MemberIn.MemberPhoto != null) // todo 有些圖片不會正確存？
                         {
-                            string type = MemberIn.MemberPhoto.ContentType;
-                            string photoName = "memberProfilePhotos_" + Guid.NewGuid().ToString() + ".jpg";
+                            string extension = Path.GetExtension(MemberIn.MemberPhoto.FileName).ToLower();
+                            string photoName = "memberProfilePhotos_" + Guid.NewGuid().ToString() + extension;
                             string photoPath = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
                             MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
                             member.FPhotoPath = photoName;
