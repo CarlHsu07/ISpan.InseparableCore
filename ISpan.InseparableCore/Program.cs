@@ -1,6 +1,10 @@
+using ISpan.InseparableCore.Controllers;
 using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Configuration;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +14,9 @@ builder.Services.AddSession();
 
 // �إ�InseparableContext����
 builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("InseparableConnection")));
+
+//Map api
+builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
 
 var app = builder.Build();
 

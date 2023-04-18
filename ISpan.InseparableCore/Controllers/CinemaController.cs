@@ -1,16 +1,19 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using NuGet.Protocol;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class CinemaController : Controller
     {
-        private InseparableContext _db;
-        public CinemaController(InseparableContext db)
+        private readonly InseparableContext _db;
+        private readonly ApiKeys _key;
+        public CinemaController(InseparableContext db, IOptions<ApiKeys> key)
         {
             _db = db;
+            _key = key.Value;
         }
 
         public IActionResult Cinema()
@@ -47,7 +50,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.FLat = data.FLat;
             vm.FLng = data.FLng;
             vm.FTraffic = data.FTraffic.Split("<br>").ToList();
-            vm.Key = "ZPyRU3c5rVSNfr62GfzHZ5HzQnb01eaHY6z11OZ_Ke0"; //改存到appsetting
+            vm.Key = _key.MapKey; //改存到appsetting
             return Ok(vm.ToJson());
         }
     }

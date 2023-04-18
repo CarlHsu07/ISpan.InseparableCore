@@ -3,6 +3,7 @@ using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
@@ -16,9 +17,11 @@ namespace ISpan.InseparableCore.Controllers
     public class ShoppingController : Controller
     {
         private readonly InseparableContext _db;
-        public ShoppingController(InseparableContext db)
+        private readonly ApiKeys _key;
+        public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
+            _key = key.Value;
         }
         public IActionResult Ticket(CticketVM vm)
         {
@@ -454,7 +457,6 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         //綠界雜湊
-        //todo 金鑰藏起來
         private string GetCheckMacValue(Dictionary<string, string> order)
         {
             var param = order.Keys.OrderBy(x => x).Select(key => key + "=" + order[key]).ToList();
@@ -462,10 +464,10 @@ namespace ISpan.InseparableCore.Controllers
             var checkValue = string.Join("&", param);
 
             //測試用的 HashKey
-            var hashKey = "pwFHCqoQZGmho4w6";
+            var hashKey = _key.hashKey;
 
             //測試用的 HashIV
-            var HashIV = "EkRm7iFT261dpevs";
+            var HashIV = _key.HashIV;
 
             checkValue = $"HashKey={hashKey}" + "&" + checkValue + $"&HashIV={HashIV}";
 

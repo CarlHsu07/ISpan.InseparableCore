@@ -2,13 +2,6 @@
 @{
     ViewData["Title"] = "Pay";
 }
-@if (ViewBag.error != null)
-{
-    <h1>@ViewBag.error</h1>
-    //todo settimeout跳轉
-}
-else
-{
 
     <link href="~/css/loading.css" rel="stylesheet" />
     <div class="loadingdiv" id="loading" style="opacity: 1;">
@@ -27,4 +20,3 @@ else
         document.getElementById("form").submit();
         }
     </script>
-}
