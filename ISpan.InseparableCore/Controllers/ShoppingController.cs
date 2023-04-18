@@ -61,7 +61,7 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult Booking(int? cinema, int? session)
         {
             CbookingVM vm = new CbookingVM();
-            if (session == null)
+            if (session == null ||cinema==null)
             {
                 return RedirectToAction("Ticket");
             }
@@ -325,7 +325,6 @@ namespace ISpan.InseparableCore.Controllers
         [HttpPost]
         public IActionResult Paydone(int? id)
         {
-            //todo 會是get
             if (id == null)
             {
                 string error = "網頁加載時出現問題";
