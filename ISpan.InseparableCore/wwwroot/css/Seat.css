@@ -1,0 +1,69 @@
+﻿body {
+    font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+td div {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+span {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+}
+
+.left p {
+    display: inline;
+    margin: 5px;
+    font-size: 10px;
+}
+
+.not-seleted {
+    border: solid 1.5px #6c7d8f;
+}
+
+.seleted {
+    border: solid 1.5px #6c7d8f;
+    background-color: #2E86C1;
+}
+
+.solid {
+    border: solid 1.5px #6c7d8f;
+    background-color: #F1C40F;
+}
+
+.movie {
+    overflow: auto;
+    width: 80%;
+    padding: 20px;
+    border: solid 2px #154360;
+    margin: auto;
+}
+
+.title {
+    text-align: center;
+    margin: 10px;
+}
+
+.screen {
+    text-align: center;
+}
+
+    .screen p {
+        border: solid 2px #6c7d8f;
+        border-radius: 10px;
+        margin: auto;
+        margin-bottom: 40px;
+    }
+
+.seat {
+    overflow: auto;
+    display: grid;
+}
+
+.center {
+    margin-top: 10px;
+    text-align: center;
+}

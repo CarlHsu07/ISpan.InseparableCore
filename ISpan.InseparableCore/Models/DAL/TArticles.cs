@@ -18,6 +18,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public int FMemberId { get; set; }
         public int FArticleCategoryId { get; set; }
         public DateTime FArticlePostingDate { get; set; }
+        public DateTime FArticleModifiedDate { get; set; }
         public int FArticleLikes { get; set; }
         public int FArticleClicks { get; set; }
         public string FArticleContent { get; set; }

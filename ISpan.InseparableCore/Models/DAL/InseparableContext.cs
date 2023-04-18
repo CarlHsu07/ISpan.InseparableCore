@@ -309,6 +309,11 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FArticleLikes).HasColumnName("fArticleLikes");
 
+                entity.Property(e => e.FArticleModifiedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fArticleModifiedDate")
+                    .HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.FArticlePostingDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fArticlePostingDate")
@@ -956,6 +961,10 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FOrderId).HasColumnName("fOrderID");
 
                 entity.Property(e => e.FCinemaId).HasColumnName("fCinemaID");
+
+                entity.Property(e => e.FCreditTradeNo)
+                    .HasMaxLength(300)
+                    .HasColumnName("fCreditTradeNo");
 
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
 

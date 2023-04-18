@@ -1,0 +1,41 @@
+th, td {
+    width: 220px;
+    font-size: 20px;
+    padding: 3px;
+}
+
+span {
+    display: inline-block;
+    width: 250px;
+    margin: 10px;
+}
+
+select {
+    width: 40%;
+}
+
+p {
+    display: inline;
+}
+
+th {
+    background-color: #3cb0b0;
+}
+
+.background {
+    background-color: #717d89;
+    padding: 3px;
+}
+
+.margin-top {
+    margin-top: 5px;
+}
+
+.next {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.right {
+    text-align: right;
+}

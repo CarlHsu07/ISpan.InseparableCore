@@ -4,18 +4,7 @@
     ViewData["Title"] = "CartView";
 }
 @section Styles{
-    <style>
-        th, td {
-            width: 220px;
-            font-size: 20px;
-            padding: 3px;
-        }
-
-        .center {
-            margin-top: 10px;
-            text-align: center;
-        }
-    </style>
+    <link href="~/css/CartView.css" rel="stylesheet"/>
 }
 <h1>確認訂單</h1>
 @using (Html.BeginForm("CreditPay", "Shopping", FormMethod.Post, new { id = "form" }))
@@ -104,26 +93,5 @@
     </div>
 }
 @section Scripts{
-    <script>$(function () {
-            var total = 0;
-            var regular = ($('#regularsub').html() == null) ? 0 : parseInt($('#regularsub').html());
-            var concession = ($('#concessionsub').html() == null) ? 0 : parseInt($('#concessionsub').html());
-
-            total = regular + concession;
-            var product = document.querySelectorAll('#productsub');
-            $(product).each(function () {
-
-                var product = ($(this).html() == null) ? 0 : parseInt($(this).html());
-                total += product;
-            });
-
-            $('#total').html(total);
-            $('#money').val(total);
-
-        });
-
-        function cashpay() {
-            $('#form').attr('action', 'CashPay');
-            $('#form').submit();
-        };</script>
+    <script type="text/javascript" src="~/js/CartView.js"></script>
 }

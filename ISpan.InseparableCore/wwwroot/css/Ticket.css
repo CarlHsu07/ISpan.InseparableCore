@@ -1,0 +1,19 @@
+﻿.mydiv {
+    margin-left: 100px;
+}
+
+.top {
+    margin-top: 30px;
+}
+
+.list {
+    padding: 5px;
+    display: inline;
+    margin: 10px;
+    border-radius: 5px;
+    font-size: 120%;
+}
+
+a:hover {
+    color: #80FFFF;
+}

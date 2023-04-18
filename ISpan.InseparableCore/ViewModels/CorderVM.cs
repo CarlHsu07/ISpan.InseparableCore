@@ -22,7 +22,9 @@ namespace ISpan.InseparableCore.ViewModels
         public DateTime FModifiedTime { get { return _orders.FModifiedTime; } set { _orders.FModifiedTime = value; } }
         public decimal FTotalMoney { get { return _orders.FTotalMoney; } set { _orders.FTotalMoney = value; } }
         public bool FStatus { get { return _orders.FStatus; } set { _orders.FStatus = value; } }
+        public string FCreditTradeNo { get { return _orders.FCreditTradeNo; } set { _orders.FCreditTradeNo = value; } }
         public int regular { get; set; }
         public int concession { get; set; }
+        
     }
 }

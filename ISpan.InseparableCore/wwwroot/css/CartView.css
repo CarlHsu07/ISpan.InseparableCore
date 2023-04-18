@@ -1,0 +1,10 @@
+﻿th, td {
+    width: 220px;
+    font-size: 20px;
+    padding: 3px;
+}
+
+.center {
+    margin-top: 10px;
+    text-align: center;
+}

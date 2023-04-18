@@ -25,6 +25,8 @@ namespace ISpan.InseparableCore.Controllers
         }
         public IActionResult Ticket(CticketVM vm)
         {
+            //以防萬一只要一開啟訂購畫面 第一件事清空session  //todo 確認其他人沒有用session
+            HttpContext.Session.Clear();
             vm.cinema = _db.TCinemas.Select(t => t);
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
@@ -292,6 +294,16 @@ namespace ISpan.InseparableCore.Controllers
                 { "EncryptType","1"},
             };
             order["CheckMacValue"] = GetCheckMacValue(order);
+
+            var get = _db.TOrders.FirstOrDefault(t => t.FOrderId == orderid);
+            if (get == null)
+            {
+                string error = "訂單出現錯誤!請重新下單";
+                return RedirectToAction("Error", new { error });
+            }
+            get.FCreditTradeNo = TradeNo;
+            _db.SaveChanges();
+
             return View(order);
 
         }

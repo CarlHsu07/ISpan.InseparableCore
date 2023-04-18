@@ -5,27 +5,7 @@
 }
 @section Styles{
     <link href="~/css/loading.css" rel="stylesheet"/>
-    <style>
-        .mydiv {
-            margin-left: 100px;
-        }
-
-        .top {
-            margin-top: 30px;
-        }
-
-        .list {
-            padding: 5px;
-            display: inline;
-            margin: 10px;
-            border-radius: 5px;
-            font-size: 120%;
-        }
-
-        a:hover {
-            color: #80FFFF;
-        }
-    </style>
+    <link href="~/css/Ticket.css" rel="stylesheet"/>
 }
 @using (Html.BeginForm())
 {
@@ -81,7 +61,7 @@
     <script>
         $(function () {
             setTimeout(function () {
-            $('#loading').css("display", "none");
+                $('#loading').css("display", "none");
             }, 500);
             $("#cinema").val(@Model.cinemaId);
             $("#movie").val(@Model.movieId);
@@ -92,9 +72,9 @@
             var session = $(this).attr('session');
 
             $('#form').append(`<form action="/Shopping/Booking" method="post" id="ticketform">
-                            <input type="hidden" name="cinema" value="${cinema}" />
-                            <input type="hidden" name="session" value="${session}" />
-                            </form>`);
+                                    <input type="hidden" name="cinema" value="${cinema}" />
+                                    <input type="hidden" name="session" value="${session}" />
+                                    </form>`);
             $('#ticketform').submit();
         });
     </script>

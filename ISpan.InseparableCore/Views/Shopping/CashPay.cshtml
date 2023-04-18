@@ -2,11 +2,14 @@
 @{
     ViewData["Title"] = "Paydone";
 }
-@if(@ViewBag.error!=null){
-<h1>@ViewBag.error</h1>
-        //todo settimeout跳轉
- }
- else
- {
-<h1>Paydone</h1>
+<form action="/Shopping/Ticket" method="post" id="form">
+    <div style="text-align:center;" id="center">
+        <br />
+        <h2>訂購完成</h2>
+        <br />
+        <h4></h4>
+    </div>
+</form>
+@section Scripts{
+    <script src="~/js//ActionToShopping.js" type="text/javascript"></script>
 }

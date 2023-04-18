@@ -1,15 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Error";
 }
-@section Styles{
-    <style>
-        .center {
-            text-align: center;
-        }
-    </style>
-}
     <form action="/Shopping/Ticket" method="post" id="form">
-        <div class="center">
+    <div style="text-align:center;" id="center">
             <br />
             <h3>@ViewBag.error</h3>
             <br />
@@ -17,22 +10,5 @@
         </div>
     </form>
     @section Scripts{
-    <script>
-        $(document).ready(function () {
-            var count = 3;
-
-            function updateCountdown() {
-                $('.center h4').text(`將於${count}秒後導回訂購畫面...`);
-                count--;
-            }
-
-            updateCountdown();
-
-            setInterval(updateCountdown, 1000);
-
-            setTimeout(function () {
-                $('#form').submit()
-            }, 3000);
-        });
-    </script>
+    <script src="~/js//ActionToShopping.js" type="text/javascript"></script>
 }
