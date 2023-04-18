@@ -43,13 +43,14 @@ function caritem() {
     var regularnum = $("#regularnum").val();
     var concessionnum = $("#concessionnum").val();
     var total = 0;
-    $("#cartitem").html(``)
+    $("#" + regular).remove();
+    $("#" + concession).remove();
     if (regularnum > 0) {
-        $("#cartitem").append(`<li>${regular} <p>x${regularnum} = ${regularnum * regularprice}</p></li>`)
+        $("#ticketitem").append(`<li id="${regular}">${regular} <p>x${regularnum} = ${regularnum * regularprice}</p></li>`)
         total += regularnum * regularprice;
     }
     if (concessionnum > 0) {
-        $("#cartitem").append(`<li>${concession} <p>x${concessionnum} = ${concessionnum * concessionprice}</p></li>`);
+        $("#ticketitem").append(`<li id="${concession}">${concession} <p>x${concessionnum} = ${concessionnum * concessionprice}</p></li>`);
         total += concessionnum * concessionprice;
     }
 
@@ -60,27 +61,6 @@ function caritem() {
         var price = $(this).attr('price');
         var num = $(this).val();
         var id = $(this).attr('pid');
-
-
-        $.ajax({
-            method: 'POST',
-            url: '/Shopping/CartItem',
-            data: {
-                productId: id,
-                quantity: num
-            },
-            success: function (data) {
-                if (data == 'pass') {
-                    $("#cartitem").append(`<li>${name} <p>x${num} = ${num * price}</p></li>`);
-                } else {
-                    console.log(data)
-                }
-
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
 
         total += num * price;
     })

@@ -278,6 +278,7 @@ namespace ISpan.InseparableCore.Controllers
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
             var web = "https://localhost:7021/"; //todo 上線要改
+            //var web = _envior.WebRootPath;
             var order = new Dictionary<string, string>
             {
                 { "MerchantID",  "3002607"},
@@ -320,14 +321,17 @@ namespace ISpan.InseparableCore.Controllers
                 return ResponseError();
             }
         }
+
+        [HttpPost]
         public IActionResult Paydone(int? id)
         {
+            //todo 會是get
             if (id == null)
             {
                 string error = "網頁加載時出現問題";
                 return RedirectToAction("Error", new { error });
             }
-            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
+            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId==id);
             if (order == null)
             {
                 string error = "網頁加載時出現問題";
@@ -336,7 +340,7 @@ namespace ISpan.InseparableCore.Controllers
 
             order.FStatus = true;
 
-            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);
+            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == order.FOrderId);
             foreach (var item in ticket)
             {
                 item.FStatus = true;
