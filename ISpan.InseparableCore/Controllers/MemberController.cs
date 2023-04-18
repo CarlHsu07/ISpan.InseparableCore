@@ -110,13 +110,14 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FDateOfBirth = MemberIn.DateOfBirth;
                 newMember.FGenderId = MemberIn.GenderId;
                 newMember.FAreaId = MemberIn.Area;
+                newMember.FAddress = MemberIn.Address;
+
 
                 // 加密會員密碼
                 #region
                 string password = MemberIn.Password; // 要加密的密碼
-
-                // 產生鹽值
-                byte[] salt = CPasswordHelper.GenerateSalt();
+                
+                byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
 
                 // 將密碼與鹽值結合後進行加密
                 byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
@@ -125,8 +126,6 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FPasswordSalt = Convert.ToBase64String(salt);
                 newMember.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
-
-
 
                 _context.Add(newMember);
                 await _context.SaveChangesAsync();
@@ -307,7 +306,8 @@ namespace ISpan.InseparableCore.Controllers
                 .Where(a => a.FCityId == cityId)
                 .Select(a => new
                 {
-                    zipCode = a.FZipCode,
+                    areaID = a.FId,
+                    //cityID = a.FCityId,
                     areaName = a.FAreaName
                 })
                 .ToList();

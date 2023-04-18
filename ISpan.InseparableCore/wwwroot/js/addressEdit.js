@@ -7,39 +7,11 @@
         var selectedValue = $("#citySelect option:selected").val();
         GetAreas(selectedValue);
 
-        //setTimeout(function () {
-        //    $('#Address').val(getAddress());
-        //}, 100);
     });
 
-    //$("#areaSelect").change(function () {
-    //    setTimeout(function () {
-    //        $('#Address').val(getAddress());
-    //    }, 100);
-    //});
 
-    // 組合縣市+區域的字串，並防止使用者刪到縣市+區域的字串
-    //$("#Address").on('input', function (e) {
-    //    var address = getAddress();
-    //    if (this.value.indexOf(address) !== 0) {
-    //        var addr2 = this.value.substring(Math.min(address.length, this.value.length));
-    //        this.value = address + addr2;
-    //    }
-    //});
 
-    // 取得選取的縣市、區域文字
-    //function getAddress() {
-    //    var $city = $('#citySelect option:selected');
-    //    var $area = $('#areaSelect option:selected');
-    //    var address = '';
-    //    if ($city.val()) {
-    //        address += $city.text();
-    //    }
-    //    if ($area.val()) {
-    //        address += $area.text();
-    //    }
-    //    return address;
-    //}
+    
 
     // 從DB取得區域的內容，並新增選單的選項
     function GetAreas(cityID) {
