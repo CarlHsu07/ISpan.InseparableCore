@@ -6,12 +6,7 @@
 
         var selectedValue = $("#citySelect option:selected").val();
         GetAreas(selectedValue);
-
     });
-
-
-
-    
 
     // 從DB取得區域的內容，並新增選單的選項
     function GetAreas(cityID) {

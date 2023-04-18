@@ -145,7 +145,7 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member.FSignUpTime = value; }
 		}
 
-		//public IFormFile photo { get; set; }
+		//public IFormFile MemberPhoto { get; set; }
 
 	}
 }

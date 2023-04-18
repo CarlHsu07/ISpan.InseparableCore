@@ -121,14 +121,15 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member.FIntroduction = value; }
 		}
 
-		//[Display(Name = "註冊時間")]
-		//public DateTime? SignUpTime
-		//{
-		//	get { return _member.FSignUpTime; }
-		//	set { _member.FSignUpTime = value; }
-		//}
+        //[Display(Name = "註冊時間")]
+        //public DateTime? SignUpTime
+        //{
+        //	get { return _member.FSignUpTime; }
+        //	set { _member.FSignUpTime = value; }
+        //}
 
-		public IFormFile photo { get; set; }
+        [Display(Name = "大頭貼照")]
+        public IFormFile? MemberPhoto { get; set; }
 
 	}
 }

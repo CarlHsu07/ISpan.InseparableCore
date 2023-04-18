@@ -18,7 +18,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public int FCinemaId { get; set; }
         public DateTime FSessionDate { get; set; }
         public TimeSpan FSessionTime { get; set; }
-        public decimal? FTicketPrice { get; set; }
+        public decimal FTicketPrice { get; set; }
 
         public virtual TCinemas FCinema { get; set; }
         public virtual TMovies FMovie { get; set; }

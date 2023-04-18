@@ -10,6 +10,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public TMembers()
         {
             TActivityParticipants = new HashSet<TActivityParticipants>();
+            TArticleClickedDetails = new HashSet<TArticleClickedDetails>();
+            TArticleLikeDetails = new HashSet<TArticleLikeDetails>();
             TArticles = new HashSet<TArticles>();
             TComments = new HashSet<TComments>();
             TFriends = new HashSet<TFriends>();
@@ -17,6 +19,8 @@ namespace ISpan.InseparableCore.Models.DAL
             TMemberPoints = new HashSet<TMemberPoints>();
             TMemberReportsFReportMember = new HashSet<TMemberReports>();
             TMemberReportsFReportedMember = new HashSet<TMemberReports>();
+            TMovieCommentDetails = new HashSet<TMovieCommentDetails>();
+            TMovieScoreDetails = new HashSet<TMovieScoreDetails>();
             TOrders = new HashSet<TOrders>();
         }
 
@@ -93,6 +97,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual TAreas FArea { get; set; }
         public virtual TGenders FGender { get; set; }
         public virtual ICollection<TActivityParticipants> TActivityParticipants { get; set; }
+        public virtual ICollection<TArticleClickedDetails> TArticleClickedDetails { get; set; }
+        public virtual ICollection<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }
         public virtual ICollection<TFriends> TFriends { get; set; }
@@ -100,6 +106,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual ICollection<TMemberPoints> TMemberPoints { get; set; }
         public virtual ICollection<TMemberReports> TMemberReportsFReportMember { get; set; }
         public virtual ICollection<TMemberReports> TMemberReportsFReportedMember { get; set; }
+        public virtual ICollection<TMovieCommentDetails> TMovieCommentDetails { get; set; }
+        public virtual ICollection<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual ICollection<TOrders> TOrders { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using System.Text;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -145,8 +146,8 @@ namespace ISpan.InseparableCore.Controllers
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers == null) // 用id沒找到會員
+            var member = await _context.TMembers.FindAsync(id);
+            if (member == null) // 用id沒找到會員
             {
                 return NotFound();
             }
@@ -156,23 +157,31 @@ namespace ISpan.InseparableCore.Controllers
             var viewModel = new CEditProfileViewModel
             {
                 // 設定 ViewModel 的屬性值
-                Id = tMembers.FId,
-                MemberId = tMembers.FMemberId,
-                LastName = tMembers.FLastName,
-                FirstName = tMembers.FFirstName,
-                Email = tMembers.FEmail,
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
                 Password = "",
-                DateOfBirth = tMembers.FDateOfBirth,
-                GenderId = tMembers.FGenderId,
-                Cellphone = tMembers.FCellphone,
-                Address = tMembers.FAddress,
-                Introduction = tMembers.FIntroduction
+                DateOfBirth = member.FDateOfBirth,
+                GenderId = member.FGenderId,
+                Cellphone = member.FCellphone,
+                Area = member.FAreaId,
+                Address = member.FAddress,
+                Introduction = member.FIntroduction
 
             };
+            int? cityID = null;
+            if (member.FAreaId != null)
+            {
+                cityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
+            }
 
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", cityID); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+
+            //ViewData["Cities"] = ; // 
             return View(viewModel);
         }
 
@@ -181,7 +190,7 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction")] CEditProfileViewModel MemberIn)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CEditProfileViewModel MemberIn)
         {
             if (id != MemberIn.Id)
             {
@@ -195,11 +204,12 @@ namespace ISpan.InseparableCore.Controllers
                     TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
                     if (member != null)
                     {
-                        if (MemberIn.photo != null) // todo 圖片不會存到DB
+                        if (MemberIn.MemberPhoto != null) // todo 圖片不會正確存
                         {
+                            string type = MemberIn.MemberPhoto.ContentType;
                             string photoName = "memberProfilePhotos_" + Guid.NewGuid().ToString() + ".jpg";
-                            string path = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
-                            MemberIn.photo.CopyTo(new FileStream(path, FileMode.Create));
+                            string photoPath = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
+                            MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
                             member.FPhotoPath = photoName;
                         }
 
@@ -213,24 +223,21 @@ namespace ISpan.InseparableCore.Controllers
                         member.FAddress = MemberIn.Address;
                         member.FIntroduction = MemberIn.Introduction;
 
-                        // 加密會員密碼
-                        #region
-                        string password = MemberIn.Password; // 要加密的密碼
+                        if (MemberIn.Password != null) // 加密會員密碼
+                        {
+                            string password = MemberIn.Password; // 要加密的密碼
 
-                        // 產生鹽值
-                        byte[] salt = CPasswordHelper.GenerateSalt();
+                            byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
 
-                        // 將密碼與鹽值結合後進行加密
-                        byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
+                            byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
 
-                        // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
-                        member.FPasswordSalt = Convert.ToBase64String(salt);
-                        member.FPasswordHash = Convert.ToBase64String(hashedPassword);
-                        #endregion
-
+                            // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                            member.FPasswordSalt = Convert.ToBase64String(salt);
+                            member.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                        }
                     }
 
-                    _context.Update(MemberIn);
+                    _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

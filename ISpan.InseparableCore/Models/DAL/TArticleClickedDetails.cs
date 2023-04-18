@@ -5,16 +5,12 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models.DAL
 {
-    public partial class TComments
+    public partial class TArticleClickedDetails
     {
-        public int FCommentId { get; set; }
-        public int FArticleId { get; set; }
-        public int FItemNumber { get; set; }
+        public int FSerialNumber { get; set; }
         public int FMemberId { get; set; }
-        public DateTime FCommentPostingDate { get; set; }
-        public int FCommentLikes { get; set; }
-        public string FCommentContent { get; set; }
-        public bool FDeleted { get; set; }
+        public int FArticleId { get; set; }
+        public bool FLikeClicked { get; set; }
 
         public virtual TArticles FArticle { get; set; }
         public virtual TMembers FMember { get; set; }
