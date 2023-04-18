@@ -3,12 +3,6 @@
 	.btnEditComment {
 	}
 
-	.chosen {
-	}
-
-	.btnScore {
-	}
-
 	.divContainer {
 		display: flex;
 		flex-direction: row;
@@ -57,16 +51,16 @@
             @Html.DisplayFor(model => model.MemberName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticlePostingDate)
+            @Html.DisplayNameFor(model => model.PostingDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticlePostingDate)
+            @Html.DisplayFor(model => model.PostingDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleModifiedDate)
+            @Html.DisplayNameFor(model => model.ModifiedDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleModifiedDate)
+            @Html.DisplayFor(model => model.ModifiedDate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FArticleLikes)
@@ -96,7 +90,7 @@
 <div class="divContainer">
 	<div class="input-group">
 		<span class="input-group-text">評論</span>
-		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
 	</div>
 	<div>
 		<button type="button" id="btnComment" class="btn btn-secondary">留言</button>
@@ -110,11 +104,11 @@
 @section Scripts{
 	<script>
 		//送出評論及展示評論ajax函數
-		function CommentDetail(FSerialNumber, FMemberId, FArticleId, FComment) {
+		function CommentDetail(FCommentId, FMemberId, FArticleId, FCommentContent) {
 			$.ajax({
 				method: "post",
-				url: "/TComments/Create",
-				data: { FSerialNumber, FMemberId, FArticleId, FComment },
+				url: "/TComments/ArticleComment",
+				data: { FCommentId, FMemberId, FArticleId, FCommentContent },
 				success: function (data) {
 					let context = JSON.parse(data);
 					//alert(data)
@@ -125,14 +119,14 @@
 						if (value.FMemberId == memberId) {
 							$("#divComment").append(`
 									<div class=" divBorder">
-										<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
+										<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FCommentId}">
 											<div style="margin:5px" >
-												${value.MemberName}	 ${value.PostDate}
-									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FSerialNumber}">修改</button>
+												${value.MemberName}	 ${value.PostingDate}
+									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">修改</button>
 											</div>
 											<hr style="margin:0"/>
 											<div style="margin:5px" id="commentText">
-												${value.FComment}
+												${value.FCommentContent}
 											</div>
 										</div>
 									</div>`
@@ -143,10 +137,10 @@
 									<div class=" divBorder">
 										<div style="font-size:large; margin:10px 0 0 10px" >
 											<div style="margin:5px">
-												${value.MemberName}	 ${value.PostDate}
+												${value.MemberName}	 ${value.PostingDate}
 											</div>
 											<hr style="margin:0"/>
-											<div style="margin:5px">${value.FComment}</div>
+											<div style="margin:5px">${value.FCommentContent}</div>
 										</div>
 									</div>`
 							)
@@ -160,17 +154,17 @@
 		}
 		//開始編輯評論，生成編輯textarea
 		$(document).on('click', '.btnEditComment', function () {
-			let serialNumber = $(this).attr("value")
-			let text = $.trim($(`#F${serialNumber} #commentText`).text())
-			//alert(serialNumber+text)
-			$(`#F${serialNumber}`).html(`
+			let commentId = $(this).attr("value")
+			let text = $.trim($(`#F${commentId} #commentText`).text())
+			//alert(commentId+text)
+			$(`#F${commentId}`).html(`
 				<div class="divContainer">
 					<div class="input-group">
 						<span class="input-group-text">評論</span>
-						<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control" id="FCommentContent" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
-						<button type="button" id="btnComment" class="btn btn-secondary" value="${serialNumber}">留言</button>
+						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">留言</button>
 					</div>
 				</div>
 					`)
@@ -186,12 +180,12 @@
 		});
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
-			let serialNumber = $(this).attr("value")
+			let commentId = $(this).attr("value")
 			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FArticleId
-				let comment = $("#FComment").val();
-			alert(serialNumber)
-			CommentDetail(serialNumber, memberId, movieId, comment)
+			let comment = $("#FCommentContent").val();
+			alert(commentId)
+			CommentDetail(commentId, memberId, movieId, comment)
 		})
 		//展示評論
 		CommentDetail(0, 0, @Model.FArticleId, "")
