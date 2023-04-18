@@ -1,86 +1,277 @@
-﻿@model IEnumerable<ISpan.InseparableCore.Models.DAL.TArticles>
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.ArticleVm>
+
+<style>
+	.divContainer {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+	.divBorder {
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivBottom {
+		position: absolute;
+		bottom: 0px;
+		right: -100px;
+	}
+</style>
 
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+	<a asp-action="Create">Create New</a>
 </p>
-<div class="row">
-	<div class="col-md-4">
-		<form asp-action="Index" method="post">
-			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-			<div class="form-group">
-				<label name="Key" class="control-label"></label>
+<div class="row divBlock">
+
+	<form asp-action="Index" method="post" id="formSearch">
+
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="divContainer ">
+			<div class="form-group divBlock">
+				<label name="Key" class="control-label">關鍵字</label>
 				<input name="Key" class="form-control" />
-@*				<span asp-validation-for="Title" class="text-danger"></span>
-*@			</div>
-			<div class="form-group">
-				<label name="" class="control-label"></label>
-				<input name="ArticleId" class="form-control" />
 			</div>
-			<div class="form-group">
-				<label name="CategoryId" class="control-label"></label>
-				<select name="CategoryId" class="form-control" asp-items="ViewBag.FArticleCategoryId"></select>
+			<div class="form-group divBlock">
+				<label name="CategoryId" class="control-label">類別</label>
+				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
-			<div class="form-group">
-				<input type="submit" value="search" class="btn btn-primary" />
+			<div class="form-group divBlock">
+				<label name="Page" class="control-label">頁數</label>
+				<select name="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
-		</form>
-	</div>
+			<div class="form-group divBlock" style="position:relative">
+				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
+			</div>
+		</div>
+	</form>
+
 </div>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FArticleTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FArticleCategory)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FMember)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FArticlePostingDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FArticleLikes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FArticleClicks)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticleTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticleCategory.FMovieCategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMember.FFirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticlePostingDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticleLikes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArticleClicks)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FArticleId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.FArticleId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.FArticleId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+
+<table class="table" id="tableSearch">
+	<thead>
+		<tr>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.FArticleTitle)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.PostingDate)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.ModifiedDate)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.FArticleLikes)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.FArticleClicks)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.PartialContent)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.ArticleCategory)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.MemberName)
+				</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					<a asp-action="Details" asp-route-id="@item.FArticleId">
+						<p>
+							@Html.DisplayFor(modelItem => item.FArticleTitle)
+						</p>
+					</a>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.PostingDate)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.ModifiedDate)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.FArticleLikes)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.FArticleClicks)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.PartialContent)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.ArticleCategory)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.MemberName)
+					</p>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
+@section Scripts {
+	<script>
+		function show() {
+			$.ajax({
+				method: "post",
+				url: $(this).attr("action"),
+				data: $("#formSearch").serialize(),
+				beforeSend: function () {
+				},
+				success: function (data) {
+					let context = JSON.parse(data);
+					alert(context[0].FArticleTitle)
+					$("#tableSearch").html(`
+		<table class="table" id="tableSearch">
+			<thead>
+				<tr>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.FArticleTitle)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.PostingDate)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.ModifiedDate)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.FArticleLikes)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.FArticleClicks)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.PartialContent)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.ArticleCategory)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.MemberName)
+						</p>
+					</th>
+				</tr>
+			</thead>
+		</table>
+					`)
+					$.each(context, function (index, value) {
+						$("#tableSearch").append(`
+					<tbody>
+						<tr>
+							<td>
+								<a href="/TArticles/Details/${value.FArticleId}">
+									<p>
+										${value.FArticleTitle}
+									</p>
+								</a>
+							</td>
+							<td>
+								<p>
+									${value.PostingDate}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.ModifiedDate}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.FArticleLikes}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.FArticleClicks}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.PartialContent}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.ArticleCategory}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.MemberName}
+								</p>
+							</td>
+						</tr>
+					</tbody>
+		`)
+					})
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+
+		}
+
+		$("#formSearch").submit(function (event) {
+			event.preventDefault();
+			show();
+		})
+
+	</script>
+
+}

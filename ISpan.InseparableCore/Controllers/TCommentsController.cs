@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.Controllers
@@ -59,7 +58,7 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent")] TComments tComments)
+        public async Task<IActionResult> Create([Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent,FDeleted")] TComments tComments)
         {
             if (ModelState.IsValid)
             {
@@ -95,7 +94,7 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent")] TComments tComments)
+        public async Task<IActionResult> Edit(int id, [Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent,FDeleted")] TComments tComments)
         {
             if (id != tComments.FCommentId)
             {

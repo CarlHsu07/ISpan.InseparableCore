@@ -22,10 +22,16 @@
                 @Html.DisplayNameFor(model => model.FCommentLikes)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FMember)
+                @Html.DisplayNameFor(model => model.FCommentContent)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FCommentContent)
+                @Html.DisplayNameFor(model => model.FDeleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FArticle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMember)
             </th>
             <th></th>
         </tr>
@@ -43,10 +49,16 @@
                 @Html.DisplayFor(modelItem => item.FCommentLikes)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FMember.FLastName)
+                @Html.DisplayFor(modelItem => item.FCommentContent)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FCommentContent)
+                @Html.DisplayFor(modelItem => item.FDeleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FArticle.FArticleContent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMember.FEmail)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.FCommentId">Edit</a> |

@@ -1,8 +1,36 @@
 ﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+<style>
+	.btnEditComment {
+	}
 
-@{
-    ViewData["Title"] = "Details";
-}
+	.chosen {
+	}
+
+	.btnScore {
+	}
+
+	.divContainer {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+	.divBorder {
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -20px;
+	}
+</style>
 
 <h1>Details</h1>
 
@@ -17,10 +45,28 @@
             @Html.DisplayFor(model => model.FArticleTitle)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ArticleCategory)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ArticleCategory)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MemberName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MemberName)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FArticlePostingDate)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FArticlePostingDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FArticleModifiedDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FArticleModifiedDate)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FArticleLikes)
@@ -40,73 +86,115 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FArticleContent)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.articles.FArticleCategory)
-        </dt>
-        <dd class = "col-sm-10">
-			@Html.DisplayFor(model => model.articles.FArticleCategory.FMovieCategoryName)
-        </dd>
-        <dt class = "col-sm-2">
-			@Html.DisplayNameFor(model => model.articles.FMember)
-        </dt>
-        <dd class = "col-sm-10">
-			@Html.DisplayFor(model => model.articles.FMember.FFirstName)
-        </dd>
     </dl>
 </div>
-@foreach (var comment in Model.Comments)
-{
-	<table class="table">
-		<thead>
-			<tr>
-				<th>
-					@Html.DisplayNameFor(model => comment.FItemNumber)
-				</th>
-				<th>
-					@Html.DisplayNameFor(model => comment.FCommentPostingDate)
-				</th>
-				<th>
-					@Html.DisplayNameFor(model => comment.FCommentLikes)
-				</th>
-				<th>
-					@Html.DisplayNameFor(model => comment.FMember)
-				</th>
-				<th>
-					@Html.DisplayNameFor(model => comment.FCommentContent)
-				</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model.Comments)
-			{
-				<tr>
-					<td>
-						@Html.DisplayFor(modelItem => comment.FItemNumber)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => comment.FCommentPostingDate)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => comment.FCommentLikes)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => comment.FMember.FLastName)
-					</td>
-					<td>
-						@Html.DisplayFor(modelItem => comment.FCommentContent)
-					</td>
-					<td>
-						<a asp-action="Edit" asp-route-id="@comment.FCommentId">Edit</a> |
-						<a asp-action="Details" asp-route-id="@comment.FCommentId">Details</a> |
-						<a asp-action="Delete" asp-route-id="@comment.FCommentId">Delete</a>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>	
-}
+<div id="divComment"></div>
+<div class="form-group">
+	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
+</div>
+
+<div class="divContainer">
+	<div class="input-group">
+		<span class="input-group-text">評論</span>
+		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
+	</div>
+	<div>
+		<button type="button" id="btnComment" class="btn btn-secondary">留言</button>
+	</div>
+</div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.FArticleId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+@section Scripts{
+	<script>
+		//送出評論及展示評論ajax函數
+		function CommentDetail(FSerialNumber, FMemberId, FArticleId, FComment) {
+			$.ajax({
+				method: "post",
+				url: "/TComments/Create",
+				data: { FSerialNumber, FMemberId, FArticleId, FComment },
+				success: function (data) {
+					let context = JSON.parse(data);
+					//alert(data)
+					let memberId = $("#FMemberId").find(":selected").attr("value")
+
+					$("#divComment").html("")
+					$.each(context, function (index, value) {
+						if (value.FMemberId == memberId) {
+							$("#divComment").append(`
+									<div class=" divBorder">
+										<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
+											<div style="margin:5px" >
+												${value.MemberName}	 ${value.PostDate}
+									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FSerialNumber}">修改</button>
+											</div>
+											<hr style="margin:0"/>
+											<div style="margin:5px" id="commentText">
+												${value.FComment}
+											</div>
+										</div>
+									</div>`
+							)
+						}
+						else {
+							$("#divComment").append(`
+									<div class=" divBorder">
+										<div style="font-size:large; margin:10px 0 0 10px" >
+											<div style="margin:5px">
+												${value.MemberName}	 ${value.PostDate}
+											</div>
+											<hr style="margin:0"/>
+											<div style="margin:5px">${value.FComment}</div>
+										</div>
+									</div>`
+							)
+						}
+
+					})
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		}
+		//開始編輯評論，生成編輯textarea
+		$(document).on('click', '.btnEditComment', function () {
+			let serialNumber = $(this).attr("value")
+			let text = $.trim($(`#F${serialNumber} #commentText`).text())
+			//alert(serialNumber+text)
+			$(`#F${serialNumber}`).html(`
+				<div class="divContainer">
+					<div class="input-group">
+						<span class="input-group-text">評論</span>
+						<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
+					</div>
+					<div>
+						<button type="button" id="btnComment" class="btn btn-secondary" value="${serialNumber}">留言</button>
+					</div>
+				</div>
+					`)
+		});
+
+		//單選按鈕組，按下時改變顏色
+		$('.btn').click(function () {
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(this).removeClass('btn-secondary');
+			$(this).addClass('btn-primary');
+		});
+		//送出評論
+		$(document).on('click', '#btnComment', function () {
+			let serialNumber = $(this).attr("value")
+			let memberId = $("#FMemberId").find(":selected").attr("value")
+			let movieId = @Model.FArticleId
+				let comment = $("#FComment").val();
+			alert(serialNumber)
+			CommentDetail(serialNumber, memberId, movieId, comment)
+		})
+		//展示評論
+		CommentDetail(0, 0, @Model.FArticleId, "")
+	</script>
+
+}

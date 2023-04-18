@@ -39,7 +39,15 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[tArticleClickedDetails]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tArticleKeywordDetails]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tArticleLikeDetails]",
          "ObjectType": 0
       },
       {
@@ -123,7 +131,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[TMovieScoreDetails]",
+         "Name": "[dbo].[tMovieScoreDetails]",
          "ObjectType": 0
       },
       {

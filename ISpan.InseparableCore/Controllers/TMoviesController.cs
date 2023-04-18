@@ -41,13 +41,13 @@ namespace ISpan.InseparableCore.Controllers
 			int pageContent = 2;
 			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
 														   : movies.Count / pageContent + 1;
-			List<Page> pageSelectList = new List<Page>();
+			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
-				pageSelectList.Add(new Page { Id = i, Value = i });
+				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
 			movies = movies.Take(pageContent).ToList();
-			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value");
+			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
@@ -75,10 +75,10 @@ namespace ISpan.InseparableCore.Controllers
 			int pageContent = 2;
 			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
 														   : movies.Count / pageContent + 1;
-			List<Page> pageSelectList = new List<Page>();
+			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
-				pageSelectList.Add(new Page { Id = i, Value = i });
+				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
 			movies = movies.Skip(pageContent * (condition.Page - 1)).Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
@@ -159,9 +159,9 @@ namespace ISpan.InseparableCore.Controllers
 			return Ok(vms.ToJson());
 		}
 
-		public async Task<IActionResult> MovieScore(TmovieScoreDetails score)
+		public async Task<IActionResult> MovieScore(TMovieScoreDetails score)
 		{
-			TmovieScoreDetails scoreInDb = _context.TmovieScoreDetails.FirstOrDefault(t => t.FMovieId == score.FMovieId && t.FMemberId == score.FMemberId);
+			TMovieScoreDetails scoreInDb = _context.TMovieScoreDetails.FirstOrDefault(t => t.FMovieId == score.FMovieId && t.FMemberId == score.FMemberId);
 			if (scoreInDb == null)
 			{
 				_context.Add(score);
@@ -174,7 +174,7 @@ namespace ISpan.InseparableCore.Controllers
 			_context.SaveChanges();
 			//計算電影評分
 			var movie = await _context.TMovies.FindAsync(score.FMovieId);
-			movie.FMovieScore = (decimal)_context.TmovieScoreDetails
+			movie.FMovieScore = (decimal)_context.TMovieScoreDetails
 				.Where(t => t.FMovieId == score.FMovieId).Average(t => t.FScore);
 			_context.Update(movie);
 			_context.SaveChanges();
@@ -215,12 +215,12 @@ namespace ISpan.InseparableCore.Controllers
 				return NotFound();
 			}
 
-			var tMovies = await _context.TMovies.FindAsync(id);
-			if (tMovies == null)
+			var movie = await _context.TMovies.FindAsync(id);
+			if (movie == null)
 			{
 				return NotFound();
 			}
-			MovieVm vm = tMovies.ModelToVm();
+			MovieVm vm = movie.ModelToVm();
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(vm);
@@ -290,15 +290,15 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var tMovies = await _context.TMovies.FindAsync(id);
-			if (tMovies != null)
+			var movie = await _context.TMovies.FindAsync(id);
+			if (movie != null)
 			{
-				IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId);
+				IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == movie.FMovieId);
 				foreach (TMovieCategoryDetails detail in categoryDetails)
 				{
 					_context.Remove(detail);
 				}
-				_context.TMovies.Remove(tMovies);
+				_context.TMovies.Remove(movie);
 			}
 
 			await _context.SaveChangesAsync();

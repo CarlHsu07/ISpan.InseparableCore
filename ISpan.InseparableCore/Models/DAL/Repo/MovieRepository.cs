@@ -41,7 +41,8 @@ namespace ISpan.InseparableCore.Models.DAL
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
-				movies = movies.Where(t => t.FMovieName.Contains(condition.Key) || t.FMovieActors.Contains(condition.Key) || t.FMovieDirectors.Contains(condition.Key)).ToList();
+				// || t.FMovieActors.Contains(condition.Key) || t.FMovieDirectors.Contains(condition.Key)
+				movies = movies.Where(t => t.FMovieName.Contains(condition.Key)).ToList();
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)

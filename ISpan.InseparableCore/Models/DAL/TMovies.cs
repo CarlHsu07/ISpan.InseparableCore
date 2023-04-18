@@ -14,9 +14,9 @@ namespace ISpan.InseparableCore.Models.DAL
             TMovieCommentDetails = new HashSet<TMovieCommentDetails>();
             TMovieDirectorDetails = new HashSet<TMovieDirectorDetails>();
             TMovieKeywordDetails = new HashSet<TMovieKeywordDetails>();
+            TMovieScoreDetails = new HashSet<TMovieScoreDetails>();
             TSessions = new HashSet<TSessions>();
             TTicketOrderDetails = new HashSet<TTicketOrderDetails>();
-            TmovieScoreDetails = new HashSet<TmovieScoreDetails>();
         }
 
         public int FMovieId { get; set; }
@@ -38,8 +38,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual ICollection<TMovieCommentDetails> TMovieCommentDetails { get; set; }
         public virtual ICollection<TMovieDirectorDetails> TMovieDirectorDetails { get; set; }
         public virtual ICollection<TMovieKeywordDetails> TMovieKeywordDetails { get; set; }
+        public virtual ICollection<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual ICollection<TSessions> TSessions { get; set; }
         public virtual ICollection<TTicketOrderDetails> TTicketOrderDetails { get; set; }
-        public virtual ICollection<TmovieScoreDetails> TmovieScoreDetails { get; set; }
     }
 }

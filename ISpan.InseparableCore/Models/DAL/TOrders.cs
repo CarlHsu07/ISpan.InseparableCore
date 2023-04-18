@@ -20,6 +20,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public DateTime FModifiedTime { get; set; }
         public decimal FTotalMoney { get; set; }
         public bool FStatus { get; set; }
+        public string FCreditTradeNo { get; set; }
 
         public virtual TCinemas FCinema { get; set; }
         public virtual TMembers FMember { get; set; }
