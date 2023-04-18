@@ -120,8 +120,11 @@ namespace ISpan.InseparableCore.Controllers
         }
         public IActionResult Seat(CseatVM vm)
         {
-            if (vm.sessionid == null)
-                return View();
+            if (vm == null || vm.sessionid == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             vm.solid = new List<int>();
 
             var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid && t.FStatus == true);
@@ -149,7 +152,7 @@ namespace ISpan.InseparableCore.Controllers
             //將票券座位記錄在session
             string responseText = "fail";
 
-            if (seatId == null)
+            if (seatId == null || sessionId == null)
                 return Ok(responseText);
 
             var session = _db.TSessions.FirstOrDefault(t => t.FSessionId == sessionId);
@@ -192,6 +195,11 @@ namespace ISpan.InseparableCore.Controllers
         }
         public IActionResult CartView(int? regular, int? concession, int? sessionid)
         {
+            if (regular == null || concession == null || sessionid == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             CcartviewVM vm = new CcartviewVM();
             string json = null;
             List<CproductCartItem> cart = null;
@@ -232,14 +240,13 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         //todo 如何知道下單的是誰
-        //todo DB跟綠界順序
         public IActionResult CashPay(CorderVM vm)
         {
             var orderid = DbSave(vm);
             if (orderid == null)
             {
-                ViewBag.error = "資料有誤！！";
-                return View();
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
             }
             var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == orderid);
             order.FStatus = true;
@@ -257,11 +264,11 @@ namespace ISpan.InseparableCore.Controllers
         //綠界API
         public IActionResult CreditPay(CorderVM vm)
         {
-            var orderid =DbSave(vm);
+            var orderid = DbSave(vm);
             if (orderid == null)
             {
-                ViewBag.errpr = "位置已售出請重新選擇!";
-                return View();
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
             }
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
@@ -277,6 +284,7 @@ namespace ISpan.InseparableCore.Controllers
                 { "ItemName","電影票"},
                 { "ReturnURL",$"{web}Shopping/AddPayInfo"},
                 { "OrderResultURL",$"{web}Shopping/Paydone/{orderid}"},
+                { "ClientBackURL",$"{web}Shopping/Ticket"},
                 { "ChoosePayment","Credit"},
                 { "EncryptType","1"},
             };
@@ -287,7 +295,7 @@ namespace ISpan.InseparableCore.Controllers
         [HttpPost]
         public HttpResponseMessage AddPayInfo(JObject info)
         {
-
+            //todo 不確定這裡要做什麼判斷
             if (!HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
             {
                 return ResponseOK();
@@ -295,20 +303,26 @@ namespace ISpan.InseparableCore.Controllers
             else
             {
                 return ResponseError();
-            }       
+            }
         }
         public IActionResult Paydone(int? id)
         {
             if (id == null)
             {
-                ViewBag.error = "資料有誤！！";
-                return View();
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
             }
             var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
+            if (order == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
+
             order.FStatus = true;
 
             var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);
-            foreach(var item in ticket)
+            foreach (var item in ticket)
             {
                 item.FStatus = true;
             }
@@ -316,6 +330,13 @@ namespace ISpan.InseparableCore.Controllers
             _db.SaveChanges();
             HttpContext.Session.Clear();
             return View(order);
+        }
+
+        //錯誤view
+        public IActionResult Error(string error)
+        {
+            ViewBag.error = error;
+            return View();
         }
         //db儲存
         public int? DbSave(CorderVM vm)
@@ -343,9 +364,15 @@ namespace ISpan.InseparableCore.Controllers
             vm.FMemberId = 1; //todo 目前尚未解決登入
             vm.FStatus = false;
 
-
-            _db.TOrders.Add(vm.orders);
-            _db.SaveChanges();
+            try
+            {
+                _db.TOrders.Add(vm.orders);
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
             int orderid = _db.TOrders.FirstOrDefault(t => t == vm.orders).FOrderId;
 
@@ -376,8 +403,16 @@ namespace ISpan.InseparableCore.Controllers
                     item.FTicketSubtotal = item.FTicketDiscount * item.FTicketUnitprice;
                 }
 
-                _db.TTicketOrderDetails.Add(item.ticket);
-                _db.SaveChanges();
+                try
+                {
+                    _db.TTicketOrderDetails.Add(item.ticket);
+                    _db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
             }
 
             //product
@@ -386,8 +421,17 @@ namespace ISpan.InseparableCore.Controllers
                 item.FOrderId = orderid;
                 item.FProductDiscount = 1;
                 item.FProductSubtotal = item.FProductUnitprice * item.FProductDiscount;
-                _db.TProductOrderDetails.Add(item.ProductOrderDetails);
-                _db.SaveChanges();
+
+                try
+                {
+                    _db.TProductOrderDetails.Add(item.ProductOrderDetails);
+                    _db.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+
             }
             return orderid;
             HttpContext.Session.Clear();
@@ -398,16 +442,19 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
                 HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+
             return Ok();
         }
         public IActionResult Clearproduct()
         {
             if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
                 HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+
             return Ok();
         }
 
         //綠界雜湊
+        //todo 金鑰藏起來
         private string GetCheckMacValue(Dictionary<string, string> order)
         {
             var param = order.Keys.OrderBy(x => x).Select(key => key + "=" + order[key]).ToList();
@@ -442,6 +489,7 @@ namespace ISpan.InseparableCore.Controllers
 
             return result.ToString();
         }
+        //回應
         private HttpResponseMessage ResponseError()
         {
             var response = new HttpResponseMessage();
