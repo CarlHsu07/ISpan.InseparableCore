@@ -15,7 +15,7 @@ builder.Services.AddSession();
 // �إ�InseparableContext����
 builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("InseparableConnection")));
 
-//Map api
+//api key
 builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
 
 var app = builder.Build();
