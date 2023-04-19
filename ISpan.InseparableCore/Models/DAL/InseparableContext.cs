@@ -417,6 +417,11 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FCommentLikes).HasColumnName("fCommentLikes");
 
+                entity.Property(e => e.FCommentModifiedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fCommentModifiedDate")
+                    .HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.FCommentPostingDate)
                     .HasColumnType("datetime")
                     .HasColumnName("fCommentPostingDate")
