@@ -23,6 +23,8 @@ namespace ISpan.InseparableCore.Controllers
             _db = db;
             _key = key.Value;
         }
+        //防止上一頁錯誤
+        [ResponseCache(CacheProfileName = "Default1800")]
         public IActionResult Ticket(CticketVM vm)
         {
             //以防萬一只要一開啟訂購畫面 第一件事清空session  //todo 確認其他人沒有用session
