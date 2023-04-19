@@ -19,7 +19,6 @@ builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServe
 //api key
 builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
 
-
 //cache
 builder.Services.AddResponseCaching();
 builder.Services.AddControllers(options =>

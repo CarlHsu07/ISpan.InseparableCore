@@ -10,18 +10,19 @@ namespace ISpan.InseparableCore.Controllers
     {
         private readonly InseparableContext _db;
         private readonly ApiKeys _key;
+        private readonly CinemaRepository _repo;
         public CinemaController(InseparableContext db, IOptions<ApiKeys> key)
         {
             _db = db;
             _key = key.Value;
+            _repo = new CinemaRepository(db);
         }
 
         public IActionResult Cinema()
         {
             CcinemaVM vm = new CcinemaVM();
-            //分區
+            //分區 //todorepo
             vm.city = _db.TCities.Select(t => t.FCityName).ToList();
-
 
             //分品牌
             vm.brand = new List<string> { "威秀", "秀泰", "國賓" };
@@ -33,12 +34,12 @@ namespace ISpan.InseparableCore.Controllers
         //電影院Ajax傳輸
         public IActionResult City(string name)
         {
-            var data = _db.TCinemas.Where(t => t.FCinemaRegion == name).ToJson();
+            var data = _repo.GetByCity(name).ToJson();
             return Ok(data);
         }
         public IActionResult Brand(string name)
         {
-            var data = _db.TCinemas.Where(t => t.FCinemaName.Contains(name)).ToJson();
+            var data = _repo.GetByBrand(name).ToJson();
             return Ok(data);
         }
         public IActionResult Map(int? id)
@@ -50,7 +51,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.FLat = data.FLat;
             vm.FLng = data.FLng;
             vm.FTraffic = data.FTraffic.Split("<br>").ToList();
-            vm.Key = _key.MapKey; //改存到appsetting
+            vm.Key = _key.MapKey;
             return Ok(vm.ToJson());
         }
     }

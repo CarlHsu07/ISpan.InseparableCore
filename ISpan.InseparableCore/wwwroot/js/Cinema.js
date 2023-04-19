@@ -110,7 +110,7 @@ function mapshow(id) {
             $('#show').prepend(`<h4>${cinema.Name}</h4>`);
             traffic = cinema.FTraffic;
             traffic.forEach(function (value, index) {
-                $('#traffic').append(`<p>${value}</p>`)
+                $('#traffic').append(`<p style="font-size:18px;">${value}</p>`)
             })
             return cinema;
         })
