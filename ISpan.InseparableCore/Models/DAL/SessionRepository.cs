@@ -7,7 +7,7 @@
         {
             _db = db;
         }
-        public IEnumerable<TMovies> GetMovie(int? cinema)
+        public IEnumerable<TMovies> GetMovieByCinema(int? cinema)
         {
             var data = _db.TSessions.Where(t => t.FCinemaId ==cinema).Select(t => t.FMovie).Distinct();
             // &&t.FSessionDate>=start && t.FSessionDate<=end 
@@ -21,7 +21,7 @@
 
             return data;
         }
-        public IEnumerable<TSessions> GetBySession(int? session)
+        public IEnumerable<TSessions> GetSessionBySession(int? session)
         {
             var data = _db.TSessions.Where(t => t.FSessionId == session);
 
@@ -31,6 +31,16 @@
         {
             var data = _db.TSessions.FirstOrDefault(t => t.FSessionId == session);
 
+            return data;
+        }
+        public IEnumerable<TMovies> GetMovieBySEssion(int? session)
+        {
+            var data= _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
+            return data;
+        }
+        public IEnumerable<TCinemas> GetCinemaBySEssion(int? session)
+        {
+            var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
             return data;
         }
     }

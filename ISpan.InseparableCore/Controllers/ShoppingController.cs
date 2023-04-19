@@ -24,6 +24,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly TicketOrderRepository _ticket_repo;
         private readonly ProductOrderRepository _product_repo;
         private readonly SessionRepository _session_repo;
+        private readonly CinemaRepository _cinema_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
@@ -32,17 +33,16 @@ namespace ISpan.InseparableCore.Controllers
             _ticket_repo = new TicketOrderRepository(db);
             _product_repo = new ProductOrderRepository(db);
             _session_repo = new SessionRepository(db);
+            _cinema_repo = new CinemaRepository(db);
         }
-        //防止上一頁錯誤
-        //todo 待測試
-        [ResponseCache(CacheProfileName = "Default1800")]
+        //todo 防止上一頁錯誤
         public IActionResult Ticket(CticketVM vm)
         {
             //以防萬一只要一開啟訂購畫面 第一件事清空session
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
 
-            vm.cinema = _db.TCinemas.Select(t => t);
+            vm.cinema = _cinema_repo.QueryAll();
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
             //限制時間區間
@@ -52,7 +52,7 @@ namespace ISpan.InseparableCore.Controllers
             //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
-                vm.movie = _session_repo.GetMovie(vm.cinemaId);
+                vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
                 // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
@@ -80,10 +80,10 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return RedirectToAction("Ticket");
             }
-            vm.sessions = _session_repo.GetBySession(session);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
-            vm.cinema = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
-            vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);
+            vm.sessions = _session_repo.GetSessionBySession(session);
+            vm.movie = _session_repo.GetMovieBySEssion(session);
+            vm.cinema = _session_repo.GetCinemaBySEssion(session);
+            vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);  //todo productrepo
 
             return View(vm);
         }
@@ -96,7 +96,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (productId == null)
                 return Ok(responseText);
-            var product = _db.TProducts.FirstOrDefault(t => t.FProductId == productId);
+            var product = _db.TProducts.FirstOrDefault(t => t.FProductId == productId); //todo productrepo
 
             List<CproductCartItem> cart = null;
             string json = string.Empty;
@@ -154,15 +154,15 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
-            var row = _db.TSeats.GroupBy(t => t.FSeatRow).Select(t => t.Key);
+            var row = _db.TSeats.GroupBy(t => t.FSeatRow).Select(t => t.Key); //todo seatrepo
             foreach (var item in row)
             {
-                var column = _db.TSeats.Where(t => t.FSeatRow == item);
+                var column = _db.TSeats.Where(t => t.FSeatRow == item); //todo seatrepo
                 vm.seats.Add(item, column);
             }
 
             vm.sessions = _session_repo.GetOneSession(vm.sessionid);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
+            vm.movie = _session_repo.GetMovieBySEssion(vm.sessionid);
             return View(vm);
         }
 
@@ -200,7 +200,7 @@ namespace ISpan.InseparableCore.Controllers
                 item.FTicketUnitprice = (decimal)session.FTicketPrice;
                 item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 1;
                 item.FMovieId = session.FMovieId;
-                item.FMovieName = _db.TMovies.FirstOrDefault(t => t.FMovieId == session.FMovieId).FMovieName;
+                item.FMovieName = _db.TMovies.FirstOrDefault(t => t.FMovieId == session.FMovieId).FMovieName; //todo movierepo
                 item.FRoomId = session.FRoomId;
                 item.FSeatId = (int)seatId;
                 item.FSessionId = (int)sessionId;
@@ -213,7 +213,7 @@ namespace ISpan.InseparableCore.Controllers
             responseText = "pass";
             return Ok(responseText);
         }
-        //todo cache
+        //todo cache err_cache_miss
         public IActionResult CartView(int? regular, int? concession, int? sessionid)
         {
             if (regular == null || concession == null || sessionid == null)
@@ -244,7 +244,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in seats)
             {
 
-                var seat = _db.TSeats.Where(t => t.FSeatId == item);
+                var seat = _db.TSeats.Where(t => t.FSeatId == item); //todo seatrepo
                 foreach (var name in seat)
                 {
                     seatid = name.FSeatRow + name.FSeatColumn;
@@ -254,7 +254,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.concession = (int)concession;
             vm.regular = (int)regular;
             vm.session = _session_repo.GetOneSession(sessionid);
-            vm.movies = _db.TSessions.Where(t => t.FSessionId == sessionid).Select(t => t.FMovie);
+            vm.movies = _session_repo.GetMovieBySEssion(sessionid);
             vm.cart = cart;
 
             return View(vm);

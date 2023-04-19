@@ -4,12 +4,12 @@
     ViewData["Title"] = "Ticket";
 }
 @section Styles{
-    <link href="~/css/loading.css" rel="stylesheet"/>
-    <link href="~/css/Ticket.css" rel="stylesheet"/>
+    <link href="~/css/loading.css" rel="stylesheet" />
+    <link href="~/css/Ticket.css" rel="stylesheet" />
 }
 @using (Html.BeginForm())
 {
-    <div class="loadingdiv" id="loading" >
+    <div class="loadingdiv" id="loading">
         <img src="~/images/Infinity-1s-200px.gif" />
     </div>
     <h1>購票系統</h1>
@@ -65,7 +65,6 @@
             }, 500);
             $("#cinema").val(@Model.cinemaId);
             $("#movie").val(@Model.movieId);
-
         });
         $('li a').click(function () {
             var cinema = $(this).attr('cinema');
