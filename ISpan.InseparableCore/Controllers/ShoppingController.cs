@@ -213,6 +213,7 @@ namespace ISpan.InseparableCore.Controllers
             responseText = "pass";
             return Ok(responseText);
         }
+        //todo cache
         public IActionResult CartView(int? regular, int? concession, int? sessionid)
         {
             if (regular == null || concession == null || sessionid == null)
