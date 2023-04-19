@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.CMemberProfileViewModel
+﻿@model ISpan.InseparableCore.ViewModels.CMemberCenterViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -7,49 +7,274 @@
 <h1>會員中心</h1>
 
 <p>
-    <a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料</a>
+    <a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料(舊)</a>
 </p>
+<div class="card">
+    <div class="card-body pt-3 bg-black"> @*// todo 樣式要改，背景色 *@
+        <ul class="nav nav-tabs nav-tabs-bordered" role="tablist">
 
-<h5 class="card-title">個人資料</h5>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview" aria-selected="true" role="tab">個人資料</button>
+            </li>
 
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.MemberId</span></div>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" aria-selected="false" tabindex="-1" role="tab">編輯資料</button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" aria-selected="false" tabindex="-1" role="tab">更改密碼</button>
+            </li>
+
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">設定</button>
+            </li>
+
+        </ul>
+        <div class="tab-content pt-2">
+            <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
+                <h5 class="card-title">簡介</h5>
+                <p class="small">@Model.Introduction</p>
+                <h5 class="card-title">個人資料</h5>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId"></label></div>
+                    <div class="col-lg-9 col-md-8">@Model.MemberId</div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="GenderString" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.GenderString</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.CityString</span><span class="form-label">@Model.AreaString</span><span class="form-label">@Model.Address</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 label "><label asp-for="TotalMemberPoint" class="control-label"></label></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.TotalMemberPoint</span></div>
+                </div>
+
+            </div>
+            
+            <div class="tab-pane fade profile-edit pt-3" id="profile-edit" role="tabpanel">
+                <!-- Profile Edit Form -->
+                <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                    <input asp-for="Id" type="hidden" />
+                    @*// todo 大頭貼照，上傳、刪除的按鈕樣式可修改 *@
+                    <div class="row mb-3">
+                        <label asp-for="PhotoPath" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            @{
+                                if (!String.IsNullOrEmpty(Model.PhotoPath))
+                                {
+                                    <img src="/images/memberProfilePhotos/@Model.PhotoPath" asp-append-version="true" class="" alt="會員大頭貼" height="120">
+                                }
+                                else
+                                {
+                                    <label class="control-label">還沒上傳大頭貼</label>
+                                }
+                            }
+                            <div class="pt-2">
+                                @*<a href="#" class="btn btn-primary btn-sm" title="上傳新大頭貼照">上傳</a>*@
+                                <input type="file" name="MemberPhoto" class="form-control form-control-sm" accept="image/*" />
+                                <a href="#" class="btn btn-danger btn-sm" title="刪除大頭貼照">刪除</a>
+                            </div>
+                        </div>
+                        <span asp-validation-for="PhotoPath" class="text-danger"></span>
+                    </div>
+
+                    @*// todo 上傳大頭貼照 換位置、樣式*@
+                    @*<div class="row mb-3">
+                        <label asp-for="MemberPhoto" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input type="file" name="MemberPhoto" class="form-control" accept="image/*" />
+                        </div>
+                        <span asp-validation-for="MemberPhoto" class="text-danger"></span>
+                    </div>*@
+
+                    <div class="row mb-3">
+                        <label asp-for="LastName" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="LastName" class="form-control">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="FirstName" class="form-control">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="Email" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Email" class="form-control" type="email">
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="DateOfBirth" class="form-control" type="date">
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="GenderId" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="GenderId" class="form-control">
+                            <span asp-validation-for="GenderId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="Cellphone" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Cellphone" class="form-control">
+                            <span asp-validation-for="Cellphone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @*// todo 地址輸入樣式要改*@
+                    <div class="row mb-3">
+                        <label asp-for="Address" class="col-sm-2 col-form-label"></label>
+                        <div class="col-sm-2">
+                            <select asp-for="City" class="form-control f-3" asp-items="ViewBag.Cities" id="citySelect">
+                                <option value="">請選擇縣市</option>
+                            </select>
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                        <div class="col-sm-2">
+                            <select asp-for="Area" class="form-control f-3" asp-items="ViewBag.Areas" id="areaSelect">
+                                <option value="">請選擇區域</option>
+                            </select>
+                            <span asp-validation-for="Area" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="Address" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="Address" class="form-control">
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="Introduction" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <textarea asp-for="Introduction" class="form-control" rows="5"></textarea>
+                        </div>
+                        <span asp-validation-for="Introduction" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-warning">儲存</button>
+                    </div>
+                </form><!-- End Profile Edit Form -->
+            </div>
+
+            <div class="tab-pane fade pt-3" id="profile-change-password" role="tabpanel">
+                <!-- Change Password Form -->
+                <form asp-action="EditProfile">
+                    <input asp-for="Id" type="hidden" />
+                    <div class="row mb-3">
+                        <label asp-for="CurrentPassword" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="CurrentPassword" type="password" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="NewPassword" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="NewPassword" type="password" class="form-control">
+                            <span asp-validation-for="NewPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label asp-for="ConfirmPassword" class="col-md-4 col-lg-3 col-form-label"></label>
+                        <div class="col-md-8 col-lg-9">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control">
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">確認修改</button>
+                    </div>
+                </form><!-- End Change Password Form -->
+            </div>
+
+            <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
+                <!-- Settings Form -->
+                <form>
+
+                    <div class="row mb-3">
+                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                        <div class="col-md-8 col-lg-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="changesMade" checked="">
+                                <label class="form-check-label" for="changesMade">
+                                    Changes made to your account
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newProducts" checked="">
+                                <label class="form-check-label" for="newProducts">
+                                    Information on new products and services
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="proOffers">
+                                <label class="form-check-label" for="proOffers">
+                                    Marketing and promo offers
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="securityNotify" checked="" disabled="">
+                                <label class="form-check-label" for="securityNotify">
+                                    Security alerts
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form><!-- End settings Form -->
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="Gender" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Gender</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Address</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-4 label "><label asp-for="TotalMemberPoint" class="control-label"></label></div>
-    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.TotalMemberPoint</span></div>
-</div>
+
 

@@ -12,10 +12,7 @@
     <div class="col-md-4">
         <form asp-action="EditProfile" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <input asp-for="Id" class="form-control" type="hidden" />
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
+            <input asp-for="Id" type="hidden" />
             <div class="form-group">
                 <label asp-for="MemberId" class="control-label"></label>
                 <span class="form-control">@Model.MemberId</span>

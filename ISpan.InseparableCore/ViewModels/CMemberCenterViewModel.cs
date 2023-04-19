@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class CMemberProfileViewModel
+    public class CMemberCenterViewModel
     {
         private TMembers _member;
 
@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member = value; }
         }
 
-        public CMemberProfileViewModel()
+        public CMemberCenterViewModel()
         {
             _member = new TMembers();
         }
@@ -33,7 +33,7 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "姓氏")]
-        //[Required(ErrorMessage = "請輸入姓氏")]
+        [Required(ErrorMessage = "請輸入姓氏")]
         public string LastName
         {
             get { return _member.FLastName; }
@@ -41,7 +41,7 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "名字")]
-        //[Required(ErrorMessage = "請輸入名字")]
+        [Required(ErrorMessage = "請輸入名字")]
         public string FirstName
         {
             get { return _member.FFirstName; }
@@ -49,25 +49,33 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "Email")]
-        //[Required(ErrorMessage = "請輸入Email")]
+        [Required(ErrorMessage = "請輸入Email")]
         public string Email
         {
             get { return _member.FEmail; }
             set { _member.FEmail = value; }
         }
 
-        //[Display(Name = "密碼")]
-        //[DataType(DataType.Password)]
-        //public string? Password
-        //{
-        //    get { return null; }
-        //    set { _member.FPasswordHash = value; }
-        //}
+        [Display(Name = "目前密碼")]
+        [DataType(DataType.Password)]
+        public string? CurrentPassword
+        {
+            get { return null; }
+            set { _member.FPasswordHash = value; }
+        }
 
-        //[Display(Name = "確認密碼")]
-        //[Compare("Password", ErrorMessage = "密碼不相同！")]
-        //[DataType(DataType.Password)]
-        //public string? ConfirmPassword { get; set; }
+        [Display(Name = "新密碼")]
+        [DataType(DataType.Password)]
+        public string? NewPassword
+        {
+            get { return null; }
+            set { _member.FPasswordHash = value; }
+        }
+
+        [Display(Name = "確認新密碼")]
+        [Compare("NewPassword", ErrorMessage = "密碼不相同！")]
+        [DataType(DataType.Password)]
+        public string? ConfirmPassword { get; set; }
 
         [Display(Name = "生日")]
         public DateTime? DateOfBirth
@@ -77,10 +85,17 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "性別")]
-        public string? Gender
+        public string? GenderString
         {
             get;
             set;
+        }
+
+        [Display(Name = "性別")]
+        public int? GenderId
+        {
+            get { return _member.FGenderId; }
+            set { _member.FGenderId = value; }
         }
 
         [Display(Name = "手機")]
@@ -91,13 +106,23 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         //[Display(Name = "縣市")]
-        public string? City { get; set; }
+        public string? CityString { get; set; }
+
+        //[Display(Name = "縣市")]
+        public int? City { get; set; }
 
         //[Display(Name = "區域")]
-        public string? Area
+        public string? AreaString
         {
             get;
             set;
+        }
+
+        //[Display(Name = "區域")]
+        public int? Area
+        {
+            get { return _member.FAreaId; }
+            set { _member.FAreaId = value; }
         }
 
         [Display(Name = "住址")]
@@ -113,6 +138,9 @@ namespace ISpan.InseparableCore.ViewModels
             get { return _member.FPhotoPath; }
             set { _member.FPhotoPath = value; }
         }
+
+        [Display(Name = "上傳新大頭貼照")]
+        public IFormFile? MemberPhoto { get; set; }
 
         [Display(Name = "自我介紹")]
         public string? Introduction
@@ -141,6 +169,7 @@ namespace ISpan.InseparableCore.ViewModels
             get { return _member.FTotalMemberPoint; }
             set { _member.FTotalMemberPoint = value; }
         }
+
 
     }
 }

@@ -63,7 +63,7 @@ namespace ISpan.InseparableCore.Controllers
             {
                 city = _context.TAreas
                     .Where(a => a.FId == member.FAreaId)
-                    .Select(x => x.FCity)
+                    .Select(x => x.FCity.FCityName)
                     .FirstOrDefault()
                     .ToString();
             }
@@ -87,7 +87,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CMemberProfileViewModel
+            var viewModel = new CMemberCenterViewModel
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -96,10 +96,11 @@ namespace ISpan.InseparableCore.Controllers
                 FirstName = member.FFirstName,
                 Email = member.FEmail,
                 DateOfBirth = member.FDateOfBirth,
-                Gender = gender,
+                GenderString = gender,
+                GenderId = member.FGenderId,
                 Cellphone = member.FCellphone,
-                City = city,
-                Area = area,
+                CityString = city,
+                AreaString = area,
                 Address = member.FAddress,
                 PhotoPath = member.FPhotoPath,
                 Introduction = member.FIntroduction,
@@ -109,10 +110,16 @@ namespace ISpan.InseparableCore.Controllers
 
             };
 
-            //ViewData["Gender"] = gender; // 性別
-            //ViewData["City"] = city; // 縣市
-            //ViewData["Area"] = area; // 區域
+            int? CityID = null;
+            if (member.FAreaId != null)
+            {
+                CityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
+            }
 
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", CityID); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+            
             return View(viewModel);
         }
 
@@ -255,15 +262,16 @@ namespace ISpan.InseparableCore.Controllers
                 Introduction = member.FIntroduction
 
             };
+
             int? cityID = null;
             if (member.FAreaId != null)
             {
                 cityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
             }
 
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", cityID); // 縣市選單的選項
             ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
 
             return View(viewModel);
         }
@@ -290,7 +298,7 @@ namespace ISpan.InseparableCore.Controllers
                         if (MemberIn.MemberPhoto != null) // todo 有些圖片不會正確存？
                         {
                             string extension = Path.GetExtension(MemberIn.MemberPhoto.FileName).ToLower();
-                            string photoName = "memberProfilePhotos_" + Guid.NewGuid().ToString() + extension;
+                            string photoName = "memberProfilePhotos_" + member.FMemberId.ToString() + extension;
                             string photoPath = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
                             MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
                             member.FPhotoPath = photoName;
@@ -339,6 +347,58 @@ namespace ISpan.InseparableCore.Controllers
             
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.Area);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
+            return View(MemberIn);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(int id, [Bind("Id,MemberId,Email,Password")] CEditProfileViewModel MemberIn)
+        {
+            if (id != MemberIn.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
+                    if (member != null)
+                    {
+                        member.FEmail = MemberIn.Email;
+
+                        if (MemberIn.Password != null) // 加密會員密碼
+                        {
+                            string password = MemberIn.Password; // 要加密的密碼
+
+                            byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
+
+                            byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
+
+                            // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                            member.FPasswordSalt = Convert.ToBase64String(salt);
+                            member.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                        }
+                    }
+
+                    _context.Update(member);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TMembersExists(MemberIn.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
             return View(MemberIn);
         }
 
