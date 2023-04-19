@@ -18,18 +18,26 @@ namespace ISpan.InseparableCore.Controllers
     {
         private readonly InseparableContext _db;
         private readonly ApiKeys _key;
+        private readonly OrderRepository _order_repo;
+        private readonly TicketOrderRepository _ticket_repo;
+        private readonly ProductOrderRepository _product_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
             _key = key.Value;
+            _order_repo = new OrderRepository(db);
+            _ticket_repo = new TicketOrderRepository(db);
+            _product_repo = new ProductOrderRepository(db);
         }
         //防止上一頁錯誤
         //todo 待測試
         [ResponseCache(CacheProfileName = "Default1800")]
         public IActionResult Ticket(CticketVM vm)
         {
-            //以防萬一只要一開啟訂購畫面 第一件事清空session  //todo 確認其他人沒有用session
-            HttpContext.Session.Clear();
+            //以防萬一只要一開啟訂購畫面 第一件事清空session
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+
             vm.cinema = _db.TCinemas.Select(t => t);
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
@@ -135,7 +143,7 @@ namespace ISpan.InseparableCore.Controllers
             }
             vm.solid = new List<int>();
 
-            var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == vm.sessionid && t.FStatus == true);
+            var solid = _ticket_repo.GetSolid(vm.sessionid ,true);
             foreach (var item in solid)
             {
                 vm.solid.Add(item.FSeatId);
@@ -256,17 +264,18 @@ namespace ISpan.InseparableCore.Controllers
                 string error = "位置已售出請重新選擇!";
                 return RedirectToAction("Error", new { error });
             }
-            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == orderid);
+            var order = _order_repo.GetById(orderid);
             order.FStatus = true;
 
-            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == orderid);
+            var ticket =_ticket_repo.GetById(orderid);
             foreach (var item in ticket)
             {
                 item.FStatus = true;
             }
 
             _db.SaveChanges();
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return View(order);
         }
         //綠界API
@@ -299,7 +308,7 @@ namespace ISpan.InseparableCore.Controllers
             };
             order["CheckMacValue"] = GetCheckMacValue(order);
 
-            var get = _db.TOrders.FirstOrDefault(t => t.FOrderId == orderid);
+            var get = _order_repo.GetById(orderid);
             if (get == null)
             {
                 string error = "訂單出現錯誤!請重新下單";
@@ -333,7 +342,7 @@ namespace ISpan.InseparableCore.Controllers
                 string error = "網頁加載時出現問題";
                 return RedirectToAction("Error", new { error });
             }
-            var order = _db.TOrders.FirstOrDefault(t => t.FOrderId==id);
+            var order = _order_repo.GetById(id);
             if (order == null)
             {
                 string error = "網頁加載時出現問題";
@@ -342,14 +351,15 @@ namespace ISpan.InseparableCore.Controllers
 
             order.FStatus = true;
 
-            var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == order.FOrderId);
+            var ticket = _ticket_repo.GetById(order.FOrderId);
             foreach (var item in ticket)
             {
                 item.FStatus = true;
             }
 
             _db.SaveChanges();
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return View(order);
         }
 
@@ -387,25 +397,24 @@ namespace ISpan.InseparableCore.Controllers
 
             try
             {
-                _db.TOrders.Add(vm.orders);
-                _db.SaveChanges();
+                _order_repo.Create(vm.orders);
             }
             catch (Exception ex)
             {
                 return null;
             }
 
-            int orderid = _db.TOrders.FirstOrDefault(t => t == vm.orders).FOrderId;
+            int orderid = _order_repo.GetByAll(vm.orders).FOrderId;
 
             //ticket
             foreach (var item in ticket_list)
             {
                 //驗證位置是否未售出
-                var solid = _db.TTicketOrderDetails.Where(t => t.FSessionId == item.FSessionId && t.FStatus == true).FirstOrDefault(t => t.FSeatId == item.FSeatId);
+                var solid = _ticket_repo.GetBySeat(item.FSessionId ,true,item.FSeatId);
                 if (solid != null && solid.FOrderId != orderid)
                 {
-                    HttpContext.Session.Clear();
-                    //throw new Exception("位置已售出請重新選擇!");
+                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
                     return null;
                 }
 
@@ -426,8 +435,7 @@ namespace ISpan.InseparableCore.Controllers
 
                 try
                 {
-                    _db.TTicketOrderDetails.Add(item.ticket);
-                    _db.SaveChanges();
+                    _ticket_repo.Create(item.ticket);
                 }
                 catch (Exception ex)
                 {
@@ -445,8 +453,7 @@ namespace ISpan.InseparableCore.Controllers
 
                 try
                 {
-                    _db.TProductOrderDetails.Add(item.ProductOrderDetails);
-                    _db.SaveChanges();
+                    _product_repo.Create(item.ProductOrderDetails);
                 }
                 catch (Exception ex)
                 {
@@ -454,8 +461,9 @@ namespace ISpan.InseparableCore.Controllers
                 }
 
             }
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return orderid;
-            HttpContext.Session.Clear();
         }
 
         //清除session
