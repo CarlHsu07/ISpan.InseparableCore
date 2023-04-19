@@ -24,6 +24,7 @@ namespace ISpan.InseparableCore.Controllers
             _key = key.Value;
         }
         //防止上一頁錯誤
+        //todo 待測試
         [ResponseCache(CacheProfileName = "Default1800")]
         public IActionResult Ticket(CticketVM vm)
         {
