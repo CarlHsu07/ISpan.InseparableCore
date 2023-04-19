@@ -1,19 +1,21 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.Models.BLL.Interfaces;
+using Microsoft.Data.Sqlite;
 
 namespace ISpan.InseparableCore.Models.DAL
 {
-    public class TicketOrderRepository
+    public class TicketOrderRepository: ITicketOrderRepository
     {
         private readonly InseparableContext _db;
         public TicketOrderRepository(InseparableContext db)
         {
             _db = db;
         }
-        public void Create(TTicketOrderDetails ticket)
+        public void Create(TicketOrderEntity entity)
         {
             try
             {
-                _db.TTicketOrderDetails.Add(ticket);
+                _db.TTicketOrderDetails.Add(entity.ticket);
                 _db.SaveChanges();
             }catch(SqliteException ex)
             {

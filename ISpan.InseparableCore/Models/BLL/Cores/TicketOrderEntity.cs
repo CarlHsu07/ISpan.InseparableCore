@@ -1,19 +1,18 @@
-﻿using ISpan.InseparableCore.Models.BLL.Cores;
-using ISpan.InseparableCore.Models.DAL;
+﻿using ISpan.InseparableCore.Models.DAL;
 
-namespace ISpan.InseparableCore.Models.BLL.DTOs
+namespace ISpan.InseparableCore.Models.BLL.Cores
 {
-    public class TicketOrderCreateDto
+    public class TicketOrderEntity
     {
-        private TicketOrderEntity _ticketOrderDetails;
-        public TicketOrderEntity ticket
+        private TTicketOrderDetails _ticketOrderDetails;
+        public TTicketOrderDetails ticket
         {
             get { return _ticketOrderDetails; }
             set { _ticketOrderDetails = value; }
         }
-        public TicketOrderCreateDto()
+        public TicketOrderEntity()
         {
-            _ticketOrderDetails = new TicketOrderEntity();
+            _ticketOrderDetails = new TTicketOrderDetails();
         }
         public int FId { get { return _ticketOrderDetails.FId; } set { _ticketOrderDetails.FId = value; } }
         public int FTicketItemNo { get { return _ticketOrderDetails.FTicketItemNo; } set { _ticketOrderDetails.FTicketItemNo = value; } }
@@ -26,6 +25,7 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
         public decimal FTicketUnitprice { get { return _ticketOrderDetails.FTicketUnitprice; } set { _ticketOrderDetails.FTicketUnitprice = value; } }
         public decimal FTicketDiscount { get { return _ticketOrderDetails.FTicketDiscount; } set { _ticketOrderDetails.FTicketDiscount = value; } }
         public decimal FTicketSubtotal { get { return _ticketOrderDetails.FTicketSubtotal; } set { _ticketOrderDetails.FTicketSubtotal = value; } }
-        public bool Fstatus { get { return _ticketOrderDetails.Fstatus; } set { _ticketOrderDetails.Fstatus = value; } }
+        public bool Fstatus { get { return _ticketOrderDetails.FStatus; } set { _ticketOrderDetails.FStatus = value; } }
     }
 }
+

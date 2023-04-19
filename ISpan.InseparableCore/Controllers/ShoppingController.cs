@@ -1,4 +1,6 @@
-﻿using ISpan.InseparableCore.Models.DAL;
+﻿using ISpan.InseparableCore.Models.BLL;
+using ISpan.InseparableCore.Models.BLL.Interfaces;
+using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -79,8 +81,8 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Ticket");
             }
             vm.sessions = _session_repo.GetBySession(session);
-            vm.movie = _session_repo.GetBySession(session).Select(t => t.FMovie);
-            vm.cinema = _session_repo.GetBySession(session).Select(t => t.FCinema);
+            vm.movie = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
+            vm.cinema = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
             vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);
 
             return View(vm);
@@ -160,7 +162,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             vm.sessions = _session_repo.GetOneSession(vm.sessionid);
-            vm.movie = _session_repo.GetBySession(vm.sessionid).Select(t => t.FMovie);
+            vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
             return View(vm);
         }
 
@@ -251,7 +253,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.concession = (int)concession;
             vm.regular = (int)regular;
             vm.session = _session_repo.GetOneSession(sessionid);
-            vm.movies = _session_repo.GetBySession(sessionid).Select(t => t.FMovie);
+            vm.movies = _db.TSessions.Where(t => t.FSessionId == sessionid).Select(t => t.FMovie);
             vm.cart = cart;
 
             return View(vm);
@@ -411,15 +413,6 @@ namespace ISpan.InseparableCore.Controllers
             //ticket
             foreach (var item in ticket_list)
             {
-                //驗證位置是否未售出
-                var solid = _ticket_repo.GetBySeat(item.FSessionId ,true,item.FSeatId);
-                if (solid != null && solid.FOrderId != orderid)
-                {
-                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
-                    return null;
-                }
-
                 item.FOrderId = orderid;
                 item.Fstatus = false;
                 if (vm.regular > 0)
@@ -434,35 +427,43 @@ namespace ISpan.InseparableCore.Controllers
                     vm.concession -= 1;
                     item.FTicketSubtotal = item.FTicketDiscount * item.FTicketUnitprice;
                 }
-
+                ITicketOrderRepository repo = new TicketOrderRepository(_db);
+                TicketOrderService service = new TicketOrderService(repo);
                 try
                 {
-                    _ticket_repo.Create(item.ticket);
+                    service.Create(item.ticket);
+                    _db.SaveChanges();
                 }
                 catch (Exception ex)
                 {
+                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
                     return null;
                 }
 
             }
 
             //product
-            foreach (var item in product_list)
+            if(product_list != null)
             {
-                item.FOrderId = orderid;
-                item.FProductDiscount = 1;
-                item.FProductSubtotal = item.FProductUnitprice * item.FProductDiscount;
-
-                try
+                foreach (var item in product_list)
                 {
-                    _product_repo.Create(item.ProductOrderDetails);
-                }
-                catch (Exception ex)
-                {
-                    return null;
-                }
+                    item.FOrderId = orderid;
+                    item.FProductDiscount = 1;
+                    item.FProductSubtotal = item.FProductUnitprice * item.FProductDiscount;
 
+                    try
+                    {
+                        _product_repo.Create(item.ProductOrderDetails);
+                    }
+                    catch (Exception ex)
+                    {
+                        return null;
+                    }
+
+                }
             }
+           
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return orderid;
