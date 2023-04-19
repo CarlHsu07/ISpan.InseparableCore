@@ -42,10 +42,8 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				repo.Search(comment.FArticleId);
 			}
-			else if (comment.FCommentId != 0)//comment已存在=>跟新
+			else if (comment.FCommentId != 0 || comment.FDeleted)//comment已存在=>跟新or刪除
 			{
-				var commentInDb = await _context.TComments.FindAsync(comment.FCommentId);
-				commentInDb.FCommentContent = comment.FCommentContent;
 				repo.UpdateAsync(comment);
 			}
 			else // 新comment=>新增

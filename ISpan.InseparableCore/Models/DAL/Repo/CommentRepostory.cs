@@ -51,11 +51,11 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task UpdateAsync(CommentVm vm)
 		{
-			vm.FCommentModifiedDate = DateTime.Now;
-			TComments comment = vm.VmToModel();
-
+			TComments comment = context.TComments.FirstOrDefault(t => t.FCommentId == vm.FCommentId);
+			comment.FCommentContent = vm.FCommentContent;
+			comment.FDeleted = vm.FDeleted;
 			context.Update(comment);
-			await context.SaveChangesAsync();
+			context.SaveChanges();
 
 		}
 		public async Task DeleteAsync(int commentId)
