@@ -9,7 +9,9 @@ namespace ISpan.InseparableCore.Models.DAL
     {
         public TArticles()
         {
+            TArticleClickedDetails = new HashSet<TArticleClickedDetails>();
             TArticleKeywordDetails = new HashSet<TArticleKeywordDetails>();
+            TArticleLikeDetails = new HashSet<TArticleLikeDetails>();
             TComments = new HashSet<TComments>();
         }
 
@@ -26,7 +28,9 @@ namespace ISpan.InseparableCore.Models.DAL
 
         public virtual TMovieCategories FArticleCategory { get; set; }
         public virtual TMembers FMember { get; set; }
+        public virtual ICollection<TArticleClickedDetails> TArticleClickedDetails { get; set; }
         public virtual ICollection<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
+        public virtual ICollection<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }
     }
 }

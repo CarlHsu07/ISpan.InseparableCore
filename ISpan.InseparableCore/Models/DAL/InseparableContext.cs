@@ -24,7 +24,9 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TActors> TActors { get; set; }
         public virtual DbSet<TAdministrators> TAdministrators { get; set; }
         public virtual DbSet<TAreas> TAreas { get; set; }
+        public virtual DbSet<TArticleClickedDetails> TArticleClickedDetails { get; set; }
         public virtual DbSet<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
+        public virtual DbSet<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual DbSet<TArticles> TArticles { get; set; }
         public virtual DbSet<TCinemas> TCinemas { get; set; }
         public virtual DbSet<TCities> TCities { get; set; }
@@ -40,9 +42,11 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TMovieActorDetails> TMovieActorDetails { get; set; }
         public virtual DbSet<TMovieCategories> TMovieCategories { get; set; }
         public virtual DbSet<TMovieCategoryDetails> TMovieCategoryDetails { get; set; }
+        public virtual DbSet<TMovieCommentDetails> TMovieCommentDetails { get; set; }
         public virtual DbSet<TMovieDirectorDetails> TMovieDirectorDetails { get; set; }
         public virtual DbSet<TMovieKeywordDetails> TMovieKeywordDetails { get; set; }
         public virtual DbSet<TMovieLevels> TMovieLevels { get; set; }
+        public virtual DbSet<TMovieScoreDetails> TMovieScoreDetails { get; set; }
         public virtual DbSet<TMovies> TMovies { get; set; }
         public virtual DbSet<TOrders> TOrders { get; set; }
         public virtual DbSet<TProductCategories> TProductCategories { get; set; }
@@ -260,6 +264,37 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasConstraintName("FK_Areas_Cities");
             });
 
+            modelBuilder.Entity<TArticleClickedDetails>(entity =>
+            {
+                entity.HasKey(e => e.FSerialNumber)
+                    .HasName("PK_TArticleClickedDetails");
+
+                entity.ToTable("tArticleClickedDetails");
+
+                entity.HasIndex(e => new { e.FMemberId, e.FArticleId }, "IX_TArticleClickedDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
+
+                entity.Property(e => e.FArticleId).HasColumnName("fArticleId");
+
+                entity.Property(e => e.FLikeClicked).HasColumnName("fLikeClicked");
+
+                entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
+
+                entity.HasOne(d => d.FArticle)
+                    .WithMany(p => p.TArticleClickedDetails)
+                    .HasForeignKey(d => d.FArticleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TArticleClickedDetails_tArticles");
+
+                entity.HasOne(d => d.FMember)
+                    .WithMany(p => p.TArticleClickedDetails)
+                    .HasForeignKey(d => d.FMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TArticleClickedDetails_tMembers");
+            });
+
             modelBuilder.Entity<TArticleKeywordDetails>(entity =>
             {
                 entity.HasKey(e => e.FSerialNumber)
@@ -287,6 +322,35 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasForeignKey(d => d.FKeywordId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ArticleCategoryDetails_ArticleCategories");
+            });
+
+            modelBuilder.Entity<TArticleLikeDetails>(entity =>
+            {
+                entity.HasKey(e => e.FSerialNumber)
+                    .HasName("PK_TArticleLikeDetails");
+
+                entity.ToTable("tArticleLikeDetails");
+
+                entity.HasIndex(e => new { e.FArticleId, e.FMemberId }, "IX_tArticleLikeDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
+
+                entity.Property(e => e.FArticleId).HasColumnName("fArticleId");
+
+                entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
+
+                entity.HasOne(d => d.FArticle)
+                    .WithMany(p => p.TArticleLikeDetails)
+                    .HasForeignKey(d => d.FArticleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TArticleLikeDetails_tArticles");
+
+                entity.HasOne(d => d.FMember)
+                    .WithMany(p => p.TArticleLikeDetails)
+                    .HasForeignKey(d => d.FMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TArticleLikeDetails_tMembers");
             });
 
             modelBuilder.Entity<TArticles>(entity =>
@@ -826,6 +890,47 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasConstraintName("FK_MovieCategoryDetails_Movies");
             });
 
+            modelBuilder.Entity<TMovieCommentDetails>(entity =>
+            {
+                entity.HasKey(e => e.FSerialNumber)
+                    .HasName("PK_tMovieScoreDetails");
+
+                entity.ToTable("tMovieCommentDetails");
+
+                entity.HasIndex(e => new { e.FMemberId, e.FMovieId, e.FPostingDate }, "IX_tMovieScoreDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
+
+                entity.Property(e => e.FComment)
+                    .IsRequired()
+                    .HasMaxLength(4000)
+                    .HasColumnName("fComment");
+
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
+
+                entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
+
+                entity.Property(e => e.FMovieId).HasColumnName("fMovieId");
+
+                entity.Property(e => e.FPostingDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fPostingDate")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.HasOne(d => d.FMember)
+                    .WithMany(p => p.TMovieCommentDetails)
+                    .HasForeignKey(d => d.FMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMovieScoreDetails_tMembers");
+
+                entity.HasOne(d => d.FMovie)
+                    .WithMany(p => p.TMovieCommentDetails)
+                    .HasForeignKey(d => d.FMovieId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMovieScoreDetails_tMovies");
+            });
+
             modelBuilder.Entity<TMovieDirectorDetails>(entity =>
             {
                 entity.HasKey(e => e.FSerialNumber);
@@ -895,6 +1000,37 @@ namespace ISpan.InseparableCore.Models.DAL
                     .IsRequired()
                     .HasMaxLength(50)
                     .HasColumnName("fLevelName");
+            });
+
+            modelBuilder.Entity<TMovieScoreDetails>(entity =>
+            {
+                entity.HasKey(e => e.FSerialNumber)
+                    .HasName("PK_TMovieScoreDetails_1");
+
+                entity.ToTable("tMovieScoreDetails");
+
+                entity.HasIndex(e => new { e.FMemberId, e.FMovieId }, "IX_TMovieScoreDetails_1")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
+
+                entity.Property(e => e.FMemberId).HasColumnName("fMemberId");
+
+                entity.Property(e => e.FMovieId).HasColumnName("fMovieId");
+
+                entity.Property(e => e.FScore).HasColumnName("fScore");
+
+                entity.HasOne(d => d.FMember)
+                    .WithMany(p => p.TMovieScoreDetails)
+                    .HasForeignKey(d => d.FMemberId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TMovieScoreDetails_tMembers1");
+
+                entity.HasOne(d => d.FMovie)
+                    .WithMany(p => p.TMovieScoreDetails)
+                    .HasForeignKey(d => d.FMovieId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TMovieScoreDetails_tMovies1");
             });
 
             modelBuilder.Entity<TMovies>(entity =>

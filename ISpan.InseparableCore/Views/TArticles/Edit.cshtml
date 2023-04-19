@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TArticles
+﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
 
 @{
     ViewData["Title"] = "Edit";
@@ -13,6 +13,11 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="FArticleId" />
+            <input asp-for="FArticlePostingDate" type="hidden" />
+            <input asp-for="FArticleModifiedDate" type="hidden" />
+            <input asp-for="FArticleLikes" type="hidden" />
+            <input asp-for="FArticleClicks" type="hidden" />
+			<input asp-for="FDeleted" type="hidden"/>
             <div class="form-group">
                 <label asp-for="FArticleTitle" class="control-label"></label>
                 <input asp-for="FArticleTitle" class="form-control" />
@@ -29,23 +34,8 @@
                 <span asp-validation-for="FArticleCategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FArticlePostingDate" class="control-label"></label>
-                <input asp-for="FArticlePostingDate" class="form-control" />
-                <span asp-validation-for="FArticlePostingDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FArticleLikes" class="control-label"></label>
-                <input asp-for="FArticleLikes" class="form-control" />
-                <span asp-validation-for="FArticleLikes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FArticleClicks" class="control-label"></label>
-                <input asp-for="FArticleClicks" class="form-control" />
-                <span asp-validation-for="FArticleClicks" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="FArticleContent" class="control-label"></label>
-                <input asp-for="FArticleContent" class="form-control" />
+                <textarea asp-for="FArticleContent" class="form-control" ></textarea>
                 <span asp-validation-for="FArticleContent" class="text-danger"></span>
             </div>
             <div class="form-group">

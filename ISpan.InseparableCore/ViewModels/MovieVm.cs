@@ -17,26 +17,26 @@ namespace ISpan.InseparableCore.ViewModels
 		public int FMovieLevelId { get; set; }
 		[DisplayName("電影分級")]
 		public string? Level { get; set; }
-		[DisplayName("上映日期")]
 		public DateTime FMovieOnDate { get; set; }
-
 		[DisplayName("上映日期")]
 		public string? OnDate { get; set; }
-		[DisplayName("下映日期")]
 		public DateTime? FMovieOffDate { get; set; }
+		[DisplayName("下映日期")]
+		public string? OffDate { get; set; }
 		[DisplayName("片長")]
 		public int FMovieLength { get; set; }
 		[DisplayName("圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }
 		[DisplayName("會員評分")]
-		public int? FMovieScore { get; set; } = 0;
-		[DisplayName("電影類別")]
+		public decimal? FMovieScore { get; set; } = 0;
 		public string? CategoryIds { get; set; }
 
 		[DisplayName("電影類別")]
 		public string? Categories { get; set; }
-		public List<TMovieActorDetails>? MovieActorDetails { get; set; }
-		public List<TMovieDirectorDetails>? MovieDirectorDetails { get; set; }
+		[DisplayName("主要演員")]
+		public string? FMovieActors { get; set; }
+		[DisplayName("導演")]
+		public string? FMovieDirectors { get; set; }
 		[DisplayName("宣傳照")]
 		public IFormFile? Image { get; set; }
 	}
@@ -53,9 +53,12 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieOnDate = tMovies.FMovieOnDate,
 				OnDate = tMovies.FMovieOnDate.ToString("yyyy-MM-dd"),
 				FMovieOffDate = tMovies.FMovieOffDate,
+				OffDate = ((DateTime)tMovies.FMovieOffDate).ToString("yyyy-MM-dd"),
 				FMovieLength = tMovies.FMovieLength,
-				FMovieScore = (int?)tMovies.FMovieScore,
+				//FMovieScore = tMovies.FMovieScore,
 				FMovieImagePath = tMovies.FMovieImagePath,
+				FMovieActors = tMovies.FMovieActors,
+				FMovieDirectors= tMovies.FMovieDirectors,
 			};
 			return vm;
 		}
@@ -72,6 +75,8 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieLength = vm.FMovieLength,
 				FMovieScore = (int)vm.FMovieScore,
 				FMovieImagePath = vm.FMovieImagePath,
+				FMovieActors = vm.FMovieActors,
+				FMovieDirectors= vm.FMovieDirectors,
 			};
 			return movie;
 		}

@@ -5,18 +5,20 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ISpan.InseparableCore.Models;
 using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
+using NuGet.Protocol;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class TCommentsController : Controller
     {
         private readonly InseparableContext _context;
-
+		private readonly CommentRepository repo;
         public TCommentsController(InseparableContext context)
         {
             _context = context;
+			repo = new CommentRepository(context);
         }
 
         // GET: TComments
@@ -25,32 +27,61 @@ namespace ISpan.InseparableCore.Controllers
             var inseparableContext = _context.TComments.Include(t => t.FArticle).Include(t => t.FMember);
             return View(await inseparableContext.ToListAsync());
         }
+		[HttpPost]
+        public async Task<IActionResult> Index(int articleId)
+        {
+            var comments = repo.Search(articleId);
+            return View(comments);
+        }
+		[HttpPost]
+		public async Task<IActionResult> ArticleComment(CommentVm comment)
+		{
+			List<CommentVm> vms = new List<CommentVm>();
+			//無參數=>預設顯示
+			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FCommentContent))
+			{
+				repo.Search(comment.FArticleId);
+			}
+			else if (comment.FCommentId != 0)//comment已存在=>跟新
+			{
+				var commentInDb = await _context.TComments.FindAsync(comment.FCommentId);
+				commentInDb.FCommentContent = comment.FCommentContent;
+				repo.UpdateAsync(comment);
+			}
+			else // 新comment=>新增
+			{
+				repo.CreateAsync(comment);
+			}
 
-        // GET: TComments/Details/5
-        public async Task<IActionResult> Details(int? id)
+			var comments = _context.TComments.Where(t => t.FArticleId == comment.FArticleId).ToList();
+			vms = repo.ModelToVms(comments).ToList();
+
+			return Ok(vms.ToJson());
+		}
+
+		// GET: TComments/Details/5
+		public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.TComments == null)
             {
                 return NotFound();
             }
 
-            var tComments = await _context.TComments
-                .Include(t => t.FArticle)
-                .Include(t => t.FMember)
+            var comment = await _context.TComments
                 .FirstOrDefaultAsync(m => m.FCommentId == id);
-            if (tComments == null)
+            if (comment == null)
             {
                 return NotFound();
             }
 
-            return View(tComments);
+            return View(comment);
         }
 
         // GET: TComments/Create
         public IActionResult Create()
         {
             ViewData["FArticleId"] = new SelectList(_context.TArticles, "FArticleId", "FArticleContent");
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail");
+            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
             return View();
         }
 
@@ -59,35 +90,14 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent")] TComments tComments)
+        public async Task<IActionResult> Create(CommentVm vm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(tComments);
-                await _context.SaveChangesAsync();
+				repo.CreateAsync(vm);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FArticleId"] = new SelectList(_context.TArticles, "FArticleId", "FArticleContent", tComments.FArticleId);
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tComments.FMemberId);
-            return View(tComments);
-        }
-
-        // GET: TComments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.TComments == null)
-            {
-                return NotFound();
-            }
-
-            var tComments = await _context.TComments.FindAsync(id);
-            if (tComments == null)
-            {
-                return NotFound();
-            }
-            ViewData["FArticleId"] = new SelectList(_context.TArticles, "FArticleId", "FArticleContent", tComments.FArticleId);
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tComments.FMemberId);
-            return View(tComments);
+            return View(vm);
         }
 
         // POST: TComments/Edit/5
@@ -95,9 +105,9 @@ namespace ISpan.InseparableCore.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FCommentId,FArticleId,FItemNumber,FMemberId,FCommentPostingDate,FCommentLikes,FCommentContent")] TComments tComments)
+        public async Task<IActionResult> Edit(int id, CommentVm vm)
         {
-            if (id != tComments.FCommentId)
+            if (id != vm.FCommentId)
             {
                 return NotFound();
             }
@@ -106,12 +116,11 @@ namespace ISpan.InseparableCore.Controllers
             {
                 try
                 {
-                    _context.Update(tComments);
-                    await _context.SaveChangesAsync();
+					repo.UpdateAsync(vm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TCommentsExists(tComments.FCommentId))
+                    if (!TCommentsExists(vm.FCommentId))
                     {
                         return NotFound();
                     }
@@ -122,29 +131,7 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FArticleId"] = new SelectList(_context.TArticles, "FArticleId", "FArticleContent", tComments.FArticleId);
-            ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FEmail", tComments.FMemberId);
-            return View(tComments);
-        }
-
-        // GET: TComments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.TComments == null)
-            {
-                return NotFound();
-            }
-
-            var tComments = await _context.TComments
-                .Include(t => t.FArticle)
-                .Include(t => t.FMember)
-                .FirstOrDefaultAsync(m => m.FCommentId == id);
-            if (tComments == null)
-            {
-                return NotFound();
-            }
-
-            return View(tComments);
+            return View(vm);
         }
 
         // POST: TComments/Delete/5
