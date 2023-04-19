@@ -21,6 +21,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly OrderRepository _order_repo;
         private readonly TicketOrderRepository _ticket_repo;
         private readonly ProductOrderRepository _product_repo;
+        private readonly SessionRepository _session_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
@@ -28,6 +29,7 @@ namespace ISpan.InseparableCore.Controllers
             _order_repo = new OrderRepository(db);
             _ticket_repo = new TicketOrderRepository(db);
             _product_repo = new ProductOrderRepository(db);
+            _session_repo = new SessionRepository(db);
         }
         //防止上一頁錯誤
         //todo 待測試
@@ -43,25 +45,25 @@ namespace ISpan.InseparableCore.Controllers
 
             //限制時間區間
             var start = DateTime.Now.Date;
-            var starttime = DateTime.Now.TimeOfDay;
+            var now = DateTime.Now.TimeOfDay;
             var end = DateTime.Now.Date.AddDays(7);
             //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
-                vm.movie = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId).Select(t => t.FMovie).Distinct();
+                vm.movie = _session_repo.GetMovie(vm.cinemaId);
                 // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
             if (vm.movieId != 0)
             {
-                var date = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
-                    var sessions = _db.TSessions.Where(t => t.FCinemaId == vm.cinemaId && t.FMovieId == vm.movieId && t.FSessionDate == item);
-                    //&&t.FsessionTime>=starttime
+                    var sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t=>t.FSessionDate == item);
+                    //&&t.FsessionTime>=now
 
                     vm.sessions.Add(item, sessions);
                 }
@@ -76,9 +78,9 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return RedirectToAction("Ticket");
             }
-            vm.sessions = _db.TSessions.Where(t => t.FSessionId == session);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
-            vm.cinema = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
+            vm.sessions = _session_repo.GetBySession(session);
+            vm.movie = _session_repo.GetBySession(session).Select(t => t.FMovie);
+            vm.cinema = _session_repo.GetBySession(session).Select(t => t.FCinema);
             vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);
 
             return View(vm);
@@ -157,8 +159,8 @@ namespace ISpan.InseparableCore.Controllers
                 vm.seats.Add(item, column);
             }
 
-            vm.sessions = _db.TSessions.FirstOrDefault(t => t.FSessionId == vm.sessionid);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
+            vm.sessions = _session_repo.GetOneSession(vm.sessionid);
+            vm.movie = _session_repo.GetBySession(vm.sessionid).Select(t => t.FMovie);
             return View(vm);
         }
 
@@ -171,7 +173,7 @@ namespace ISpan.InseparableCore.Controllers
             if (seatId == null || sessionId == null)
                 return Ok(responseText);
 
-            var session = _db.TSessions.FirstOrDefault(t => t.FSessionId == sessionId);
+            var session = _session_repo.GetOneSession(sessionId);
 
             List<CticketCartItemVM> cart = null;
             string json = string.Empty;
@@ -248,8 +250,8 @@ namespace ISpan.InseparableCore.Controllers
             }
             vm.concession = (int)concession;
             vm.regular = (int)regular;
-            vm.session = _db.TSessions.FirstOrDefault(t => t.FSessionId == sessionid);
-            vm.movies = _db.TSessions.Where(t => t.FSessionId == sessionid).Select(t => t.FMovie);
+            vm.session = _session_repo.GetOneSession(sessionid);
+            vm.movies = _session_repo.GetBySession(sessionid).Select(t => t.FMovie);
             vm.cart = cart;
 
             return View(vm);
