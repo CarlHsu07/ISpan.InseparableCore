@@ -86,12 +86,12 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FGenderId = value; }
         }
 
-        [Display(Name = "手機")]
-        public string? Cellphone
-        {
-            get { return _member.FCellphone; }
-            set { _member.FCellphone = value; }
-        }
+        //[Display(Name = "手機")]
+        //public string? Cellphone
+        //{
+        //    get { return _member.FCellphone; }
+        //    set { _member.FCellphone = value; }
+        //}
 
         //[Display(Name = "縣市")]
         [Required(ErrorMessage = "請選擇縣市")]
@@ -112,11 +112,11 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FAddress = value; }
         }
 
-        public string? PhotoPath
-        {
-            get { return _member.FPhotoPath; }
-            set { _member.FPhotoPath = value; }
-        }
+        //public string? PhotoPath
+        //{
+        //    get { return _member.FPhotoPath; }
+        //    set { _member.FPhotoPath = value; }
+        //}
 
         //[Display(Name = "自我介紹")]
         //public string? Introduction
@@ -146,6 +146,6 @@ namespace ISpan.InseparableCore.ViewModels
         //    set { _member.FSignUpTime = value; }
         //}
 
-        //public IFormFile photo { get; set; }
+        //public IFormFile MemberPhoto { get; set; }
     }
 }

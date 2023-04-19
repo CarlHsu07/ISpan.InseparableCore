@@ -21,7 +21,10 @@
     <Folder Include="Models\BLL\Cores\" />
     <Folder Include="Models\BLL\DTOs\" />
     <Folder Include="Models\BLL\Interfaces\" />
-    <Folder Include="wwwroot\images\" />
+    <Folder Include="Models\DAL\" />
+    <Folder Include="wwwroot\images\memberProfilePhotos\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

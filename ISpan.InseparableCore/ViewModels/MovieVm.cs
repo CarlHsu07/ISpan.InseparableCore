@@ -55,7 +55,7 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieOffDate = tMovies.FMovieOffDate,
 				OffDate = ((DateTime)tMovies.FMovieOffDate).ToString("yyyy-MM-dd"),
 				FMovieLength = tMovies.FMovieLength,
-				FMovieScore = tMovies.FMovieScore,
+				//FMovieScore = tMovies.FMovieScore,
 				FMovieImagePath = tMovies.FMovieImagePath,
 				FMovieActors = tMovies.FMovieActors,
 				FMovieDirectors= tMovies.FMovieDirectors,

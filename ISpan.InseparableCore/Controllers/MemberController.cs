@@ -11,26 +11,119 @@ using System.Text;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class MemberController : Controller
     {
         private readonly InseparableContext _context;
+        IWebHostEnvironment _enviro;
 
-        public MemberController(InseparableContext context)
+        public MemberController(InseparableContext context, IWebHostEnvironment enviro)
         {
             _context = context;
+            _enviro = enviro;
         }
 
-        // GET: Members
-        public async Task<IActionResult> Index()
+        // GET: Member/Index/2
+        public async Task<IActionResult> Index(int? id)
         {
-            var inseparableContext = _context.TMembers.Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
-            return View(await inseparableContext.ToListAsync());
+            string gender = string.Empty;
+            string city = string.Empty;
+            string area = string.Empty;
+            string accountStatus = string.Empty;
+
+            if (id == null || _context.TMembers == null)
+            {
+                return NotFound();
+            }
+
+            //var member = _context.TMembers
+            //    .Where(m=>m.FId == id)
+            //    .Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
+
+            var member = await _context.TMembers.FindAsync(id);
+
+            if (member == null) // 沒找到會員
+            {
+                return NotFound();
+            }
+
+            if (member.FGenderId != null) // 取性別
+            {
+                gender = _context.TGenders
+                    .Where(g => g.FGenderId == member.FGenderId)
+                    .Select(x => x.FGenderType)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAreaId != null) // 取縣市
+            {
+                city = _context.TAreas
+                    .Where(a => a.FId == member.FAreaId)
+                    .Select(x => x.FCity.FCityName)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAreaId != null) // 取地區
+            {
+                area = _context.TAreas
+                    .Where(a => a.FId == member.FAreaId)
+                    .Select(x => x.FAreaName)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            if (member.FAccountStatus != null) // 取會員狀態
+            {
+                accountStatus = _context.TAccountStatuses
+                    .Where(s => s.FStatusId == member.FAccountStatus)
+                    .Select(x => x.FStatus)
+                    .FirstOrDefault()
+                    .ToString();
+            }
+
+            // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
+            var viewModel = new CMemberCenterViewModel
+            {
+                // 設定 ViewModel 的屬性值
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
+                DateOfBirth = member.FDateOfBirth,
+                GenderString = gender,
+                GenderId = member.FGenderId,
+                Cellphone = member.FCellphone,
+                CityString = city,
+                AreaString = area,
+                Address = member.FAddress,
+                PhotoPath = member.FPhotoPath,
+                Introduction = member.FIntroduction,
+                AccountStatus = accountStatus,
+                TotalMemberPoint = member.FTotalMemberPoint,
+                SignUpTime = member.FSignUpTime
+
+            };
+
+            int? CityID = null;
+            if (member.FAreaId != null)
+            {
+                CityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
+            }
+
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", CityID); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+            
+            return View(viewModel);
         }
 
-        // GET: Members/Details/5
+        // GET: Member/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.TMembers == null)
@@ -51,13 +144,31 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // GET: Members/Register
-        public IActionResult Register()
-        {
-            // 縣市
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName");
+		// GET: Member/ViewProfile/5
+		public async Task<IActionResult> ViewProfile(int? id)
+		{
+			if (id == null || _context.TMembers == null)
+			{
+				return NotFound();
+			}
 
-            //ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
+			var tMembers = await _context.TMembers
+				.Include(t => t.FAccountStatusNavigation)
+				.Include(t => t.FArea)
+				.Include(t => t.FGender)
+				.FirstOrDefaultAsync(m => m.FId == id);
+			if (tMembers == null)
+			{
+				return NotFound();
+			}
+
+			return View(tMembers);
+		}
+
+		// GET: Member/Register
+		public IActionResult Register()
+        {
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
             return View();
         }
@@ -75,11 +186,8 @@ namespace ISpan.InseparableCore.Controllers
             {
                 MemberService memberService = new MemberService(_context);
 
-                // 產生會員ID
-                newMember.FMemberId = memberService.GenerateMemberId();
-
-                // 產生會員註冊時間
-                newMember.FSignUpTime = memberService.GenerateSignUpTime();
+                newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
+                newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
 
                 // 產生會員點數
                 if (newMember.FTotalMemberPoint == null)
@@ -93,13 +201,14 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FDateOfBirth = MemberIn.DateOfBirth;
                 newMember.FGenderId = MemberIn.GenderId;
                 newMember.FAreaId = MemberIn.Area;
+                newMember.FAddress = MemberIn.Address;
+
 
                 // 加密會員密碼
                 #region
                 string password = MemberIn.Password; // 要加密的密碼
-
-                // 產生鹽值
-                byte[] salt = CPasswordHelper.GenerateSalt();
+                
+                byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
 
                 // 將密碼與鹽值結合後進行加密
                 byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
@@ -108,8 +217,6 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FPasswordSalt = Convert.ToBase64String(salt);
                 newMember.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
-
-
 
                 _context.Add(newMember);
                 await _context.SaveChangesAsync();
@@ -121,33 +228,62 @@ namespace ISpan.InseparableCore.Controllers
             return View(MemberIn);
         }
 
-        // GET: Members/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Member/EditProfile/5
+        public async Task<IActionResult> EditProfile(int? id)
         {
             if (id == null || _context.TMembers == null)
             {
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers == null)
+            var member = await _context.TMembers.FindAsync(id);
+            if (member == null) // 沒找到會員
             {
                 return NotFound();
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+
+
+            // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
+            var viewModel = new CEditProfileViewModel
+            {
+                // 設定 ViewModel 的屬性值
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
+                Password = "",
+                DateOfBirth = member.FDateOfBirth,
+                GenderId = member.FGenderId,
+                Cellphone = member.FCellphone,
+                Area = member.FAreaId,
+                Address = member.FAddress,
+                PhotoPath = member.FPhotoPath,
+                Introduction = member.FIntroduction
+
+            };
+
+            int? cityID = null;
+            if (member.FAreaId != null)
+            {
+                cityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
+            }
+
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", cityID); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+
+            return View(viewModel);
         }
 
-        // POST: Members/Edit/5
+        // POST: Member/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FId,FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint,FSignUpTime")] TMembers tMembers)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CEditProfileViewModel MemberIn)
         {
-            if (id != tMembers.FId)
+            if (id != MemberIn.Id)
             {
                 return NotFound();
             }
@@ -156,12 +292,48 @@ namespace ISpan.InseparableCore.Controllers
             {
                 try
                 {
-                    _context.Update(tMembers);
+                    TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
+                    if (member != null)
+                    {
+                        if (MemberIn.MemberPhoto != null) // todo 有些圖片不會正確存？
+                        {
+                            string extension = Path.GetExtension(MemberIn.MemberPhoto.FileName).ToLower();
+                            string photoName = "memberProfilePhotos_" + member.FMemberId.ToString() + extension;
+                            string photoPath = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
+                            MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
+                            member.FPhotoPath = photoName;
+                        }
+
+                        member.FLastName = MemberIn.LastName;
+                        member.FFirstName = MemberIn.FirstName;
+                        member.FEmail = MemberIn.Email;
+                        member.FDateOfBirth = MemberIn.DateOfBirth;
+                        member.FGenderId = MemberIn.GenderId;
+                        member.FCellphone = MemberIn.Cellphone;
+                        member.FAreaId = MemberIn.Area;
+                        member.FAddress = MemberIn.Address;
+                        member.FIntroduction = MemberIn.Introduction;
+
+                        if (MemberIn.Password != null) // 加密會員密碼
+                        {
+                            string password = MemberIn.Password; // 要加密的密碼
+
+                            byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
+
+                            byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
+
+                            // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                            member.FPasswordSalt = Convert.ToBase64String(salt);
+                            member.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                        }
+                    }
+
+                    _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TMembersExists(tMembers.FId))
+                    if (!TMembersExists(MemberIn.Id))
                     {
                         return NotFound();
                     }
@@ -172,13 +344,66 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+            
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.Area);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
+            return View(MemberIn);
         }
 
-        // GET: Members/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(int id, [Bind("Id,MemberId,Email,Password")] CEditProfileViewModel MemberIn)
+        {
+            if (id != MemberIn.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
+                    if (member != null)
+                    {
+                        member.FEmail = MemberIn.Email;
+
+                        if (MemberIn.Password != null) // 加密會員密碼
+                        {
+                            string password = MemberIn.Password; // 要加密的密碼
+
+                            byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
+
+                            byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
+
+                            // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                            member.FPasswordSalt = Convert.ToBase64String(salt);
+                            member.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                        }
+                    }
+
+                    _context.Update(member);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!TMembersExists(MemberIn.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(MemberIn);
+        }
+
+
+        // GET: Member/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.TMembers == null)
@@ -199,7 +424,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // POST: Members/Delete/5
+        // POST: Member/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -224,7 +449,6 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // 取得指定縣市的區域(鄉鎮市區)
-        [HttpPost]
         public IActionResult GetAreas(int cityId)
         {
             // 根據縣市值，查詢對應的區域資料
@@ -232,7 +456,8 @@ namespace ISpan.InseparableCore.Controllers
                 .Where(a => a.FCityId == cityId)
                 .Select(a => new
                 {
-                    zipCode = a.FZipCode,
+                    areaID = a.FId,
+                    //cityID = a.FCityId,
                     areaName = a.FAreaName
                 })
                 .ToList();
