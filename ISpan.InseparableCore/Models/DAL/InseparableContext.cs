@@ -331,9 +331,10 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.ToTable("tArticleLikeDetails");
 
-                entity.Property(e => e.FSerialNumber)
-                    .ValueGeneratedNever()
-                    .HasColumnName("fSerialNumber");
+                entity.HasIndex(e => new { e.FArticleId, e.FMemberId }, "IX_tArticleLikeDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FArticleId).HasColumnName("fArticleId");
 

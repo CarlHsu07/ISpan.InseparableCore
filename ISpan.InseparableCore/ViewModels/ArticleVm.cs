@@ -33,6 +33,8 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("文章內容")]
 		public string? PartialContent { get; set; }
 		public bool FDeleted { get; set; } = false;
+
+		public bool LikeOrUnlike { get; set; }
 		public int Page { get; set; }
 	}
 	public static class ArticleVmExtension
@@ -52,7 +54,7 @@ namespace ISpan.InseparableCore.ViewModels
 				FArticleLikes = article.FArticleLikes,
 				FArticleClicks = article.FArticleClicks,
 				FArticleContent = article.FArticleContent,
-				PartialContent = article.FArticleContent.Substring(0, len) + "...",
+				PartialContent = article.FArticleContent.Trim().Substring(0, len) + "...",
 				FArticleCategoryId = article.FArticleCategoryId,
 				FDeleted = article.FDeleted,
 			};

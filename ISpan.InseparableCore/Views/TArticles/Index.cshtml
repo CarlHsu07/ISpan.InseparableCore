@@ -65,12 +65,17 @@
 			</th>
 			<th>
 				<p>
-					@Html.DisplayNameFor(model => model.PostingDate)
+					@Html.DisplayNameFor(model => model.PartialContent)
 				</p>
 			</th>
 			<th>
 				<p>
-					@Html.DisplayNameFor(model => model.ModifiedDate)
+					@Html.DisplayNameFor(model => model.ArticleCategory)
+				</p>
+			</th>
+			<th>
+				<p>
+					@Html.DisplayNameFor(model => model.MemberName)
 				</p>
 			</th>
 			<th>
@@ -85,17 +90,7 @@
 			</th>
 			<th>
 				<p>
-					@Html.DisplayNameFor(model => model.PartialContent)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.ArticleCategory)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.MemberName)
+					@Html.DisplayNameFor(model => model.PostingDate)
 				</p>
 			</th>
 		</tr>
@@ -113,12 +108,17 @@
 				</td>
 				<td>
 					<p>
-						@Html.DisplayFor(modelItem => item.PostingDate)
+						@Html.DisplayFor(modelItem => item.PartialContent)
 					</p>
 				</td>
 				<td>
 					<p>
-						@Html.DisplayFor(modelItem => item.ModifiedDate)
+						@Html.DisplayFor(modelItem => item.ArticleCategory)
+					</p>
+				</td>
+				<td>
+					<p>
+						@Html.DisplayFor(modelItem => item.MemberName)
 					</p>
 				</td>
 				<td>
@@ -133,17 +133,7 @@
 				</td>
 				<td>
 					<p>
-						@Html.DisplayFor(modelItem => item.PartialContent)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.ArticleCategory)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.MemberName)
+						@Html.DisplayFor(modelItem => item.PostingDate)
 					</p>
 				</td>
 			</tr>
@@ -173,12 +163,17 @@
 					</th>
 					<th>
 						<p>
-		@Html.DisplayNameFor(model => model.PostingDate)
+		@Html.DisplayNameFor(model => model.PartialContent)
 						</p>
 					</th>
 					<th>
 						<p>
-		@Html.DisplayNameFor(model => model.ModifiedDate)
+		@Html.DisplayNameFor(model => model.ArticleCategory)
+						</p>
+					</th>
+					<th>
+						<p>
+		@Html.DisplayNameFor(model => model.MemberName)
 						</p>
 					</th>
 					<th>
@@ -193,17 +188,7 @@
 					</th>
 					<th>
 						<p>
-		@Html.DisplayNameFor(model => model.PartialContent)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.ArticleCategory)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.MemberName)
+		@Html.DisplayNameFor(model => model.PostingDate)
 						</p>
 					</th>
 				</tr>
@@ -223,12 +208,17 @@
 							</td>
 							<td>
 								<p>
-									${value.PostingDate}
+									${value.PartialContent}
 								</p>
 							</td>
 							<td>
 								<p>
-									${value.ModifiedDate}
+									${value.ArticleCategory}
+								</p>
+							</td>
+							<td>
+								<p>
+									${value.MemberName}
 								</p>
 							</td>
 							<td>
@@ -243,17 +233,7 @@
 							</td>
 							<td>
 								<p>
-									${value.PartialContent}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.ArticleCategory}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.MemberName}
+									${value.PostingDate}
 								</p>
 							</td>
 						</tr>

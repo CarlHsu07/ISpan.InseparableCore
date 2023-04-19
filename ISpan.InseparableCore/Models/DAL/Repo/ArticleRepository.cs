@@ -42,6 +42,7 @@ namespace ISpan.InseparableCore.Models.DAL
 					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FArticleCategory.FMovieCategoryName;
 				vm.MemberName = context.TArticles.Include(t => t.FMember)
 					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FMember.FFirstName;
+
 				vms.Add(vm);
 			}
 			return vms;

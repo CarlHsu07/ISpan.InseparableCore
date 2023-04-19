@@ -2,11 +2,40 @@
 <style>
 	.btnEditComment {
 	}
+	.btnCommentCancel{
 
-	.divContainer {
+	}
+
+	.displayNone{
+		display:none;
+	}
+	.divComment{
+		margin:5px;
+		font-size:20px;
+	}
+	.divArticle{
+		font-size: 30px;
+		text-align:justify;
+	}
+
+	pre{
+		white-space:pre-wrap;
+		white-space:-moz-pre-wrap;
+		white-space:-pre-wrap;
+		white-space:-o-pre_wrap;
+		word-wrap:break-word;
+	}
+	.divContainerRow {
 		display: flex;
 		flex-direction: row;
 		padding: 5px;
+
+	}
+	.divContainerCol {
+		display: flex;
+		flex-direction: column;
+		padding: 5px;
+		margin:0;
 	}
 
 	.divBorder {
@@ -22,81 +51,75 @@
 	.inDivPosition {
 		position: relative;
 		bottom: 0px;
-		right: -20px;
+		right: -200px;
 	}
 </style>
-
-<h1>Details</h1>
-
-<div>
-    <h4>TArticles</h4>
+<div class="" >
+	<div class="divContainerRow " style="">
+		<span class=" divContainerCol" style="width:200px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.ArticleCategory):
+				@Model.ArticleCategory
+			</p>
+		</span>
+		<span class=" divContainerCol" style="width:150px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.MemberName):
+				@Html.DisplayFor(model => model.MemberName)
+			</p>
+		</span>
+		<span class=" divContainerCol" style="width:300px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.PostingDate):
+				@Html.DisplayFor(model => model.PostingDate)
+			</p>
+		</span>
+		<span class=" divContainerCol" style="width:300px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.ModifiedDate):
+				@Html.DisplayFor(model => model.ModifiedDate)
+			</p>
+		</span>
+		<span class=" divContainerCol" style="width:150px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.FArticleLikes):
+				<div id="divLikes">@Html.DisplayFor(model => model.FArticleLikes)</div>
+				@if (Model.LikeOrUnlike == true)
+				{
+					<button type="button" id="btnArticleLike" class="btn btn-primary">讚</button>
+				}
+				else
+				{
+					<button type="button" id="btnArticleLike" class="btn btn-secondary">讚</button>
+				}
+			</p>
+		</span>
+		<span class=" divContainerCol" style="width:300px">
+			<p class="">
+				@Html.DisplayNameFor(model => model.FArticleClicks):
+				@Html.DisplayFor(model => model.FArticleClicks)
+			</p>
+		</span>
+    </div>
+    <h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleTitle)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleTitle)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ArticleCategory)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ArticleCategory)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MemberName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MemberName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PostingDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PostingDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleLikes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleLikes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleClicks)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleClicks)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArticleContent)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FArticleContent)
-        </dd>
-    </dl>
+</div>
+<div>
+	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
 </div>
 <div id="divComment"></div>
 <div class="form-group">
 	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
 </div>
 
-<div class="divContainer">
+<div class="divContainerRow">
 	<div class="input-group">
-		<span class="input-group-text">評論</span>
-		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FCommentContent0" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn btn-secondary">留言</button>
+		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
 	</div>
 </div>
-
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.FArticleId">Edit</a> |
     <a asp-action="Index">Back to List</a>
@@ -119,13 +142,16 @@
 						if (value.FMemberId == memberId) {
 							$("#divComment").append(`
 									<div class=" divBorder">
-										<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FCommentId}">
-											<div style="margin:5px" >
+										<div style="font-size:large; margin:10px 0 0 10px">
+											<div class="divComment" >
 												${value.MemberName}	 ${value.PostingDate}
 									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">修改</button>
+									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
 											</div>
 											<hr style="margin:0"/>
-											<div style="margin:5px" id="commentText">
+											<div>
+											</div>
+											<div class="divComment" id="F${value.FCommentId}">
 												${value.FCommentContent}
 											</div>
 										</div>
@@ -136,11 +162,11 @@
 							$("#divComment").append(`
 									<div class=" divBorder">
 										<div style="font-size:large; margin:10px 0 0 10px" >
-											<div style="margin:5px">
+											<div  class="divComment">
 												${value.MemberName}	 ${value.PostingDate}
 											</div>
 											<hr style="margin:0"/>
-											<div style="margin:5px">${value.FCommentContent}</div>
+											<div class="divComment">${value.FCommentContent}</div>
 										</div>
 									</div>`
 							)
@@ -154,21 +180,42 @@
 		}
 		//開始編輯評論，生成編輯textarea
 		$(document).on('click', '.btnEditComment', function () {
+			$(this).addClass("btnCommentCancel")
+			$(this).html(`取消`)
+			//$(`#F${commentId}`).addClass("displayNone")
+
 			let commentId = $(this).attr("value")
-			let text = $.trim($(`#F${commentId} #commentText`).text())
+			let text = $.trim($(`#F${commentId}`).text())
 			//alert(commentId+text)
 			$(`#F${commentId}`).html(`
-				<div class="divContainer">
+				<div class="divContainerRow">
+				<div >
 					<div class="input-group">
-						<span class="input-group-text">評論</span>
-						<textarea class="form-control" id="FCommentContent" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control divComment" id="FCommentContent${commentId}" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
-						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">留言</button>
+						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">go</button>
 					</div>
 				</div>
+					<input type="hidden" id="hidden${commentId}" />
+				</div>
 					`)
+			$(`#hidden${commentId}`).val(text)
+			alert($(`#hidden${commentId}`).val())
 		});
+		//取消編輯
+		$(document).on('click', '.btnCommentCancel', function () {
+			$(this).removeClass("btnCommentCancel")
+			$(this).html(`編輯`)
+			//$(`F${commentId}`).removeClass("displayNone")
+
+			let commentId = $(this).attr("value")
+			let commentContent = $(`#hidden${commentId}`).attr("value");
+			alert($.trim(commentContent))
+			$(`#F${commentId}`).html(`
+					<div class="divComment"  id="F${commentId}">${commentContent}</div>
+					`)
+		})
 
 		//單選按鈕組，按下時改變顏色
 		$('.btn').click(function () {
@@ -182,13 +229,40 @@
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
 			let memberId = $("#FMemberId").find(":selected").attr("value")
-			let movieId = @Model.FArticleId
-			let comment = $("#FCommentContent").val();
+			let articleId = @Model.FArticleId
+			let comment = $(`#FCommentContent${commentId}`).val();
 			alert(commentId)
-			CommentDetail(commentId, memberId, movieId, comment)
+			CommentDetail(commentId, memberId, articleId, comment)
 		})
+
+		//點讚ajax
+		function ArticleLike(FMemberId, FArticleId) {
+			$.ajax({
+				method: "post",
+				url: "/TArticles/ArticleLike",
+				data: { FMemberId, FArticleId},
+				success: function (data) {
+					let context = JSON.parse(data);
+					alert(context.LikeOrUnlike + context.LikeCount)
+					$("#divLikes").html(`${context.LikeCount}`)
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		}
+
+		//點讚
+		$(document).on('click', '#btnArticleLike', function () {
+			let memberId = $("#FMemberId").find(":selected").attr("value")
+			let articleId = @Model.FArticleId
+			ArticleLike(memberId, articleId)
+		})
+
+
 		//展示評論
 		CommentDetail(0, 0, @Model.FArticleId, "")
+
+		//likeOrUnlike
 	</script>
 
 }
