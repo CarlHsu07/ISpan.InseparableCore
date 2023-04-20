@@ -202,20 +202,25 @@
             </div>
 
             <div class="tab-pane fade pt-3" id="profile-change-password" role="tabpanel">
+                <div class="">
+                    
+                </div>
+                
                 <!-- Change Password Form -->
-                <form asp-action="EditProfile">
-                    <input asp-for="Id" type="hidden" />
+                <form asp-action="ChangePassword" id="changePasswordForm">
+                    <input asp-for="Id" type="hidden" id="memberId" />
                     <div class="row mb-3">
                         <label asp-for="CurrentPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="CurrentPassword" type="password" class="form-control">
+                            <input asp-for="CurrentPassword" type="password" class="form-control" id="CurrentPassword">
+                            <span asp-validation-for="CurrentPassword" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label asp-for="NewPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="NewPassword" type="password" class="form-control">
+                            <input asp-for="NewPassword" type="password" class="form-control" id="NewPassword">
                             <span asp-validation-for="NewPassword" class="text-danger"></span>
                         </div>
                     </div>
@@ -223,7 +228,7 @@
                     <div class="row mb-3">
                         <label asp-for="ConfirmPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="ConfirmPassword" type="password" class="form-control">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" id="ConfirmPassword">
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
                     </div>
@@ -277,4 +282,69 @@
     </div>
 </div>
 
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="~/js/addressEdit.js"></script>
 
+    <script>
+        $(document).ready(function () {
+            $("#changePasswordForm").submit(function (event) {
+                event.preventDefault(); // 防止表單提交刷新頁面
+
+                var token = $("#changePasswordForm input[name='__RequestVerificationToken']").val();
+
+                var formData = {
+                    Id: $("#memberId").val(),
+                    CurrentPassword: $("#CurrentPassword").val(),
+                    NewPassword: $("#NewPassword").val(),
+                    ConfirmPassword: $("#ConfirmPassword").val()
+                };
+
+                //var formData = $(this).serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/member/ChangePassword", // 填寫後端API的URL
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    headers: {
+                        "RequestVerificationToken": token
+                    },
+                    success: function (result) {
+                        if (result.success) {
+                            //$("#result").text("修改成功！");
+                            $("#CurrentPassword").val("");
+                            $("#NewPassword").val("");
+                            $("#ConfirmPassword").val("");
+                            console.log("修改成功！");
+                        } else {
+                            if (result.message == 1) {
+                                var newElement = $(`<div class="alert alert-danger alert-dismissible fade show" role="alert" id="CPasswordAlert"><strong>錯誤！</strong>原始密碼不正確，請重新輸入。<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button></div>`);
+                                $("#profile-change-password").prepend(newElement);
+                                $("#CurrentPassword").val("");
+                                $("#NewPassword").val("");
+                                $("#ConfirmPassword").val("");
+                                // 5秒後自動移除新元素
+                                setTimeout(function () {
+                                    newElement.remove();
+                                }, 5000);
+                            }
+                            
+                            console.log(result.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //$("#result").text("修改失敗，請重試！");
+                        //console.log("修改失敗，請重試！");
+                        alert("執行了error")
+                    }
+                });
+            });
+        });
+        
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
