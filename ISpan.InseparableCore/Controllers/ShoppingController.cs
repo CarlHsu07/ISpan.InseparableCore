@@ -38,7 +38,7 @@ namespace ISpan.InseparableCore.Controllers
         //todo 防止上一頁錯誤
         public IActionResult Ticket(CticketVM vm)
         {
-            //以防萬一只要一開啟訂購畫面 第一件事清空session
+            //以防萬一只要一開啟訂購畫面 第一件事清空訂單session
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
 
@@ -72,7 +72,6 @@ namespace ISpan.InseparableCore.Controllers
             }
             return View(vm);
         }
-
         public IActionResult Booking(int? cinema, int? session)
         {
             CbookingVM vm = new CbookingVM();
@@ -238,7 +237,8 @@ namespace ISpan.InseparableCore.Controllers
                 json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
                 ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
-
+            if (ticket == null)
+                return RedirectToAction("seat");
             vm.seats = new Dictionary<int, string>();
             var seats = ticket.Select(t => t.FSeatId);
             foreach (var item in seats)
@@ -465,8 +465,6 @@ namespace ISpan.InseparableCore.Controllers
                 }
             }
            
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return orderid;
         }
 

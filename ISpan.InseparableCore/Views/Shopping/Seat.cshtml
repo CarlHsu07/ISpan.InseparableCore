@@ -10,51 +10,51 @@
 }
 <form action="/Shopping/CartView" method="post" id="seat">
     @{
-        <div class="title">
-            @foreach (var item in Model.movie)
+            <div class="title">
+                @foreach (var item in Model.movie)
             {
-                <h3>@item.FMovieName</h3>
+                    <h3>@item.FMovieName</h3>
             }
-            <input type="hidden" name="sessionid" value="@Model.sessionid">
-            <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.sessions.FSessionDate.ToString("yyyy/MM/dd") @Model.sessions.FSessionTime.Hours : @Model.sessions.FSessionTime.Minutes.ToString("D2")</h4>
-        </div>
-        <div class="left">
-            <span class="seleted"></span><p>您的座位</p>
-            <span class="not-seleted"></span><p>可選座位</p>
-            <span class="solid"></span><p>已售出</p>
-            <p class="alert-danger" style="font-size:15px;" id="ticketnum"></p>
-        </div>
-        <div class="movie">
-            <div class="screen"><p>螢幕</p></div>
-            <div class="seat">
-                <table>
-                    @foreach (var item in Model.seats)
+                <input type="hidden" name="sessionid" value="@Model.sessionid">
+                <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @Model.sessions.FSessionDate.ToString("yyyy/MM/dd") @Model.sessions.FSessionTime.Hours : @Model.sessions.FSessionTime.Minutes.ToString("D2")</h4>
+            </div>
+            <div class="left">
+                <span class="seleted"></span><p>您的座位</p>
+                <span class="not-seleted"></span><p>可選座位</p>
+                <span class="solid"></span><p>已售出</p>
+                <p class="alert-danger" style="font-size:15px;" id="ticketnum"></p>
+            </div>
+            <div class="movie">
+                <div class="screen"><p>螢幕</p></div>
+                <div class="seat">
+                    <table>
+                        @foreach (var item in Model.seats)
                     {
-                        <tr>
-                            <td>@item.Key</td>
-                            @foreach (var column in item.Value)
+                            <tr>
+                                <td>@item.Key</td>
+                                @foreach (var column in item.Value)
                             {
-                                <td>
-                                    <div class="not-seleted" value="@column.FSeatId" id="@column.FSeatId">
-                                        @column.FSeatColumn
-                                    </div>
-                                </td>
+                                    <td>
+                                        <div class="not-seleted" value="@column.FSeatId" id="@column.FSeatId">
+                                            @column.FSeatColumn
+                                        </div>
+                                    </td>
 
                                 if (column.FSeatColumn == 2 || column.FSeatColumn == 12)
                                 {
-                                    <td><div class="aisle"></div></td>
+                                        <td><div class="aisle"></div></td>
                                 }
                             }
-                        </tr>
+                            </tr>
                     }
-                </table>
+                    </table>
+                </div>
             </div>
-        </div>
 
     }
     <input type="hidden" name="regular" value="@Model.regularnum" />
     <input type="hidden" name="concession" value="@Model.concessionnum" />
-    <div class="center">
+    <div class="center" id="btnverif">
         <input type="submit" value="下一步" class="btn btn-primary" id="button" />
     </div>
 </form>
@@ -87,6 +87,7 @@
                     console.log('fail');
                 }
             });
+
         }
 
         $("td div").click(function () {
@@ -153,7 +154,7 @@
             }
         });
 
-        $('#seat').submit(function (event) {
+        $('#button').click(function  (event) {
             //判斷選擇的位置數量是否正確
             var regular = @Model.regularnum;
             var concession = @Model.concessionnum;

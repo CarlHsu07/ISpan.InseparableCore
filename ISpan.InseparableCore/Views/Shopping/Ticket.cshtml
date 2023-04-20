@@ -7,14 +7,13 @@
     <link href="~/css/loading.css" rel="stylesheet" />
     <link href="~/css/Ticket.css" rel="stylesheet" />
 }
-@using (Html.BeginForm())
+@using (Html.BeginForm(FormMethod.Post, new { autocomplete = "off" ,id="test"}))
 {
     <div class="loadingdiv" id="loading">
         <img src="~/images/Infinity-1s-200px.gif" />
     </div>
     <h1>購票系統</h1>
     <div class="mydiv">
-
         <h3>
             <select name="cinemaId" id="cinema" onchange="this.form.submit()">
                 <option value="0">請選擇</option>
@@ -69,12 +68,16 @@
         $('li a').click(function () {
             var cinema = $(this).attr('cinema');
             var session = $(this).attr('session');
-
+            var movie = $("#movie").val();
             $('#form').append(`<form action="/Shopping/Booking" method="post" id="ticketform">
                                     <input type="hidden" name="cinema" value="${cinema}" />
                                     <input type="hidden" name="session" value="${session}" />
                                     </form>`);
+
+            var data = { movieId: movie, cinemaId:cinema }
+            window.history.pushState({ data :data}, null, document.URL);
             $('#ticketform').submit();
         });
+
     </script>
 }
