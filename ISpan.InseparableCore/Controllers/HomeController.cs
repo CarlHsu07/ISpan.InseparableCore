@@ -15,13 +15,13 @@ namespace ISpan.InseparableCore.Controllers
             _logger = logger;
             _db = db;
         }
-   
+
         public IActionResult Index()
         {
             ChomeIndexVM vm = new ChomeIndexVM();
             DateTime today = DateTime.Now.Date;
-            vm.showing = _db.TMovies.Take(6); //Where(t => t.FMovieOffDate < today).OrderByDescending(t => t.FMovieOffDate).
-            vm.soon = _db.TMovies.Take(6); //Where(t => t.FMovieOffDate > today).OrderBy(t => t.FMovieOffDate).
+            vm.showing = _db.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today).OrderByDescending(t => t.FMovieOffDate).Take(6); 
+            vm.soon = _db.TMovies.Where(t => t.FMovieOnDate > today).OrderBy(t => t.FMovieOffDate).Take(6); 
             return View(vm);
         }
 

@@ -2,6 +2,7 @@
 using ISpan.InseparableCore.Models.BLL.Interfaces;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
@@ -49,26 +50,27 @@ namespace ISpan.InseparableCore.Controllers
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
             //限制時間區間
-            var start = DateTime.Now.Date;
             var now = DateTime.Now.TimeOfDay;
-            var end = DateTime.Now.Date.AddDays(7);
+            var start = DateTime.Now.Date;
+
             //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
                 vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
-                // &&t.FSessionDate>=start && t.FSessionDate<=end 
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
             if (vm.movieId != 0)
             {
-                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
-                // &&t.FSessionDate>=start && t.FSessionDate<=end 
+                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
-                    var sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t=>t.FSessionDate == item);
-                    //&&t.FsessionTime>=now
+                    IEnumerable<TSessions> sessions = null;
+
+                    sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item);
+                    if (item==start)
+                        sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now);
 
                     vm.sessions.Add(item, sessions);
                 }
