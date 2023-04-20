@@ -11,7 +11,6 @@
 <style>
 	PageContainer{
 		margin:0 auto;
-		width:300;
 	}
 	.btnPage{
 
@@ -31,6 +30,12 @@
 		border-style: solid;
 	}
 
+	.divCreate{
+		border:solid;
+		border-width:2px;
+		border-radius:5px;
+	}
+
 	.divBlock {
 		margin: 20px
 	}
@@ -42,12 +47,12 @@
 	}
 	.inDivPosition {
 		position: relative;
-		bottom: -30px;
-		right: -600px;
+		bottom: -20px;
+		right: -500px;
 	}
 </style>
 
-<h1>貼文搜尋</h1>
+<h1 style="margin:50px 0 0 50px;">貼文搜尋</h1>
 
 <div class="row divBlock">
 
@@ -63,19 +68,18 @@
 				<label name="CategoryId" class="control-label">類別</label>
 				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
-			<div class="form-group divBlock">
+@*			<div class="form-group divBlock">
 				<label name="Page" class="control-label">頁數</label>
 				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
-			<div class="form-group divBlock" style="position:relative">
-				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
+*@			<div class="form-group divBlock" style="position:relative">
+				<input type="submit" value="search" class="btn btn-light inDivBottom" />
 			</div>
-			<div class="form-group divBlock inDivPosition" >
-				<h3><a asp-action="Create">發文</a></h3>
+			<div class="form-group divBlock inDivPosition ">
+				<h3><a asp-action="Create" class="divCreate">發文</a></h3>
 			</div>
 		</div>
 	</form>
-
 </div>
 
 <table class="table" id="tableSearch">
@@ -177,7 +181,7 @@
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			@for (int i = 1; i < pagedList.PageCount + 1; i++)
 			{
-				<button type="button" class="btn btn-secondary btnPage"  id="page @i" value="@i">@i</button>
+				<button type="button" class="btn btn-secondary btnPage"  id="@i" value="@i">@i</button>
 			}
 			<button type="button" class="btn btn-secondary" id="nextPage">></button>
 		</div>
@@ -187,6 +191,8 @@
 	<script>
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
+		$(`1`).removeClass('btn-secondary');
+		$(`1`).addClass('btn-primary');
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
@@ -321,9 +327,12 @@
 						for (let i = 1; i < context.PageCount + 1; i++)
 						{
 							$("#divPageContainer").append(`
-								<button type="button" class="btn btn-secondary btnPage"  id="page${i}" value="${i}">${i}</button>
+								<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
 							`)
 						}
+						$(`1`).removeClass('btn-secondary');
+						$(`1`).addClass('btn-primary');
+
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="nextPage">></button>
 						`)
@@ -344,27 +353,36 @@
 			show(key, categoryId, page);
 			alert(page + "/" + key + "/" + categoryId)
 		}
+
+		//btnpage換顏色
+		function pageSelected(event){
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(event).removeClass('btn-secondary');
+			$(event).addClass('btn-primary');
+
+		}
 		//點頁碼換頁
 		$(document).on('click', '.btnPage', function () {
 			let page = $(this).val()
 			pageChange(page)
 
 			$('.btnSelected').removeClass('btnSelected');
-
 			$(this).addClass('btnSelected');
-
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
-			$(this).removeClass('btn-secondary');
-			$(this).addClass('btn-primary');
+			pageSelected(this)
 		});
 		//上一頁
 		$(document).on('click', '#prePage', function () {
 			let page = parseInt(pageNumber) - 1
+
 			if (page <= 0){
 				page += 1
 			}
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+			$(`#${page}`).removeClass('btn-secondary');
+			$(`#${page}`).addClass('btn-primary');
 			pageChange(page)
 		});
 		//下一頁
@@ -373,15 +391,12 @@
 			if (page > PageCountNumber) {
 				page -= 1
 			}
-			pageChange(page)
-		});
-		//btnpage變色
-		$(document).on('click', '.btnPage', function () {
 			$('.btn-primary').addClass('btn-secondary');
 			$('.btn-secondary').removeClass('btn-primary');
 
-			$(this).removeClass('btn-secondary');
-			$(this).addClass('btn-primary');
+			$(`#${page}`).removeClass('btn-secondary');
+			$(`#${page}`).addClass('btn-primary');
+			pageChange(page)
 		});
 
 		//搜尋
