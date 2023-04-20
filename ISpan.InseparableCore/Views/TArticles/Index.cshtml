@@ -1,6 +1,24 @@
 ﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.ArticleVm>
 
+@{
+	var pagedList = (IPagedList)ViewBag.ArticleModel;
+}
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Fluent
+@using X.PagedList.Web.Common
+
 <style>
+	PageContainer{
+		margin:0 auto;
+		width:300;
+	}
+	.btnPage{
+
+	}
+	.btnSelected{
+
+	}
 	.divContainer {
 		display: flex;
 		flex-direction: row;
@@ -22,13 +40,15 @@
 		bottom: 0px;
 		right: -100px;
 	}
+	.inDivPosition {
+		position: relative;
+		bottom: -30px;
+		right: -600px;
+	}
 </style>
 
-<h1>Index</h1>
+<h1>貼文搜尋</h1>
 
-<p>
-	<a asp-action="Create">Create New</a>
-</p>
 <div class="row divBlock">
 
 	<form asp-action="Index" method="post" id="formSearch">
@@ -36,19 +56,22 @@
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="divContainer ">
 			<div class="form-group divBlock">
-				<label name="Key" class="control-label">關鍵字</label>
-				<input name="Key" class="form-control" />
+				<label name="Key"  class="control-label">關鍵字</label>
+				<input name="Key" id="Key" class="form-control" />
 			</div>
 			<div class="form-group divBlock">
 				<label name="CategoryId" class="control-label">類別</label>
-				<select name="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
+				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
 			<div class="form-group divBlock">
 				<label name="Page" class="control-label">頁數</label>
-				<select name="Page" class="form-control" asp-items="ViewBag.Page"></select>
+				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="search" class="btn btn-primary inDivBottom" />
+			</div>
+			<div class="form-group divBlock inDivPosition" >
+				<h3><a asp-action="Create">發文</a></h3>
 			</div>
 		</div>
 	</form>
@@ -139,19 +162,57 @@
 			</tr>
 		}
 	</tbody>
+	<tfoot>
+		<tr>
+			<td class="text-muted" colspan="5">
+				每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
+			</td>
+		</tr>
+	</tfoot>
+
 </table>
+<div style=" font-size:larger" class="PageContainer">
+	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
+		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+			<button type="button" class="btn btn-secondary" id="prePage"><</button>
+			@for (int i = 1; i < pagedList.PageCount + 1; i++)
+			{
+				<button type="button" class="btn btn-secondary btnPage"  id="page @i" value="@i">@i</button>
+			}
+			<button type="button" class="btn btn-secondary" id="nextPage">></button>
+		</div>
+	</div>
+</div>
 @section Scripts {
 	<script>
-		function show() {
+		var PageCountNumber = @pagedList.PageCount
+		var pageNumber = 1
+
+		function show(Key, CategoryId, Page) {
 			$.ajax({
 				method: "post",
 				url: $(this).attr("action"),
-				data: $("#formSearch").serialize(),
+				data: {Key, CategoryId, Page},
 				beforeSend: function () {
 				},
 				success: function (data) {
+					$("#tableSearch").html(``)
+					if (data == "noData") 
+					{
+						alert("nodata")
+						$("#tableSearch").html(`
+			<tfoot>
+				<tr>
+					<td class="text-muted" colspan="5">
+						每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
+					</td>
+				</tr>
+			</tfoot>
+
+						`)
+						return;
+					}
 					let context = JSON.parse(data);
-					alert(context[0].FArticleTitle)
 					$("#tableSearch").html(`
 		<table class="table" id="tableSearch">
 			<thead>
@@ -195,51 +256,79 @@
 			</thead>
 		</table>
 					`)
-					$.each(context, function (index, value) {
+					$.each(context.Vm, function (index, value) {
 						$("#tableSearch").append(`
-					<tbody>
-						<tr>
-							<td>
-								<a href="/TArticles/Details/${value.FArticleId}">
+						<tbody>
+							<tr>
+								<td>
+									<a href="/TArticles/Details/${value.FArticleId}">
+										<p>
+											${value.FArticleTitle}
+										</p>
+									</a>
+								</td>
+								<td>
 									<p>
-										${value.FArticleTitle}
+										${value.PartialContent}
 									</p>
-								</a>
-							</td>
-							<td>
-								<p>
-									${value.PartialContent}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.ArticleCategory}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.MemberName}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.FArticleLikes}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.FArticleClicks}
-								</p>
-							</td>
-							<td>
-								<p>
-									${value.PostingDate}
-								</p>
-							</td>
-						</tr>
-					</tbody>
-		`)
+								</td>
+								<td>
+									<p>
+										${value.ArticleCategory}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.MemberName}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.FArticleLikes}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.FArticleClicks}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.PostingDate}
+									</p>
+								</td>
+							</tr>
+						</tbody>
+
+						`)
 					})
+					$("#tableSearch").append(`
+						<tfoot>
+							<tr>
+								<td class="text-muted" colspan="5">
+									每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
+								</td>
+							</tr>
+						</tfoot>
+					`)
+					if(PageCountNumber != context.PageCount){
+						PageCountNumber = context.PageCount
+						$("#divPageContainer").html(`
+						`)
+						$("#divPageContainer").append(`
+							<button type="button" class="btn btn-secondary" id="prePage"><</button>
+						`)
+						for (let i = 1; i < context.PageCount + 1; i++)
+						{
+							$("#divPageContainer").append(`
+								<button type="button" class="btn btn-secondary btnPage"  id="page${i}" value="${i}">${i}</button>
+							`)
+						}
+						$("#divPageContainer").append(`
+							<button type="button" class="btn btn-secondary" id="nextPage">></button>
+						`)
+					}
+
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
@@ -247,9 +336,63 @@
 
 		}
 
+		//換頁function
+		function pageChange(page){
+			pageNumber = page
+			let key = $("#Key").val()
+			let categoryId = $("#CategoryId").find(":selected").val()
+			show(key, categoryId, page);
+			alert(page + "/" + key + "/" + categoryId)
+		}
+		//點頁碼換頁
+		$(document).on('click', '.btnPage', function () {
+			let page = $(this).val()
+			pageChange(page)
+
+			$('.btnSelected').removeClass('btnSelected');
+
+			$(this).addClass('btnSelected');
+
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(this).removeClass('btn-secondary');
+			$(this).addClass('btn-primary');
+		});
+		//上一頁
+		$(document).on('click', '#prePage', function () {
+			let page = parseInt(pageNumber) - 1
+			if (page <= 0){
+				page += 1
+			}
+			pageChange(page)
+		});
+		//下一頁
+		$(document).on('click', '#nextPage', function () {
+			let page = parseInt(pageNumber) + 1
+			if (page > PageCountNumber) {
+				page -= 1
+			}
+			pageChange(page)
+		});
+		//btnpage變色
+		$(document).on('click', '.btnPage', function () {
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(this).removeClass('btn-secondary');
+			$(this).addClass('btn-primary');
+		});
+
+		//搜尋
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
-			show();
+			let page = 1
+			let key = $("#Key").val()
+			let categoryId = $("#CategoryId").find(":selected").val()
+			alert(page + "" + key + "" + categoryId)
+
+			show(key, categoryId, page);
 		})
 
 	</script>

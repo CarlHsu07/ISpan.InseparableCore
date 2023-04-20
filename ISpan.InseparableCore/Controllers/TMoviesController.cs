@@ -262,35 +262,16 @@ namespace ISpan.InseparableCore.Controllers
 			return View(vm);
 		}
 
-		// GET: TMovies/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
-			if (id == null || _context.TMovies == null)
-			{
-				return NotFound();
-			}
-
-			var tMovies = await _context.TMovies
-				.Include(t => t.FMovieLevel)
-				.FirstOrDefaultAsync(m => m.FMovieId == id);
-			if (tMovies == null)
-			{
-				return NotFound();
-			}
-
-			return View(tMovies);
-		}
-
 		// POST: TMovies/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
+		public async Task<IActionResult> DeleteConfirmed(int movieId)
 		{
 			if (_context.TMovies == null)
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var movie = await _context.TMovies.FindAsync(id);
+			var movie = await _context.TMovies.FindAsync(movieId);
 			if (movie != null)
 			{
 				IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == movie.FMovieId);

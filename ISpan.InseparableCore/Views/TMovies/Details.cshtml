@@ -205,7 +205,7 @@
 		});
 
 		//單選按鈕組，按下時改變顏色
-		$('.btn').click(function () {
+		$(document).on('click', '.btn', function () {
 			$('.btn-primary').addClass('btn-secondary');
 			$('.btn-secondary').removeClass('btn-primary');
 

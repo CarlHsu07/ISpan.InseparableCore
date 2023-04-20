@@ -8,6 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using NuGet.Protocol;
+using X.PagedList;
+using Azure;
+using System.Drawing.Printing;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -22,10 +26,25 @@ namespace ISpan.InseparableCore.Controllers
 			repo = new ArticleRepository(context);
 		}
 
+		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
+		{
+			// 過濾從client傳送過來有問題頁數
+			if (page.HasValue && page < 1)
+				return null;
+			// 從資料庫取得資料
+			var listUnpaged = articles;
+			IPagedList<ArticleVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
+			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
+			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
+				return null;
+			return pagelist;
+		}
 		// GET: TArticles
 		public async Task<IActionResult> Index()
 		{
+
 			List<ArticleVm> articles = repo.Search(null).ToList();
+
 
 			int pageContent = 2;
 			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
@@ -35,7 +54,7 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			articles = articles.Take(pageContent).ToList();
+			//articles = articles.Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -43,7 +62,12 @@ namespace ISpan.InseparableCore.Controllers
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 
-			return View(articles.ToList());
+			int pageSize = 2;
+
+			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
+			articles = articles.Take(pageSize).ToList();
+
+			return View(articles); 
 		}
 		[HttpPost]
 		public async Task<IActionResult> Index(ArticleSearchCondition condition)
@@ -58,7 +82,7 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			articles = articles.Skip(pageContent * (condition.Page - 1)).Take(pageContent).ToList();
+			//articles = articles.Skip(pageContent * ((int)condition.Page - 1)).Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -66,7 +90,15 @@ namespace ISpan.InseparableCore.Controllers
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 
-			return Ok(articles.ToJson());
+			int pageSize = 2;
+			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
+			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
+			if (articles.Count == 0) return Ok("noData");
+
+			return Ok(new { Vm = articles,
+							PageCount = pageList.PageCount,
+							TotalItemCount = pageList.TotalItemCount, 
+							PageSize = pageSize}.ToJson());
 		}
 
 		// GET: TArticles/Details/5
@@ -79,9 +111,9 @@ namespace ISpan.InseparableCore.Controllers
 
 			var article = await _context.TArticles.FirstOrDefaultAsync(m => m.FArticleId == id);
 			//點閱數+1
-			article.FArticleClicks++;
-			_context.Update(article);
-			_context.SaveChanges();
+			//article.FArticleClicks++;
+			//_context.Update(article);
+			//_context.SaveChanges();
 
 			if (article == null)
 			{
@@ -97,7 +129,7 @@ namespace ISpan.InseparableCore.Controllers
 			else vm.LikeOrUnlike = true;
 
 			//點閱數+1
-			//repo.Click(vm);
+			repo.Click(vm.FArticleId);
 			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
 
 			return View(vm);
@@ -213,36 +245,16 @@ namespace ISpan.InseparableCore.Controllers
 			return View(vm);
 		}
 
-		// GET: TArticles/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
-			if (id == null || _context.TArticles == null)
-			{
-				return NotFound();
-			}
-
-			var article = await _context.TArticles
-				.Include(t => t.FArticleCategory)
-				.Include(t => t.FMember)
-				.FirstOrDefaultAsync(m => m.FArticleId == id);
-			if (article == null)
-			{
-				return NotFound();
-			}
-			var vm = article.ModelToVm();
-			return View(vm);
-		}
-
 		// POST: TArticles/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
+		public async Task<IActionResult> DeleteConfirmed(int articleId)
 		{
 			if (_context.TArticles == null)
 			{
 				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
 			}
-			var article = await _context.TArticles.FindAsync(id);
+			var article = await _context.TArticles.FindAsync(articleId);
 
 			if (article != null)
 			{

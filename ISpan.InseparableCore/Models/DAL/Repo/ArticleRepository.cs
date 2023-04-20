@@ -73,16 +73,19 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task UpdateAsync(ArticleVm vm)
 		{
-			vm.FArticleModifiedDate = DateTime.Now;
-			TArticles article = vm.VmToModel();
+			TArticles article = context.TArticles.Find(vm.FArticleId);
+			article.FArticleModifiedDate = DateTime.Now;
+			article.FArticleTitle = vm.FArticleTitle;
+			article.FArticleCategoryId = vm.FArticleCategoryId;
+			article.FArticleContent = vm.FArticleContent;
 
 			context.Update(article);
 			await context.SaveChangesAsync();
 
 		}
-		public void Click(ArticleVm vm)
+		public void Click(int articleId)
 		{
-			TArticles article = vm.VmToModel();
+			TArticles article = context.TArticles.Find(articleId);
 			article.FArticleClicks++;
 			context.Update(article);
 			context.SaveChanges();
