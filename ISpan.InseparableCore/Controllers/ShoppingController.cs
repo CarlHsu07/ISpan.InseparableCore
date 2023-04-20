@@ -4,10 +4,8 @@ using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,20 +20,23 @@ namespace ISpan.InseparableCore.Controllers
         private readonly ApiKeys _key;
         private readonly OrderRepository _order_repo;
         private readonly TicketOrderRepository _ticket_repo;
-        private readonly ProductOrderRepository _product_repo;
+        private readonly ProductOrderRepository _product_order_repo;
         private readonly SessionRepository _session_repo;
         private readonly CinemaRepository _cinema_repo;
+        private readonly ProductRepository _product_repo;
+        private readonly SeatRepository _seat_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
             _key = key.Value;
             _order_repo = new OrderRepository(db);
             _ticket_repo = new TicketOrderRepository(db);
-            _product_repo = new ProductOrderRepository(db);
+            _product_order_repo = new ProductOrderRepository(db);
             _session_repo = new SessionRepository(db);
             _cinema_repo = new CinemaRepository(db);
+            _product_repo = new ProductRepository(db);
+            _seat_repo = new SeatRepository(db);
         }
-        //todo 防止上一頁錯誤
         public IActionResult Ticket(CticketVM vm)
         {
             //以防萬一只要一開啟訂購畫面 第一件事清空訂單session
@@ -82,7 +83,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.sessions = _session_repo.GetSessionBySession(session);
             vm.movie = _session_repo.GetMovieBySEssion(session);
             vm.cinema = _session_repo.GetCinemaBySEssion(session);
-            vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);  //todo productrepo
+            vm.products = _product_repo.GetProductByCinema(cinema);
 
             return View(vm);
         }
@@ -95,7 +96,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (productId == null)
                 return Ok(responseText);
-            var product = _db.TProducts.FirstOrDefault(t => t.FProductId == productId); //todo productrepo
+            var product = _product_repo.GetOneProduct(productId);
 
             List<CproductCartItem> cart = null;
             string json = string.Empty;
@@ -153,10 +154,10 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
-            var row = _db.TSeats.GroupBy(t => t.FSeatRow).Select(t => t.Key); //todo seatrepo
+            var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key); 
             foreach (var item in row)
             {
-                var column = _db.TSeats.Where(t => t.FSeatRow == item); //todo seatrepo
+                var column = _seat_repo.GetSeat().Where(t => t.FSeatRow == item);
                 vm.seats.Add(item, column);
             }
 
@@ -212,7 +213,6 @@ namespace ISpan.InseparableCore.Controllers
             responseText = "pass";
             return Ok(responseText);
         }
-        //todo cache err_cache_miss
         public IActionResult CartView(int? regular, int? concession, int? sessionid)
         {
             if (regular == null || concession == null || sessionid == null)
@@ -244,7 +244,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in seats)
             {
 
-                var seat = _db.TSeats.Where(t => t.FSeatId == item); //todo seatrepo
+                var seat = _seat_repo.GetSeat.Where(t => t.FSeatId == item);
                 foreach (var name in seat)
                 {
                     seatid = name.FSeatRow + name.FSeatColumn;
@@ -455,7 +455,7 @@ namespace ISpan.InseparableCore.Controllers
 
                     try
                     {
-                        _product_repo.Create(item.ProductOrderDetails);
+                        _product_order_repo.Create(item.ProductOrderDetails);
                     }
                     catch (Exception ex)
                     {
