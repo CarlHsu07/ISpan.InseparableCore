@@ -244,7 +244,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in seats)
             {
 
-                var seat = _seat_repo.GetSeat.Where(t => t.FSeatId == item);
+                var seat = _seat_repo.GetSeat().Where(t => t.FSeatId == item);
                 foreach (var name in seat)
                 {
                     seatid = name.FSeatRow + name.FSeatColumn;
