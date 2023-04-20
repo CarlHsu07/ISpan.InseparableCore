@@ -9,5 +9,10 @@ namespace ISpan.InseparableCore.Models.DAL
         {
             _db = db;
         }
+        public TMovies GetOneMovie(int? movie)
+        {
+            var data = _db.TMovies.FirstOrDefault(t => t.FMovieId == movie);
+            return data;
+        }
     }
 }

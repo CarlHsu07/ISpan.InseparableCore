@@ -25,6 +25,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly CinemaRepository _cinema_repo;
         private readonly ProductRepository _product_repo;
         private readonly SeatRepository _seat_repo;
+        private readonly MovieRepository _movie_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
@@ -36,6 +37,7 @@ namespace ISpan.InseparableCore.Controllers
             _cinema_repo = new CinemaRepository(db);
             _product_repo = new ProductRepository(db);
             _seat_repo = new SeatRepository(db);
+            _movie_repo = new MovieRepository(db);
         }
         public IActionResult Ticket(CticketVM vm)
         {
@@ -200,7 +202,7 @@ namespace ISpan.InseparableCore.Controllers
                 item.FTicketUnitprice = (decimal)session.FTicketPrice;
                 item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 1;
                 item.FMovieId = session.FMovieId;
-                item.FMovieName = _db.TMovies.FirstOrDefault(t => t.FMovieId == session.FMovieId).FMovieName; //todo movierepo
+                item.FMovieName = _movie_repo.GetOneMovie(session.FMovieId).FMovieName;
                 item.FRoomId = session.FRoomId;
                 item.FSeatId = (int)seatId;
                 item.FSessionId = (int)sessionId;
