@@ -16,7 +16,7 @@
     <div class="mydiv">
         <h3>
             <select name="cinemaId" id="cinema" onchange="this.form.submit()">
-                <option value="0">請選擇</option>
+                <option value="0" >請選擇</option>
                 @foreach (var item in Model.cinema)
                 {
                     <option value="@item.FCinemaId">@item.FCinemaName</option>
@@ -29,7 +29,7 @@
             @if (Model.movie != null)
             {
                 <select name="movieId" id="movie" onchange="this.form.submit()">
-                    <option value="0">請選擇</option>
+                    <option value="0" >請選擇</option>
                     @foreach (var item in Model.movie)
                     {
                         <option value="@item.FMovieId">@item.FMovieName</option>

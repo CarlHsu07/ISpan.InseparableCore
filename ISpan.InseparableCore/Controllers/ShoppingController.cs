@@ -68,9 +68,9 @@ namespace ISpan.InseparableCore.Controllers
                 {
                     IEnumerable<TSessions> sessions = null;
 
-                    sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item);
+                    sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item).OrderBy(t=>t.FSessionTime);
                     if (item==start)
-                        sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now);
+                        sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
 
                     vm.sessions.Add(item, sessions);
                 }
