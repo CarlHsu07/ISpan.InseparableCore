@@ -94,7 +94,7 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         //Ajax
-        public IActionResult CartItem(int? productId, int? quantity)
+        public IActionResult ProductItem(int? productId, int? quantity)
         {
             //產品紀錄在session
             string responseText = "fail";
@@ -265,7 +265,6 @@ namespace ISpan.InseparableCore.Controllers
             return View(vm);
         }
 
-        //todo 如何知道下單的是誰
         public IActionResult CashPay(CorderVM vm)
         {
             var orderid = DbSave(vm);
@@ -384,6 +383,7 @@ namespace ISpan.InseparableCore.Controllers
         {
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
+            TMembers member = new TMembers();
             string json = string.Empty;
 
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
@@ -397,12 +397,16 @@ namespace ISpan.InseparableCore.Controllers
                 json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_TICKET_LIST);
                 ticket_list = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
-
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                member = JsonSerializer.Deserialize<TMembers>(json);
+            }
 
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = 1; //todo 目前尚未解決登入
+            vm.FMemberId = member.FId; //todo 目前尚未解決登入
             vm.FStatus = false;
 
             try
