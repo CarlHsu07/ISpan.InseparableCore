@@ -2,12 +2,11 @@
 using ISpan.InseparableCore.Models.BLL.Interfaces;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,57 +21,62 @@ namespace ISpan.InseparableCore.Controllers
         private readonly ApiKeys _key;
         private readonly OrderRepository _order_repo;
         private readonly TicketOrderRepository _ticket_repo;
-        private readonly ProductOrderRepository _product_repo;
+        private readonly ProductOrderRepository _product_order_repo;
         private readonly SessionRepository _session_repo;
+        private readonly CinemaRepository _cinema_repo;
+        private readonly ProductRepository _product_repo;
+        private readonly SeatRepository _seat_repo;
+        private readonly MovieRepository _movie_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
             _key = key.Value;
             _order_repo = new OrderRepository(db);
             _ticket_repo = new TicketOrderRepository(db);
-            _product_repo = new ProductOrderRepository(db);
+            _product_order_repo = new ProductOrderRepository(db);
             _session_repo = new SessionRepository(db);
+            _cinema_repo = new CinemaRepository(db);
+            _product_repo = new ProductRepository(db);
+            _seat_repo = new SeatRepository(db);
+            _movie_repo = new MovieRepository(db);
         }
-        //防止上一頁錯誤
-        //todo 待測試
-        [ResponseCache(CacheProfileName = "Default1800")]
         public IActionResult Ticket(CticketVM vm)
         {
-            //以防萬一只要一開啟訂購畫面 第一件事清空session
+            //以防萬一只要一開啟訂購畫面 第一件事清空訂單session
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
 
-            vm.cinema = _db.TCinemas.Select(t => t);
+            vm.cinema = _cinema_repo.QueryAll();
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
             //限制時間區間
-            var start = DateTime.Now.Date;
             var now = DateTime.Now.TimeOfDay;
-            var end = DateTime.Now.Date.AddDays(7);
+            var start = DateTime.Now.Date;
+
             //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
-                vm.movie = _session_repo.GetMovie(vm.cinemaId);
-                // &&t.FSessionDate>=start && t.FSessionDate<=end 
+                vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
             if (vm.movieId != 0)
             {
-                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).GroupBy(t => t.FSessionDate).Select(t => t.Key);
-                // &&t.FSessionDate>=start && t.FSessionDate<=end 
+                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
-                    var sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t=>t.FSessionDate == item);
-                    //&&t.FsessionTime>=now
+                    IEnumerable<TSessions> sessions = null;
+
+                    sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item).OrderBy(t=>t.FSessionTime);
+                    if (item==start)
+                        sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
 
                     vm.sessions.Add(item, sessions);
                 }
             }
             return View(vm);
         }
-
         public IActionResult Booking(int? cinema, int? session)
         {
             CbookingVM vm = new CbookingVM();
@@ -80,10 +84,10 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return RedirectToAction("Ticket");
             }
-            vm.sessions = _session_repo.GetBySession(session);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
-            vm.cinema = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
-            vm.products = _db.TProducts.Where(t => t.FCinemaId == cinema);
+            vm.sessions = _session_repo.GetSessionBySession(session);
+            vm.movie = _session_repo.GetMovieBySEssion(session);
+            vm.cinema = _session_repo.GetCinemaBySEssion(session);
+            vm.products = _product_repo.GetProductByCinema(cinema);
 
             return View(vm);
         }
@@ -96,7 +100,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (productId == null)
                 return Ok(responseText);
-            var product = _db.TProducts.FirstOrDefault(t => t.FProductId == productId);
+            var product = _product_repo.GetOneProduct(productId);
 
             List<CproductCartItem> cart = null;
             string json = string.Empty;
@@ -154,15 +158,15 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
-            var row = _db.TSeats.GroupBy(t => t.FSeatRow).Select(t => t.Key);
+            var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key); 
             foreach (var item in row)
             {
-                var column = _db.TSeats.Where(t => t.FSeatRow == item);
+                var column = _seat_repo.GetSeat().Where(t => t.FSeatRow == item);
                 vm.seats.Add(item, column);
             }
 
             vm.sessions = _session_repo.GetOneSession(vm.sessionid);
-            vm.movie = _db.TSessions.Where(t => t.FSessionId == vm.sessionid).Select(t => t.FMovie);
+            vm.movie = _session_repo.GetMovieBySEssion(vm.sessionid);
             return View(vm);
         }
 
@@ -200,7 +204,7 @@ namespace ISpan.InseparableCore.Controllers
                 item.FTicketUnitprice = (decimal)session.FTicketPrice;
                 item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 1;
                 item.FMovieId = session.FMovieId;
-                item.FMovieName = _db.TMovies.FirstOrDefault(t => t.FMovieId == session.FMovieId).FMovieName;
+                item.FMovieName = _movie_repo.GetOneMovie(session.FMovieId).FMovieName;
                 item.FRoomId = session.FRoomId;
                 item.FSeatId = (int)seatId;
                 item.FSessionId = (int)sessionId;
@@ -237,13 +241,14 @@ namespace ISpan.InseparableCore.Controllers
                 json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
                 ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
-
+            if (ticket == null)
+                return RedirectToAction("seat");
             vm.seats = new Dictionary<int, string>();
             var seats = ticket.Select(t => t.FSeatId);
             foreach (var item in seats)
             {
 
-                var seat = _db.TSeats.Where(t => t.FSeatId == item);
+                var seat = _seat_repo.GetSeat().Where(t => t.FSeatId == item);
                 foreach (var name in seat)
                 {
                     seatid = name.FSeatRow + name.FSeatColumn;
@@ -253,7 +258,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.concession = (int)concession;
             vm.regular = (int)regular;
             vm.session = _session_repo.GetOneSession(sessionid);
-            vm.movies = _db.TSessions.Where(t => t.FSessionId == sessionid).Select(t => t.FMovie);
+            vm.movies = _session_repo.GetMovieBySEssion(sessionid);
             vm.cart = cart;
 
             return View(vm);
@@ -454,7 +459,7 @@ namespace ISpan.InseparableCore.Controllers
 
                     try
                     {
-                        _product_repo.Create(item.ProductOrderDetails);
+                        _product_order_repo.Create(item.ProductOrderDetails);
                     }
                     catch (Exception ex)
                     {
@@ -464,8 +469,6 @@ namespace ISpan.InseparableCore.Controllers
                 }
             }
            
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
             return orderid;
         }
 

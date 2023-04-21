@@ -7,7 +7,6 @@
     <link href="~/css/blog.css" rel="stylesheet">
     <link href="~/css/Booking.css" rel="stylesheet">
 }
-
     <form action="/Shopping/Seat" method="post">
     @foreach (var item in Model.movie)
     {
@@ -144,5 +143,9 @@
                 }
             });
         }
+        window.addEventListener("popstate", e => {
+            //history.state 如果希望帶回參數 就會變成get
+            window.location.href = '../Shopping/Ticket';
+        });
     </script>
 }

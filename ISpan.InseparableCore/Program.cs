@@ -4,6 +4,7 @@ using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using NuGet.Configuration;
 using System.Configuration;
 
@@ -19,17 +20,6 @@ builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServe
 //api key
 builder.Services.Configure<ApiKeys>(builder.Configuration.GetSection("ApiKeys"));
 
-//cache
-builder.Services.AddResponseCaching();
-builder.Services.AddControllers(options =>
-{
-    options.CacheProfiles.Add("Default1800",
-        new CacheProfile()
-        {
-            Duration = 1800
-        });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,8 +29,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseResponseCaching();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
