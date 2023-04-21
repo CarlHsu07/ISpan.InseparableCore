@@ -204,12 +204,9 @@
             </div>
 
             <div class="tab-pane fade pt-3" id="profile-change-password" role="tabpanel">
-                <div class="">
-                    
-                </div>
-                
                 <!-- Change Password Form -->
                 <form asp-action="ChangePassword" id="changePasswordForm">
+                    <div id="alertArea"></div>
                     <input asp-for="Id" type="hidden" id="memberId" />
                     <div class="row mb-3">
                         <label asp-for="CurrentPassword" class="col-md-4 col-lg-3 col-form-label"></label>
@@ -308,33 +305,37 @@
                     },
                     success: function (result) {
                         if (result.success) {
-                            // todo 加上成功提示
                             var newElement = $(`<div class="alert alert-success alert-dismissible fade show" role="alert" id="CPasswordAlert"><strong>成功！</strong>已成功修改密碼。<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button></div>`);
-                                $("#profile-change-password").prepend(newElement);
+                            $(newElement).insertAfter("#alertArea");
+
                             $("#CurrentPassword").val("");
                             $("#NewPassword").val("");
                             $("#ConfirmPassword").val("");
-                            console.log("修改成功！");
+
+                            // 5秒後自動移除新元素
+                            setTimeout(function () {
+                                newElement.remove();
+                            }, 5000);
                         } else {
                             if (result.message == 1) {
                                 var newElement = $(`<div class="alert alert-danger alert-dismissible fade show" role="alert" id="CPasswordAlert"><strong>錯誤！</strong>原始密碼不正確，請重新輸入。<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button></div>`);
-                                $("#profile-change-password").prepend(newElement);
+                                $(newElement).insertAfter("#alertArea");
+
                                 $("#CurrentPassword").val("");
                                 $("#NewPassword").val("");
                                 $("#ConfirmPassword").val("");
-                                // 5秒後自動移除新元素
-                                setTimeout(function () {
-                                    newElement.remove();
-                                }, 5000);
                             }
-                            
-                            console.log(result.message);
                         }
                     },
                     error: function (xhr, status, error) {
                         //$("#result").text("修改失敗，請重試！");
                         //console.log("修改失敗，請重試！");
-                        alert("執行了error")
+                        var newElement = $(`<div class="alert alert-danger alert-dismissible fade show" role="alert" id="CPasswordAlert"><strong>錯誤！</strong>修改失敗，請重試。<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button></div>`);
+                        $("#profile-change-password").prepend(newElement);
+
+                        $("#CurrentPassword").val("");
+                        $("#NewPassword").val("");
+                        $("#ConfirmPassword").val("");
                     }
                 });
             });
