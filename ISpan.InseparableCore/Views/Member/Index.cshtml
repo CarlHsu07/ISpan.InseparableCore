@@ -307,6 +307,8 @@
                     success: function (result) {
                         if (result.success) {
                             // todo 加上成功提示
+                            var newElement = $(`<div class="alert alert-success alert-dismissible fade show" role="alert" id="CPasswordAlert"><strong>成功！</strong>已成功修改密碼。<button type = "button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button></div>`);
+                                $("#profile-change-password").prepend(newElement);
                             $("#CurrentPassword").val("");
                             $("#NewPassword").val("");
                             $("#ConfirmPassword").val("");

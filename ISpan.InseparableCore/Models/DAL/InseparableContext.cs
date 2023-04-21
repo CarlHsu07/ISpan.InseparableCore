@@ -331,9 +331,10 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.ToTable("tArticleLikeDetails");
 
-                entity.Property(e => e.FSerialNumber)
-                    .ValueGeneratedNever()
-                    .HasColumnName("fSerialNumber");
+                entity.HasIndex(e => new { e.FArticleId, e.FMemberId }, "IX_tArticleLikeDetails")
+                    .IsUnique();
+
+                entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
                 entity.Property(e => e.FArticleId).HasColumnName("fArticleId");
 
@@ -479,6 +480,11 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fCommentContent");
 
                 entity.Property(e => e.FCommentLikes).HasColumnName("fCommentLikes");
+
+                entity.Property(e => e.FCommentModifiedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fCommentModifiedDate")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.FCommentPostingDate)
                     .HasColumnType("datetime")
@@ -1096,6 +1102,10 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FOrderId).HasColumnName("fOrderID");
 
                 entity.Property(e => e.FCinemaId).HasColumnName("fCinemaID");
+
+                entity.Property(e => e.FCreditTradeNo)
+                    .HasMaxLength(300)
+                    .HasColumnName("fCreditTradeNo");
 
                 entity.Property(e => e.FMemberId).HasColumnName("fMemberID");
 

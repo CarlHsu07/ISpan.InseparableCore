@@ -13,10 +13,12 @@ using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using System.Diagnostics.Metrics;
+using prjMvcCoreDemo.Models;
+using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class MemberController : Controller
+    public class MemberController : SuperController
     {
         private readonly InseparableContext _context;
         IWebHostEnvironment _enviro;
@@ -37,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
             }
 
             var member = await _context.TMembers.FindAsync(id);
@@ -171,11 +173,9 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // POST: Members/Register
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CRegisterViewModel MemberIn)
+        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
         {
             TMembers newMember = new TMembers();
 
@@ -241,7 +241,7 @@ namespace ISpan.InseparableCore.Controllers
 
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CEditProfileViewModel
+            var viewModel = new CMemberEditProfileViewModel
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -274,11 +274,9 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // POST: Member/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CEditProfileViewModel MemberIn)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileViewModel MemberIn)
         {
             if (id != MemberIn.Id)
             {
