@@ -41,7 +41,7 @@ namespace ISpan.InseparableCore.Controllers
             return View();
         }
 
-        // POST: Home/Register
+        // POST: Home/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Email,Password")] CMemberLoginViewModel model)

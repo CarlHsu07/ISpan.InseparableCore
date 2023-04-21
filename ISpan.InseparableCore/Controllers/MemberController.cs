@@ -408,45 +408,16 @@ namespace ISpan.InseparableCore.Controllers
             //return View(MemberIn);
         }
 
-
-        // GET: Member/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Home/Logout
+        public IActionResult Logout()
         {
-            if (id == null || _context.TMembers == null)
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
-                return NotFound();
+                HttpContext.Session.Remove(CDictionary.SK_LOGINED_USER);
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            var tMembers = await _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender)
-                .FirstOrDefaultAsync(m => m.FId == id);
-            if (tMembers == null)
-            {
-                return NotFound();
-            }
-
-            return View(tMembers);
-        }
-
-        // POST: Member/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.TMembers == null)
-            {
-                return Problem("Entity set 'InseparableContext.TMembers'  is null.");
-            }
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers != null)
-            {
-                _context.TMembers.Remove(tMembers);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View();
         }
 
         private bool TMembersExists(int id)
