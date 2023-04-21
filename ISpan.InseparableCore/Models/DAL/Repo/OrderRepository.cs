@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace ISpan.InseparableCore.Models.DAL
+namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class OrderRepository
     {
@@ -15,11 +15,12 @@ namespace ISpan.InseparableCore.Models.DAL
             {
                 _db.TOrders.Add(orders);
                 _db.SaveChanges();
-            }catch(SqliteException ex)
-            {
-               throw new Exception(ex.Message);
             }
-            
+            catch (SqliteException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
         public TOrders GetByAll(TOrders orders)
         {

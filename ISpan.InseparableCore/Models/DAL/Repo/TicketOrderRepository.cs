@@ -2,9 +2,9 @@
 using ISpan.InseparableCore.Models.BLL.Interfaces;
 using Microsoft.Data.Sqlite;
 
-namespace ISpan.InseparableCore.Models.DAL
+namespace ISpan.InseparableCore.Models.DAL.Repo
 {
-    public class TicketOrderRepository: ITicketOrderRepository
+    public class TicketOrderRepository : ITicketOrderRepository
     {
         private readonly InseparableContext _db;
         public TicketOrderRepository(InseparableContext db)
@@ -17,12 +17,13 @@ namespace ISpan.InseparableCore.Models.DAL
             {
                 _db.TTicketOrderDetails.Add(entity.ticket);
                 _db.SaveChanges();
-            }catch(SqliteException ex)
+            }
+            catch (SqliteException ex)
             {
                 throw new Exception(ex.Message);
             }
         }
-        public IEnumerable<TTicketOrderDetails> GetSolid(int? seesionid,bool status)
+        public IEnumerable<TTicketOrderDetails> GetSolid(int? seesionid, bool status)
         {
             var data = _db.TTicketOrderDetails.Where(t => t.FSessionId == seesionid && t.FStatus == status);
             return data;
@@ -32,7 +33,7 @@ namespace ISpan.InseparableCore.Models.DAL
             var data = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);
             return data;
         }
-        public TTicketOrderDetails GetBySeat(int? seesionid, bool status,int? seat)
+        public TTicketOrderDetails GetBySeat(int? seesionid, bool status, int? seat)
         {
             var data = _db.TTicketOrderDetails.Where(t => t.FSessionId == seesionid && t.FStatus == status).FirstOrDefault(t => t.FSeatId == seat);
             return data;

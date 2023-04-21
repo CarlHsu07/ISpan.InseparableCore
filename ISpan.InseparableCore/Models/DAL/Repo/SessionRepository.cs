@@ -1,4 +1,4 @@
-﻿namespace ISpan.InseparableCore.Models.DAL
+﻿namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class SessionRepository
     {
@@ -12,11 +12,11 @@
         public DateTime end = DateTime.Now.Date.AddDays(7);
         public IEnumerable<TMovies> GetMovieByCinema(int? cinema)
         {
-            var data = _db.TSessions.Where(t => t.FCinemaId ==cinema && t.FSessionDate >= start && t.FSessionDate <= end).Select(t => t.FMovie).Distinct();
+            var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FSessionDate >= start && t.FSessionDate <= end).Select(t => t.FMovie).Distinct();
 
             return data;
         }
-        public IEnumerable<TSessions> GetSession(int? cinema,int? movie)
+        public IEnumerable<TSessions> GetSession(int? cinema, int? movie)
         {
             var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FMovieId == movie && t.FSessionDate >= start && t.FSessionDate <= end);
 
@@ -36,7 +36,7 @@
         }
         public IEnumerable<TMovies> GetMovieBySEssion(int? session)
         {
-            var data= _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
+            var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
             return data;
         }
         public IEnumerable<TCinemas> GetCinemaBySEssion(int? session)
