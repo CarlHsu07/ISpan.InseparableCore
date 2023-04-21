@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using prjMvcCoreDemo.Models;
+using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
@@ -42,8 +44,8 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult Ticket(CticketVM vm)
         {
             //以防萬一只要一開啟訂購畫面 第一件事清空訂單session
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
 
             vm.cinema = _cinema_repo.QueryAll();
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
@@ -103,9 +105,9 @@ namespace ISpan.InseparableCore.Controllers
 
             List<CproductCartItem> cart = null;
             string json = string.Empty;
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
                 cart = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
             }
             else
@@ -134,7 +136,7 @@ namespace ISpan.InseparableCore.Controllers
                 cart.Add(item);
             }
             json = JsonSerializer.Serialize(cart);
-            HttpContext.Session.SetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST, json);
+            HttpContext.Session.SetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST, json);
             if (cart.Count() > 0)
                 responseText = "pass";
             if (quantity == 0)
@@ -182,9 +184,9 @@ namespace ISpan.InseparableCore.Controllers
 
             List<CticketCartItemVM> cart = null;
             string json = string.Empty;
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_TICKET_LIST);
                 cart = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
             else
@@ -212,7 +214,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             json = JsonSerializer.Serialize(cart);
-            HttpContext.Session.SetString(CDitionary.SK_PURCHASED_TICKET_LIST, json);
+            HttpContext.Session.SetString(CDictionary.SK_PURCHASED_TICKET_LIST, json);
             responseText = "pass";
             return Ok(responseText);
         }
@@ -229,15 +231,15 @@ namespace ISpan.InseparableCore.Controllers
             List<CticketCartItemVM> ticket = null;
             string seatid = string.Empty;
 
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
                 cart = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
             }
 
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_TICKET_LIST);
                 ticket = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
             if (ticket == null)
@@ -282,8 +284,8 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             _db.SaveChanges();
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
             return View(order);
         }
         //綠界API
@@ -332,7 +334,7 @@ namespace ISpan.InseparableCore.Controllers
         public HttpResponseMessage AddPayInfo(JObject info)
         {
             //todo 不確定這裡要做什麼判斷
-            if (!HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            if (!HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
             {
                 return ResponseOK();
             }
@@ -366,8 +368,8 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             _db.SaveChanges();
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-            HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
             return View(order);
         }
 
@@ -384,15 +386,15 @@ namespace ISpan.InseparableCore.Controllers
             List<CticketCartItemVM> ticket_list = null;
             string json = string.Empty;
 
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
                 product_list = JsonSerializer.Deserialize<List<CproductCartItem>>(json);
             }
 
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
             {
-                json = HttpContext.Session.GetString(CDitionary.SK_PURCHASED_TICKET_LIST);
+                json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_TICKET_LIST);
                 ticket_list = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
 
@@ -440,8 +442,8 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 catch (Exception ex)
                 {
-                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
-                    HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+                    HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
+                    HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
                     return null;
                 }
 
@@ -474,15 +476,15 @@ namespace ISpan.InseparableCore.Controllers
         //清除session
         public IActionResult Clearticket()
         {
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_TICKET_LIST))
-                HttpContext.Session.Remove(CDitionary.SK_PURCHASED_TICKET_LIST);
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
+                HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
 
             return Ok();
         }
         public IActionResult Clearproduct()
         {
-            if (HttpContext.Session.Keys.Contains(CDitionary.SK_PURCHASED_PRODUCTS_LIST))
-                HttpContext.Session.Remove(CDitionary.SK_PURCHASED_PRODUCTS_LIST);
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
+                HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
 
             return Ok();
         }
