@@ -8,11 +8,11 @@
 @using X.PagedList.Web.Common
 
 <style>
-	PageContainer{
-		margin:0 auto;
+	PageContainer {
+		margin: 0 auto;
 	}
-	.btnPage{
 
+	.btnPage {
 	}
 
 	.divContainer {
@@ -36,6 +36,7 @@
 		bottom: 0px;
 		right: -100px;
 	}
+
 	.inDivPosition {
 		position: relative;
 		bottom: -20px;
@@ -44,8 +45,7 @@
 
 </style>
 <h1>電影搜尋</h1>
-<a asp-action="IndexMaintainer">IndexMaintainer</a>
-
+<button action="Create" class="btn btn-primary">新增</button>
 
 <div class="row divBlock">
 
@@ -69,11 +69,11 @@
 				<label name="LevelId" class="control-label">分級</label>
 				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
 			</div>
-@*			<div class="form-group divBlock">
-				<label name="Page" class="control-label">頁數</label>
-				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
+			@*			<div class="form-group divBlock">
+			<label name="Page" class="control-label">頁數</label>
+			<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
-*@			<div class="form-group divBlock" style="position:relative">
+			*@			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 		</div>
@@ -83,49 +83,105 @@
 
 <div class="divBlock" id="divSearch">
 
-	@foreach (var item in Model)
-	{
-		<div class="divContainer divBorder">
-			<div style="margin:0 20px 0 0">
-				<p>
-					<img src="~/images/@item.FMovieImagePath" width="250">
-				</p>
-			</div>
+	<table class="table" id="tableSearch">
+		<thead>
+			<tr>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieName)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.PartialIntro)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieOnDate)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieOffDate)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieLength)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.Level)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.Categories)
+					</p>
+				</th>
+				<th><p></p></th>
+			</tr>
+		</thead>
+		<tbody id="bodySearch">
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>
+						<p>
+							<a asp-action="Details" asp-route-id="@item.FMovieId">
+								@Html.DisplayFor(modelItem => item.FMovieName)
+							</a>
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.PartialIntro)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.OnDate)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.OffDate)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FMovieLength)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.Level)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.Categories)
+						</p>
+					</td>
+					<td>
+						<div class="divContainer">
+							<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-primary">編輯</a>
+							<div class="form-group">
+								<form asp-action="Delete">
+									<input type="hidden" name="movieId" value="@item.FMovieId" />
+									<input type="submit" value="刪除" class="btn btn-danger" />
+								</form>
+							</div>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 
-			<div>
-				<p>
-					<a asp-action="Details" asp-route-id="@item.FMovieId">
-						<h3>
-							@Html.DisplayFor(modelItem => item.FMovieName)
-						</h3>
-					</a>
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.OnDate) : @item.OnDate
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieLength) : @item.FMovieLength 分
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieScore) : @item.FMovieScore
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.Categories) : @item.Categories
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.Level) : @item.Level
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieActors) : @item.FMovieActors
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieDirectors) : @item.FMovieDirectors
-				</p>
-			</div>
-		</div>
-	}
-
-	<div>
+	<div id="divDataCount">
 		<p class="text-muted" colspan="5">
 			每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
 		</p>
@@ -147,102 +203,107 @@
 @section Scripts {
 	<script>
 		var PageCountNumber = @pagedList.PageCount
-		var pageNumber = 1
+				var pageNumber = 1
 
 		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
 			$.ajax({
 				method: "post",
-				url: $(this).attr("action"),
+				url: "/TMovies/Index",
 				data: { Key, CategoryId, DateCategoryId, LevelId, Page },
 				beforeSend: function () {
 				},
 				success: function (data) {
-					$("#divSearch").html(``)
+					$("#divDataCount").html(``)
+					$("#bodySearch").html(``)
 					if (data == "noData") {
 						alert("nodata")
-						$("#divSearch").html(`
-
-							<div>
-								<p class="text-muted" colspan="5">
-									每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
-								</p>
-							</div>
-						`)
+						$("#divDataCount").html(`
+									<div>
+										<p class="text-muted" colspan="5">
+											每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
+										</p>
+									</div>
+								`)
 						return;
 					}
 
 					let context = JSON.parse(data);
-					$("#divSearch").html(``)
 					$.each(context.Vm, function (index, value) {
-						$("#divSearch").append(`
-							<div class="divContainer divBorder">
-								<div style="margin:0 20px 0 0">
-									<p>
-										<img src="../images/${value.FMovieImagePath}" width="250">
-									</p>
-								</div>
-
-								<div>
-									<p>
-										<a href="/TMovies/Details/${value.FMovieId}">
-											<h3>
-												${value.FMovieName}
-											</h3>
-										</a>
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.OnDate) :	${value.OnDate}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieLength) :	${value.FMovieLength}分
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieScore) : ${value.FMovieScore}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.Categories) : ${value.Categories}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.Level) : ${value.Level}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieActors) : ${value.FMovieActors}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieDirectors) : ${value.FMovieDirectors}
-									</p>
-
-								</div>
-							</div>`)
+						$("#bodySearch").append(`
+									<tr>
+										<td>
+											<p>
+												<a href="/TMovies/Details/${value.FMovieId}">
+											${value.FMovieName}
+												</a>
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.PartialIntro}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.OnDate}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.OffDate}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.FMovieLength}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.Level}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.Categories}
+											</p>
+										</td>
+										<td>
+											<p>
+												<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-primary">編輯</a>
+												<a href="/TMovies/Delete/${value.FMovieId}" class="btn btn-danger">刪除</a>
+											</p>
+										</td>
+									</tr>
+								`)
 					})
-					$("#divSearch").append(`
-						<div>
-							<p class="text-muted" colspan="5">
-								每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
-							</p>
-						</div>
-					`)
+					$("#divDataCount").append(`
+								<div>
+									<p class="text-muted" colspan="5">
+										每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
+									</p>
+								</div>
+							`)
 					if (PageCountNumber != context.PageCount) {
 						PageCountNumber = context.PageCount
 						$("#divPageContainer").html(`
-									`)
+											`)
 						$("#divPageContainer").append(`
-							<button type="button" class="btn btn-secondary" id="prePage"><</button>
-						`)
+									<button type="button" class="btn btn-secondary" id="prePage"><</button>
+								`)
 						$("#divPageContainer").append(`
-										<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
-									`)
+												<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+											`)
 						for (let i = 2; i < context.PageCount + 1; i++) {
 							$("#divPageContainer").append(`
-							<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
-						`)
+									<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
+								`)
 						}
 
 						$("#divPageContainer").append(`
-							<button type="button" class="btn btn-secondary" id="nextPage">></button>
-						`)
+									<button type="button" class="btn btn-secondary" id="nextPage">></button>
+								`)
 					}
-
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
@@ -257,7 +318,7 @@
 			let levelId = $("#LevelId").find(":selected").val()
 			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
 			show(key, categoryId, dateCategoryId, levelId, page)
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId+ "/" + levelId )
+			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 		}
 
 		//btnpage換顏色

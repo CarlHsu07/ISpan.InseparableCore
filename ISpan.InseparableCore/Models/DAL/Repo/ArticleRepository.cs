@@ -78,9 +78,19 @@ namespace ISpan.InseparableCore.Models.DAL
 			article.FArticleTitle = vm.FArticleTitle;
 			article.FArticleCategoryId = vm.FArticleCategoryId;
 			article.FArticleContent = vm.FArticleContent;
+			article.FArticleLikes = vm.FArticleLikes;
 
 			context.Update(article);
 			await context.SaveChangesAsync();
+
+		}
+		public async Task UpdateLikeAsync(ArticleVm vm)
+		{
+			TArticles article = context.TArticles.Find(vm.FArticleId);
+			article.FArticleLikes = vm.FArticleLikes;
+
+			context.Update(article);
+			context.SaveChanges();
 
 		}
 		public void Click(int articleId)

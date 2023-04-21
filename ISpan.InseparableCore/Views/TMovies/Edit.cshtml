@@ -30,12 +30,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="FMovieOnDate" class="control-label"></label>
-                <input asp-for="FMovieOnDate" class="form-control" />
+                <input type="date" asp-for="FMovieOnDate" class="form-control" />
                 <span asp-validation-for="FMovieOnDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FMovieOffDate" class="control-label"></label>
-                <input asp-for="FMovieOffDate" class="form-control" />
+                <input type="date" asp-for="FMovieOffDate" class="form-control" />
                 <span asp-validation-for="FMovieOffDate" class="text-danger"></span>
             </div>
 			<div class="form-group">
@@ -61,7 +61,7 @@
 			</div>
 
 			<div class="form-group">
-				<label asp-for="CategoryIds" class="control-label"></label>
+				<label asp-for="Categories" class="control-label"></label>
 				<select id="FMovieCategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId" multiple></select>
 				<input type="hidden" name="CategoryIds" id="CategoryIds" />
 			</div>

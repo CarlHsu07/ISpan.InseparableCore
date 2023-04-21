@@ -10,6 +10,7 @@ using ISpan.InseparableCore.ViewModels;
 using NuGet.Protocol;
 using ISpan.InseparableCore.Models.DAL;
 using static System.Formats.Asn1.AsnWriter;
+using X.PagedList;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -25,19 +26,27 @@ namespace ISpan.InseparableCore.Controllers
 			this._enviro = enviro;
 			repo = new MovieRepository(context, enviro);
 		}
+		//產生頁碼
+		protected IPagedList<MovieVm> GetPagedProcess(int? page, int pageSize, List<MovieVm> movies)
+		{
+			// 過濾從client傳送過來有問題頁數
+			if (page.HasValue && page < 1)
+				return null;
+			// 從資料庫取得資料
+			var listUnpaged = movies;
+			IPagedList<MovieVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
+			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
+			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
+				return null;
+			return pagelist;
+		}
 
 		// GET: TMovies
 		public async Task<IActionResult> IndexMaintain()
 		{
-			var inseparableContext = _context.TMovies.Include(t => t.FMovieLevel);
-
-			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
-			return View(await inseparableContext.ToListAsync());
-		}
-		public IActionResult Index()
-		{
 			List<MovieVm> movies = repo.Search(null).ToList();
 
+			#region ViewData
 			int pageContent = 2;
 			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
 														   : movies.Count / pageContent + 1;
@@ -46,7 +55,6 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			movies = movies.Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -63,13 +71,94 @@ namespace ISpan.InseparableCore.Controllers
 			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
+			#endregion
+			int pageSize = 2;
 
+			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
+
+			movies = movies.Take(pageSize).ToList();
+			return View(movies);
+		}
+		public async Task<IActionResult> IndexMaintainer()
+		{
+			List<MovieVm> movies = repo.Search(null).ToList();
+
+			#region ViewData
+			int pageContent = 2;
+			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
+														   : movies.Count / pageContent + 1;
+			List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			for (int i = 1; i < pageNumber + 1; i++)
+			{
+				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			}
+			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+
+			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
+			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
+			categorySelectList.Add(defaultCategory);
+			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
+
+			//為電影等級SelectList加入預設值
+			TMovieLevels defaultLevel = new TMovieLevels { FLevelId = 0, FLevelName = "全部" };
+			List<TMovieLevels> LevelSelectList = _context.TMovieLevels.ToList();
+			LevelSelectList.Add(defaultLevel);
+			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", 0);
+
+			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			SelectList dateCategorySelectList = dateCategories.ToSelectList();
+			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
+			#endregion
+			int pageSize = 2;
+
+			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
+
+			movies = movies.Take(pageSize).ToList();
+			return View(movies);
+		}
+		public IActionResult Index()
+		{
+			List<MovieVm> movies = repo.Search(null).ToList();
+
+			#region ViewData
+			int pageContent = 2;
+			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
+														   : movies.Count / pageContent + 1;
+			List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			for (int i = 1; i < pageNumber + 1; i++)
+			{
+				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			}
+			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+
+			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
+			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
+			categorySelectList.Add(defaultCategory);
+			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
+
+			//為電影等級SelectList加入預設值
+			TMovieLevels defaultLevel = new TMovieLevels { FLevelId = 0, FLevelName = "全部" };
+			List<TMovieLevels> LevelSelectList = _context.TMovieLevels.ToList();
+			LevelSelectList.Add(defaultLevel);
+			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", 0);
+
+			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			SelectList dateCategorySelectList = dateCategories.ToSelectList();
+			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
+			#endregion
+			int pageSize = 2;
+
+			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
+
+			movies = movies.Take(pageSize).ToList();
 			return View(movies);
 		}
 		[HttpPost]
 		public IActionResult Index(MovieSearchCondition condition)
 		{
 			List<MovieVm> movies = repo.Search(condition).ToList();
+				
+			#region ViewData
 
 			//產生頁碼SelectList
 			int pageContent = 2;
@@ -80,7 +169,6 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			movies = movies.Skip(pageContent * (condition.Page - 1)).Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
 
 			//為電影類別SelectList加入預設值
@@ -99,8 +187,19 @@ namespace ISpan.InseparableCore.Controllers
 			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
+			#endregion
+			int pageSize = 2;
+			var pageList = GetPagedProcess(condition.Page, pageSize, movies);
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
+			if (movies.Count == 0) return Ok("noData");
 
-			return Ok(movies.ToJson());
+			return Ok(new
+			{
+				Vm = movies,
+				PageCount = pageList.PageCount,
+				TotalItemCount = pageList.TotalItemCount,
+				PageSize = pageSize
+			}.ToJson());
 		}
 
 

@@ -15,9 +15,6 @@
 	.btnPage{
 
 	}
-	.btnSelected{
-
-	}
 	.divContainer {
 		display: flex;
 		flex-direction: row;
@@ -73,7 +70,7 @@
 				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
 *@			<div class="form-group divBlock" style="position:relative">
-				<input type="submit" value="search" class="btn btn-light inDivBottom" />
+				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition ">
 				<h3><a asp-action="Create" class="divCreate">發文</a></h3>
@@ -179,7 +176,8 @@
 	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
 		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
-			@for (int i = 1; i < pagedList.PageCount + 1; i++)
+			<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+			@for (int i = 2; i < pagedList.PageCount + 1; i++)
 			{
 				<button type="button" class="btn btn-secondary btnPage"  id="@i" value="@i">@i</button>
 			}
@@ -191,8 +189,6 @@
 	<script>
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
-		$(`1`).removeClass('btn-secondary');
-		$(`1`).addClass('btn-primary');
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
@@ -322,16 +318,17 @@
 						$("#divPageContainer").html(`
 						`)
 						$("#divPageContainer").append(`
+							<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+						`)
+						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
-						for (let i = 1; i < context.PageCount + 1; i++)
+						for (let i = 2; i < context.PageCount + 1; i++)
 						{
 							$("#divPageContainer").append(`
 								<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
 							`)
 						}
-						$(`1`).removeClass('btn-secondary');
-						$(`1`).addClass('btn-primary');
 
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="nextPage">></button>
@@ -368,8 +365,6 @@
 			let page = $(this).val()
 			pageChange(page)
 
-			$('.btnSelected').removeClass('btnSelected');
-			$(this).addClass('btnSelected');
 			pageSelected(this)
 		});
 		//上一頁

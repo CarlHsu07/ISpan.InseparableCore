@@ -26,6 +26,7 @@ namespace ISpan.InseparableCore.Controllers
 			repo = new ArticleRepository(context);
 		}
 
+		//產生頁碼
 		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
 		{
 			// 過濾從client傳送過來有問題頁數
@@ -45,6 +46,7 @@ namespace ISpan.InseparableCore.Controllers
 
 			List<ArticleVm> articles = repo.Search(null).ToList();
 
+			#region ViewData
 
 			int pageContent = 2;
 			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
@@ -61,6 +63,7 @@ namespace ISpan.InseparableCore.Controllers
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
+			#endregion
 
 			int pageSize = 2;
 
@@ -74,6 +77,7 @@ namespace ISpan.InseparableCore.Controllers
 		{
 			List<ArticleVm> articles = repo.Search(condition).ToList();
 
+			#region ViewData
 			int pageContent = 2;
 			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
 														   : articles.Count / pageContent + 1;
@@ -82,13 +86,13 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			//articles = articles.Skip(pageContent * ((int)condition.Page - 1)).Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
+			#endregion
 
 			int pageSize = 2;
 			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
@@ -110,10 +114,6 @@ namespace ISpan.InseparableCore.Controllers
 			}
 
 			var article = await _context.TArticles.FirstOrDefaultAsync(m => m.FArticleId == id);
-			//點閱數+1
-			//article.FArticleClicks++;
-			//_context.Update(article);
-			//_context.SaveChanges();
 
 			if (article == null)
 			{
@@ -135,7 +135,7 @@ namespace ISpan.InseparableCore.Controllers
 			return View(vm);
 		}
 		[HttpPost]
-		public IActionResult ArticleLike(TArticleLikeDetails detail)
+		public async Task<IActionResult> ArticleLike(TArticleLikeDetails detail)
 		{
 			bool like = false;
 			var detailInDb = _context.TArticleLikeDetails
@@ -147,7 +147,7 @@ namespace ISpan.InseparableCore.Controllers
 			if (detailInDb == null)
 			{
 				article.FArticleLikes++;
-				repo.UpdateAsync(article);
+				repo.UpdateLikeAsync(article);
 
 				like = true;
 				_context.Add(detail);
@@ -155,12 +155,12 @@ namespace ISpan.InseparableCore.Controllers
 			else
 			{
 				article.FArticleLikes--;
-				repo.UpdateAsync(article);
+				repo.UpdateLikeAsync(article);
 
 				like = false;
 				_context.Remove(detailInDb);
 			}
-			_context.SaveChanges();
+			await _context.SaveChangesAsync();
 
 			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes}).ToJson());
 		}

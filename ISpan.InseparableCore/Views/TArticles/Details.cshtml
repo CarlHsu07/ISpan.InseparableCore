@@ -124,8 +124,8 @@
 	</div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FArticleId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.FArticleId">編輯</a> |
+    <a asp-action="Index">返回</a>
 </div>
 @section Scripts{
 	<script>
@@ -144,21 +144,21 @@
 					$.each(context, function (index, value) {
 						if (value.FMemberId == memberId && !value.FDeleted) {
 							$("#divComment").append(`
-									<div class=" divBorder">
-										<div style="font-size:large; margin:10px 0 0 10px">
-											<div class="divComment" >
-												${value.MemberName}	 ${value.PostingDate}
-									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
-									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
-											</div>
-											<hr style="margin:0"/>
-											<div id="Container${value.FCommentId}">
-												<div class="divComment" id="divComment${value.FCommentId}">
-													${value.FCommentContent}
-												</div>
+								<div class=" divBorder">
+									<div style="font-size:large; margin:10px 0 0 10px">
+										<div class="divComment" >
+											${value.MemberName}	 ${value.PostingDate}
+								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
+								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
+										</div>
+										<hr style="margin:0"/>
+										<div id="Container${value.FCommentId}">
+											<div class="divComment" id="divComment${value.FCommentId}">
+												${value.FCommentContent}
 											</div>
 										</div>
-									</div>`
+									</div>
+								</div>`
 							)
 						}
 						else {
@@ -201,7 +201,7 @@
 				</div>
 			`)
 			$(`#hidden${commentId}`).val(text)
-			alert($(`#hidden${commentId}`).val())
+			//alert($(`#hidden${commentId}`).val())
 		});
 		//取消編輯
 		$(document).on('click', '.btnCommentCancel', function () {
@@ -218,13 +218,14 @@
 			`)
 		})
 
-		//單選按鈕組，按下時改變顏色
-		$(document).on('click', '.btn', function () {
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
+		//按鈕組時改變顏色
+		$(document).on('click', '.btn-secondary', function () {
 			$(this).removeClass('btn-secondary');
 			$(this).addClass('btn-primary');
+		});
+		$(document).on('click', '.btn-primary', function () {
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-secondary');
 		});
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
@@ -258,13 +259,21 @@
 				},
 			})
 		}
-
 		//點讚
-		$(document).on('click', '#btnArticleLike', function () {
-			let memberId = $("#FMemberId").find(":selected").attr("value")
-			let articleId = @Model.FArticleId
-			ArticleLike(memberId, articleId)
-		})
+		$(document).ready(function () {
+			$(document).on('click', '#btnArticleLike', function () {
+				var now = new Date().getTime();
+				var lastClickedTime = $(this).data('clicked-time') || 0;
+				var timeDiff = now - lastClickedTime;
+				if (timeDiff > 1000) { // 如果距離上一次點擊的時間大於1秒，執行下面的代碼
+					$(this).data('clicked-time', now); // 更新最後點擊時間
+					// 执行按钮的操作
+					let memberId = $("#FMemberId").find(":selected").attr("value")
+					let articleId = @Model.FArticleId
+					ArticleLike(memberId, articleId)
+				}
+			});
+		});
 
 		//展示評論
 		CommentDetail(0, 0, @Model.FArticleId, "", false)
