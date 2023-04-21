@@ -25,9 +25,9 @@
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" aria-selected="false" tabindex="-1" role="tab">更改密碼</button>
             </li>
 
-            <li class="nav-item" role="presentation">
+            @*<li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">設定</button>
-            </li>
+            </li>*@
 
         </ul>
         <div class="tab-content pt-2">
@@ -239,7 +239,7 @@
                 </form><!-- End Change Password Form -->
             </div>
 
-            <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
+@*            <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
                 <!-- Settings Form -->
                 <form>
 
@@ -259,12 +259,6 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="proOffers">
-                                <label class="form-check-label" for="proOffers">
-                                    Marketing and promo offers
-                                </label>
-                            </div>
-                            <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="securityNotify" checked="" disabled="">
                                 <label class="form-check-label" for="securityNotify">
                                     Security alerts
@@ -278,7 +272,7 @@
                     </div>
                 </form><!-- End settings Form -->
             </div>
-        </div>
+*@        </div>
     </div>
 </div>
 
@@ -312,7 +306,7 @@
                     },
                     success: function (result) {
                         if (result.success) {
-                            //$("#result").text("修改成功！");
+                            // todo 加上成功提示
                             $("#CurrentPassword").val("");
                             $("#NewPassword").val("");
                             $("#ConfirmPassword").val("");

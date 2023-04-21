@@ -58,7 +58,7 @@ namespace ISpan.InseparableCore.ViewModels
 
         [Display(Name = "目前密碼")]
         [DataType(DataType.Password)]
-        [StringLength(100, ErrorMessage = "新的密碼長度至少為 {2} 個字元。", MinimumLength = 4)]
+        [StringLength(100, ErrorMessage = "密碼長度至少為 {2} 個字元。", MinimumLength = 4)]
         [Required(ErrorMessage = "請輸入目前密碼")]
         public string? CurrentPassword
         {
