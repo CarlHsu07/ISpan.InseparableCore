@@ -1,4 +1,5 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.Models.DAL.Repo;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

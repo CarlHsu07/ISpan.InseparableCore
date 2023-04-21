@@ -1,6 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.BLL.Interfaces;
 using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.Models.DAL.Repo;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

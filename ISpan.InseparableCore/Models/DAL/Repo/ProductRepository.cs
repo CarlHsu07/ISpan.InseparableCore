@@ -1,11 +1,11 @@
-﻿namespace ISpan.InseparableCore.Models.DAL
+﻿namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class ProductRepository
     {
         private readonly InseparableContext _db;
         public ProductRepository(InseparableContext db)
         {
-            _db= db;
+            _db = db;
         }
         public IEnumerable<TProducts> GetProductByCinema(int? cinema)
         {

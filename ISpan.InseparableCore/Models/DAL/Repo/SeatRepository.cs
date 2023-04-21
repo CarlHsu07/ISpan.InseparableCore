@@ -1,4 +1,4 @@
-﻿namespace ISpan.InseparableCore.Models.DAL
+﻿namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class SeatRepository
     {

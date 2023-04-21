@@ -1,7 +1,7 @@
 ﻿using ISpan.InseparableCore.ViewModels;
 using Microsoft.Extensions.Options;
 
-namespace ISpan.InseparableCore.Models.DAL
+namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class CinemaRepository
     {
