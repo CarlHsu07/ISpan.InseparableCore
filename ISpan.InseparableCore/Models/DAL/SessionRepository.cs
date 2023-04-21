@@ -7,21 +7,22 @@
         {
             _db = db;
         }
-        public IEnumerable<TMovies> GetMovie(int? cinema)
+        //限制時間區間
+        public DateTime start = DateTime.Now.Date;
+        public DateTime end = DateTime.Now.Date.AddDays(7);
+        public IEnumerable<TMovies> GetMovieByCinema(int? cinema)
         {
-            var data = _db.TSessions.Where(t => t.FCinemaId ==cinema).Select(t => t.FMovie).Distinct();
-            // &&t.FSessionDate>=start && t.FSessionDate<=end 
+            var data = _db.TSessions.Where(t => t.FCinemaId ==cinema && t.FSessionDate >= start && t.FSessionDate <= end).Select(t => t.FMovie).Distinct();
 
             return data;
         }
         public IEnumerable<TSessions> GetSession(int? cinema,int? movie)
         {
-            var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FMovieId == movie);
-            // &&t.FSessionDate>=start && t.FSessionDate<=end 
+            var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FMovieId == movie && t.FSessionDate >= start && t.FSessionDate <= end);
 
             return data;
         }
-        public IEnumerable<TSessions> GetBySession(int? session)
+        public IEnumerable<TSessions> GetSessionBySession(int? session)
         {
             var data = _db.TSessions.Where(t => t.FSessionId == session);
 
@@ -31,6 +32,22 @@
         {
             var data = _db.TSessions.FirstOrDefault(t => t.FSessionId == session);
 
+            return data;
+        }
+        public IEnumerable<TMovies> GetMovieBySEssion(int? session)
+        {
+            var data= _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
+            return data;
+        }
+        public IEnumerable<TCinemas> GetCinemaBySEssion(int? session)
+        {
+            var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
+            return data;
+        }
+        //待移走
+        public TMovies GetOneMovie(int? movie)
+        {
+            var data = _db.TMovies.FirstOrDefault(t => t.FMovieId == movie);
             return data;
         }
     }

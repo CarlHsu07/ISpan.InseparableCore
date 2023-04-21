@@ -13,13 +13,17 @@ namespace ISpan.InseparableCore.ViewModels
 		public string? FMovieName { get; set; }
 		[DisplayName("簡介")]
 		public string? FMovieIntroduction { get; set; }
+		[DisplayName("簡介")]
+		public string? PartialIntro { get; set; }
 		[DisplayName("電影分級")]
 		public int FMovieLevelId { get; set; }
 		[DisplayName("電影分級")]
 		public string? Level { get; set; }
+		[DisplayName("上映日期")]
 		public DateTime FMovieOnDate { get; set; }
 		[DisplayName("上映日期")]
 		public string? OnDate { get; set; }
+		[DisplayName("下映日期")]
 		public DateTime? FMovieOffDate { get; set; }
 		[DisplayName("下映日期")]
 		public string? OffDate { get; set; }
@@ -42,23 +46,26 @@ namespace ISpan.InseparableCore.ViewModels
 	}
 	public static class MovieVmExtensions
 	{
-		public static MovieVm ModelToVm(this TMovies tMovies)
+		public static MovieVm ModelToVm(this TMovies movie)
 		{
+			int len = Math.Min(movie.FMovieIntroduction.Length, 10);
+
 			MovieVm vm = new MovieVm()
 			{
-				FMovieId = tMovies.FMovieId,
-				FMovieIntroduction = tMovies.FMovieIntroduction,
-				FMovieName = tMovies.FMovieName,
-				FMovieLevelId = tMovies.FMovieLevelId,
-				FMovieOnDate = tMovies.FMovieOnDate,
-				OnDate = tMovies.FMovieOnDate.ToString("yyyy-MM-dd"),
-				FMovieOffDate = tMovies.FMovieOffDate,
-				OffDate = ((DateTime)tMovies.FMovieOffDate).ToString("yyyy-MM-dd"),
-				FMovieLength = tMovies.FMovieLength,
-				//FMovieScore = tMovies.FMovieScore,
-				FMovieImagePath = tMovies.FMovieImagePath,
-				FMovieActors = tMovies.FMovieActors,
-				FMovieDirectors= tMovies.FMovieDirectors,
+				FMovieId = movie.FMovieId,
+				FMovieIntroduction = movie.FMovieIntroduction,
+				PartialIntro = movie.FMovieIntroduction.Trim().Substring(0, len) + "...",
+				FMovieName = movie.FMovieName,
+				FMovieLevelId = movie.FMovieLevelId,
+				FMovieOnDate = movie.FMovieOnDate,
+				OnDate = movie.FMovieOnDate.ToString("yyyy-MM-dd"),
+				FMovieOffDate = movie.FMovieOffDate,
+				OffDate = ((DateTime)movie.FMovieOffDate).ToString("yyyy-MM-dd"),
+				FMovieLength = movie.FMovieLength,
+				FMovieScore = movie.FMovieScore,
+				FMovieImagePath = movie.FMovieImagePath,
+				FMovieActors = movie.FMovieActors,
+				FMovieDirectors= movie.FMovieDirectors,
 			};
 			return vm;
 		}

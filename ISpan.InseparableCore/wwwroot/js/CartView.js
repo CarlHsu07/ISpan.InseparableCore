@@ -13,7 +13,6 @@
 
     $('#total').html(total);
     $('#money').val(total);
-
 });
 
 function cashpay() {

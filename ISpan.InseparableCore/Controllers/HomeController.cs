@@ -22,13 +22,13 @@ namespace ISpan.InseparableCore.Controllers
             _context = context;
             _enviro = enviro;
         }
-   
+
         public IActionResult Index()
         {
             ChomeIndexVM vm = new ChomeIndexVM();
             DateTime today = DateTime.Now.Date;
-            vm.showing = _context.TMovies.Take(6); //Where(t => t.FMovieOffDate < today).OrderByDescending(t => t.FMovieOffDate).
-            vm.soon = _context.TMovies.Take(6); //Where(t => t.FMovieOffDate > today).OrderBy(t => t.FMovieOffDate).
+            vm.showing = _context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today).OrderByDescending(t => t.FMovieOffDate).Take(6); 
+            vm.soon = _context.TMovies.Where(t => t.FMovieOnDate > today).OrderBy(t => t.FMovieOffDate).Take(6); 
             return View(vm);
         }
 

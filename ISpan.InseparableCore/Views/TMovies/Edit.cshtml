@@ -30,12 +30,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="FMovieOnDate" class="control-label"></label>
-                <input asp-for="FMovieOnDate" class="form-control" />
+                <input type="date" asp-for="FMovieOnDate" class="form-control" />
                 <span asp-validation-for="FMovieOnDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FMovieOffDate" class="control-label"></label>
-                <input asp-for="FMovieOffDate" class="form-control" />
+                <input type="date" asp-for="FMovieOffDate" class="form-control" />
                 <span asp-validation-for="FMovieOffDate" class="text-danger"></span>
             </div>
 			<div class="form-group">
@@ -61,20 +61,26 @@
 			</div>
 
 			<div class="form-group">
-				<label asp-for="CategoryIds" class="control-label"></label>
+				<label asp-for="Categories" class="control-label"></label>
 				<select id="FMovieCategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId" multiple></select>
 				<input type="hidden" name="CategoryIds" id="CategoryIds" />
 			</div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="儲存" class="btn btn-primary" />
             </div>
         </form>
+		<div class="form-group">
+			<form asp-action="Delete">
+				<input type="hidden" name="movieId" value="@Model.FMovieId" />
+				<input type="submit" value="刪除" class="btn btn-danger" />
+			</form>
+        </div>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">返回</a>
 </div>
 @section Scripts {
 <script>

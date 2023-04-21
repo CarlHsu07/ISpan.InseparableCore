@@ -1,0 +1,381 @@
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieVm>
+@{
+	var pagedList = (IPagedList)ViewBag.MovieModel;
+}
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@using X.PagedList.Mvc.Core.Fluent
+@using X.PagedList.Web.Common
+
+<style>
+	PageContainer {
+		margin: 0 auto;
+	}
+
+	.btnPage {
+	}
+
+	.divContainer {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+	.divBorder {
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivBottom {
+		position: absolute;
+		bottom: 0px;
+		right: -100px;
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: -20px;
+		right: -500px;
+	}
+
+</style>
+<h1>電影搜尋</h1>
+<button action="Create" class="btn btn-primary">新增</button>
+
+<div class="row divBlock">
+
+	<form asp-action="Index" method="post" id="formSearch">
+
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="divContainer ">
+			<div class="form-group divBlock">
+				<label name="Key" class="control-label">關鍵字</label>
+				<input name="Key" id="Key" class="form-control" />
+			</div>
+			<div class="form-group divBlock">
+				<label name="CategoryId" class="control-label">類別</label>
+				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
+			</div>
+			<div class="form-group divBlock">
+				<label name="DateCategoryId" class="control-label">檔期</label>
+				<select name="DateCategoryId" id="DateCategoryId" class="form-control" asp-items="ViewBag.DateCategoryId"></select>
+			</div>
+			<div class="form-group divBlock">
+				<label name="LevelId" class="control-label">分級</label>
+				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
+			</div>
+			@*			<div class="form-group divBlock">
+			<label name="Page" class="control-label">頁數</label>
+			<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
+			</div>
+			*@			<div class="form-group divBlock" style="position:relative">
+				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<div class="divBlock" id="divSearch">
+
+	<table class="table" id="tableSearch">
+		<thead>
+			<tr>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieName)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.PartialIntro)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieOnDate)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieOffDate)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieLength)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.Level)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.Categories)
+					</p>
+				</th>
+				<th><p></p></th>
+			</tr>
+		</thead>
+		<tbody id="bodySearch">
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>
+						<p>
+							<a asp-action="Details" asp-route-id="@item.FMovieId">
+								@Html.DisplayFor(modelItem => item.FMovieName)
+							</a>
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.PartialIntro)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.OnDate)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.OffDate)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FMovieLength)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.Level)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.Categories)
+						</p>
+					</td>
+					<td>
+						<div class="divContainer">
+							<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-primary">編輯</a>
+							<div class="form-group">
+								<form asp-action="Delete">
+									<input type="hidden" name="movieId" value="@item.FMovieId" />
+									<input type="submit" value="刪除" class="btn btn-danger" />
+								</form>
+							</div>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<div id="divDataCount">
+		<p class="text-muted" colspan="5">
+			每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
+		</p>
+	</div>
+</div>
+<div style=" font-size:larger" class="PageContainer">
+	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
+		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+			<button type="button" class="btn btn-secondary" id="prePage"><</button>
+			<button type="button" class="btn btn-primary btnPage" id="1" value="1">1</button>
+			@for (int i = 2; i < pagedList.PageCount + 1; i++)
+			{
+				<button type="button" class="btn btn-secondary btnPage" id="@i" value="@i">@i</button>
+			}
+			<button type="button" class="btn btn-secondary" id="nextPage">></button>
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<script>
+		var PageCountNumber = @pagedList.PageCount
+				var pageNumber = 1
+
+		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
+			$.ajax({
+				method: "post",
+				url: "/TMovies/Index",
+				data: { Key, CategoryId, DateCategoryId, LevelId, Page },
+				beforeSend: function () {
+				},
+				success: function (data) {
+					$("#divDataCount").html(``)
+					$("#bodySearch").html(``)
+					if (data == "noData") {
+						alert("nodata")
+						$("#divDataCount").html(`
+									<div>
+										<p class="text-muted" colspan="5">
+											每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
+										</p>
+									</div>
+								`)
+						return;
+					}
+
+					let context = JSON.parse(data);
+					$.each(context.Vm, function (index, value) {
+						$("#bodySearch").append(`
+									<tr>
+										<td>
+											<p>
+												<a href="/TMovies/Details/${value.FMovieId}">
+											${value.FMovieName}
+												</a>
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.PartialIntro}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.OnDate}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.OffDate}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.FMovieLength}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.Level}
+											</p>
+										</td>
+										<td>
+											<p>
+								${value.Categories}
+											</p>
+										</td>
+										<td>
+											<p>
+												<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-primary">編輯</a>
+												<a href="/TMovies/Delete/${value.FMovieId}" class="btn btn-danger">刪除</a>
+											</p>
+										</td>
+									</tr>
+								`)
+					})
+					$("#divDataCount").append(`
+								<div>
+									<p class="text-muted" colspan="5">
+										每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
+									</p>
+								</div>
+							`)
+					if (PageCountNumber != context.PageCount) {
+						PageCountNumber = context.PageCount
+						$("#divPageContainer").html(`
+											`)
+						$("#divPageContainer").append(`
+									<button type="button" class="btn btn-secondary" id="prePage"><</button>
+								`)
+						$("#divPageContainer").append(`
+												<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+											`)
+						for (let i = 2; i < context.PageCount + 1; i++) {
+							$("#divPageContainer").append(`
+									<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
+								`)
+						}
+
+						$("#divPageContainer").append(`
+									<button type="button" class="btn btn-secondary" id="nextPage">></button>
+								`)
+					}
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+
+		}
+		//換頁function
+		function pageChange(page) {
+			pageNumber = page
+			let key = $("#Key").val()
+			let categoryId = $("#CategoryId").find(":selected").val()
+			let levelId = $("#LevelId").find(":selected").val()
+			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+			show(key, categoryId, dateCategoryId, levelId, page)
+			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
+		}
+
+		//btnpage換顏色
+		function pageSelected(event) {
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(event).removeClass('btn-secondary');
+			$(event).addClass('btn-primary');
+
+		}
+		//點頁碼換頁
+		$(document).on('click', '.btnPage', function () {
+			let page = $(this).val()
+			pageChange(page)
+
+			pageSelected(this)
+		});
+		//上一頁
+		$(document).on('click', '#prePage', function () {
+			let page = parseInt(pageNumber) - 1
+
+			if (page <= 0) {
+				page += 1
+			}
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+			$(`#${page}`).removeClass('btn-secondary');
+			$(`#${page}`).addClass('btn-primary');
+			pageChange(page)
+		});
+		//下一頁
+		$(document).on('click', '#nextPage', function () {
+			let page = parseInt(pageNumber) + 1
+			if (page > PageCountNumber) {
+				page -= 1
+			}
+			$('.btn-primary').addClass('btn-secondary');
+			$('.btn-secondary').removeClass('btn-primary');
+
+			$(`#${page}`).removeClass('btn-secondary');
+			$(`#${page}`).addClass('btn-primary');
+			pageChange(page)
+		});
+
+		$("#formSearch").submit(function (event) {
+			event.preventDefault();
+			let page = 1
+			let key = $("#Key").val()
+			let categoryId = $("#CategoryId").find(":selected").val()
+			let levelId = $("#LevelId").find(":selected").val()
+			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
+
+			show(key, categoryId, dateCategoryId, levelId, page)
+		})
+
+	</script>
+
+}

@@ -3,20 +3,20 @@
     ViewData["Title"] = "Pay";
 }
 
-    <link href="~/css/loading.css" rel="stylesheet" />
-    <div class="loadingdiv" id="loading" style="opacity: 1;">
-        <img src="~/images/Infinity-1s-200px.gif" />
-    </div>
-    <form id="form" name="form" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="POST" enctype="application/x-www-form-urlencoded">
-        @foreach (var key in @Model.Keys.ToList())
-        {
-            @(key) <input type="text" name="@key" value="@Model[key]" />
+<link href="~/css/loading.css" rel="stylesheet" />
+<div class="loadingdiv" id="loading" style="opacity: 1;">
+    <img src="~/images/Infinity-1s-200px.gif" />
+</div>
+<form id="form" name="form" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="post" enctype="application/x-www-form-urlencoded">
+    @foreach (var key in @Model.Keys.ToList())
+    {
+        @(key) <input type="text" name="@key" value="@Model[key]" />
 
-            <br />
-        }
-    </form>
-    <script>
-        window.onload = function () {
+        <br />
+    }
+</form>
+<script>
+    window.onload = function () {
         document.getElementById("form").submit();
-        }
-    </script>
+    }
+</script>

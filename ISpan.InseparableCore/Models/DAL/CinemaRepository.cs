@@ -10,6 +10,11 @@ namespace ISpan.InseparableCore.Models.DAL
         {
             _db = db;
         }
+        public IEnumerable<TCinemas> QueryAll()
+        {
+            var data = _db.TCinemas.Select(t => t);
+            return data;
+        }
         public IEnumerable<TCinemas> GetByCity(string city)
         {
             var data = _db.TCinemas.Where(t => t.FCinemaRegion == city);
