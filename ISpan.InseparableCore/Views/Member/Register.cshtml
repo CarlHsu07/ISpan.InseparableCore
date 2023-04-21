@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.CRegisterViewModel
+﻿@model ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel
 
 @{
     ViewData["Title"] = "Register";
@@ -6,7 +6,7 @@
 
 <h1>註冊</h1>
 
-<h4>請輸入會員資料</h4>
+<h4>請填寫會員資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -44,7 +44,9 @@
             </div>
             <div class="form-row">
                 <label asp-for="GenderId" class="control-label"></label>
-                <select asp-for="GenderId" class ="form-control" asp-items="ViewBag.FGenderId"></select>
+                <select asp-for="GenderId" class ="form-control" asp-items="ViewBag.FGenderId">
+                    <option value="">請選擇</option>
+                </select>
             </div>
             <div class="form-row">
                 <label asp-for="Address" class="col-sm-2 col-form-label"></label>
@@ -62,7 +64,7 @@
                 </div>
             </div>
             <div class="form-row">
-                <input asp-for="Address" class="form-control" placeholder="請輸入剩餘住址" />
+                <input asp-for="Address" class="form-control" placeholder="請輸入剩下的住址" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             
@@ -75,7 +77,7 @@
 </div>
 
 <div>
-    <a asp-action="">取消</a>
+    <a asp-action="Login" asp-controller="Home">取消</a>
 </div>
 
 @section Scripts {

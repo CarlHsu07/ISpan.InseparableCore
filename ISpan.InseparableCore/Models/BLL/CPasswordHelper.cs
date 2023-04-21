@@ -29,7 +29,7 @@ namespace ISpan.InseparableCore.Models.BLL
         }
 
         // 驗證密碼是否相符
-        static bool VerifyPassword(string inputPassword, string hashedPasswordString, string saltString)
+        public static bool VerifyPassword(string inputPassword, string hashedPasswordString, string saltString)
         {
             // 將 Base64 字串形式的鹽值轉換為 byte 陣列
             byte[] salt = Convert.FromBase64String(saltString);

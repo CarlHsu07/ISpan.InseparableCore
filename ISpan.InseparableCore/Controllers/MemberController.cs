@@ -12,10 +12,13 @@ using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
+using System.Diagnostics.Metrics;
+using prjMvcCoreDemo.Models;
+using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class MemberController : Controller
+    public class MemberController : SuperController
     {
         private readonly InseparableContext _context;
         IWebHostEnvironment _enviro;
@@ -29,19 +32,15 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Member/Index/2
         public async Task<IActionResult> Index(int? id)
         {
-            string gender = string.Empty;
-            string city = string.Empty;
-            string area = string.Empty;
-            string accountStatus = string.Empty;
+            string genderString = string.Empty;
+            string cityString = string.Empty;
+            string areaString = string.Empty;
+            string accountStatusString = string.Empty;
 
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
             }
-
-            //var member = _context.TMembers
-            //    .Where(m=>m.FId == id)
-            //    .Include(t => t.FAccountStatusNavigation).Include(t => t.FArea).Include(t => t.FGender);
 
             var member = await _context.TMembers.FindAsync(id);
 
@@ -52,7 +51,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member.FGenderId != null) // 取性別
             {
-                gender = _context.TGenders
+                genderString = _context.TGenders
                     .Where(g => g.FGenderId == member.FGenderId)
                     .Select(x => x.FGenderType)
                     .FirstOrDefault()
@@ -61,7 +60,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member.FAreaId != null) // 取縣市
             {
-                city = _context.TAreas
+                cityString = _context.TAreas
                     .Where(a => a.FId == member.FAreaId)
                     .Select(x => x.FCity.FCityName)
                     .FirstOrDefault()
@@ -70,7 +69,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member.FAreaId != null) // 取地區
             {
-                area = _context.TAreas
+                areaString = _context.TAreas
                     .Where(a => a.FId == member.FAreaId)
                     .Select(x => x.FAreaName)
                     .FirstOrDefault()
@@ -79,7 +78,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member.FAccountStatus != null) // 取會員狀態
             {
-                accountStatus = _context.TAccountStatuses
+                accountStatusString = _context.TAccountStatuses
                     .Where(s => s.FStatusId == member.FAccountStatus)
                     .Select(x => x.FStatus)
                     .FirstOrDefault()
@@ -96,15 +95,15 @@ namespace ISpan.InseparableCore.Controllers
                 FirstName = member.FFirstName,
                 Email = member.FEmail,
                 DateOfBirth = member.FDateOfBirth,
-                GenderString = gender,
+                GenderString = genderString,
                 GenderId = member.FGenderId,
                 Cellphone = member.FCellphone,
-                CityString = city,
-                AreaString = area,
+                CityString = cityString,
+                AreaString = areaString,
                 Address = member.FAddress,
                 PhotoPath = member.FPhotoPath,
                 Introduction = member.FIntroduction,
-                AccountStatus = accountStatus,
+                AccountStatus = accountStatusString,
                 TotalMemberPoint = member.FTotalMemberPoint,
                 SignUpTime = member.FSignUpTime
 
@@ -174,11 +173,9 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // POST: Members/Register
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CRegisterViewModel MemberIn)
+        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
         {
             TMembers newMember = new TMembers();
 
@@ -244,7 +241,7 @@ namespace ISpan.InseparableCore.Controllers
 
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CEditProfileViewModel
+            var viewModel = new CMemberEditProfileViewModel
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -270,18 +267,16 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", cityID); // 縣市選單的選項
-            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", cityID); // 產生縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 產生區域選單的選項
 
             return View(viewModel);
         }
 
         // POST: Member/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CEditProfileViewModel MemberIn)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileViewModel MemberIn)
         {
             if (id != MemberIn.Id)
             {
@@ -352,34 +347,40 @@ namespace ISpan.InseparableCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(int id, [Bind("Id,MemberId,Email,Password")] CEditProfileViewModel MemberIn)
+        public async Task<IActionResult> ChangePassword([FromBody] CChangePasswordViewModel MemberIn)
         {
-            if (id != MemberIn.Id)
+            TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
+
+            if (member == null)
             {
                 return NotFound();
+            }
+
+            if (!String.IsNullOrEmpty(MemberIn.CurrentPassword))
+            {
+                // 驗證目前密碼是否正確
+                if (!CPasswordHelper.VerifyPassword(MemberIn.CurrentPassword, member.FPasswordHash, member.FPasswordSalt))
+                {
+                    ModelState.AddModelError("CurrentPassword", "目前密碼有誤");
+                    return Json(new { success = false, message = 1 }); // "目前密碼有誤 in C#"
+                }
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    TMembers member = _context.TMembers.FirstOrDefault(m => m.FId == MemberIn.Id);
-                    if (member != null)
+                    if (!String.IsNullOrEmpty(MemberIn.NewPassword))
                     {
-                        member.FEmail = MemberIn.Email;
+                        string password = MemberIn.NewPassword; // 要加密的密碼
 
-                        if (MemberIn.Password != null) // 加密會員密碼
-                        {
-                            string password = MemberIn.Password; // 要加密的密碼
+                        byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
 
-                            byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
+                        byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
 
-                            byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt); // 密碼與鹽結合後加密
-
-                            // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
-                            member.FPasswordSalt = Convert.ToBase64String(salt);
-                            member.FPasswordHash = Convert.ToBase64String(hashedPassword);
-                        }
+                        // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
+                        member.FPasswordSalt = Convert.ToBase64String(salt);
+                        member.FPasswordHash = Convert.ToBase64String(hashedPassword);
                     }
 
                     _context.Update(member);
@@ -396,51 +397,27 @@ namespace ISpan.InseparableCore.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
+                //return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Json(new { success = false, message = "更改密碼失敗 in C#" });
             }
 
-            return View(MemberIn);
+            //return View(MemberIn);
         }
 
-
-        // GET: Member/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Home/Logout
+        public IActionResult Logout()
         {
-            if (id == null || _context.TMembers == null)
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
-                return NotFound();
+                HttpContext.Session.Remove(CDictionary.SK_LOGINED_USER);
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            var tMembers = await _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender)
-                .FirstOrDefaultAsync(m => m.FId == id);
-            if (tMembers == null)
-            {
-                return NotFound();
-            }
-
-            return View(tMembers);
-        }
-
-        // POST: Member/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.TMembers == null)
-            {
-                return Problem("Entity set 'InseparableContext.TMembers'  is null.");
-            }
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers != null)
-            {
-                _context.TMembers.Remove(tMembers);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View();
         }
 
         private bool TMembersExists(int id)
