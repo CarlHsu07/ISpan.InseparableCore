@@ -1,0 +1,59 @@
+﻿@model ISpan.InseparableCore.Models.DAL.TSessions
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TSessions</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FSessionId" />
+            <div class="form-group">
+                <label asp-for="FMovieId" class="control-label"></label>
+                <select asp-for="FMovieId" class="form-control" asp-items="ViewBag.FMovieId"></select>
+                <span asp-validation-for="FMovieId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FRoomId" class="control-label"></label>
+                <select asp-for="FRoomId" class="form-control" asp-items="ViewBag.FRoomId"></select>
+                <span asp-validation-for="FRoomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaId" class="control-label"></label>
+                <select asp-for="FCinemaId" class="form-control" asp-items="ViewBag.FCinemaId"></select>
+                <span asp-validation-for="FCinemaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FSessionDate" class="control-label"></label>
+                <input asp-for="FSessionDate" class="form-control" />
+                <span asp-validation-for="FSessionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FSessionTime" class="control-label"></label>
+                <input asp-for="FSessionTime" class="form-control" />
+                <span asp-validation-for="FSessionTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FTicketPrice" class="control-label"></label>
+                <input asp-for="FTicketPrice" class="form-control" />
+                <span asp-validation-for="FTicketPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

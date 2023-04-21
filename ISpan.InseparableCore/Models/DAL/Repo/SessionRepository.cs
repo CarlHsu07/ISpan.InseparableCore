@@ -44,11 +44,5 @@
             var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
             return data;
         }
-        //待移走
-        public TMovies GetOneMovie(int? movie)
-        {
-            var data = _db.TMovies.FirstOrDefault(t => t.FMovieId == movie);
-            return data;
-        }
     }
 }

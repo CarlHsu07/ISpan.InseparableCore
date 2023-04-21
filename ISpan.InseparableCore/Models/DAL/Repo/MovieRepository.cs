@@ -200,6 +200,10 @@ namespace ISpan.InseparableCore.Models.DAL
 				context.TMovies.Remove(tMovies);
 			}
 		}
-
-	}
+        public TMovies GetOneMovie(int? movie)
+        {
+            var data = context.TMovies.FirstOrDefault(t => t.FMovieId == movie);
+            return data;
+        }
+    }
 }

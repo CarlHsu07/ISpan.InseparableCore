@@ -18,7 +18,7 @@ using System.Web;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class ShoppingController : Controller
+    public class ShoppingController : SuperController
     {
         private readonly InseparableContext _db;
         private readonly ApiKeys _key;
@@ -29,6 +29,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly CinemaRepository _cinema_repo;
         private readonly ProductRepository _product_repo;
         private readonly SeatRepository _seat_repo;
+        private readonly MovieRepository _movie_repo;
         public ShoppingController(InseparableContext db,IOptions<ApiKeys> key)
         {
             _db = db;
@@ -40,6 +41,7 @@ namespace ISpan.InseparableCore.Controllers
             _cinema_repo = new CinemaRepository(db);
             _product_repo = new ProductRepository(db);
             _seat_repo = new SeatRepository(db);
+            _movie_repo = new MovieRepository(db, null);
         }
         public IActionResult Ticket(CticketVM vm)
         {
@@ -205,7 +207,7 @@ namespace ISpan.InseparableCore.Controllers
                 item.FTicketUnitprice = (decimal)session.FTicketPrice;
                 item.FTicketItemNo = cart.Count() > 0 ? cart.Count() + 1 : 1;
                 item.FMovieId = session.FMovieId;
-                item.FMovieName = _session_repo.GetOneMovie(session.FMovieId).FMovieName;
+                item.FMovieName = _movie_repo.GetOneMovie(session.FMovieId).FMovieName;
                 item.FRoomId = session.FRoomId;
                 item.FSeatId = (int)seatId;
                 item.FSessionId = (int)sessionId;
@@ -299,7 +301,6 @@ namespace ISpan.InseparableCore.Controllers
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
             var web = "https://localhost:7021/"; //todo 上線要改
-            //var web = _envior.WebRootPath;
             var order = new Dictionary<string, string>
             {
                 { "MerchantID",  "3002607"},
@@ -369,7 +370,7 @@ namespace ISpan.InseparableCore.Controllers
             _db.SaveChanges();
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
-            return View(order);
+            return View();
         }
 
         //錯誤view

@@ -1,14 +1,36 @@
 ﻿@{
     //Layout = "_Layout";
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var folderName = controllerName.Split('/')[0];
 
-    switch (controllerName)
+    switch (folderName)
     {
-        case "Admin":
-            Layout = "~/Views/Shared/admin_Layout.cshtml";
+        case "AdminMember":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Cinema":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Home":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Member":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Shopping":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TArticles":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TMovies":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TComments":
+            Layout = "~/Views/Shared/_Layout.cshtml";
             break;
         default:
-            Layout = "~/Views/Shared/_Layout.cshtml";
+            Layout = "~/Views/Shared/admin_Layout.cshtml";
             break;
     }
 }
