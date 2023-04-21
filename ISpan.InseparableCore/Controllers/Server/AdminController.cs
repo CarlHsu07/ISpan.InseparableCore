@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ISpan.InseparableCore.Controllers
+namespace ISpan.InseparableCore.Controllers.Server
 {
     public class AdminController : Controller
     {
