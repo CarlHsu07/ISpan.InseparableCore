@@ -1,5 +1,6 @@
 ﻿using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 
 namespace ISpan.InseparableCore.Models.DAL
 {
@@ -140,7 +141,18 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task UpdateAsync(MovieVm vm)
 		{
-			TMovies movie = vm.VmToModel();
+
+			TMovies movie = context.TMovies.Find(vm.FMovieId);
+			if (movie == null) return;
+			movie.FMovieName = vm.FMovieName;
+			movie.FMovieIntroduction = vm.FMovieIntroduction;
+			movie.FMovieLevelId = vm.FMovieLevelId;
+			movie.FMovieOnDate = vm.FMovieOnDate;
+			movie.FMovieOffDate = vm.FMovieOffDate;
+			movie.FMovieLength = vm.FMovieLength;
+			movie.FMovieActors = vm.FMovieActors;
+			movie.FMovieDirectors = vm.FMovieDirectors;
+
 			if (vm.Image != null)
 			{
 				string imageName = Guid.NewGuid().ToString() + ".jpg";

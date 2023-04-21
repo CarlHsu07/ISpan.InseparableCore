@@ -10,11 +10,13 @@ namespace ISpan.InseparableCore.ViewModels
 		public int FArticleId { get; set; }
 		[DisplayName("標題")]
 		public string? FArticleTitle { get; set; }
+		[DisplayName("發文者")]
 		public int FMemberId { get; set; }
 		[DisplayName("發文者")]
 		public string? MemberName { get; set; }
+		[DisplayName("類別")]
 		public int FArticleCategoryId { get; set; }
-		[DisplayName("文章類別")]
+		[DisplayName("類別")]
 		public string? ArticleCategory { get; set; }
 		[DisplayName("發文時間")]
 		public DateTime? FArticlePostingDate { get; set; }
@@ -28,9 +30,9 @@ namespace ISpan.InseparableCore.ViewModels
 		public int FArticleLikes { get; set; }
 		[DisplayName("點閱數")]
 		public int FArticleClicks { get; set; }
-		[DisplayName("文章內容")]
+		[DisplayName("內容")]
 		public string? FArticleContent { get; set; }
-		[DisplayName("文章內容")]
+		[DisplayName("內容")]
 		public string? PartialContent { get; set; }
 		public bool FDeleted { get; set; } = false;
 

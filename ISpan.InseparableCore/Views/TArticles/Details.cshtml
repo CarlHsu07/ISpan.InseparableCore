@@ -20,9 +20,6 @@
 
 	pre{
 		white-space:pre-wrap;
-		white-space:-moz-pre-wrap;
-		white-space:-pre-wrap;
-		white-space:-o-pre_wrap;
 		word-wrap:break-word;
 	}
 	.divContainerRow {
@@ -31,10 +28,16 @@
 		padding: 5px;
 
 	}
-	.divContainerCol {
+	.divContainerRow span{
 		display: flex;
 		flex-direction: column;
 		padding: 5px;
+		margin:0;
+	}
+	.divContainerRow span span{
+		display:inline;
+		flex-direction: column;
+		padding: 0px;
 		margin:0;
 	}
 
@@ -56,34 +59,34 @@
 </style>
 <div class="" >
 	<div class="divContainerRow " style="">
-		<span class=" divContainerCol" style="width:200px">
-			<p class="">
+		<span class=" " style="width:200px">
+			<p >
 				@Html.DisplayNameFor(model => model.ArticleCategory):
 				@Model.ArticleCategory
 			</p>
 		</span>
-		<span class=" divContainerCol" style="width:150px">
-			<p class="">
+		<span class=" " style="width:150px">
+			<p >
 				@Html.DisplayNameFor(model => model.MemberName):
 				@Html.DisplayFor(model => model.MemberName)
 			</p>
 		</span>
-		<span class=" divContainerCol" style="width:300px">
-			<p class="">
+		<span class=" " style="width:300px">
+			<p >
 				@Html.DisplayNameFor(model => model.PostingDate):
 				@Html.DisplayFor(model => model.PostingDate)
 			</p>
 		</span>
-		<span class=" divContainerCol" style="width:300px">
-			<p class="">
+		<span class=" " style="width:300px">
+			<p >
 				@Html.DisplayNameFor(model => model.ModifiedDate):
 				@Html.DisplayFor(model => model.ModifiedDate)
 			</p>
 		</span>
-		<span class=" divContainerCol" style="width:150px">
-			<p class="">
+		<span class=" " style="width:150px">
+			<p >
 				@Html.DisplayNameFor(model => model.FArticleLikes):
-				<div id="divLikes">@Html.DisplayFor(model => model.FArticleLikes)</div>
+				<span id="spanLikes">@Html.DisplayFor(model => model.FArticleLikes)</span>
 				@if (Model.LikeOrUnlike == true)
 				{
 					<button type="button" id="btnArticleLike" class="btn btn-primary">讚</button>
@@ -94,8 +97,8 @@
 				}
 			</p>
 		</span>
-		<span class=" divContainerCol" style="width:300px">
-			<p class="">
+		<span class=""  style="width:300px">
+			<p >
 				@Html.DisplayNameFor(model => model.FArticleClicks):
 				@Html.DisplayFor(model => model.FArticleClicks)
 			</p>
@@ -114,24 +117,24 @@
 
 <div class="divContainerRow">
 	<div class="input-group">
-		<textarea class="form-control" id="FCommentContent0" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
+		<button type="button" id="btnComment" class="btn-secondary" value="0">留言</button>
 	</div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FArticleId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.FArticleId">編輯</a> |
+    <a asp-action="Index">返回</a>
 </div>
 @section Scripts{
 	<script>
 		//送出評論及展示評論ajax函數
-		function CommentDetail(FCommentId, FMemberId, FArticleId, FCommentContent) {
+		function CommentDetail(FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted) {
 			$.ajax({
 				method: "post",
 				url: "/TComments/ArticleComment",
-				data: { FCommentId, FMemberId, FArticleId, FCommentContent },
+				data: { FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted },
 				success: function (data) {
 					let context = JSON.parse(data);
 					//alert(data)
@@ -139,23 +142,23 @@
 
 					$("#divComment").html("")
 					$.each(context, function (index, value) {
-						if (value.FMemberId == memberId) {
+						if (value.FMemberId == memberId && !value.FDeleted) {
 							$("#divComment").append(`
-									<div class=" divBorder">
-										<div style="font-size:large; margin:10px 0 0 10px">
-											<div class="divComment" >
-												${value.MemberName}	 ${value.PostingDate}
-									<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">修改</button>
-									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
-											</div>
-											<hr style="margin:0"/>
-											<div>
-											</div>
-											<div class="divComment" id="F${value.FCommentId}">
+								<div class=" divBorder">
+									<div style="font-size:large; margin:10px 0 0 10px">
+										<div class="divComment" >
+											${value.MemberName}	 ${value.PostingDate}
+								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
+								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
+										</div>
+										<hr style="margin:0"/>
+										<div id="Container${value.FCommentId}">
+											<div class="divComment" id="divComment${value.FCommentId}">
 												${value.FCommentContent}
 											</div>
 										</div>
-									</div>`
+									</div>
+								</div>`
 							)
 						}
 						else {
@@ -181,58 +184,65 @@
 		//開始編輯評論，生成編輯textarea
 		$(document).on('click', '.btnEditComment', function () {
 			$(this).addClass("btnCommentCancel")
+			$(this).removeClass("btnEditComment")
 			$(this).html(`取消`)
-			//$(`#F${commentId}`).addClass("displayNone")
 
 			let commentId = $(this).attr("value")
-			let text = $.trim($(`#F${commentId}`).text())
-			//alert(commentId+text)
-			$(`#F${commentId}`).html(`
+			let text = $.trim($(`#divComment${commentId}`).text())
+			$(`#Container${commentId}`).html(`
 				<div class="divContainerRow">
-				<div >
 					<div class="input-group">
-						<textarea class="form-control divComment" id="FCommentContent${commentId}" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control divComment" id="FCommentContent" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
-						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">go</button>
+						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">儲存</button>
 					</div>
-				</div>
 					<input type="hidden" id="hidden${commentId}" />
 				</div>
-					`)
+			`)
 			$(`#hidden${commentId}`).val(text)
-			alert($(`#hidden${commentId}`).val())
+			//alert($(`#hidden${commentId}`).val())
 		});
 		//取消編輯
 		$(document).on('click', '.btnCommentCancel', function () {
 			$(this).removeClass("btnCommentCancel")
+			$(this).addClass("btnEditComment")
 			$(this).html(`編輯`)
 			//$(`F${commentId}`).removeClass("displayNone")
 
 			let commentId = $(this).attr("value")
 			let commentContent = $(`#hidden${commentId}`).attr("value");
-			alert($.trim(commentContent))
-			$(`#F${commentId}`).html(`
-					<div class="divComment"  id="F${commentId}">${commentContent}</div>
-					`)
+			//alert(commentContent)
+			$(`#Container${commentId}`).html(`
+					<div class="divComment"  id="divComment${commentId}">${commentContent}</div>
+			`)
 		})
 
-		//單選按鈕組，按下時改變顏色
-		$('.btn').click(function () {
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
+		//按鈕組時改變顏色
+		$(document).on('click', '.btn-secondary', function () {
 			$(this).removeClass('btn-secondary');
 			$(this).addClass('btn-primary');
+		});
+		$(document).on('click', '.btn-primary', function () {
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-secondary');
 		});
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
 			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let articleId = @Model.FArticleId
-			let comment = $(`#FCommentContent${commentId}`).val();
-			alert(commentId)
-			CommentDetail(commentId, memberId, articleId, comment)
+			let comment = $(`#FCommentContent`).val();
+			CommentDetail(commentId, memberId, articleId, comment,false)
+		})
+		//刪除評論
+		$(document).on('click', '#btnDeleteComment', function () {
+			let commentId = $(this).attr("value")
+			let memberId = $("#FMemberId").find(":selected").attr("value")
+			let articleId = @Model.FArticleId
+			let comment = "留言已刪除"
+			let deleted = true
+			CommentDetail(commentId, memberId, articleId, comment, deleted)
 		})
 
 		//點讚ajax
@@ -243,24 +253,30 @@
 				data: { FMemberId, FArticleId},
 				success: function (data) {
 					let context = JSON.parse(data);
-					alert(context.LikeOrUnlike + context.LikeCount)
-					$("#divLikes").html(`${context.LikeCount}`)
+					$("#spanLikes").html(`${context.LikeCount}`)
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
 			})
 		}
-
 		//點讚
-		$(document).on('click', '#btnArticleLike', function () {
-			let memberId = $("#FMemberId").find(":selected").attr("value")
-			let articleId = @Model.FArticleId
-			ArticleLike(memberId, articleId)
-		})
-
+		$(document).ready(function () {
+			$(document).on('click', '#btnArticleLike', function () {
+				var now = new Date().getTime();
+				var lastClickedTime = $(this).data('clicked-time') || 0;
+				var timeDiff = now - lastClickedTime;
+				if (timeDiff > 1000) { // 如果距離上一次點擊的時間大於1秒，執行下面的代碼
+					$(this).data('clicked-time', now); // 更新最後點擊時間
+					// 执行按钮的操作
+					let memberId = $("#FMemberId").find(":selected").attr("value")
+					let articleId = @Model.FArticleId
+					ArticleLike(memberId, articleId)
+				}
+			});
+		});
 
 		//展示評論
-		CommentDetail(0, 0, @Model.FArticleId, "")
+		CommentDetail(0, 0, @Model.FArticleId, "", false)
 
 		//likeOrUnlike
 	</script>

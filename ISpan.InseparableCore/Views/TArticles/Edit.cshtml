@@ -1,52 +1,108 @@
 ﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
 
-@{
-    ViewData["Title"] = "Edit";
-}
+<style>
+	.btnEditAndDeleted{
+		justify-content: flex-end
+	}
 
-<h1>Edit</h1>
+	.divContainerRow {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
 
-<h4>TArticles</h4>
+	.divContainerCol {
+		display: flex;
+		flex-direction: column;
+		padding: 5px;
+		margin: 0;
+	}
+	.text{
+		font-size: 30px;
+	}
+	.textarea{
+		height: 700px;
+		max-width: 3000px;
+	}
+	.divBorder {
+		border-color: white;
+		border-width: 3px;
+		border-style: solid;
+	}
+
+	titleInput {
+		width: 700px;
+	}
+	.divContainerRow label {
+		margin: 10px 10px 0 30px;
+		font-size:30px;
+	}
+
+	.divContainerRow select, .divContainerRow input {
+		margin: 5px;
+		font-size:20px;
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -200px;
+	}
+</style>
+
+<h1 style="margin-top:20px;">編輯貼文</h1>
+
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class=" divContainerCol" >
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="FArticleId" />
-            <input asp-for="FArticlePostingDate" type="hidden" />
-            <input asp-for="FArticleModifiedDate" type="hidden" />
-            <input asp-for="FArticleLikes" type="hidden" />
-            <input asp-for="FArticleClicks" type="hidden" />
-			<input asp-for="FDeleted" type="hidden"/>
-            <div class="form-group">
-                <label asp-for="FArticleTitle" class="control-label"></label>
-                <input asp-for="FArticleTitle" class="form-control" />
-                <span asp-validation-for="FArticleTitle" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMemberId" class="control-label"></label>
-                <select asp-for="FMemberId" class="form-control" asp-items="ViewBag.FMemberId"></select>
-                <span asp-validation-for="FMemberId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FArticleCategoryId" class="control-label"></label>
-                <select asp-for="FArticleCategoryId" class="form-control" asp-items="ViewBag.FArticleCategoryId"></select>
-                <span asp-validation-for="FArticleCategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FArticleContent" class="control-label"></label>
-                <textarea asp-for="FArticleContent" class="form-control" ></textarea>
-                <span asp-validation-for="FArticleContent" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+			<div class=" divContainerRow">
+				<div class="form-group ">
+					<label asp-for="FArticleTitle" class="control-label"></label>
+				</div>
+				<div class="form-group">
+					<input asp-for="FArticleTitle" class="form-control titleInput" style="width: 700px;" />
+					<span asp-validation-for="FArticleTitle" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMemberId" class="control-label "></label>
+				</div>
+				<div class="form-group">
+					<select asp-for="FMemberId" class="form-control " asp-items="ViewBag.FMemberId"></select>
+					<span asp-validation-for="FMemberId" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FArticleCategoryId" class="control-label "></label>
+				</div>
+				<div class="form-group">
+					<select asp-for="FArticleCategoryId" class="form-control " asp-items="ViewBag.FArticleCategoryId"></select>
+					<span asp-validation-for="FArticleCategoryId" class="text-danger"></span>
+				</div>
+			</div>
+			<div class="form-group ">
+				<label asp-for="FArticleContent" class="control-label text"></label>
+				<textarea asp-for="FArticleContent" class="form-control text textarea" style=""></textarea>
+				<span asp-validation-for="FArticleContent" class="text-danger"></span>
+			</div>
+			<div class="form-group divContainerRow btnEditAndDeleted">
+				<div class="">
+					<input type="submit" value="儲存" class="btn btn-primary" />
+				</div>
+				<div class="form-group ">
+					<form asp-action="Delete">
+						<input type="hidden" name="articleId" value="@Model.FArticleId" />
+						<input type="submit" value="刪除" class="btn btn-danger " />
+					</form>
+				</div>
+			</div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" style=" font-size:30px">返回</a>
 </div>
 
 @section Scripts {
