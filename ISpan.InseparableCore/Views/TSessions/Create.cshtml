@@ -54,14 +54,15 @@
                 <span asp-validation-for="FTicketPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="送出" class="btn btn-primary" />|
+                <a asp-action="Index" class="btn btn-light">取消</a>
+
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">取消</a>
 </div>
 
 @section Scripts {
@@ -73,6 +74,7 @@
                         method:'POST',
                         data: { movie },
                         success:function(data){
+                            $('#Date').attr('max','');
                             $('#Date').attr('max', data);
                         },
                         error:function(err){
@@ -86,6 +88,7 @@
                         method: 'POST',
                         data: { cinema },
                         success: function (data) {
+                            $('#room').html('');
                             $('#room').append(`<option>請選擇</option>`);
                             var room =JSON.parse(data);
                             console.log(room);
