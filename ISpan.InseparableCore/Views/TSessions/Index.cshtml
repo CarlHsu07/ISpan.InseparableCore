@@ -1,23 +1,24 @@
-﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.CSessionVM>
+﻿
+@model IEnumerable<ISpan.InseparableCore.ViewModels.CSessionVM>
 
 @{
     ViewData["Title"] = "Index";
     var page = ViewBag.page;
 }
 @section Styles{
-    <style>
-        .search {
-            display: flex;
-        }
+        <style>
+            .search {
+                display: flex;
+            }
 
-        .margin5 {
-            margin: 5px;
-        }
+            .margin5 {
+                margin: 5px;
+            }
 
-        #movie, #cinema {
-            color: aliceblue;
-        }
-    </style>
+            #movie, #cinema {
+                color: aliceblue;
+            }
+        </style>
 }
 <h1>場次</h1>
 
@@ -64,69 +65,98 @@
     </thead>
     <tbody>
         @foreach (var item in Model)
-            {
-            <tr>
-                <td>
+        {
+                <tr>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FSessionDate)
-                </td>
-                <td>
+                    </td>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FSessionTime)
-                </td>
-                <td>
+                    </td>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FTicketPrice)
-                </td>
-                <td>
+                    </td>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FCinema.FCinemaName)
-                </td>
-                <td>
+                    </td>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FMovie.FMovieName)
-                </td>
-                <td>
+                    </td>
+                    <td>
                     @Html.DisplayFor(modelItem => item.FRoom.FRoomName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.FSessionId">修改</a> |
-                    <a asp-action="Details" asp-route-id="@item.FSessionId">詳細資料</a> |
-                    <a asp-action="Delete" asp-route-id="@item.FSessionId">刪除</a>
-                </td>
-            </tr>
-            }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.FSessionId">修改</a> |
+                        <a asp-action="Details" asp-route-id="@item.FSessionId">詳細資料</a> |
+                        <a asp-action="Delete" asp-route-id="@item.FSessionId">刪除</a>
+                    </td>
+                </tr>
+        }
     </tbody>
 </table>
 <div style="margin:5px;">
     <button type="button" class="btn btn-secondary btnPage" id="first" value="1"><<</button>
     <button type="button" class="btn btn-primarybtnPage" id="1" value="1">1</button>
     @for (int i = 2; i < page.PageCount + 1; i++)
-        {
-        <button type="button" class="btn btn-secondary btnPage" id="@i" value="@i">@i</button>
-        }
-    <button type="button" class="btn btn-secondary btnPage" id="last" value="@{page.PageCount()}">>></button>
+    {
+            <button type="button" class="btn btn-secondary btnPage" id="@i" value="@i">@i</button>
+    }
+    <button type="button" class="btn btn-secondary btnPage" id="last" value="page.PageCount">>></button>
 </div>
 @section Scripts{
-    <script>
-        function search(movie,cinema,pageIndex) {
-            $.ajax({
-                url: '/Tsessions/Index',
-                method: 'POST',
-                data: {
-                    movie,
-                    cinema,
-                    pageIndex
-                },
-                success: function (data) {
-                    var Model = JSON.parse(data);
-                    console.log(Model);
-                },
-                error: function (err) {
-
-                }
+        <script>
+            function search(movie,cinema,pageIndex) {
+                $.ajax({
+                    url: '/Tsessions/Index',
+                    method: 'POST',
+                    data: {
+                        movie,
+                        cinema,
+                        pageIndex
+                    },
+                    success: function (data) {
+                        var Model = JSON.parse(data);
+                        var item =JSON.parse(Model.Items);
+                        var session =item.$values;
+                                $.each(session,function(index,value){
+                                $('tbody').html(`
+                                    <tr>
+                            <td>
+        ${value.FSessionDate})
+                            </td>
+                            <td>
+        ${value.FSessionTime}
+                            </td>
+                            <td>
+            ${value.FTicketPrice}
+                            </td>
+                            <td>
+            ${value.FCinemaName}
+                            </td>
+                            <td>
+            ${value.FMovieName}
+                            </td>
+                            <td>
+            ${value.FRoomName}
+                            </td>
+                            <td>
+                                    <a asp-action="Edit" asp-route-id="${value.FSessionId}">修改</a> |
+                                    <a asp-action="Details" asp-route-id="${value.FSessionId}">詳細資料</a> |
+                                    <a asp-action="Delete" asp-route-id="${value.FSessionId}">刪除</a>
+                            </td>
+                        </tr>`)
+                            })
+                    },
+                    error: function (err) {
+                        console.log(err);
+                    }
+                });
+            }
+            $('button').on('click', function () {
+                var movie = $('#movie').val();
+                var cinema = $('#cinema').val();
+                var pageIndex = $(this).val();
+                search(movie, cinema, pageIndex);
             });
-        }
-        $('button').on('click', function () {
-            var movie = $('#movie').val();
-            var cinema = $('cinema').val();
-            var pageIndex = $(this).val();
-            search(movie, cinema, pageIndex);
-        }));
-    </script>
+        </script>
 }

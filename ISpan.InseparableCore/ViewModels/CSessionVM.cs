@@ -32,5 +32,11 @@ namespace ISpan.InseparableCore.ViewModels
         public virtual TMovies FMovie { get; set; }
         [Display(Name = "影廳")]
         public virtual TRooms FRoom { get; set; }
+        [Display(Name = "影城")]
+        public string FMovieName { get => FMovie.FMovieName; set => FMovie.FMovieName = value; }
+        [Display(Name = "影城")]
+        public string FCinemaName { get => FCinema.FCinemaName; set => FCinema.FCinemaName = value; }
+        [Display(Name = "影廳")]
+        public string FRoomName { get => FRoom.FRoomName; set => FRoom.FRoomName = value; }
     }
 }

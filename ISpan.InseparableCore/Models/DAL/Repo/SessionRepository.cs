@@ -50,14 +50,13 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         public List<CSessionVM> SessionSearch(CSessionSearch item)
         {
             List<CSessionVM> data = new List<CSessionVM>();
-            var inseparableContext = _db.TSessions.Select(t => t); ;
+            var inseparableContext = _db.TSessions.OrderByDescending(t => t.FSessionDate).Include(t => t.FCinema).Include(t => t.FMovie).Include(t => t.FRoom).Select(t=>t);
 
-            if (item.cinema != null)
+            if (item.cinema != 0)
                 inseparableContext = inseparableContext.Where(t => t.FCinemaId == item.cinema);
-            if (item.movie != null)
+            if (item.movie != 0)
                 inseparableContext = inseparableContext.Where(t => t.FMovieId == item.movie);
 
-            inseparableContext = inseparableContext.OrderByDescending(t => t.FSessionDate).Include(t => t.FCinema).Include(t => t.FMovie).Include(t => t.FRoom);
             foreach(var value in inseparableContext)
             {
                 CSessionVM vm = new CSessionVM();

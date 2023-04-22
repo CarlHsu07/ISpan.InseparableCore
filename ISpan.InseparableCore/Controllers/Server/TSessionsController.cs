@@ -12,6 +12,11 @@ using X.PagedList;
 using Azure;
 using System.Drawing.Printing;
 using ISpan.InseparableCore.Models.DAL.Repo;
+using NuGet.Protocol;
+using static NuGet.Packaging.PackagingConstants;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -60,7 +65,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pagesize = 5;
             var pageIndex = 1;
             var count =data.Count();
-            var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
+            //var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.page = SessionPageList(pageIndex, pagesize, data);
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName");
@@ -72,20 +77,26 @@ namespace ISpan.InseparableCore.Controllers.Server
         public async Task<IActionResult> Index(CSessionSearch vm)
         {
             var inseparableContext =_repo.SessionSearch(vm);
-            
+            List<TMovies> movie = new List<TMovies>();
+            List<TCinemas> cinema = new List<TCinemas>();
+            List<TSessions> session = new List<TSessions>();
             var pagesize = 5;
             var pageIndex = vm.pageIndex;
             var count = inseparableContext.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
             var page = SessionPageList(pageIndex, pagesize, inseparableContext);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string json = JsonSerializer.Serialize(pagedItems, options);
             return Ok(new
             {
-                pagedItems = pagedItems,
-                page = page,
-                count = count,
-                pageIndex = pageIndex
-            });
+                Items=json,
+                totalpage= totalpage,
+            }.ToJson());
+
         }
         // GET: TSessions/Details/5
         public async Task<IActionResult> Details(int? id)
