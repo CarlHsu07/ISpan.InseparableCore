@@ -6,14 +6,16 @@
 }
 @section Styles{
     <style>
-        .search{
-            display:flex;
+        .search {
+            display: flex;
         }
-        .margin5{
-            margin:5px;
+
+        .margin5 {
+            margin: 5px;
         }
-        #movie,#cinema{
-            color:aliceblue;
+
+        #movie, #cinema {
+            color: aliceblue;
         }
     </style>
 }
@@ -23,18 +25,18 @@
     <a asp-action="Create">新增場次</a>
 </p>
 <div class="search">
-     <span class="margin5">
-         <label class="control-label">電影</label>
-         <select id="movie" class ="form-control" asp-items="ViewBag.FMovieId">
-             <option>請選擇</option>
-         </select>
-     </span>
-     <span class="margin5">
-         <label class="control-label">影城</label>
-         <select id="cinema" class ="form-control" asp-items="ViewBag.FCinemaId">
-             <option>請選擇</option>
-         </select>
-     </span>
+    <span class="margin5">
+        <label class="control-label">電影</label>
+        <select id="movie" class="form-control" asp-items="ViewBag.FMovieId">
+            <option>請選擇</option>
+        </select>
+    </span>
+    <span class="margin5">
+        <label class="control-label">影城</label>
+        <select id="cinema" class="form-control" asp-items="ViewBag.FCinemaId">
+            <option>請選擇</option>
+        </select>
+    </span>
 </div>
 <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
     <thead>
@@ -61,55 +63,70 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FSessionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FSessionTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FTicketPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FCinema.FCinemaName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMovie.FMovieName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FRoom.FRoomName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FSessionId">修改</a> |
-                <a asp-action="Details" asp-route-id="@item.FSessionId">詳細資料</a> |
-                <a asp-action="Delete" asp-route-id="@item.FSessionId">刪除</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FSessionDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FSessionTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FTicketPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FCinema.FCinemaName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FMovie.FMovieName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FRoom.FRoomName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.FSessionId">修改</a> |
+                    <a asp-action="Details" asp-route-id="@item.FSessionId">詳細資料</a> |
+                    <a asp-action="Delete" asp-route-id="@item.FSessionId">刪除</a>
+                </td>
+            </tr>
+            }
     </tbody>
 </table>
-<div>
-    @for(int i=1; i<page.PageCount +1;i++)
-    {
-         <button type="button" class="btn btn-secondary btnPage" id="@i" value="@i">@i</button>
-    }
+<div style="margin:5px;">
+    <button type="button" class="btn btn-secondary btnPage" id="first" value="1"><<</button>
+    <button type="button" class="btn btn-primarybtnPage" id="1" value="1">1</button>
+    @for (int i = 2; i < page.PageCount + 1; i++)
+        {
+        <button type="button" class="btn btn-secondary btnPage" id="@i" value="@i">@i</button>
+        }
+    <button type="button" class="btn btn-secondary btnPage" id="last" value="@{page.PageCount()}">>></button>
 </div>
 @section Scripts{
     <script>
-            function search(){
-                     $.ajax({
-                        url:'/Tsessions/Index',
-                        method:'POST',
-                        data: { movie },
-                        success:function(data){
-                            $('#Date').attr('max', data);
-                        },
-                        error:function(err){
+        function search(movie,cinema,pageIndex) {
+            $.ajax({
+                url: '/Tsessions/Index',
+                method: 'POST',
+                data: {
+                    movie,
+                    cinema,
+                    pageIndex
+                },
+                success: function (data) {
+                    var Model = JSON.parse(data);
+                    console.log(Model);
+                },
+                error: function (err) {
 
-                        }
-                    });
-            }
+                }
+            });
+        }
+        $('button').on('click', function () {
+            var movie = $('#movie').val();
+            var cinema = $('cinema').val();
+            var pageIndex = $(this).val();
+            search(movie, cinema, pageIndex);
+        }));
     </script>
 }

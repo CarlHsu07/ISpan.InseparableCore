@@ -1,4 +1,7 @@
-﻿namespace ISpan.InseparableCore.Models.DAL.Repo
+﻿using ISpan.InseparableCore.ViewModels;
+using Microsoft.EntityFrameworkCore;
+
+namespace ISpan.InseparableCore.Models.DAL.Repo
 {
     public class SessionRepository
     {
@@ -42,6 +45,29 @@
         public IEnumerable<TCinemas> GetCinemaBySEssion(int? session)
         {
             var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
+            return data;
+        }
+        public List<CSessionVM> SessionSearch(CSessionSearch item)
+        {
+            List<CSessionVM> data = new List<CSessionVM>();
+            var inseparableContext = _db.TSessions.Select(t => t); ;
+
+            if (item.cinema != null)
+                inseparableContext = inseparableContext.Where(t => t.FCinemaId == item.cinema);
+            if (item.movie != null)
+                inseparableContext = inseparableContext.Where(t => t.FMovieId == item.movie);
+
+            inseparableContext = inseparableContext.OrderByDescending(t => t.FSessionDate).Include(t => t.FCinema).Include(t => t.FMovie).Include(t => t.FRoom);
+            foreach(var value in inseparableContext)
+            {
+                CSessionVM vm = new CSessionVM();
+                vm.session = value;
+                vm.FMovie = value.FMovie;
+                vm.FCinema = value.FCinema;
+                vm.FRoom = value.FRoom;
+
+                data.Add(vm);
+            }
             return data;
         }
     }

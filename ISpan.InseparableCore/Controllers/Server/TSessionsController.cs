@@ -11,16 +11,19 @@ using System.Runtime.Intrinsics.X86;
 using X.PagedList;
 using Azure;
 using System.Drawing.Printing;
+using ISpan.InseparableCore.Models.DAL.Repo;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
     public class TSessionsController : Controller
     {
         private readonly InseparableContext _context;
+        private readonly SessionRepository _repo;
 
         public TSessionsController(InseparableContext context)
         {
             _context = context;
+            _repo = new SessionRepository(context);
         }
         //pagelist
         /// <summary>
@@ -64,7 +67,26 @@ namespace ISpan.InseparableCore.Controllers.Server
             ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName");
             return View(pagedItems);
         }
-
+        //Ajax Post
+        [HttpPost]
+        public async Task<IActionResult> Index(CSessionSearch vm)
+        {
+            var inseparableContext =_repo.SessionSearch(vm);
+            
+            var pagesize = 5;
+            var pageIndex = vm.pageIndex;
+            var count = inseparableContext.Count();
+            var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
+            var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            var page = SessionPageList(pageIndex, pagesize, inseparableContext);
+            return Ok(new
+            {
+                pagedItems = pagedItems,
+                page = page,
+                count = count,
+                pageIndex = pageIndex
+            });
+        }
         // GET: TSessions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
