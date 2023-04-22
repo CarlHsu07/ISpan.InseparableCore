@@ -118,11 +118,16 @@
                         var Model = JSON.parse(data);
                         var item =JSON.parse(Model.Items);
                         var session =item.$values;
+                             $('tbody').html(``);
                                 $.each(session,function(index,value){
-                                $('tbody').html(`
+                                    var transdate =new Date(value.FSessionDate)
+                                    var date =(transdate).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                                    //var transetime =new Date(value.FSessionTime);
+                                    //var time =transetime.toLocaleTimeString();
+                                $('tbody').append(`
                                     <tr>
                             <td>
-        ${value.FSessionDate})
+        ${date}
                             </td>
                             <td>
         ${value.FSessionTime}
@@ -140,9 +145,9 @@
             ${value.FRoomName}
                             </td>
                             <td>
-                                    <a asp-action="Edit" asp-route-id="${value.FSessionId}">修改</a> |
-                                    <a asp-action="Details" asp-route-id="${value.FSessionId}">詳細資料</a> |
-                                    <a asp-action="Delete" asp-route-id="${value.FSessionId}">刪除</a>
+                                        <a href="Edit/${value.FSessionId}">修改</a> |
+                                        <a href="Details/${value.FSessionId}">詳細資料</a> |
+                                        <a href="Delete/${value.FSessionId}" >刪除</a>
                             </td>
                         </tr>`)
                             })
