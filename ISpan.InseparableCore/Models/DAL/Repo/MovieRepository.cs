@@ -17,7 +17,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<MovieVm> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.ToList();
+			var movies = context.TMovies.Where(t => t.FDeleted == false).ToList();
 
 			if (condition == null) return ModelToVms(movies);
 
@@ -189,15 +189,12 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task DeleteAsync(int movieId)
 		{
-			var tMovies = await context.TMovies.FindAsync(movieId);
-			if (tMovies != null)
+			var movie = await context.TMovies.FindAsync(movieId);
+			if (movie != null)
 			{
-				IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId);
-				foreach (TMovieCategoryDetails detail in categoryDetails)
-				{
-					context.Remove(detail);
-				}
-				context.TMovies.Remove(tMovies);
+				movie.FDeleted = true;
+				context.Update(movie);
+				await context.SaveChangesAsync();
 			}
 		}
 

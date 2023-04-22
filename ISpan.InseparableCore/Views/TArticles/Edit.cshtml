@@ -93,7 +93,7 @@
 				<div class="form-group ">
 					<form asp-action="Delete">
 						<input type="hidden" name="articleId" value="@Model.FArticleId" />
-						<input type="submit" value="刪除" class="btn btn-danger " />
+						<input type="submit" value="刪除" class="btn btn-danger " onclick="return confirm('你確定要刪除嗎？')" />
 					</form>
 				</div>
 			</div>

@@ -9,9 +9,6 @@
 @using X.PagedList.Web.Common
 
 <style>
-	PageContainer{
-		margin:0 auto;
-	}
 	.btnPage{
 
 	}
@@ -23,15 +20,19 @@
 
 	.divBorder {
 		border-color: white;
-		border-width: 3px;
+		border-width: 1px;
 		border-style: solid;
+		border-radius:9px;
 	}
 
-	.divCreate{
-		border:solid;
-		border-width:2px;
-		border-radius:5px;
+	.center-container {
+		text-align: center;
 	}
+
+		.center-container div {
+			display: block;
+			margin: 0 auto;
+		}
 
 	.divBlock {
 		margin: 20px
@@ -73,108 +74,109 @@
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition ">
-				<h3><a asp-action="Create" class="divCreate">發文</a></h3>
+				<h3><a asp-action="Create" class="btn btn-warning">發文</a></h3>
 			</div>
 		</div>
 	</form>
 </div>
-
-<table class="table" id="tableSearch">
-	<thead>
-		<tr>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.FArticleTitle)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.PartialContent)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.ArticleCategory)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.MemberName)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.FArticleLikes)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.FArticleClicks)
-				</p>
-			</th>
-			<th>
-				<p>
-					@Html.DisplayNameFor(model => model.PostingDate)
-				</p>
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model)
-		{
+<div class="divBorder">
+	<table class="table " id="tableSearch">
+		<thead>
 			<tr>
-				<td>
-					<a asp-action="Details" asp-route-id="@item.FArticleId">
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FArticleTitle)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.PartialContent)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.ArticleCategory)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.MemberName)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FArticleLikes)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FArticleClicks)
+					</p>
+				</th>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.PostingDate)
+					</p>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>
+						<a asp-action="Details" asp-route-id="@item.FArticleId">
+							<p>
+								@Html.DisplayFor(modelItem => item.FArticleTitle)
+							</p>
+						</a>
+					</td>
+					<td>
 						<p>
-							@Html.DisplayFor(modelItem => item.FArticleTitle)
+							@Html.DisplayFor(modelItem => item.PartialContent)
 						</p>
-					</a>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.PartialContent)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.ArticleCategory)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.MemberName)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.FArticleLikes)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.FArticleClicks)
-					</p>
-				</td>
-				<td>
-					<p>
-						@Html.DisplayFor(modelItem => item.PostingDate)
-					</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.ArticleCategory)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.MemberName)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FArticleLikes)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FArticleClicks)
+						</p>
+					</td>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.PostingDate)
+						</p>
+					</td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td class="text-muted" colspan="5">
+					每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
 				</td>
 			</tr>
-		}
-	</tbody>
-	<tfoot>
-		<tr>
-			<td class="text-muted" colspan="5">
-				每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
-			</td>
-		</tr>
-	</tfoot>
+		</tfoot>
+	</table>
+</div>
 
-</table>
-<div style=" font-size:larger" class="PageContainer">
-	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
-		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+<div style=" font-size:larger" class="">
+	<div class="btn-toolbar  " role="toolbar" aria-label="Toolbar with button groups" style="text-align:center;">
+		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer" style="margin:10px auto; ">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
 			@for (int i = 2; i < pagedList.PageCount + 1; i++)

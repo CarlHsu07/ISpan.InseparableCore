@@ -72,7 +72,7 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 			#endregion
-			int pageSize = 2;
+			int pageSize = 10;
 
 			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
 
@@ -109,7 +109,7 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 			#endregion
-			int pageSize = 2;
+			int pageSize = 10;
 
 			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
 
@@ -146,7 +146,7 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 			#endregion
-			int pageSize = 2;
+			int pageSize = 10;
 
 			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
 
@@ -188,7 +188,7 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
 			#endregion
-			int pageSize = 2;
+			int pageSize = 10;
 			var pageList = GetPagedProcess(condition.Page, pageSize, movies);
 			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
 			if (movies.Count == 0) return Ok("noData");
@@ -299,7 +299,7 @@ namespace ISpan.InseparableCore.Controllers
 			if (ModelState.IsValid)
 			{
 				await repo.CreateAsync(vm);
-				return RedirectToAction(nameof(Index));
+				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
@@ -332,10 +332,10 @@ namespace ISpan.InseparableCore.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, MovieVm vm)
 		{
-			//if (id != vm.FMovieId)
-			//{
-			//	return NotFound();
-			//}
+			if (id != vm.FMovieId)
+			{
+				return NotFound();
+			}
 
 			if (ModelState.IsValid)
 			{
@@ -355,34 +355,26 @@ namespace ISpan.InseparableCore.Controllers
 						throw;
 					}
 				}
-				return RedirectToAction(nameof(Index));
+				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			return View(vm);
 		}
 
 		// POST: TMovies/Delete/5
-		[HttpPost, ActionName("Delete")]
+		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int movieId)
+		public async Task<IActionResult> Delete(int movieId)
 		{
 			if (_context.TMovies == null)
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
 			var movie = await _context.TMovies.FindAsync(movieId);
-			if (movie != null)
-			{
-				IEnumerable<TMovieCategoryDetails> categoryDetails = _context.TMovieCategoryDetails.Where(t => t.FMovieId == movie.FMovieId);
-				foreach (TMovieCategoryDetails detail in categoryDetails)
-				{
-					_context.Remove(detail);
-				}
-				_context.TMovies.Remove(movie);
-			}
 
-			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
+			await repo.DeleteAsync(movieId);
+
+			return Ok();
 		}
 
 		private bool TMoviesExists(int id)

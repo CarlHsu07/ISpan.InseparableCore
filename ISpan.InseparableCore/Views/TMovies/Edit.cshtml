@@ -1,100 +1,207 @@
 ﻿@model ISpan.InseparableCore.ViewModels.MovieVm
 
 @{
-    ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
+<style>
+	form .form-control {
+		border-radius: 5px;
+		background-color: rgb(20,20,20);
+		color: white;
+	}
 
-<h1>Edit</h1>
+		form .form-control:focus {
+			background-color: rgb(20,20,20);
+		}
 
-<h4>TMovies</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data" id="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="FMovieId" />
-            <div class="form-group">
-                <label asp-for="FMovieName" class="control-label"></label>
-                <input asp-for="FMovieName" class="form-control" />
-                <span asp-validation-for="FMovieName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieIntroduction" class="control-label"></label>
-                <input asp-for="FMovieIntroduction" class="form-control" />
-                <span asp-validation-for="FMovieIntroduction" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieLevelId" class="control-label"></label>
-                <select asp-for="FMovieLevelId" class="form-control" asp-items="ViewBag.FMovieLevelId"></select>
-                <span asp-validation-for="FMovieLevelId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieOnDate" class="control-label"></label>
-                <input type="date" asp-for="FMovieOnDate" class="form-control" />
-                <span asp-validation-for="FMovieOnDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FMovieOffDate" class="control-label"></label>
-                <input type="date" asp-for="FMovieOffDate" class="form-control" />
-                <span asp-validation-for="FMovieOffDate" class="text-danger"></span>
-            </div>
-			<div class="form-group">
-				<input asp-for="FMovieImagePath" class="form-control" type="hidden"/>
-				<img src="~/images/@Model.FMovieImagePath" width="150">
-				<input type="file" name="Image" class="form-control" />
+	.go-right{
+		justify-content: flex-end
+	}
+
+	form div {
+		font-size: 20px;
+		text-align: justify;
+		margin: 10px 10px 10px 50px;
+	}
+
+	.image-container {
+		text-align: center;
+	}
+
+		.image-container img {
+			display: block;
+			margin: 0 auto;
+		}
+
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	.divContainerRow {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+		.divContainerRow > div {
+			width: 550px;
+		}
+
+	.textarea {
+		height: 200px;
+		width: 500px;
+	}
+
+	.divBorder {
+		border-color: white;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 9px;
+	}
+
+
+	.checkbox-container {
+		width: 500px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding: 20px;
+	}
+
+		.checkbox-container > div {
+			width: 30%;
+			margin: initial;
+		}
+
+	.divBlock {
+		padding:0;
+		margin: 20px 0;
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -200px;
+	}
+</style>
+
+<h1 style="margin:20px">編輯電影</h1>
+
+<div class="divBorder">
+	<div class="">
+		<form asp-action="Edit" enctype="multipart/form-data" id="Edit" class="divContainerRow">
+			<div>
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<input type="hidden" asp-for="FMovieId" />
+				<div class="form-group">
+					<label asp-for="FMovieName" class="control-label"></label>
+					<input asp-for="FMovieName" class="form-control" />
+					<span asp-validation-for="FMovieName" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieLevelId" class="control-label"></label>
+					<select asp-for="FMovieLevelId" class="form-control" asp-items="ViewBag.FMovieLevelId"></select>
+					<span asp-validation-for="FMovieLevelId" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieOnDate" class="control-label"></label>
+					<input type="date" asp-for="FMovieOnDate" class="form-control" />
+					<span asp-validation-for="FMovieOnDate" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieOffDate" class="control-label"></label>
+					<input type="date" asp-for="FMovieOffDate" class="form-control" />
+					<span asp-validation-for="FMovieOffDate" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieLength" class="control-label"></label>
+					<input asp-for="FMovieLength" class="form-control" />
+					<span asp-validation-for="FMovieLength" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieActors" class="control-label"></label>
+					<input asp-for="FMovieActors" class="form-control" />
+					<span asp-validation-for="FMovieActors" class="text-danger"></span>
+				</div>
+				<div class="form-group">
+					<label asp-for="FMovieDirectors" class="control-label"></label>
+					<input asp-for="FMovieDirectors" class="form-control" />
+					<span asp-validation-for="FMovieDirectors" class="text-danger"></span>
+				</div>
+				<div>
+					<label asp-for="CategoryIds" class="control-label"></label>
+				</div>
+				<div class="form-group checkbox-container divBorder">
+					@foreach (var item in ViewBag.FMovieCategoryId)
+					{
+						<div>
+							<input type="checkbox" name="CategoryCheck" value="@item.Value" />
+							<label for="@item.Value">@item.Text</label>
+						</div>
+					}
+					<input type="hidden" name="CategoryIds" id="CategoryIds" />
+				</div>
 			</div>
-
-            <div class="form-group">
-                <label asp-for="FMovieLength" class="control-label"></label>
-                <input asp-for="FMovieLength" class="form-control" />
-                <span asp-validation-for="FMovieLength" class="text-danger"></span>
-            </div>
-			<div class="form-group">
-				<label asp-for="FMovieActors" class="control-label"></label>
-				<input asp-for="FMovieActors" class="form-control" />
-				<span asp-validation-for="FMovieActors" class="text-danger"></span>
+			<div>
+				<div class="form-group">
+					<label asp-for="FMovieIntroduction" class="control-label"></label>
+					<textarea asp-for="FMovieIntroduction" class="form-control textarea" style=""></textarea>
+					<span asp-validation-for="FMovieIntroduction" class="text-danger"></span>
+				</div>
+				<div class="form-group image-container">
+					<label asp-for="Image" class="control-label"></label>
+					<input asp-for="FMovieImagePath" class="form-control" type="hidden" />
+					<input type="file" name="Image" class="form-control" id="fileInput" />
+					<img src="~/images/@Model.FMovieImagePath" width="200" id="preview">
+				</div>
+				<div class="form-group" style="text-align:right">
+					<input type="submit" value="儲存" class="btn btn-primary" />
+				</div>
 			</div>
-			<div class="form-group">
-				<label asp-for="FMovieDirectors" class="control-label"></label>
-				<input asp-for="FMovieDirectors" class="form-control" />
-				<span asp-validation-for="FMovieDirectors" class="text-danger"></span>
+		</form>
+		<div class="go-right divContainerRow">
+			<div class="divBlock" style="width:100px">
+				<form asp-action="Delete">
+					<input type="hidden" name="movieId" value="@Model.FMovieId" />
+					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+				</form>
 			</div>
-
-			<div class="form-group">
-				<label asp-for="Categories" class="control-label"></label>
-				<select id="FMovieCategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId" multiple></select>
-				<input type="hidden" name="CategoryIds" id="CategoryIds" />
+			<div class="divBlock" style="width:100px">
+				<a asp-action="Index" class="btn btn-light ">返回</a>
 			</div>
-
-            <div class="form-group">
-                <input type="submit" value="儲存" class="btn btn-primary" />
-            </div>
-        </form>
-		<div class="form-group">
-			<form asp-action="Delete">
-				<input type="hidden" name="movieId" value="@Model.FMovieId" />
-				<input type="submit" value="刪除" class="btn btn-danger" />
-			</form>
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
 
-<div>
-    <a asp-action="Index">返回</a>
-</div>
 @section Scripts {
-<script>
-	var categoryIds = "";
+	<script>
+		var categoryIds = "";
 
-	$("#Edit").submit(function () {
-		$("#FMovieCategoryId").find(":selected").each(function () {
-			categoryIds += this.value + ',';
+		$("#Edit").submit(function () {
+			var checkboxes = document.querySelectorAll("input[name='CategoryCheck']");
+			$('input[name="CategoryCheck"]:checked').each(function () {
+				categoryIds += $(this).val() + ',';
+			});
+			$("#CategoryIds").val(categoryIds);
+			alert($("#CategoryIds").val())
+		})
+		const fileInput = document.getElementById('fileInput');
+		const preview = document.getElementById('preview');
+
+		fileInput.addEventListener('change', function () {
+			const file = this.files[0];
+			const reader = new FileReader();
+
+			reader.addEventListener('load', function () {
+				preview.src = reader.result;
+			});
+
+			reader.readAsDataURL(file);
 		});
-		$("#CategoryIds").val(categoryIds);
-		alert($("#CategoryIds").val())
-	})
+	</script>
 
-</script>
-
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

@@ -8,12 +8,24 @@
 @using X.PagedList.Web.Common
 
 <style>
+	.Delete{
+
+	}
 	PageContainer {
 		margin: 0 auto;
 	}
 
 	.btnPage {
 	}
+
+	.center-container {
+		text-align: center;
+	}
+
+		.center-container div {
+			display: block;
+			margin: 0 auto;
+		}
 
 	.divContainer {
 		display: flex;
@@ -23,9 +35,15 @@
 
 	.divBorder {
 		border-color: white;
-		border-width: 3px;
+		border-width: 1px;
 		border-style: solid;
+		border-radius:9px;
 	}
+
+	.go-right {
+		justify-content: flex-end
+	}
+
 
 	.divBlock {
 		margin: 20px
@@ -44,8 +62,7 @@
 	}
 
 </style>
-<h1>電影搜尋</h1>
-<button action="Create" class="btn btn-primary">新增</button>
+<h1 style="margin:20px;">電影管理</h1>
 
 <div class="row divBlock">
 
@@ -69,19 +86,22 @@
 				<label name="LevelId" class="control-label">分級</label>
 				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
 			</div>
-			@*			<div class="form-group divBlock">
+			@*<div class="form-group divBlock">
 			<label name="Page" class="control-label">頁數</label>
 			<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
 			</div>
-			*@			<div class="form-group divBlock" style="position:relative">
+			*@<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
+			</div>
+			<div class="form-group divBlock inDivPosition" >
+				<a href="/TMovies/Create" class="btn btn-primary">新增</a>
 			</div>
 		</div>
 	</form>
 
 </div>
 
-<div class="divBlock" id="divSearch">
+<div class="divBlock divBorder" id="divSearch">
 
 	<table class="table" id="tableSearch">
 		<thead>
@@ -167,13 +187,13 @@
 					</td>
 					<td>
 						<div class="divContainer">
-							<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-primary">編輯</a>
 							<div class="form-group">
-								<form asp-action="Delete">
-									<input type="hidden" name="movieId" value="@item.FMovieId" />
-									<input type="submit" value="刪除" class="btn btn-danger" />
-								</form>
+								<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-primary">編輯</a>
 							</div>
+							<form asp-action="Delete" class="form-group">
+								<input type="hidden" name="movieId" value="@item.FMovieId" />
+								<input type="submit" value="刪除" class="btn btn-danger " style="width:100%;height:100%" onclick="return confirm('你確定要刪除嗎？')" />
+							</form>
 						</div>
 					</td>
 				</tr>
@@ -187,9 +207,9 @@
 		</p>
 	</div>
 </div>
-<div style=" font-size:larger" class="PageContainer">
-	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
-		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+<div style=" font-size:larger" class="">
+	<div class="btn-toolbar center-container" role="toolbar" aria-label="Toolbar with button groups">
+		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer " style="margin:10px auto;">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			<button type="button" class="btn btn-primary btnPage" id="1" value="1">1</button>
 			@for (int i = 2; i < pagedList.PageCount + 1; i++)
@@ -203,7 +223,7 @@
 @section Scripts {
 	<script>
 		var PageCountNumber = @pagedList.PageCount
-				var pageNumber = 1
+		var pageNumber = 1
 
 		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
 			$.ajax({
@@ -218,91 +238,95 @@
 					if (data == "noData") {
 						alert("nodata")
 						$("#divDataCount").html(`
-									<div>
-										<p class="text-muted" colspan="5">
-											每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
-										</p>
-									</div>
-								`)
+							<div>
+								<p class="text-muted" colspan="5">
+									每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
+								</p>
+							</div>
+						`)
 						return;
 					}
 
 					let context = JSON.parse(data);
 					$.each(context.Vm, function (index, value) {
 						$("#bodySearch").append(`
-									<tr>
-										<td>
-											<p>
-												<a href="/TMovies/Details/${value.FMovieId}">
+							<tr>
+								<td>
+									<p>
+										<a href="/TMovies/Details/${value.FMovieId}">
 											${value.FMovieName}
-												</a>
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.PartialIntro}
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.OnDate}
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.OffDate}
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.FMovieLength}
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.Level}
-											</p>
-										</td>
-										<td>
-											<p>
-								${value.Categories}
-											</p>
-										</td>
-										<td>
-											<p>
-												<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-primary">編輯</a>
-												<a href="/TMovies/Delete/${value.FMovieId}" class="btn btn-danger">刪除</a>
-											</p>
-										</td>
-									</tr>
-								`)
+										</a>
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.PartialIntro}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.OnDate}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.OffDate}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.FMovieLength}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.Level}
+									</p>
+								</td>
+								<td>
+									<p>
+										${value.Categories}
+									</p>
+								</td>
+								<td>
+									<div class="divContainer">
+										<div class="form-group">
+											<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-primary">編輯</a>
+										</div>
+										<div class="form-group">
+												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" />刪除</button>
+										</div>
+									</div>
+								</td>
+							</tr>
+						`)
 					})
 					$("#divDataCount").append(`
-								<div>
-									<p class="text-muted" colspan="5">
-										每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
-									</p>
-								</div>
-							`)
+						<div>
+							<p class="text-muted" colspan="5">
+								每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
+							</p>
+						</div>
+					`)
 					if (PageCountNumber != context.PageCount) {
 						PageCountNumber = context.PageCount
 						$("#divPageContainer").html(`
 											`)
 						$("#divPageContainer").append(`
-									<button type="button" class="btn btn-secondary" id="prePage"><</button>
-								`)
+							<button type="button" class="btn btn-secondary" id="prePage"><</button>
+						`)
 						$("#divPageContainer").append(`
 												<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
-											`)
+						`)
 						for (let i = 2; i < context.PageCount + 1; i++) {
 							$("#divPageContainer").append(`
-									<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
-								`)
+								<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
+							`)
 						}
 
 						$("#divPageContainer").append(`
-									<button type="button" class="btn btn-secondary" id="nextPage">></button>
-								`)
+							<button type="button" class="btn btn-secondary" id="nextPage">></button>
+						`)
 					}
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
@@ -364,6 +388,23 @@
 			pageChange(page)
 		});
 
+		//刪除電影
+		$(document).on('click', '.Delete', function () {
+			var movieId = parseInt($(this).attr("value"))
+			//confirm('你確定要刪除嗎？' + movieId)
+			$.ajax({
+				type: "POST",
+				url: "/TMovies/Delete",
+				data: { movieId },
+				success: function (data) {
+					alert("已刪除")
+				},
+				error: function(xhr, status, error) {					
+					// 處理錯誤
+					console.log("AJAX request error: " + status + " - " + error);
+				}
+			});
+		})
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
 			let page = 1

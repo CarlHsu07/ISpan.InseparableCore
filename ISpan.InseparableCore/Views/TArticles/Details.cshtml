@@ -242,6 +242,7 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
+			confirm('你確定要刪除嗎？')
 			CommentDetail(commentId, memberId, articleId, comment, deleted)
 		})
 

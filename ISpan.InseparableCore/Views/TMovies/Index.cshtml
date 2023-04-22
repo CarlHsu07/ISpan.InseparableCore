@@ -20,11 +20,20 @@
 		flex-direction: row;
 		padding: 5px;
 	}
+	.center-container {
+		text-align: center;
+	}
+
+		.center-container div {
+			display: block;
+			margin: 0 auto;
+		}
 
 	.divBorder {
 		border-color: white;
-		border-width: 3px;
+		border-width: 1px;
 		border-style: solid;
+		border-radius:9px;
 	}
 
 	.divBlock {
@@ -43,7 +52,7 @@
 	}
 
 </style>
-<h1>電影搜尋</h1>
+<h1 class="divBlock">電影搜尋</h1>
 <a asp-action="IndexMaintainer">IndexMaintainer</a>
 
 
@@ -131,9 +140,9 @@
 		</p>
 	</div>
 </div>
-<div style=" font-size:larger" class="PageContainer">
-	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
-		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+<div style=" font-size:larger" class="">
+	<div class="btn-toolbar center-container" role="toolbar" aria-label="Toolbar with button groups">
+		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer" style="margin:10px auto; ">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			<button type="button" class="btn btn-primary btnPage" id="1" value="1">1</button>
 			@for (int i = 2; i < pagedList.PageCount + 1; i++)
