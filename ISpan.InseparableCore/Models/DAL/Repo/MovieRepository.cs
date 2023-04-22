@@ -205,5 +205,12 @@ namespace ISpan.InseparableCore.Models.DAL
             var data = context.TMovies.FirstOrDefault(t => t.FMovieId == movie);
             return data;
         }
+		public IEnumerable<TMovies> GetByOffDay()
+		{
+			var today = DateTime.Now.Date;
+			var data = context.TMovies.Where(t => t.FMovieOffDate >= today);
+
+			return data;
+		}
     }
 }

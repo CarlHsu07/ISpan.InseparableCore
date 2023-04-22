@@ -22,9 +22,10 @@ namespace ISpan.InseparableCore.ViewModels
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime FSessionDate { get { return _sessions.FSessionDate; } set { _sessions.FSessionDate = value; } }
         [Display(Name = "時間")]
-        [DisplayFormat(DataFormatString = "{0:hh\\:mm}")]
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm\\:ss}")]
         public TimeSpan FSessionTime { get { return _sessions.FSessionTime; } set { _sessions.FSessionTime = value; } }
         [Display(Name = "票價")]
+        [DisplayFormat(DataFormatString = "{0:0}")]
         public decimal FTicketPrice { get { return _sessions.FTicketPrice; } set { _sessions.FTicketPrice = value; } }
         [Display(Name = "影城")]
         public virtual TCinemas FCinema { get; set; }

@@ -65,15 +65,15 @@ namespace ISpan.InseparableCore.Controllers
 
             if (vm.movieId != 0)
             {
-                var date = _session_repo.GetSession(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                var date = _session_repo.GetSessionByTwoCondition(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
                     IEnumerable<TSessions> sessions = null;
 
-                    sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item).OrderBy(t=>t.FSessionTime);
+                    sessions = _session_repo.GetSessionByTwoCondition(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item).OrderBy(t=>t.FSessionTime);
                     if (item==start)
-                        sessions = _session_repo.GetSession(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
+                        sessions = _session_repo.GetSessionByTwoCondition(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
 
                     vm.sessions.Add(item, sessions);
                 }

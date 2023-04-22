@@ -23,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\BLL\Cores\" />
-    <Folder Include="Models\BLL\DTOs\" />
-    <Folder Include="Models\BLL\Interfaces\" />
     <Folder Include="wwwroot\images\memberProfilePhotos\" />
   </ItemGroup>
 

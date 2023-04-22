@@ -1,13 +1,13 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TSessions
+﻿@model ISpan.InseparableCore.ViewModels.CSessionVM
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>詳細資料</h1>
 
 <div>
-    <h4>TSessions</h4>
+
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -22,23 +22,17 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FSessionTime)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FTicketPrice)
+         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FMovie)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FTicketPrice)
+            @Html.DisplayFor(model => model.FMovie.FMovieName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FCinema)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FCinema.FCinemaAddress)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovie)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovie.FMovieImagePath)
+            @Html.DisplayFor(model => model.FCinema.FCinemaName)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FRoom)
@@ -46,9 +40,15 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FRoom.FRoomName)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FTicketPrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FTicketPrice)
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FSessionId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.FSessionId">修改</a> |
+    <a asp-action="Index">取消</a>
 </div>

@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
-using System.Runtime.Intrinsics.X86;
 using X.PagedList;
-using Azure;
-using System.Drawing.Printing;
 using ISpan.InseparableCore.Models.DAL.Repo;
 using NuGet.Protocol;
-using static NuGet.Packaging.PackagingConstants;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
+using ISpan.InseparableCore.Models.BLL.Interface;
+using ISpan.InseparableCore.Models;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
     public class TSessionsController : Controller
     {
         private readonly InseparableContext _context;
-        private readonly SessionRepository _repo;
+        private readonly SessionRepository session_repo;
+        private readonly MovieRepository movie_repo;
+        private readonly RoomRepository room_repo;
 
         public TSessionsController(InseparableContext context)
         {
             _context = context;
-            _repo = new SessionRepository(context);
+            session_repo = new SessionRepository(context);
+            movie_repo = new MovieRepository(context, null);
+            room_repo = new RoomRepository(context);
         }
         //pagelist
         /// <summary>
@@ -50,33 +47,22 @@ namespace ISpan.InseparableCore.Controllers.Server
         // GET: TSessions
         public async Task<IActionResult> Index()
         {
-            List<CSessionVM> data =new List<CSessionVM>();
-            var inseparableContext = _context.TSessions.OrderByDescending(t=>t.FSessionDate).Include(t => t.FCinema).Include(t => t.FMovie).Include(t => t.FRoom);
-            foreach(var item in inseparableContext)
-            {
-                CSessionVM vm = new CSessionVM();
-                vm.session = item;
-                vm.FMovie=item.FMovie;
-                vm.FCinema = item.FCinema;
-                vm.FRoom = item.FRoom;
-
-                data.Add(vm);
-            }
+            var inseparableContext = session_repo.SessionSearch(null);
+            
             var pagesize = 5;
             var pageIndex = 1;
-            var count =data.Count();
-            //var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
-            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = SessionPageList(pageIndex, pagesize, data);
+
+            var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.page = SessionPageList(pageIndex, pagesize, inseparableContext);
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName");
-            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName");
+            ViewData["FMovieId"] = new SelectList(movie_repo.GetByOffDay(), "FMovieId", "FMovieName");
             return View(pagedItems);
         }
         //Ajax Post
         [HttpPost]
         public async Task<IActionResult> Index(CSessionSearch vm)
         {
-            var inseparableContext =_repo.SessionSearch(vm);
+            var inseparableContext =session_repo.SessionSearch(vm);
             List<TMovies> movie = new List<TMovies>();
             List<TCinemas> cinema = new List<TCinemas>();
             List<TSessions> session = new List<TSessions>();
@@ -85,7 +71,6 @@ namespace ISpan.InseparableCore.Controllers.Server
             var count = inseparableContext.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            var page = SessionPageList(pageIndex, pagesize, inseparableContext);
             JsonSerializerOptions options = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve
@@ -106,11 +91,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tSessions = await _context.TSessions
-                .Include(t => t.FCinema)
-                .Include(t => t.FMovie)
-                .Include(t => t.FRoom)
-                .FirstOrDefaultAsync(m => m.FSessionId == id);
+            var tSessions = session_repo.GetSession(id);
             if (tSessions == null)
             {
                 return NotFound();
@@ -123,8 +104,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         public IActionResult Create()
         {
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName");
-            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName");
-            ViewData["FRoomId"] = new SelectList(_context.TRooms, "FRoomId", "FRoomName");
+            ViewData["FMovieId"] = new SelectList(movie_repo.GetByOffDay(), "FMovieId", "FMovieName");
             return View();
         }
 
@@ -133,17 +113,28 @@ namespace ISpan.InseparableCore.Controllers.Server
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FSessionId,FMovieId,FRoomId,FCinemaId,FSessionDate,FSessionTime,FTicketPrice")] TSessions tSessions)
+        public async Task<IActionResult> Create([Bind("FSessionId,FMovieId,FRoomId,FCinemaId,FSessionDate,FSessionTime,FTicketPrice")] SessionCreateVM tSessions)
         {
+            ISessionRepository repo = new SessionRepository(_context);
+            SessionService service = new SessionService(repo);
+
+            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName", tSessions.FCinemaId);
+            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName", tSessions.FMovieId);
+            ViewData["FRoomId"] = new SelectList(_context.TRooms, "FRoomId", "FRoomName", tSessions.FRoomId);
+
             if (ModelState.IsValid)
             {
-                _context.Add(tSessions);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    service.Create(tSessions.session);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.error = $"{ex.Message}";
+                    return View(tSessions);
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaAddress", tSessions.FCinemaId);
-            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieImagePath", tSessions.FMovieId);
-            ViewData["FRoomId"] = new SelectList(_context.TRooms, "FRoomId", "FRoomName", tSessions.FRoomId);
             return View(tSessions);
         }
 
@@ -155,15 +146,23 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
+            SessionEditVM vm = new SessionEditVM();
             var tSessions = await _context.TSessions.FindAsync(id);
+            vm.FSessionId = tSessions.FSessionId;
+            vm.FMovieId = tSessions.FMovieId;
+            vm.FRoomId = tSessions.FRoomId;
+            vm.FTicketPrice = tSessions.FTicketPrice;
+            vm.FCinemaId = tSessions.FCinemaId;
+            vm.FSessionDate = tSessions.FSessionDate;
+            vm.FSessionTime = tSessions.FSessionTime;
             if (tSessions == null)
             {
                 return NotFound();
             }
-            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaAddress", tSessions.FCinemaId);
-            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieImagePath", tSessions.FMovieId);
-            ViewData["FRoomId"] = new SelectList(_context.TRooms, "FRoomId", "FRoomName", tSessions.FRoomId);
-            return View(tSessions);
+            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName", tSessions.FCinemaId);
+            ViewData["FMovieId"] = new SelectList(movie_repo.GetByOffDay(), "FMovieId", "FMovieName", tSessions.FMovieId);
+            ViewData["FRoomId"] = new SelectList(room_repo.GetByCinema(tSessions.FCinemaId), "FRoomId", "FRoomName", tSessions.FRoomId);
+            return View(vm);
         }
 
         // POST: TSessions/Edit/5
@@ -171,21 +170,25 @@ namespace ISpan.InseparableCore.Controllers.Server
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FSessionId,FMovieId,FRoomId,FCinemaId,FSessionDate,FSessionTime,FTicketPrice")] TSessions tSessions)
+        public async Task<IActionResult> Edit(int id, [Bind("FSessionId,FMovieId,FRoomId,FCinemaId,FSessionDate,FSessionTime,FTicketPrice")] SessionEditVM tSessions)
         {
             if (id != tSessions.FSessionId)
             {
                 return NotFound();
             }
+            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName", tSessions.FCinemaId);
+            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName", tSessions.FMovieId);
+            ViewData["FRoomId"] = new SelectList(room_repo.GetByCinema(tSessions.FCinemaId), "FRoomId", "FRoomName", tSessions.FRoomId);
 
+            ISessionRepository repo = new SessionRepository(_context);
+            SessionService service = new SessionService(repo);
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(tSessions);
-                    await _context.SaveChangesAsync();
+                    service.Edit(tSessions.session);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!TSessionsExists(tSessions.FSessionId))
                     {
@@ -193,14 +196,13 @@ namespace ISpan.InseparableCore.Controllers.Server
                     }
                     else
                     {
-                        throw;
+                        ViewBag.error = $"{ex.Message}";
+                        return View(tSessions);
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaAddress", tSessions.FCinemaId);
-            ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieImagePath", tSessions.FMovieId);
-            ViewData["FRoomId"] = new SelectList(_context.TRooms, "FRoomId", "FRoomName", tSessions.FRoomId);
+
             return View(tSessions);
         }
 
@@ -212,41 +214,62 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tSessions = await _context.TSessions
-                .Include(t => t.FCinema)
-                .Include(t => t.FMovie)
-                .Include(t => t.FRoom)
-                .FirstOrDefaultAsync(m => m.FSessionId == id);
+            var tSessions =session_repo.GetSession(id);
             if (tSessions == null)
             {
                 return NotFound();
             }
-
+            ViewBag.error = TempData["error"];
             return View(tSessions);
         }
 
         // POST: TSessions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
             if (_context.TSessions == null)
             {
                 return Problem("Entity set 'InseparableContext.TSessions'  is null.");
             }
-            var tSessions = await _context.TSessions.FindAsync(id);
+            var tSessions = session_repo.GetOneSession(id);
             if (tSessions != null)
             {
-                _context.TSessions.Remove(tSessions);
+                try {
+                    session_repo.Delete(tSessions);
+                }catch(Exception ex)
+                {
+                    ViewBag.error = ex.Message;
+                    return RedirectToAction("Delete", new {id});
+                }
+                
             }
             
-            await _context.SaveChangesAsync();
+            _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TSessionsExists(int id)
         {
           return (_context.TSessions?.Any(e => e.FSessionId == id)).GetValueOrDefault();
+        }
+
+        //Ajax
+        public IActionResult GetDate(int? movie)
+        {
+            if (movie == null)
+                return null;
+            var data = movie_repo.GetOneMovie(movie).FMovieOffDate.Value.Date.ToString("yyyy-MM-dd");
+            return Ok(data);
+        }
+        public IActionResult GetRoom(int? cinema)
+        {
+            if (cinema == null)
+                return null;
+
+            var data =room_repo.GetByCinema(cinema).ToJson();
+
+            return Ok(data);
         }
     }
 }

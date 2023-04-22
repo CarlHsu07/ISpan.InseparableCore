@@ -1,37 +1,51 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TSessions
+﻿@model ISpan.InseparableCore.ViewModels.SessionCreateVM
 
 @{
     ViewData["Title"] = "Create";
 }
+@section Styles{
+    <style>
+        #cinema,#movie,#room,#Date,#time{
+                color:aliceblue;
+        }
+    </style>
+}
+<h1>新增場次</h1>
 
-<h1>Create</h1>
-
-<h4>TSessions</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @if (ViewBag.error != null)
+        {
+                    <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+        }
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FMovieId" class="control-label"></label>
-                <select asp-for="FMovieId" class ="form-control" asp-items="ViewBag.FMovieId"></select>
+                <select asp-for="FMovieId" class ="form-control" asp-items="ViewBag.FMovieId" id="movie">
+                    <option>請選擇</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="FCinemaId" class="control-label"></label>
-                <select asp-for="FCinemaId" class ="form-control" asp-items="ViewBag.FCinemaId"></select>
+                <select asp-for="FCinemaId" class ="form-control" asp-items="ViewBag.FCinemaId" id="cinema">
+                    <option>請選擇</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="FRoomId" class="control-label"></label>
-                <select asp-for="FRoomId" class ="form-control" asp-items="ViewBag.FRoomId"></select>
+                <select asp-for="FRoomId" class ="form-control" id="room">
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="FSessionDate" class="control-label"></label>
-                <input asp-for="FSessionDate" class="form-control" />
+                <input asp-for="FSessionDate" class="form-control" type="date" id="Date"/>
                 <span asp-validation-for="FSessionDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FSessionTime" class="control-label"></label>
-                <input asp-for="FSessionTime" class="form-control" />
+                <input asp-for="FSessionTime" class="form-control" type="time" id="time"/>
                 <span asp-validation-for="FSessionTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -47,9 +61,57 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">取消</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script>
+            function GetDate(movie){
+                    $.ajax({
+                        url:'/TSessions/GetDate',
+                        method:'POST',
+                        data: { movie },
+                        success:function(data){
+                            $('#Date').attr('max', data);
+                        },
+                        error:function(err){
+
+                        }
+                    });
+            }
+            function GetRoom(cinema){
+                    $.ajax({
+                        url: '/TSessions/GetRoom',
+                        method: 'POST',
+                        data: { cinema },
+                        success: function (data) {
+                            $('#room').append(`<option>請選擇</option>`);
+                            var room =JSON.parse(data);
+                            console.log(room);
+                            room.forEach(function(value,index){
+                                $('#room').append(`<option value="${value.FRoomId}">${value.FRoomName}</option>`);
+                            });
+                        },
+                        error: function (err) {
+
+                        }
+                    });
+            }
+            $(function(){
+                     var movie = $('#movie').val();
+                     var cinema = $('#cinema').val();
+                     GetDate(movie);
+                     GetRoom(cinema);
+            });
+            $('#movie').on('change', function () {
+                var movie = $('#movie').val();
+                console.log(movie);
+                GetDate(movie);
+            });
+            $('#cinema').on('change', function () {
+                var cinema = $('#cinema').val();
+                GetRoom(cinema);
+            });
+            </script>
 }
