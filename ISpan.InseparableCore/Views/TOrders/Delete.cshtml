@@ -1,5 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.CSessionVM
-
+﻿@model ISpan.InseparableCore.ViewModels.CorderVM
 @{
     ViewData["Title"] = "Delete";
 }
@@ -11,25 +10,25 @@
     <dl class="row">
         @if (ViewBag.error != null)
         {
-                    <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+           <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
         }
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FSessionDate)
+            @Html.DisplayNameFor(model => model.FOrderDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FSessionDate)
+            @Html.DisplayFor(model => model.FOrderDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FSessionTime)
+            @Html.DisplayNameFor(model => model.FModifiedTime)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FSessionTime)
+            @Html.DisplayFor(model => model.FModifiedTime)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMovie)
+            @Html.DisplayNameFor(model => model.FMember)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMovie.FMovieName)
+            @Html.DisplayFor(model => model.FMember.FMemberId)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FCinema)
@@ -38,21 +37,27 @@
             @Html.DisplayFor(model => model.FCinema.FCinemaName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FRoom)
+            @Html.DisplayNameFor(model => model.FCreditTradeNo)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FRoom.FRoomName)
+            @Html.DisplayFor(model => model.FCreditTradeNo)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FTicketPrice)
+            @Html.DisplayNameFor(model => model.FTotalMoney)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FTicketPrice)
+            @Html.DisplayFor(model => model.FTotalMoney)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FStatus)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FStatus)
         </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="FSessionId" />
+        <input type="hidden" asp-for="FOrderId" />
         <input type="submit" value="刪除" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-light">取消</a>
     </form>

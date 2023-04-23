@@ -18,7 +18,7 @@ using System.Web;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class ShoppingController : SuperController
+    public class ShoppingController :  Controller
     {
         private readonly InseparableContext _db;
         private readonly ApiKeys _key;
@@ -56,7 +56,6 @@ namespace ISpan.InseparableCore.Controllers
             var now = DateTime.Now.TimeOfDay;
             var start = DateTime.Now.Date;
 
-            //todo時間限制還沒放
             if (vm.cinemaId != 0)
             {
                 vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
@@ -65,7 +64,7 @@ namespace ISpan.InseparableCore.Controllers
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
-            if (vm.movieId != 0)
+            if (vm.movieId > 0)
             {
                 var date = _session_repo.GetSessionByTwoCondition(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 if (date == null)
@@ -281,11 +280,11 @@ namespace ISpan.InseparableCore.Controllers
             return View(vm);
         }
 
-        public IActionResult CashPay(CorderVM vm)
+        public IActionResult CashPay(CorderForDbVM vm)
         {
             if(vm==null)
             {
-                string error = "位置已售出請重新選擇!";
+                string error = "網頁加載時出現問題 請重新下單!!";
                 return RedirectToAction("Error", new { error });
             }
             var orderid = DbSave(vm);
@@ -297,7 +296,7 @@ namespace ISpan.InseparableCore.Controllers
             var order = _order_repo.GetById(orderid);
             if (order == null)
             {
-                string error = "位置已售出請重新選擇!";
+                string error = "網頁加載時出現問題 請重新下單!";
                 return RedirectToAction("Error", new { error });
             }
             order.FStatus = true;
@@ -305,7 +304,7 @@ namespace ISpan.InseparableCore.Controllers
             var ticket =_ticket_repo.GetById(orderid);
             if (ticket == null)
             {
-                string error = "位置已售出請重新選擇!";
+                string error = "網頁加載時出現問題 請重新下單!!";
                 return RedirectToAction("Error", new { error });
             }
             foreach (var item in ticket)
@@ -319,7 +318,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(order);
         }
         //綠界API
-        public IActionResult CreditPay(CorderVM vm)
+        public IActionResult CreditPay(CorderForDbVM vm)
         {
             var orderid = DbSave(vm);
             if (orderid == null)
@@ -384,7 +383,7 @@ namespace ISpan.InseparableCore.Controllers
             var order = _order_repo.GetById(id);
             if (order == null)
             {
-                string error = "網頁加載時出現問題";
+                string error = "網頁加載時出現問題 請重新下單!";
                 return RedirectToAction("Error", new { error });
             }
 
@@ -393,7 +392,7 @@ namespace ISpan.InseparableCore.Controllers
             var ticket = _ticket_repo.GetById(order.FOrderId);
             if (ticket == null)
             {
-                string error = "位置已售出請重新選擇!";
+                string error = "網頁加載時出現問題 請重新下單!!";
                 return RedirectToAction("Error", new { error });
             }
             foreach (var item in ticket)
@@ -414,7 +413,7 @@ namespace ISpan.InseparableCore.Controllers
             return View();
         }
         //db儲存
-        public int? DbSave(CorderVM vm)
+        public int? DbSave(CorderForDbVM vm)
         {
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
@@ -441,7 +440,7 @@ namespace ISpan.InseparableCore.Controllers
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = member.FId; //todo 目前尚未解決登入
+            vm.FMemberId = member.FId==0? 1:member.FId;  //todo 如果加上supercontroller會結帳失敗
             vm.FStatus = false;
 
             try

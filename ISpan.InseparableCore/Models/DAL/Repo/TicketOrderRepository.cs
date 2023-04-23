@@ -1,6 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.BLL.Cores;
 using ISpan.InseparableCore.Models.BLL.Interfaces;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ISpan.InseparableCore.Models.DAL.Repo
@@ -39,7 +40,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             if (id == null)
                 return null;
 
-            var data = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);
+            var data = _db.TTicketOrderDetails.Include(t=>t.FSession).Include(t=>t.FSeat).Where(t => t.FOrderId == id);
 
             return data;
         }

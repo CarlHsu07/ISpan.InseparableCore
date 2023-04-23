@@ -23,5 +23,14 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                 throw new Exception(ex.Message);
             }
         }
+        public  IEnumerable<TProductOrderDetails> GetById(int? id) 
+        {
+            if (id == null)
+                return null;
+
+            var data = _db.TProductOrderDetails.Where(t => t.FOrderId == id).ToList();
+
+            return data;
+        }
     }
 }

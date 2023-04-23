@@ -1,10 +1,9 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.Xml;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class CorderVM
+    public class CorderDetaillVM
     {
         private TOrders _orders;
         public TOrders orders
@@ -12,11 +11,11 @@ namespace ISpan.InseparableCore.ViewModels
             get { return _orders; }
             set { _orders = value; }
         }
-        public CorderVM()
+        public CorderDetaillVM()
         {
             _orders = new TOrders();
         }
-        [Display(Name ="訂單編號")]
+        [Display(Name = "訂單編號")]
         public int FOrderId { get { return _orders.FOrderId; } set { _orders.FOrderId = value; } }
         [Display(Name = "會員編號")]
         public int FMemberId { get { return _orders.FMemberId; } set { _orders.FMemberId = value; } }
@@ -41,8 +40,10 @@ namespace ISpan.InseparableCore.ViewModels
         public virtual TCinemas FCinema { get; set; }
         [Display(Name = "會員編號")]
         public virtual TMembers FMember { get; set; }
-        public string FCinemaName { get => FCinema.FCinemaName; set =>FCinema.FCinemaName = value; }
-        public string FMemberNo { get => FMember.FMemberId; set=> FMember.FMemberId = value; }
-
+        public string Cinema { get=>FCinema.FCinemaName; set=>FCinema.FCinemaName=value; }
+        public string MemberNo { get=>FMember.FMemberId; set=>FMember.FMemberId=value; }
+        public IEnumerable<TTicketOrderDetails> ticket { get; set; }
+        public IEnumerable<TProductOrderDetails> product { get; set; }
+        
     }
 }
