@@ -11,6 +11,8 @@ using NuGet.Protocol;
 using ISpan.InseparableCore.Models.DAL;
 using static System.Formats.Asn1.AsnWriter;
 using X.PagedList;
+using prjMvcCoreDemo.Models;
+using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -26,6 +28,17 @@ namespace ISpan.InseparableCore.Controllers
 			this._enviro = enviro;
 			repo = new MovieRepository(context, enviro);
 		}
+		public int GetUserId()
+		{
+			int userId = 0;
+			if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+			{
+				var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+				userId = JsonSerializer.Deserialize<TMembers>(serializedTMembers).FId;
+			}
+			return userId;
+		}
+
 		//產生頁碼
 		protected IPagedList<MovieVm> GetPagedProcess(int? page, int pageSize, List<MovieVm> movies)
 		{
@@ -42,43 +55,6 @@ namespace ISpan.InseparableCore.Controllers
 		}
 
 		// GET: TMovies
-		public async Task<IActionResult> IndexMaintain()
-		{
-			List<MovieVm> movies = repo.Search(null).ToList();
-
-			#region ViewData
-			int pageContent = 2;
-			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
-														   : movies.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
-
-			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
-			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
-			categorySelectList.Add(defaultCategory);
-			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
-
-			//為電影等級SelectList加入預設值
-			TMovieLevels defaultLevel = new TMovieLevels { FLevelId = 0, FLevelName = "全部" };
-			List<TMovieLevels> LevelSelectList = _context.TMovieLevels.ToList();
-			LevelSelectList.Add(defaultLevel);
-			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", 0);
-
-			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
-			SelectList dateCategorySelectList = dateCategories.ToSelectList();
-			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
-			#endregion
-			int pageSize = 10;
-
-			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
-
-			movies = movies.Take(pageSize).ToList();
-			return View(movies);
-		}
 		public async Task<IActionResult> IndexMaintainer()
 		{
 			List<MovieVm> movies = repo.Search(null).ToList();
@@ -224,6 +200,7 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> MovieComment(TMovieCommentDetails comment)
 		{
+			if (GetUserId() != 0) comment.FMemberId = GetUserId();
 			List<MovieDetailVm> vms = new List<MovieDetailVm>();
 			//無參數=>預設顯示
 			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FComment))
@@ -260,6 +237,8 @@ namespace ISpan.InseparableCore.Controllers
 
 		public async Task<IActionResult> MovieScore(TMovieScoreDetails score)
 		{
+			if (GetUserId() != 0) score.FMemberId = GetUserId();
+
 			TMovieScoreDetails scoreInDb = _context.TMovieScoreDetails.FirstOrDefault(t => t.FMovieId == score.FMovieId && t.FMemberId == score.FMemberId);
 			if (scoreInDb == null)
 			{
@@ -339,7 +318,6 @@ namespace ISpan.InseparableCore.Controllers
 
 			if (ModelState.IsValid)
 			{
-
 				try
 				{
 					await repo.UpdateAsync(vm);

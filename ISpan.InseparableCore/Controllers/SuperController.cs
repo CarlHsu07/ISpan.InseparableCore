@@ -6,7 +6,8 @@ namespace ISpan.InseparableCore.Controllers
 {
     public class SuperController : Controller
     {
-        public override void OnActionExecuting(ActionExecutingContext context)
+		public int UserId { get; set; }
+		public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
 

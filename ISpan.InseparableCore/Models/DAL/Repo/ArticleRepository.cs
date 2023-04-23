@@ -38,7 +38,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var article in articles)
 			{
 				ArticleVm vm = article.ModelToVm();
-				vm.ArticleCategory = context.TArticles.Include(t => t.FArticleCategory)
+				vm.ArticleCategory =  context.TArticles.Include(t => t.FArticleCategory)
 					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FArticleCategory.FMovieCategoryName;
 				vm.MemberName = context.TArticles.Include(t => t.FMember)
 					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FMember.FFirstName;
@@ -90,22 +90,23 @@ namespace ISpan.InseparableCore.Models.DAL
 			article.FArticleLikes = vm.FArticleLikes;
 
 			context.Update(article);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 
 		}
-		public void Click(int articleId)
+		public async void Click(int articleId)
 		{
 			TArticles article = context.TArticles.Find(articleId);
 			article.FArticleClicks++;
 			context.Update(article);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 		public async Task DeleteAsync(int articleId)
 		{
 			var article = await context.TArticles.FindAsync(articleId);
 			if (article != null)
 			{
-				context.TArticles.Remove(article);
+				article.FDeleted = true;
+				context.TArticles.Update(article);
 			}
 		}
 

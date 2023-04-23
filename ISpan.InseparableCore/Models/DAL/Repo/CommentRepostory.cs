@@ -55,7 +55,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			comment.FCommentContent = vm.FCommentContent;
 			comment.FDeleted = vm.FDeleted;
 			context.Update(comment);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 
 		}
 		public async Task DeleteAsync(int commentId)

@@ -12,6 +12,9 @@ using X.PagedList;
 using Azure;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using prjMvcCoreDemo.Models;
+using System.Text.Json;
+using System.Diagnostics.Metrics;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -19,11 +22,21 @@ namespace ISpan.InseparableCore.Controllers
 	{
 		private readonly InseparableContext _context;
 		private readonly ArticleRepository repo;
-
 		public TArticlesController(InseparableContext context)
 		{
 			_context = context;
 			repo = new ArticleRepository(context);
+		}
+
+		public int GetUserId()
+		{
+			int userId = 0;
+			if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+			{
+				var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+				userId = JsonSerializer.Deserialize<TMembers>(serializedTMembers).FId;
+			}
+			return userId;
 		}
 
 		//產生頁碼
@@ -43,7 +56,6 @@ namespace ISpan.InseparableCore.Controllers
 		// GET: TArticles
 		public async Task<IActionResult> Index()
 		{
-
 			List<ArticleVm> articles = repo.Search(null).ToList();
 
 			#region ViewData
@@ -65,12 +77,12 @@ namespace ISpan.InseparableCore.Controllers
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
 
-			int pageSize = 2;
+			int pageSize = 10;
 
 			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
 			articles = articles.Take(pageSize).ToList();
 
-			return View(articles); 
+			return View(articles);
 		}
 		[HttpPost]
 		public async Task<IActionResult> Index(ArticleSearchCondition condition)
@@ -94,15 +106,18 @@ namespace ISpan.InseparableCore.Controllers
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 			#endregion
 
-			int pageSize = 2;
+			int pageSize = 10;
 			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
 			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
 			if (articles.Count == 0) return Ok("noData");
 
-			return Ok(new { Vm = articles,
-							PageCount = pageList.PageCount,
-							TotalItemCount = pageList.TotalItemCount, 
-							PageSize = pageSize}.ToJson());
+			return Ok(new
+			{
+				Vm = articles,
+				PageCount = pageList.PageCount,
+				TotalItemCount = pageList.TotalItemCount,
+				PageSize = pageSize
+			}.ToJson());
 		}
 
 		// GET: TArticles/Details/5
@@ -147,7 +162,7 @@ namespace ISpan.InseparableCore.Controllers
 			if (detailInDb == null)
 			{
 				article.FArticleLikes++;
-				repo.UpdateLikeAsync(article);
+				await repo.UpdateLikeAsync(article);
 
 				like = true;
 				_context.Add(detail);
@@ -155,19 +170,21 @@ namespace ISpan.InseparableCore.Controllers
 			else
 			{
 				article.FArticleLikes--;
-				repo.UpdateLikeAsync(article);
+				await repo.UpdateLikeAsync(article);
 
 				like = false;
 				_context.Remove(detailInDb);
 			}
 			await _context.SaveChangesAsync();
 
-			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes}).ToJson());
+			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes }).ToJson());
 		}
 
 		// GET: TArticles/Create
 		public IActionResult Create()
 		{
+			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
+
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
 			return View();
@@ -180,9 +197,13 @@ namespace ISpan.InseparableCore.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create(ArticleVm vm)
 		{
+			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
+
 			if (ModelState.IsValid)
 			{
-				repo.CreateAsync(vm);
+				if (GetUserId() != 0) vm.FMemberId = GetUserId();
+
+				await repo.CreateAsync(vm);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
@@ -193,6 +214,8 @@ namespace ISpan.InseparableCore.Controllers
 		// GET: TArticles/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
+			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
+
 			if (id == null || _context.TArticles == null)
 			{
 				return NotFound();
@@ -216,6 +239,8 @@ namespace ISpan.InseparableCore.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, ArticleVm vm)
 		{
+			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
+
 			//if (id != vm.FArticleId)
 			//{
 			//    return NotFound();
@@ -225,7 +250,9 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				try
 				{
-					repo.UpdateAsync(vm);
+					if (GetUserId() != 0) vm.FMemberId = GetUserId();
+
+					await repo.UpdateAsync(vm);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -248,8 +275,10 @@ namespace ISpan.InseparableCore.Controllers
 		// POST: TArticles/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int articleId)
+		public async Task<IActionResult> Delete(int articleId)
 		{
+			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
+
 			if (_context.TArticles == null)
 			{
 				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
@@ -258,7 +287,7 @@ namespace ISpan.InseparableCore.Controllers
 
 			if (article != null)
 			{
-				_context.TArticles.Remove(article);
+				await repo.DeleteAsync(article.FArticleId);
 			}
 
 			await _context.SaveChangesAsync();

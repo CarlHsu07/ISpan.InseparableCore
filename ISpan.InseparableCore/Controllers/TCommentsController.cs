@@ -42,7 +42,7 @@ namespace ISpan.InseparableCore.Controllers
 			}
 			else // 新comment=>新增
 			{
-				repo.CreateAsync(comment);
+				await repo.CreateAsync(comment);
 			}
 
 			var comments = _context.TComments.Where(t => t.FArticleId == comment.FArticleId).ToList();
