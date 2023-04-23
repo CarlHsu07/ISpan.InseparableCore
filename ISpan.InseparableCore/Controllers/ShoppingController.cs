@@ -60,12 +60,16 @@ namespace ISpan.InseparableCore.Controllers
             if (vm.cinemaId != 0)
             {
                 vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
+                if (vm.movie == null)
+                    return View();
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
             if (vm.movieId != 0)
             {
                 var date = _session_repo.GetSessionByTwoCondition(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
+                if (date == null)
+                    return View();
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
@@ -155,13 +159,23 @@ namespace ISpan.InseparableCore.Controllers
             vm.solid = new List<int>();
 
             var solid = _ticket_repo.GetSolid(vm.sessionid ,true);
+            if (solid == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             foreach (var item in solid)
             {
                 vm.solid.Add(item.FSeatId);
             }
 
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
-            var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key); 
+            var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key);
+            if( row == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             foreach (var item in row)
             {
                 var column = _seat_repo.GetSeat().Where(t => t.FSeatRow == item);
@@ -269,6 +283,11 @@ namespace ISpan.InseparableCore.Controllers
 
         public IActionResult CashPay(CorderVM vm)
         {
+            if(vm==null)
+            {
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
+            }
             var orderid = DbSave(vm);
             if (orderid == null)
             {
@@ -276,9 +295,19 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
             var order = _order_repo.GetById(orderid);
+            if (order == null)
+            {
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
+            }
             order.FStatus = true;
 
             var ticket =_ticket_repo.GetById(orderid);
+            if (ticket == null)
+            {
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
+            }
             foreach (var item in ticket)
             {
                 item.FStatus = true;
@@ -362,6 +391,11 @@ namespace ISpan.InseparableCore.Controllers
             order.FStatus = true;
 
             var ticket = _ticket_repo.GetById(order.FOrderId);
+            if (ticket == null)
+            {
+                string error = "位置已售出請重新選擇!";
+                return RedirectToAction("Error", new { error });
+            }
             foreach (var item in ticket)
             {
                 item.FStatus = true;

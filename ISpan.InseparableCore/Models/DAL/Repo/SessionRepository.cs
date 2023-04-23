@@ -18,18 +18,27 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         public DateTime end = DateTime.Now.Date.AddDays(7);
         public IEnumerable<TMovies> GetMovieByCinema(int? cinema)
         {
+            if (cinema == null)
+                return null;
+
             var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FSessionDate >= start && t.FSessionDate <= end).Select(t => t.FMovie).Distinct();
 
             return data;
         }
         public IEnumerable<TSessions> GetSessionByTwoCondition(int? cinema, int? movie)
         {
+            if (cinema == null || movie == null)
+                return null;
+
             var data = _db.TSessions.Where(t => t.FCinemaId == cinema && t.FMovieId == movie && t.FSessionDate >= start && t.FSessionDate <= end);
 
             return data;
         }
         public IEnumerable<TSessions> GetSessionBySession(int? session)
         {
+            if (session == null)
+                return null;
+
             var data = _db.TSessions.Where(t => t.FSessionId == session);
 
             return data;
