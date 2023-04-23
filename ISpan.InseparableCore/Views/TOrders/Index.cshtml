@@ -92,7 +92,7 @@
                     @Html.DisplayFor(modelItem => item.FCreditTradeNo)
                  </td>
                  <td>
-                    @Html.DisplayFor(modelItem => item.FStatus)
+                   <label>@item.FStatus.ToString().ToLower()</label>
                  </td>
                 <td>
                         <a asp-action="Details" asp-route-id="@item.FOrderId" class="btn btn-light">明細</a> |
