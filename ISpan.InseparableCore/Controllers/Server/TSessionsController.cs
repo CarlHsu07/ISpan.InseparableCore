@@ -35,11 +35,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         /// <param name="pageSize">一頁幾個</param>
         /// <param name="vm">資料</param>
         /// <returns></returns>
-       public IPagedList<CSessionVM> SessionPageList(int? pageIndex, int? pageSize, List<CSessionVM> vm)
+        public IPagedList<CSessionVM> SessionPageList(int? pageIndex, int? pageSize, List<CSessionVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
-            IPagedList<CSessionVM> pagelist = vm.ToPagedList(pageIndex??1, (int)pageSize);
+            IPagedList<CSessionVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
             if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
                 return null;
             return pagelist;
@@ -48,7 +48,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         public async Task<IActionResult> Index()
         {
             var inseparableContext = session_repo.SessionSearch(null);
-            
+
             var pagesize = 5;
             var pageIndex = 1;
 
@@ -62,7 +62,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         [HttpPost]
         public async Task<IActionResult> Index(CSessionSearch vm)
         {
-            var inseparableContext =session_repo.SessionSearch(vm);
+            var inseparableContext = session_repo.SessionSearch(vm);
             List<TMovies> movie = new List<TMovies>();
             List<TCinemas> cinema = new List<TCinemas>();
             List<TSessions> session = new List<TSessions>();
@@ -78,8 +78,8 @@ namespace ISpan.InseparableCore.Controllers.Server
             string json = JsonSerializer.Serialize(pagedItems, options);
             return Ok(new
             {
-                Items=json,
-                totalpage= totalpage,
+                Items = json,
+                totalpage = totalpage,
             }.ToJson());
 
         }
@@ -214,7 +214,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tSessions =session_repo.GetSession(id);
+            var tSessions = session_repo.GetSession(id);
             if (tSessions == null)
             {
                 return NotFound();
@@ -235,23 +235,25 @@ namespace ISpan.InseparableCore.Controllers.Server
             var tSessions = session_repo.GetOneSession(id);
             if (tSessions != null)
             {
-                try {
+                try
+                {
                     session_repo.Delete(tSessions);
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     ViewBag.error = ex.Message;
-                    return RedirectToAction("Delete", new {id});
+                    return RedirectToAction("Delete", new { id });
                 }
-                
+
             }
-            
+
             _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TSessionsExists(int id)
         {
-          return (_context.TSessions?.Any(e => e.FSessionId == id)).GetValueOrDefault();
+            return (_context.TSessions?.Any(e => e.FSessionId == id)).GetValueOrDefault();
         }
 
         //Ajax
@@ -267,7 +269,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (cinema == null)
                 return null;
 
-            var data =room_repo.GetByCinema(cinema).ToJson();
+            var data = room_repo.GetByCinema(cinema).ToJson();
 
             return Ok(data);
         }

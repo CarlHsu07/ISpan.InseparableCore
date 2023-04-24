@@ -4,21 +4,21 @@
     ViewData["Title"] = "Edit";
 }
 @section Styles{
-        <style>
-            #movie,#room,#Date,#time{
-                    color:aliceblue;
-            }
-        </style>
+    <style>
+        #movie, #room, #Date, #time {
+            color: aliceblue;
+        }
+    </style>
 }
 
-<h1>更新場次</h1>
+    <h1>更新場次</h1>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
         @if (ViewBag.error != null)
         {
-                    <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+            <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
         }
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -41,12 +41,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="FSessionDate" class="control-label"></label>
-                <input asp-for="FSessionDate" class="form-control" type="date" id="Date"/>
+                <input asp-for="FSessionDate" class="form-control" type="date" id="Date" />
                 <span asp-validation-for="FSessionDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FSessionTime" class="control-label"></label>
-                <input asp-for="FSessionTime" class="form-control" type="time" id="time"/>
+                <input asp-for="FSessionTime" class="form-control" type="time" id="time" />
                 <span asp-validation-for="FSessionTime" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -55,7 +55,7 @@
                 <span asp-validation-for="FTicketPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="送出" class="btn btn-primary" id="btn"/> |
+                <input type="submit" value="送出" class="btn btn-primary" id="btn" /> |
                 <a asp-action="Index" class="btn btn-light">取消</a>
             </div>
         </form>
@@ -66,26 +66,28 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        <script>
-            $(function(){
-                var movie = $('#movie').val();
-                var cinema = $('#cinema').val();
-                console.log(movie);
-                console.log(cinema);
-                $.ajax({
-                    url: '/TSessions/GetDate',
-                    method: 'POST',
-                    data: { movie },
-                    success: function (data) {
-                        $('#Date').attr('max', '');
-                        $('#Date').attr('max', data);
-                    },
-                    error: function (err) {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(function () {
+            var movie = $('#movie').val();
+            var cinema = $('#cinema').val();
+            console.log(movie);
+            console.log(cinema);
+            $.ajax({
+                url: '/TSessions/GetDate',
+                method: 'POST',
+                data: { movie },
+                success: function (data) {
+                    $('#Date').attr('max', '');
+                    $('#Date').attr('max', data);
+                },
+                error: function (err) {
 
-                    }
-                });
-
+                }
             });
-        </script>
+
+        });
+    </script>
 }
