@@ -1,0 +1,64 @@
+﻿@model ISpan.InseparableCore.Models.DAL.TMembers
+
+@{
+    ViewData["Title"] = "Profile";
+}
+<style>
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #191c24;
+        background-clip: border-box;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        border-radius: 0.25rem;
+    }
+
+    .card .card-body {
+        padding: 1.75rem 1.5625rem;
+    }
+
+    .profile-card h2 {
+        margin: 10px 0 0 0;
+    }
+</style>
+
+<h1>Profile</h1>
+<div class="card">
+    <div class="card-body profile-card pt-4">
+        <div class="row pb-4">
+            <img src="../../images/memberProfilePhotos/@Model.FPhotoPath" class="col-sm-2" asp-append-version="true" alt="會員大頭貼" height="">
+            <div class="col-sm-10">
+                <h2>@Html.DisplayFor(model => model.FLastName)@Html.DisplayFor(model => model.FFirstName)</h2>
+                @Model.FIntroduction
+            </div>
+        </div>
+        <div class="row pt-4 border-top border-secondary">
+            <div class="col-sm-3">
+                <label>會員編號：@Model.FMemberId</label>
+            </div>
+            <div class="col-sm-3">
+                <label>註冊時間：@Model.FSignUpTime.Value.ToString("yyyy/MM/dd HH:mm")</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <hr />
+    <dl class="row">
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FAreaId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FAreaId)
+        </dd>
+        
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

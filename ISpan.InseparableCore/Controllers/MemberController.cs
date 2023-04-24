@@ -122,8 +122,40 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        // GET: Member/Details/2
-        public async Task<IActionResult> Details(int? id)
+        // GET: Member/OrderHistorys/2
+        public async Task<IActionResult> OrderHistorys(int? id)
+        {
+            if (id == null || _context.TOrders == null)
+            {
+                return NotFound();
+            }
+
+            var orders = await _context.TOrders
+                .Include(t => t.TProductOrderDetails)
+                .Include(t => t.TTicketOrderDetails)
+                .Where(m => m.FMemberId == id)
+                .ToListAsync();
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = orders.Select(o => new CMemberOrderHistoryViewModel
+            {
+                OrderId = o.FOrderId,
+                CinemaId = o.FCinemaId,
+                OrderDate = o.FOrderDate,
+                ModifiedTime = o.FModifiedTime,
+                TotalMoney = o.FTotalMoney,
+                Status = o.FStatus
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+        // GET: Member/Profile/5
+        public async Task<IActionResult> Profile(int? id)
         {
             if (id == null || _context.TMembers == null)
             {
@@ -143,8 +175,8 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-		// GET: Member/ViewProfile/5
-		public async Task<IActionResult> ViewProfile(int? id)
+        // GET: Member/ViewProfile/5
+        public async Task<IActionResult> ViewProfile(int? id)
 		{
 			if (id == null || _context.TMembers == null)
 			{
