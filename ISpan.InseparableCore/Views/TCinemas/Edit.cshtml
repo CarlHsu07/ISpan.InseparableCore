@@ -1,0 +1,64 @@
+﻿@model ISpan.InseparableCore.Models.DAL.TCinemas
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>TCinemas</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FCinemaId" />
+            <div class="form-group">
+                <label asp-for="FCinemaName" class="control-label"></label>
+                <input asp-for="FCinemaName" class="form-control" />
+                <span asp-validation-for="FCinemaName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaRegion" class="control-label"></label>
+                <input asp-for="FCinemaRegion" class="form-control" />
+                <span asp-validation-for="FCinemaRegion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaAddress" class="control-label"></label>
+                <input asp-for="FCinemaAddress" class="form-control" />
+                <span asp-validation-for="FCinemaAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaTel" class="control-label"></label>
+                <input asp-for="FCinemaTel" class="form-control" />
+                <span asp-validation-for="FCinemaTel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FLat" class="control-label"></label>
+                <input asp-for="FLat" class="form-control" />
+                <span asp-validation-for="FLat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FLng" class="control-label"></label>
+                <input asp-for="FLng" class="form-control" />
+                <span asp-validation-for="FLng" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FTraffic" class="control-label"></label>
+                <input asp-for="FTraffic" class="form-control" />
+                <span asp-validation-for="FTraffic" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

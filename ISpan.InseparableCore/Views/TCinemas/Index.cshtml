@@ -1,9 +1,10 @@
-﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.CorderVM>
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.TCinemasVM.CTCinemasVM>
 
 @{
     ViewData["Title"] = "Index";
     var _page = ViewBag.page;
 }
+
 @section Styles{
     <style>
         .search {
@@ -14,7 +15,7 @@
             margin: 5px;
         }
 
-        #member, #cinema {
+        #brand, #city {
             color: aliceblue;
             font-size:15px;
         }
@@ -25,18 +26,19 @@
     </style>
 }
 
-    <h1>訂單</h1>
-
+    <p>
+        <a asp-action="Create" class="btn btn-rounded btn-success">新增</a>
+    </p>
     <div class="search">
         <span class="margin5">
-            <label class="control-label">會員</label>
-            <select id="member" class="form-control" asp-items="ViewBag.FMemberId">
+            <label class="control-label">地區</label>
+            <select id="city" class="form-control" asp-items="ViewBag.FCity">
                 <option>請選擇</option>
             </select>
         </span>
         <span class="margin5">
             <label class="control-label">影城</label>
-            <select id="cinema" class="form-control" asp-items="ViewBag.FCinemaId">
+            <select id="brand" class="form-control" asp-items="ViewBag.brand">
                 <option>請選擇</option>
             </select>
         </span>
@@ -49,25 +51,25 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.FOrderDate)
+                    @Html.DisplayNameFor(model => model.FCinemaName)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FModifiedTime)
+                    @Html.DisplayNameFor(model => model.FCinemaRegion)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FMember)
+                    @Html.DisplayNameFor(model => model.FCinemaAddress)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FCinema)
+                    @Html.DisplayNameFor(model => model.FCinemaTel)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FTotalMoney)
+                    @Html.DisplayNameFor(model => model.FLat)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FCreditTradeNo)
+                    @Html.DisplayNameFor(model => model.FLng)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FStatus)
+                    @Html.DisplayNameFor(model => model.FTraffic)
                 </th>
                 <th></th>
             </tr>
@@ -77,46 +79,44 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FOrderDate)
+                    @Html.DisplayFor(modelItem => item.FCinemaName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FModifiedTime)
+                    @Html.DisplayFor(modelItem => item.FCinemaRegion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FMember.FMemberId)
+                    @Html.DisplayFor(modelItem => item.FCinemaAddress)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FCinema.FCinemaName)
+                    @Html.DisplayFor(modelItem => item.FCinemaTel)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FTotalMoney)
+                    @Html.DisplayFor(modelItem => item.FLat)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FCreditTradeNo)
+                    @Html.DisplayFor(modelItem => item.FLng)
                 </td>
                 <td>
                     @{
-                        string result = string.Empty;
-                        if (item.FStatus)
-                        {
-                            result = "正常";
-                        }
-                        else
-                        {
-                            result = "取消";
+                        string result = "";
+                        if(item.FTraffic.Length>2){
+                            result = item.FTraffic.Substring(0, 3);
+                        }else{
+                            result = item.FTraffic;
                         }
                     }
-                    <label>@result</label>
+                    @result ...
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.FOrderId" class="btn btn-light">明細</a> |
-                    <a asp-action="Delete" asp-route-id="@item.FOrderId" class="btn btn-danger">刪除</a>
+                    <a asp-action="Edit" asp-route-id="@item.FCinemaId" class="btn btn-warning">修改</a> |
+                    <a asp-action="Details" asp-route-id="@item.FCinemaId" class="btn btn-light">詳細資料</a> |
+                    <a asp-action="Delete" asp-route-id="@item.FCinemaId" class="btn btn-danger">刪除</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<div style="margin:15px; overflow:auto; display:flex;" id="pagebtn">
+<div style="margin:15px;" id="pagebtn">
     <button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
     <button type="button" class="btn btn-primary first" id="page" value="1">1</button>
     @for (int i = 2; i < _page.PageCount + 1; i++)
@@ -128,13 +128,13 @@
 @section Scripts{
     <script>
         var pagecount = @_page.PageCount;
-        function search(member, cinema, pageIndex) {
+        function search(brand, city, pageIndex) {
             $.ajax({
-                url: '/TOrders/Index',
+                url: '/TCinemas/Index',
                 method: 'POST',
                 data: {
-                    member,
-                    cinema,
+                    brand,
+                    city,
                     pageIndex
                 },
                 success: function (data) {
@@ -143,48 +143,41 @@
                     var session = item.$values;
                     $('tbody').html(``);
                     $.each(session, function (index, value) {
-                        var transdate1 = new Date(value.FOrderDate)
-                        var orderdate = (transdate1).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
-                        var transdate2 = new Date(value.FModifiedTime)
-                        var modifieddate = (transdate2).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
-                        var result = "";
-                        if (value.FStatus == true) {
-                            result = "正常";
-                        } else {
-                            result = "取消";
-                        }
-                        $('tbody').append(`<tr>
-                            <td>
-                            ${orderdate}
-                            </td>
-                            <td>
-                            ${modifieddate}
-                            </td>
-                            <td>
-                            ${value.FMemberNo}
-                            </td>
-                            <td>
+                        var result = value.FTraffic.substring(0,3);
+                        $('tbody').append(`
+                        <tr>
+                        <td>
                             ${value.FCinemaName}
-                            </td>
-                             <td>
-                            ${value.FTotalMoney}
-                             </td>
-                            <td>
-                            ${value.FCreditTradeNo}
-                            </td>
-                             <td>
-                             ${result}
-                             </td>
-                            <td>
-                                <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
-                                <a href="Delete/${value.FOrderId}" class="btn btn-danger">刪除</a>
-                            </td>
+                        </td>
+                        <td>
+                            ${value.FCinemaRegion}
+                        </td>
+                        <td>
+                            ${value.FCinemaAddress}
+                        </td>
+                        <td>
+                            ${value.FCinemaTel}
+                        </td>
+                        <td>
+                            ${value.FLat}
+                        </td>
+                        <td>
+                            ${value.FLng}
+                        </td>
+                        <td>
+                            ${result} ...
+                        </td>
+                        <td>
+                            <a href="Edit/${value.FCinemaId}" class="btn btn-warning">修改</a> |
+                            <a href="Details/${value.FCinemaId}" class="btn btn-light">詳細資料</a> |
+                            <a href="Delete/${value.FCinemaId}" class="btn btn-danger">刪除</a>
+                        </td>
                         </tr>`)
                     });
                     if (Model.totalpage != pagecount) {
                         pagecount = Model.totalpage;
                         $('#pagebtn').html(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
-                        <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
+                                            <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
                         for (var i = 2; i < Model.totalpage + 1; i++) {
                             $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
                         }
@@ -197,10 +190,10 @@
             });
         }
         $(document).on('click', '#page', function () {
-            var member = $('#member').val();
-            var cinema = $('#cinema').val();
+            var brand = $('#brand').val();
+            var city = $('#city').val();
             var pageIndex = $(this).val();
-            search(member, cinema, pageIndex);
+            search(brand, city, pageIndex);
 
             $('.btn-primary').addClass('btn-secondary');
             $('.btn-primary').removeClass('btn-primary');
@@ -209,14 +202,15 @@
             $(this).removeClass('btn-secondary');
         });
         $('.btn-info').click(function () {
-            var member = $('#member').val();
-            var cinema = $('#cinema').val();
+            var brand = $('#brand').val();
+            var city = $('#city').val();
+
             var pageIndex = 1;
-            search(member, cinema, pageIndex);
+            search(brand, city, pageIndex);
             $('.btn-primary').addClass('btn-secondary');
             $('.btn-primary').removeClass('btn-primary');
             $('.first').removeClass('btn-secondary');
             $('.first').addClass('btn-primary');
         });
     </script>
-}
+    }

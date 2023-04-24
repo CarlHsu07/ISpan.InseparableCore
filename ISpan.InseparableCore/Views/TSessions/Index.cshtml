@@ -16,13 +16,14 @@
 
         #movie, #cinema {
             color: aliceblue;
+            font-size:15px;
         }
     </style>
 }
     <h1>場次</h1>
 
     <p>
-        <a asp-action="Create" class="btn btn-rounded btn-warning">新增場次</a>
+        <a asp-action="Create" class="btn btn-rounded btn-success">新增場次</a>
     </p>
     <div class="search">
         <span class="margin5">
@@ -89,7 +90,7 @@
                     @Html.DisplayFor(modelItem => item.FTicketPrice)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.FSessionId" class="btn btn-success">修改</a> |
+                    <a asp-action="Edit" asp-route-id="@item.FSessionId" class="btn btn-warning">修改</a> |
                     <a asp-action="Details" asp-route-id="@item.FSessionId" class="btn btn-light">詳細資料</a> |
                     <a asp-action="Delete" asp-route-id="@item.FSessionId" class="btn btn-danger">刪除</a>
                 </td>
@@ -147,7 +148,7 @@
                             ${value.FTicketPrice}
                         </td>
                         <td>
-                            <a href="Edit/${value.FSessionId}" class="btn btn-success">修改</a> |
+                            <a href="Edit/${value.FSessionId}" class="btn btn-warning">修改</a> |
                             <a href="Details/${value.FSessionId}" class="btn btn-light">詳細資料</a> |
                             <a href="Delete/${value.FSessionId}" class="btn btn-danger">刪除</a>
                         </td>

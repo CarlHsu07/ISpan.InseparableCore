@@ -63,9 +63,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         public async Task<IActionResult> Index(CSessionSearch vm)
         {
             var inseparableContext = session_repo.SessionSearch(vm);
-            List<TMovies> movie = new List<TMovies>();
-            List<TCinemas> cinema = new List<TCinemas>();
-            List<TSessions> session = new List<TSessions>();
+
             var pagesize = 5;
             var pageIndex = vm.pageIndex;
             var count = inseparableContext.Count();
