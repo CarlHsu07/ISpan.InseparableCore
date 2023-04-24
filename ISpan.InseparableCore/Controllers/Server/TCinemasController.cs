@@ -16,6 +16,9 @@ using System.Drawing.Printing;
 using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using ISpan.InseparableCore.Models.BLL.Interfaces;
+using ISpan.InseparableCore.Models.BLL;
+using Microsoft.AspNetCore.Http;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -81,8 +84,8 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tCinemas = await _context.TCinemas
-                .FirstOrDefaultAsync(m => m.FCinemaId == id);
+            var tCinemas =cinema_repo.GetCinema(id);
+
             if (tCinemas == null)
             {
                 return NotFound();
@@ -102,11 +105,21 @@ namespace ISpan.InseparableCore.Controllers.Server
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FCinemaId,FCinemaName,FCinemaRegion,FCinemaAddress,FCinemaTel,FLat,FLng,FTraffic")] TCinemas tCinemas)
+        public async Task<IActionResult> Create([Bind("FCinemaId,FCinemaName,FCinemaRegion,FCinemaAddress,FCinemaTel,FLat,FLng,FTraffic")] CTCinemasCreateVM tCinemas)
         {
+            ICinemaRepository repo = new CinemaRepository(_context);
+            CinemaService service = new CinemaService(repo);
             if (ModelState.IsValid)
             {
-                _context.Add(tCinemas);
+                try 
+                { 
+                service.Create(tCinemas.cinemas);
+                }
+                catch(Exception ex)
+                {
+                    ViewBag.error = $"{ex.Message}";
+                    return View(tCinemas);
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

@@ -2,7 +2,7 @@
 using ISpan.InseparableCore.Models.BLL.Dtos;
 using ISpan.InseparableCore.Models.BLL.Interface;
 
-namespace ISpan.InseparableCore.Models
+namespace ISpan.InseparableCore.Models.BLL
 {
     public class SessionService
     {
@@ -15,8 +15,8 @@ namespace ISpan.InseparableCore.Models
         public void Create(SessionCreateDto dto)
         {
 
-            var entityInDb = repo.GetByDateTime(dto.FRoomId, dto.FSessionDate,dto.FSessionTime);
-            if (entityInDb != null) throw new Exception("該影廳已有電影播放!!");
+            var entityInDb = repo.GetByDateTime(dto.FRoomId, dto.FSessionDate, dto.FSessionTime);
+            if (entityInDb != null) throw new Exception("該時段影廳已有電影播放!!");
 
             repo.Create(dto.session);
         }
@@ -24,7 +24,7 @@ namespace ISpan.InseparableCore.Models
         {
 
             var entityInDb = repo.GetByDateTime(dto.FRoomId, dto.FSessionDate, dto.FSessionTime);
-            if (entityInDb != null && entityInDb.FSessionId!=dto.FSessionId) throw new Exception("該影廳已有電影播放!!");
+            if (entityInDb != null && entityInDb.FSessionId != dto.FSessionId) throw new Exception("該時段影廳已有電影播放!!");
 
             repo.Edit(dto.session);
         }

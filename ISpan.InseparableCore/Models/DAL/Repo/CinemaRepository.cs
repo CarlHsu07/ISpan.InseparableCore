@@ -1,10 +1,14 @@
-﻿using ISpan.InseparableCore.ViewModels;
+﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.Models.BLL.Interfaces;
+using ISpan.InseparableCore.ViewModels;
 using ISpan.InseparableCore.ViewModels.TCinemasVM;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using System.Runtime.CompilerServices;
 
 namespace ISpan.InseparableCore.Models.DAL.Repo
 {
-    public class CinemaRepository
+    public class CinemaRepository:ICinemaRepository
     {
         private readonly InseparableContext _db;
         public CinemaRepository(InseparableContext db)
@@ -55,6 +59,31 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                 return null;
 
             var data = _db.TCinemas.FirstOrDefault(t => t.FCinemaId == id);
+            CTCinemasVM vm = new CTCinemasVM();
+            vm.cinemas = data;
+            return vm;
+        }
+        public void Create(CinemaEntity entity)
+        {
+            if (entity == null)
+                throw new Exception("資料傳輸錯誤");
+
+            try
+            {
+                _db.TCinemas.Add(entity.cinemas);
+                _db.SaveChanges();
+            }catch(SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public TCinemas GetByName(string fCinemaName)
+        {
+            if (fCinemaName == null)
+                throw new Exception("資料傳輸錯誤");
+
+            var data = _db.TCinemas.FirstOrDefault(t => t.FCinemaName.Equals(fCinemaName));
 
             return data;
         }

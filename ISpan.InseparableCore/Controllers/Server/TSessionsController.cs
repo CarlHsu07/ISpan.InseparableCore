@@ -9,7 +9,7 @@ using NuGet.Protocol;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ISpan.InseparableCore.Models.BLL.Interface;
-using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {

@@ -7,6 +7,10 @@
     <style>
         #cinema, #movie, #room, #Date, #time {
             color: aliceblue;
+            font-size: 15px;
+        }
+        .input:focus {
+            color: aliceblue;
         }
     </style>
 }
@@ -50,7 +54,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="FTicketPrice" class="control-label"></label>
-                <input asp-for="FTicketPrice" class="form-control" />
+                <input asp-for="FTicketPrice" class="form-control input" />
                 <span asp-validation-for="FTicketPrice" class="text-danger"></span>
             </div>
             <div class="form-group">
