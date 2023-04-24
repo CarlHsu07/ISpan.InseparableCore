@@ -7,14 +7,7 @@ namespace ISpan.InseparableCore.Models.DAL
 {
     public partial class TMovieLevels
     {
-        public TMovieLevels()
-        {
-            TMovies = new HashSet<TMovies>();
-        }
-
         public int FLevelId { get; set; }
         public string FLevelName { get; set; }
-
-        public virtual ICollection<TMovies> TMovies { get; set; }
     }
 }

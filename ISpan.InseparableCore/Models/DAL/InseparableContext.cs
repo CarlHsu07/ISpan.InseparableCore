@@ -1042,9 +1042,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");
 
-                entity.Property(e => e.FDeleted)
-                    .HasColumnName("fDeleted")
-                    .HasDefaultValueSql("((0))");
+                entity.Property(e => e.FDeleted).HasColumnName("fDeleted");
 
                 entity.Property(e => e.FMovieActors)
                     .HasMaxLength(4000)
@@ -1084,12 +1082,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FMovieScore)
                     .HasColumnType("decimal(2, 1)")
                     .HasColumnName("fMovieScore");
-
-                entity.HasOne(d => d.FMovieLevel)
-                    .WithMany(p => p.TMovies)
-                    .HasForeignKey(d => d.FMovieLevelId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Movies_MovieLevels");
             });
 
             modelBuilder.Entity<TOrders>(entity =>
