@@ -41,7 +41,7 @@
 		width: 700px;
 	}
 
-	.divContainerRow select, .divContainerRow input {
+	.divContainerRow select, .divContainerRow input ,divContainerRow button{
 		margin: 10px;
 		font-size: 20px;
 	}
@@ -88,15 +88,18 @@
             </div>
 			<div class="form-group divContainerRow btnEditAndDeleted">
                 <input type="submit" value="送出" class="btn btn-primary" />
+				<button type="button" class="btn btn-info" style="margin: 10px;font-size: 20px;" onclick="backToIndex()">
+					返回
+				</button>
             </div>	
         </form>
     </div>
 </div>
 
-<div>
-	<a asp-action="Index" style=" font-size:30px">返回</a>
-</div>
 
 @section Scripts {
+	<script>
+		function backToIndex(){ window.location.href = "/TArticles/Index" }
+	</script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

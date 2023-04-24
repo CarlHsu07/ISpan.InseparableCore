@@ -43,7 +43,10 @@
 	.go-right {
 		justify-content: flex-end
 	}
-
+	td {
+		max-width: 100px;
+		word-wrap: break-word;
+	}
 
 	.divBlock {
 		margin: 20px
@@ -60,7 +63,10 @@
 		bottom: -20px;
 		right: -500px;
 	}
-
+	.link-container {
+	  text-align: center;
+	  cursor: pointer;
+	}
 </style>
 <h1 style="margin:20px;">電影管理</h1>
 
@@ -94,7 +100,7 @@
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition" >
-				<a href="/TMovies/Create" class="btn btn-primary">新增</a>
+				<a href="/TMovies/Create" class="btn btn-info">新增</a>
 			</div>
 		</div>
 	</form>
@@ -149,11 +155,11 @@
 			{
 				<tr>
 					<td>
-						<p>
-							<a asp-action="Details" asp-route-id="@item.FMovieId">
+						<a asp-action="Details" asp-route-id="@item.FMovieId">
+							<p class="link-container">
 								@Html.DisplayFor(modelItem => item.FMovieName)
-							</a>
-						</p>
+							</p>
+						</a>
 					</td>
 					<td>
 						<p>
@@ -188,12 +194,11 @@
 					<td>
 						<div class="divContainer">
 							<div class="form-group">
-								<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-primary">編輯</a>
+								<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
 							</div>
-							<form asp-action="Delete" class="form-group">
-								<input type="hidden" name="movieId" value="@item.FMovieId" />
-								<input type="submit" value="刪除" class="btn btn-danger " style="width:100%;height:100%" onclick="return confirm('你確定要刪除嗎？')" />
-							</form>
+							<div class="form-group">
+								<button value="@item.FMovieId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -209,7 +214,7 @@
 </div>
 <div style=" font-size:larger" class="">
 	<div class="btn-toolbar center-container" role="toolbar" aria-label="Toolbar with button groups">
-		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer " style="margin:10px auto;">
+		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer" style="margin:10px auto;">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			<button type="button" class="btn btn-primary btnPage" id="1" value="1">1</button>
 			@for (int i = 2; i < pagedList.PageCount + 1; i++)
@@ -291,10 +296,10 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-											<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-primary">編輯</a>
+											<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
 										</div>
 										<div class="form-group">
-												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" />刪除</button>
+												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" >刪除</button>
 										</div>
 									</div>
 								</td>
@@ -309,16 +314,17 @@
 						</div>
 					`)
 					if (PageCountNumber != context.PageCount) {
+						alert(PageCountNumber.toString() + context.PageCount)
 						PageCountNumber = context.PageCount
-						$("#divPageContainer").html(`
-											`)
+						$("#divPageContainer").html(``)
+						alert(PageCountNumber.toString() + context.PageCount)
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
 						$("#divPageContainer").append(`
-												<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+							<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
 						`)
-						for (let i = 2; i < context.PageCount + 1; i++) {
+						for (let i = 2; i <= context.PageCount; i++) {
 							$("#divPageContainer").append(`
 								<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
 							`)
@@ -394,10 +400,18 @@
 			//confirm('你確定要刪除嗎？' + movieId)
 			$.ajax({
 				type: "POST",
-				url: "/TMovies/Delete",
-				data: { movieId },
+				url: "/TMovies/DeleteAjax",
+				data: { "movieId": parseInt($(this).attr("value")) },
 				success: function (data) {
 					alert("已刪除")
+					let page = pageNumber
+					let key = $("#Key").val()
+					let categoryId = $("#CategoryId").find(":selected").val()
+					let levelId = $("#LevelId").find(":selected").val()
+					let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+					alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
+
+					show(key, categoryId, dateCategoryId, levelId, page)
 				},
 				error: function(xhr, status, error) {					
 					// 處理錯誤

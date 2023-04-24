@@ -13,6 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("名稱")]
 		[Required]
 		public string? FMovieName { get; set; }
+		[Required]
 		[DisplayName("簡介")]
 		public string? FMovieIntroduction { get; set; }
 		[DisplayName("簡介")]

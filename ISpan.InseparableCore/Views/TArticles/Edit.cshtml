@@ -1,6 +1,9 @@
 ﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
 
 <style>
+	.Delete {
+	}
+
 	.btnEditAndDeleted{
 		justify-content: flex-end
 	}
@@ -29,7 +32,7 @@
 		border-width: 3px;
 		border-style: solid;
 	}
-
+	
 	titleInput {
 		width: 700px;
 	}
@@ -87,24 +90,39 @@
 				<span asp-validation-for="FArticleContent" class="text-danger"></span>
 			</div>
 			<div class="form-group divContainerRow btnEditAndDeleted">
-				<div class="">
+				<div class="form-group">
 					<input type="submit" value="儲存" class="btn btn-primary" />
-				</div>
-				<div class="form-group ">
-					<form asp-action="Delete">
-						<input type="hidden" name="articleId" value="@Model.FArticleId" />
-						<input type="submit" value="刪除" class="btn btn-danger " onclick="return confirm('你確定要刪除嗎？')" />
-					</form>
+					<button value="@Model.FArticleId" class="btn btn-danger Delete" 
+					style="margin: 10px;font-size: 20px;" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+					<button type="button" class="btn btn-info" style="margin: 10px;font-size: 20px;"
+					onclick="backToIndex()">返回</button>
+
 				</div>
 			</div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index" style=" font-size:30px">返回</a>
-</div>
-
 @section Scripts {
+	<script>
+		function backToIndex() { window.location.href = "/TArticles/Index" }
+
+		$(document).on('click', '.Delete', function () {
+			var movieId = parseInt($(this).attr("value"))
+			//confirm('你確定要刪除嗎？' + movieId)
+			$.ajax({
+				type: "POST",
+				url: "/TArticles/DeleteAjax",
+				data: { "articleId": parseInt($(this).attr("value")) },
+				success: function (data) {
+					alert("已刪除")
+				},
+				error: function (xhr, status, error) {
+					// 處理錯誤
+					console.log("AJAX request error: " + status + " - " + error);
+				}
+			});
+		})
+	</script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

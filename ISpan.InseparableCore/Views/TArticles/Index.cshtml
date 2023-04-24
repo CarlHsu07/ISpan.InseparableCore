@@ -46,7 +46,7 @@
 	.inDivPosition {
 		position: relative;
 		bottom: -20px;
-		right: -500px;
+		right: -700px;
 	}
 </style>
 
@@ -164,14 +164,12 @@
 				</tr>
 			}
 		</tbody>
-		<tfoot>
-			<tr>
-				<td class="text-muted" colspan="5">
-					每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
-				</td>
-			</tr>
-		</tfoot>
 	</table>
+	<div id="divDataCount">
+		<p class="text-muted" colspan="5">
+			每頁 @pagedList.PageSize 筆資料，共 @pagedList.PageCount 頁，全部共有 @pagedList.TotalItemCount 筆資料。
+		</p>
+	</div>
 </div>
 
 <div style=" font-size:larger" class="">
@@ -306,7 +304,7 @@
 
 						`)
 					})
-					$("#tableSearch").append(`
+					$("#divDataCount").html(`
 						<tfoot>
 							<tr>
 								<td class="text-muted" colspan="5">
@@ -320,12 +318,12 @@
 						$("#divPageContainer").html(`
 						`)
 						$("#divPageContainer").append(`
-							<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
-						`)
-						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
-						for (let i = 2; i < context.PageCount + 1; i++)
+						$("#divPageContainer").append(`
+							<button type="button" class="btn btn-primary btnPage"  id="1" value="1">1</button>
+						`)
+						for (let i = 2; i <= context.PageCount; i++)
 						{
 							$("#divPageContainer").append(`
 								<button type="button" class="btn btn-secondary btnPage"  id="${i}" value="${i}">${i}</button>
@@ -336,7 +334,6 @@
 							<button type="button" class="btn btn-secondary" id="nextPage">></button>
 						`)
 					}
-
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},

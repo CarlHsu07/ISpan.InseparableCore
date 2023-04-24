@@ -138,14 +138,14 @@ namespace ISpan.InseparableCore.Controllers
 
 			//是否點讚
 			int memberId = 1;
-			var detailInDb = _context.TArticleLikeDetails.FirstOrDefault(t => t.FMemberId == memberId
+			var detailInDb = await _context.TArticleLikeDetails.FirstOrDefaultAsync(t => t.FMemberId == memberId
 																		&& t.FArticleId == vm.FArticleId);
 			if (detailInDb == null) vm.LikeOrUnlike = false;
 			else vm.LikeOrUnlike = true;
 
 			//點閱數+1
 			repo.Click(vm.FArticleId);
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
+			ViewData["FMemberId"] =  new SelectList(_context.TMembers, "FId", "FFirstName");
 
 			return View(vm);
 		}
@@ -273,9 +273,9 @@ namespace ISpan.InseparableCore.Controllers
 		}
 
 		// POST: TArticles/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Delete(int articleId)
+		[HttpPost]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteAjax(int articleId)
 		{
 			//if (GetUserId() == 0) return RedirectToAction(nameof(HomeController.Login));
 
@@ -287,10 +287,9 @@ namespace ISpan.InseparableCore.Controllers
 
 			if (article != null)
 			{
-				await repo.DeleteAsync(article.FArticleId);
+				repo.Delete(article.FArticleId);
 			}
 
-			await _context.SaveChangesAsync();
 			return RedirectToAction(nameof(Index));
 		}
 

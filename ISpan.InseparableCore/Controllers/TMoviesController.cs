@@ -213,9 +213,10 @@ namespace ISpan.InseparableCore.Controllers
 				}
 				return Ok(vms.ToJson());
 			}
-			else if (comment.FSerialNumber != 0)//comment已存在=>跟新
+			else if (comment.FSerialNumber != 0 || comment.FDeleted)//comment已存在=>跟新
 			{
 				var commentInDb = await _context.TMovieCommentDetails.FindAsync(comment.FSerialNumber);
+				commentInDb.FDeleted = comment.FDeleted;
 				commentInDb.FComment = comment.FComment;
 				_context.Update(commentInDb);
 				_context.SaveChanges();
@@ -234,7 +235,11 @@ namespace ISpan.InseparableCore.Controllers
 			}
 			return Ok(vms.ToJson());
 		}
-
+		[HttpPost]
+		public IActionResult ShowOwnScore()
+		{
+			return Ok(1);
+		}
 		public async Task<IActionResult> MovieScore(TMovieScoreDetails score)
 		{
 			if (GetUserId() != 0) score.FMemberId = GetUserId();
@@ -341,8 +346,21 @@ namespace ISpan.InseparableCore.Controllers
 
 		// POST: TMovies/Delete/5
 		[HttpPost]
-		[ValidateAntiForgeryToken]
+		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int movieId)
+		{
+			if (_context.TMovies == null)
+			{
+				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
+			}
+			var movie = await _context.TMovies.FindAsync(movieId);
+
+			await repo.DeleteAsync(movieId);
+
+			return RedirectToAction(nameof(IndexMaintainer));
+		}
+		[HttpPost]
+		public async Task<IActionResult> DeleteAjax(int movieId)
 		{
 			if (_context.TMovies == null)
 			{

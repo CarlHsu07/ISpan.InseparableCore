@@ -14,7 +14,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<ArticleVm> Search(ArticleSearchCondition? condition)
 		{
-			var articles = context.TArticles.ToList();
+			var articles = context.TArticles.Where(t => t.FDeleted == false).OrderByDescending(t => t.FArticlePostingDate).ToList();
 
 			if (condition == null) return ModelToVms(articles);
 
@@ -93,16 +93,16 @@ namespace ISpan.InseparableCore.Models.DAL
 			await context.SaveChangesAsync();
 
 		}
-		public async void Click(int articleId)
+		public void Click(int articleId)
 		{
 			TArticles article = context.TArticles.Find(articleId);
 			article.FArticleClicks++;
 			context.Update(article);
-			await context.SaveChangesAsync();
+			context.SaveChanges();
 		}
-		public async Task DeleteAsync(int articleId)
+		public void Delete(int articleId)
 		{
-			var article = await context.TArticles.FindAsync(articleId);
+			var article = context.TArticles.Find(articleId);
 			if (article != null)
 			{
 				article.FDeleted = true;
