@@ -133,7 +133,7 @@ namespace ISpan.InseparableCore.Controllers
 		public IActionResult Index(MovieSearchCondition condition)
 		{
 			List<MovieVm> movies = repo.Search(condition).ToList();
-				
+
 			#region ViewData
 
 			//產生頁碼SelectList
@@ -236,9 +236,20 @@ namespace ISpan.InseparableCore.Controllers
 			return Ok(vms.ToJson());
 		}
 		[HttpPost]
-		public IActionResult ShowOwnScore()
+		public IActionResult ShowOwnScore(int movieId)
 		{
-			return Ok(1);
+			int score = 0;
+			if (GetUserId() != 0)
+			{
+				int memberId = GetUserId();
+				var scoreDetail = _context.TMovieScoreDetails.
+					FirstOrDefault(t => t.FMemberId == memberId && t.FMovieId == movieId);
+				if (scoreDetail != null)
+				{
+					score = scoreDetail.FScore;
+				}
+			}
+			return Ok(score);
 		}
 		public async Task<IActionResult> MovieScore(TMovieScoreDetails score)
 		{

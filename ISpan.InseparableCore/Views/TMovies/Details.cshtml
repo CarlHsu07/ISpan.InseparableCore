@@ -271,11 +271,11 @@
 		CommentDetail(0, 0, @Model.FMovieId, "",false)
 
 		//顯示自己的評分
-		function ShowOwnScore(FMovieId) {
+		function ShowOwnScore(movieId) {
 			$.ajax({
 				method: "post",
 				url: "/TMovies/ShowOwnScore",
-				data: { FMovieId },
+				data: { movieId },
 				success: function (data) {
 					let score = JSON.parse(data);
 					alert(score)
