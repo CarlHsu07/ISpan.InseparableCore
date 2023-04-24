@@ -7,11 +7,14 @@
         .input:focus{
             color:aliceblue;
         }
+        #city{
+            color: aliceblue;
+            font-size:15px;
+        }
     </style>
 }
-<h1>Create</h1>
+<h1>新增影院</h1>
 
-<h4>TCinemas</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -28,8 +31,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="FCinemaRegion" class="control-label"></label>
-                <input asp-for="FCinemaRegion" class="form-control input" />
-                <span asp-validation-for="FCinemaRegion" class="text-danger"></span>
+                <select asp-for="FCinemaRegion" class="form-control" asp-items="ViewBag.FCity" id="city">
+                    <option>請選擇</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="FCinemaAddress" class="control-label"></label>
@@ -57,14 +61,15 @@
                 <span asp-validation-for="FTraffic" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="送出" class="btn btn-primary" /> |
+                <a asp-action="Index" class="btn btn-light">取消</a>
+
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

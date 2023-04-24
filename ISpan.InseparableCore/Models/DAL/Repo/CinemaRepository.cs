@@ -87,5 +87,46 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 
             return data;
         }
+        public void Edit(CinemaEntity entity)
+        {
+            if (entity == null)
+                throw new Exception("資料傳輸錯誤!");
+
+            var edit = GetCinema(entity.FCinemaId);
+
+            edit.FCinemaName = entity.FCinemaName;
+            edit.FCinemaAddress = entity.FCinemaAddress;
+            edit.FCinemaTel = entity.FCinemaTel;
+            edit.FCinemaRegion = entity.FCinemaRegion;
+            edit.FLat = entity.FLat;
+            edit.FLng = entity.FLng;
+            edit.FTraffic = entity.FTraffic;
+
+            try
+            {
+                _db.SaveChanges();
+            }catch(SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public void Delete(int? id)
+        {
+            if (id == null)
+                throw new Exception("資料傳輸錯誤");
+
+            var delete =_db.TCinemas.FirstOrDefault(t => t.FCinemaId == id);
+
+            if(delete == null)
+                throw new Exception("資料傳輸錯誤");
+            try
+            {
+                _db.TCinemas.Remove(delete);
+                _db.SaveChanges();
+            }catch(SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

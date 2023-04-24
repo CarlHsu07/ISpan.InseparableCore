@@ -1,15 +1,16 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TCinemas
-
+﻿@model ISpan.InseparableCore.ViewModels.TCinemasVM.CTCinemasVM
 @{
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>確定要刪除嗎?</h3>
 <div>
-    <h4>TCinemas</h4>
     <hr />
+    @if (ViewBag.error != null)
+    {
+        <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+    }
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FCinemaName)
@@ -57,7 +58,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="FCinemaId" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value="刪除" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-light">取消</a>
     </form>
 </div>

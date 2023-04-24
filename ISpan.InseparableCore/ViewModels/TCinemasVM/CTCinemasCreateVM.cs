@@ -18,22 +18,29 @@ namespace ISpan.InseparableCore.ViewModels.TCinemasVM
         }
         public int FCinemaId { get => _cinema.FCinemaId; set => _cinema.FCinemaId = value; }
         [Display(Name = "名稱")]
+        [Required(ErrorMessage = "{0}必填")]
         public string FCinemaName { get => _cinema.FCinemaName; set => _cinema.FCinemaName = value; }
         [Display(Name = "地區")]
+        [Required(ErrorMessage = "{0}必填")]
         public string FCinemaRegion { get => _cinema.FCinemaRegion; set => _cinema.FCinemaRegion = value; }
         [Display(Name = "地址")]
+        [Required(ErrorMessage = "{0}必填")]
 
         public string FCinemaAddress { get => _cinema.FCinemaAddress; set => _cinema.FCinemaAddress = value; }
         [Display(Name = "電話")]
+        [Required(ErrorMessage = "{0}必填")]
 
         public string FCinemaTel { get => _cinema.FCinemaTel; set => _cinema.FCinemaTel = value; }
         [Display(Name = "座標(緯度)")]
+        [Required(ErrorMessage = "{0}必填")]
 
         public double FLat { get => _cinema.FLat; set => _cinema.FLat = value; }
         [Display(Name = "座標(經度)")]
+        [Required(ErrorMessage = "{0}必填")]
 
         public double FLng { get => _cinema.FLng; set => _cinema.FLng = value; }
         [Display(Name = "交通資訊")]
+        [Required(ErrorMessage = "{0}必填")]
 
         public string FTraffic { get => _cinema.FTraffic; set => _cinema.FTraffic = value; }
     }

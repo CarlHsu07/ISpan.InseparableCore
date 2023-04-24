@@ -19,5 +19,12 @@ namespace ISpan.InseparableCore.Models.BLL
 
             repo.Create(dto.cinemas);
         }
+        public void Edit(CinemaCreateDto dto)
+        {
+            var entityInDb = repo.GetByName(dto.FCinemaName);
+            if (entityInDb != null && entityInDb.FCinemaId!=dto.FCinemaId) throw new Exception("該影院已存在!!");
+
+            repo.Edit(dto.cinemas);
+        }
     }
 }

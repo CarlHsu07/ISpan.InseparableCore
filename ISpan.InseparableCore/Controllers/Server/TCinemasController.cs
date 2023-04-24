@@ -97,6 +97,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         // GET: TCinemas/Create
         public IActionResult Create()
         {
+            ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
             return View();
         }
 
@@ -134,12 +135,23 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tCinemas = await _context.TCinemas.FindAsync(id);
+            var tCinemas = cinema_repo.GetCinema(id);
             if (tCinemas == null)
             {
                 return NotFound();
             }
-            return View(tCinemas);
+            ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
+            CTCinemasCreateVM vm = new CTCinemasCreateVM();
+            vm.FCinemaId = tCinemas.FCinemaId;
+            vm.FCinemaName = tCinemas.FCinemaName;
+            vm.FCinemaAddress = tCinemas.FCinemaAddress;
+            vm.FCinemaTel = tCinemas.FCinemaTel;
+            vm.FLat = tCinemas.FLat;
+            vm.FLng=tCinemas.FLng;
+            vm.FTraffic=tCinemas.FTraffic;
+            vm.FCinemaRegion = tCinemas.FCinemaRegion;
+
+            return View(vm);
         }
 
         // POST: TCinemas/Edit/5
@@ -147,8 +159,10 @@ namespace ISpan.InseparableCore.Controllers.Server
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FCinemaId,FCinemaName,FCinemaRegion,FCinemaAddress,FCinemaTel,FLat,FLng,FTraffic")] TCinemas tCinemas)
+        public async Task<IActionResult> Edit(int id, [Bind("FCinemaId,FCinemaName,FCinemaRegion,FCinemaAddress,FCinemaTel,FLat,FLng,FTraffic")] CTCinemasCreateVM tCinemas)
         {
+            ICinemaRepository repo = new CinemaRepository(_context);
+            CinemaService service = new CinemaService(repo);
             if (id != tCinemas.FCinemaId)
             {
                 return NotFound();
@@ -158,10 +172,10 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 try
                 {
-                    _context.Update(tCinemas);
+                    service.Edit(tCinemas.cinemas);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
                     if (!TCinemasExists(tCinemas.FCinemaId))
                     {
@@ -169,11 +183,12 @@ namespace ISpan.InseparableCore.Controllers.Server
                     }
                     else
                     {
-                        throw;
+                        ViewBag.error = $"{ex.Message}";
+                        return View(tCinemas);
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
+                return RedirectToAction(nameof(Index)); 
+            } 
             return View(tCinemas);
         }
 
@@ -185,8 +200,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tCinemas = await _context.TCinemas
-                .FirstOrDefaultAsync(m => m.FCinemaId == id);
+            var tCinemas = cinema_repo.GetCinema(id);
             if (tCinemas == null)
             {
                 return NotFound();
@@ -204,12 +218,16 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 return Problem("Entity set 'InseparableContext.TCinemas'  is null.");
             }
-            var tCinemas = await _context.TCinemas.FindAsync(id);
-            if (tCinemas != null)
-            {
-                _context.TCinemas.Remove(tCinemas);
-            }
 
+            try
+            {
+                cinema_repo.Delete(id);
+            }
+            catch(Exception ex)
+            {
+                ViewBag.error = $"{ex.Message}";
+                return RedirectToAction("Delete", new { id });
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
