@@ -175,6 +175,18 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
+        // POST: Home/AddFriend
+        [HttpPost]
+        public IActionResult AddFriend()
+        {
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+
+            }
+
+            return View();
+        }
+
         // GET: Member/ViewProfile/5
         public async Task<IActionResult> ViewProfile(int? id)
 		{
@@ -340,6 +352,7 @@ namespace ISpan.InseparableCore.Controllers
                         member.FAreaId = MemberIn.Area;
                         member.FAddress = MemberIn.Address;
                         member.FIntroduction = MemberIn.Introduction;
+                        // todo 字數太長的處理
 
                         if (MemberIn.Password != null) // 加密會員密碼
                         {

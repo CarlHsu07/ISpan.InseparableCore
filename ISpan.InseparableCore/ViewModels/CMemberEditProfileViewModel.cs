@@ -108,18 +108,11 @@ namespace ISpan.InseparableCore.ViewModels
 		}
 
         [Display(Name = "會員大頭貼")]
-        public string? PhotoPath
-		{
-			get { return _member.FPhotoPath; }
-			set { _member.FPhotoPath = value; }
-		}
+        public string? PhotoPath { get { return _member.FPhotoPath; } set { _member.FPhotoPath = value; } }
 
-		[Display(Name = "自我介紹")]
-		public string? Introduction
-		{
-			get { return _member.FIntroduction; }
-			set { _member.FIntroduction = value; }
-		}
+		[Display(Name = "個人簡介")]
+        [MaxLength(500, ErrorMessage = "個人簡介不能超過300字")]
+        public string? Introduction { get { return _member.FIntroduction; } set { _member.FIntroduction = value; } }
 
         //[Display(Name = "註冊時間")]
         //public DateTime? SignUpTime
