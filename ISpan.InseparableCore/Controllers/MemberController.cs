@@ -122,7 +122,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        // GET: Member/Details/5
+        // GET: Member/Details/2
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.TMembers == null)
