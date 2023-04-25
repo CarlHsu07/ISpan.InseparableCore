@@ -59,7 +59,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth.Value.ToString("yyyy/MM/dd")</span></div>
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
