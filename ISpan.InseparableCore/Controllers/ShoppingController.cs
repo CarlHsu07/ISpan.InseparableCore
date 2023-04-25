@@ -393,8 +393,46 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return ResponseError();
             }
+            //todo 好像因為沒有網址所以不會跑
         }
+        //[HttpPost]
+        //public IActionResult AddPayInfo(ECPayResponse info)
+        //{
+        //    //todo 不確定這裡要做什麼判斷
+        //    string error = string.Empty;
+        //    string json = string.Empty;
+        //    int? id = null;
+        //    if (HttpContext.Session.Keys.Contains(CDictionary.SK_ORDER_ID))
+        //    {
+        //        json = HttpContext.Session.GetString(CDictionary.SK_ORDER_ID);
+        //        id = JsonSerializer.Deserialize<int>(json);
+        //    }
+        //    if (info.RtnCode != 1)
+        //    {
+        //        var ticket = _ticket_repo.GetById(id);
+        //        if (ticket == null)
+        //        {
+        //            return Content("0|Error");
+        //        }
 
+        //        foreach (var item in ticket)
+        //        {
+        //            item.FStatus = false;
+        //        }
+
+        //        _db.SaveChanges();
+        //    }
+        //    var order = _order_repo.GetOneOrder(id);
+        //    if (order == null)
+        //    {
+        //        return Content("0|Error");
+        //    }
+        //    if (info.MerchantTradeNo != order.FCreditTradeNo)
+        //    {
+        //        return Content("0|Error");
+        //    }
+        //    return Content("1|OK");
+        //}
         [HttpPost]
         public IActionResult Paydone(int? id)
         {
