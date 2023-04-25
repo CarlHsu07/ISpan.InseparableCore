@@ -32,7 +32,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             ticket_repo=new TicketOrderRepository(context);
             product_repo=new ProductOrderRepository(context);
         }
-        public IPagedList<CorderVM> SessionPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
+        public IPagedList<CorderVM> OrderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
@@ -55,7 +55,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pageIndex = 1;
 
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = SessionPageList(pageIndex, pagesize, inseparableContext);
+            ViewBag.page = OrderPageList(pageIndex, pagesize, inseparableContext);
 
             return View(pagedItems);
         }
@@ -152,6 +152,15 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         //todo membet會員中心訂單紀錄
+        public IPagedList<CorderVM> MemberorderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
+        {
+            if (!pageIndex.HasValue || pageIndex < 1)
+                return null;
+            IPagedList<CorderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
+                return null;
+            return pagelist;
+        }
         public IActionResult MemberOrder()
         {
             TMembers member = new TMembers();

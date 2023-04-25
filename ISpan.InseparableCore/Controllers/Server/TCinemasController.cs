@@ -31,7 +31,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             _context = context;
             cinema_repo = new CinemaRepository(context);
         }
-        public IPagedList<CTCinemasVM> SessionPageList(int? pageIndex, int? pageSize, List<CTCinemasVM> vm)
+        public IPagedList<CTCinemasVM> CinemaPageList(int? pageIndex, int? pageSize, List<CTCinemasVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
@@ -50,7 +50,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             int pageIndex = 1;
             int pagesize = 5;
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = SessionPageList(pageIndex, pagesize, data);
+            ViewBag.page = CinemaPageList(pageIndex, pagesize, data);
             ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
             List<string> brnad = new List<string>{"威秀","秀泰","國賓",};
             SelectList brnadList = new SelectList(brnad);
