@@ -13,6 +13,8 @@ using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using prjMvcCoreDemo.Models;
+using System.Drawing.Printing;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -149,5 +151,36 @@ namespace ISpan.InseparableCore.Controllers.Server
             return RedirectToAction(nameof(Index));
         }
 
+        //todo membet會員中心訂單紀錄
+        public IActionResult MemberOrder()
+        {
+            TMembers member = new TMembers();
+            string json = string.Empty;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                member = JsonSerializer.Deserialize<TMembers>(json);
+            }
+            if (member == null)
+                return NotFound(); //todo 待改
+
+            var data = _context.TOrders.Where(t => t.FMemberId == member.FId).ToList();
+            //todo pagelist
+
+            return View();
+        }
+        [HttpPost]
+        public IActionResult MemberOrderDetail(int? order)
+        {
+            CorderDetaillVM vm = new CorderDetaillVM();
+            if (order == null)
+                return View();
+
+            vm.orders = order_repo.GetOneOrder(order);
+            vm.ticket = ticket_repo.GetById(order);//_context.TTicketOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+            vm.product = product_repo.GetById(order);//_context.TProductOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+
+            return View(vm);
+        }
     }
 }
