@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using System.Diagnostics.Metrics;
 using prjMvcCoreDemo.Models;
 using System.Text.Json;
+using System.Security.Claims;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -175,16 +176,36 @@ namespace ISpan.InseparableCore.Controllers
             return View(tMembers);
         }
 
-        // POST: Home/AddFriend
+        // POST: Member/AddFriend/7
         [HttpPost]
-        public IActionResult AddFriend()
+        public IActionResult AddFriend(int friendId)
         {
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            int? memberId = GetMemberID();
+            if (memberId != null)
             {
+                TMembers friend = _context.TMembers.FirstOrDefault(m => m.FId == friendId);
+                if (friend == null)
+                {
+                    return Json(new { success = false, message = "加好友失敗 in C#" });
+                }
 
+                // 做加好友的操作，向DB中的 tFriends 中插入一條記錄
+                var friendship = new TFriends
+                {
+                    FMemberId = (int)memberId,
+                    FFriendId = friend.FId,
+                    FFriendDateTime = DateTime.Now
+                };
+                _context.TFriends.Add(friendship);
+                _context.SaveChanges();
+
+                // 返回 JSON 格式的結果
+                return Json(new { success = true });
             }
-
-            return View();
+            else
+            {
+                return Json(new { success = false, message = "加好友失敗 in C#" });
+            }
         }
 
         // GET: Member/ViewProfile/5
@@ -442,15 +463,13 @@ namespace ISpan.InseparableCore.Controllers
                         throw;
                     }
                 }
+
                 return Json(new { success = true });
-                //return RedirectToAction(nameof(Index));
             }
             else
             {
                 return Json(new { success = false, message = "更改密碼失敗 in C#" });
             }
-
-            //return View(MemberIn);
         }
 
         // GET: Home/Logout
@@ -486,6 +505,19 @@ namespace ISpan.InseparableCore.Controllers
 
             // 將區域資料轉換成 JSON 格式回傳給前端
             return Json(areas);
+        }
+
+        // 從Session中取得會員的fID
+        private int? GetMemberID()
+        {
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                var member = JsonSerializer.Deserialize<TMembers>(serializedTMembers);
+                return member.FId;
+            }
+
+            return null;
         }
     }
 }
