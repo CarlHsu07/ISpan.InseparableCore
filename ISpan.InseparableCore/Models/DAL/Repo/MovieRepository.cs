@@ -21,6 +21,12 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			if (condition == null) return ModelToVms(movies);
 
+			//id搜尋
+			if (int.TryParse(condition.Key, out int movieId))
+			{
+				movies = movies.Where(t => t.FMovieId == movieId).ToList();
+				return ModelToVms(movies);
+			}
 			//電影等級
 			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId).ToList();
 
@@ -42,8 +48,10 @@ namespace ISpan.InseparableCore.Models.DAL
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
-				// || t.FMovieActors.Contains(condition.Key) || t.FMovieDirectors.Contains(condition.Key)
-				movies = movies.Where(t => t.FMovieName.Contains(condition.Key)).ToList();
+				
+				movies = movies.Where(t => t.FMovieName.Contains(condition.Key) 
+										|| t.FMovieActors.Contains(condition.Key) 
+										|| t.FMovieDirectors.Contains(condition.Key)).ToList();
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)

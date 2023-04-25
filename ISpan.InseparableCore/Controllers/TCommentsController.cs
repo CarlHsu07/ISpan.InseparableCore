@@ -46,8 +46,7 @@ namespace ISpan.InseparableCore.Controllers
 				await repo.CreateAsync(comment);
 			}
 
-			var comments = _context.TComments.Where(t => t.FArticleId == comment.FArticleId).ToList();
-			vms = repo.ModelToVms(comments).ToList();
+			vms = repo.Search(comment.FArticleId).ToList();
 
 			return Ok(new
 			{

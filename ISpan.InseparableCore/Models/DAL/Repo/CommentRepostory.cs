@@ -14,7 +14,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<CommentVm> Search(int articleId)
 		{
-			var comments = context.TComments.Where(t=>t.FArticleId == articleId).ToList();
+			var comments = context.TComments.Where(t => t.FArticleId == articleId).ToList();
 
 			return ModelToVms(comments);
 		}
@@ -45,7 +45,6 @@ namespace ISpan.InseparableCore.Models.DAL
 			TComments comment = vm.VmToModel();
 
 			context.Add(comment);
-			context.SaveChanges();
 
 			await context.SaveChangesAsync();
 		}
@@ -58,14 +57,5 @@ namespace ISpan.InseparableCore.Models.DAL
 			await context.SaveChangesAsync();
 
 		}
-		public async Task DeleteAsync(int commentId)
-		{
-			var comment = await context.TComments.FindAsync(commentId);
-			if (comment != null)
-			{
-				context.TComments.Remove(comment);
-			}
-		}
-
 	}
 }

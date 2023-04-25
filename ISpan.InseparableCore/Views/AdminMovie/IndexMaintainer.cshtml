@@ -8,6 +8,18 @@
 @using X.PagedList.Web.Common
 
 <style>
+	.form-group label {
+		font-size: 0.875rem;
+		line-height: 1;
+		vertical-align: baseline;
+		font-size: 20px;
+	}
+	p{
+		text-align: center;
+	}
+	a {
+	  text-decoration: none;
+	}
 	.Delete{
 
 	}
@@ -44,10 +56,21 @@
 		justify-content: flex-end
 	}
 	td {
-		max-width: 100px;
+		max-height:100px;
+		max-width: 200px;
 		word-wrap: break-word;
 	}
 
+	#Key, #CategoryId, #DateCategoryId, #LevelId {
+		color:aliceblue;
+		font-size:15px;
+	}
+	#Key:focus{
+		color:aliceblue;
+	}
+	p, button{
+		font-size:20px;
+	}
 	.divBlock {
 		margin: 20px
 	}
@@ -60,19 +83,20 @@
 
 	.inDivPosition {
 		position: relative;
-		bottom: -20px;
-		right: -500px;
+		bottom: -35px;
+		right: -600px;
 	}
 	.link-container {
 	  text-align: center;
 	  cursor: pointer;
+	  white-space: normal;
 	}
 </style>
 <h1 style="margin:20px;">電影管理</h1>
 
 <div class="row divBlock">
 
-	<form asp-action="Index" method="post" id="formSearch">
+	<form asp-action="Index" method="post" id="formSearch" >
 
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="divContainer ">
@@ -100,7 +124,7 @@
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition" >
-				<a href="/TMovies/Create" class="btn btn-info">新增</a>
+				<a href="/AdminMovie/Create" class="btn btn-info">新增</a>
 			</div>
 		</div>
 	</form>
@@ -194,7 +218,7 @@
 					<td>
 						<div class="divContainer">
 							<div class="form-group">
-								<a href="/TMovies/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
+								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
 							</div>
 							<div class="form-group">
 								<button value="@item.FMovieId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
@@ -233,7 +257,7 @@
 		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
 			$.ajax({
 				method: "post",
-				url: "/TMovies/Index",
+				url: "/AdminMovie/Index",
 				data: { Key, CategoryId, DateCategoryId, LevelId, Page },
 				beforeSend: function () {
 				},
@@ -258,7 +282,7 @@
 							<tr>
 								<td>
 									<p>
-										<a href="/TMovies/Details/${value.FMovieId}">
+										<a href="/AdminMovie/Details/${value.FMovieId}">
 											${value.FMovieName}
 										</a>
 									</p>
@@ -296,7 +320,7 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-											<a href="/TMovies/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
+											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
 										</div>
 										<div class="form-group">
 												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" >刪除</button>
@@ -400,7 +424,7 @@
 			//confirm('你確定要刪除嗎？' + movieId)
 			$.ajax({
 				type: "POST",
-				url: "/TMovies/DeleteAjax",
+				url: "/AdminMovie/DeleteAjax",
 				data: { "movieId": parseInt($(this).attr("value")) },
 				success: function (data) {
 					alert("已刪除")

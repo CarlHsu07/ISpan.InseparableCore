@@ -4,6 +4,11 @@
 	ViewData["Title"] = "Edit";
 }
 <style>
+	.form-group label {
+		font-size: 0.875rem;
+		line-height: 1;
+		vertical-align:baseline;
+	}
 	form .form-control {
 		border-radius: 5px;
 		background-color: rgb(20,20,20);
@@ -137,7 +142,7 @@
 					@foreach (var item in ViewBag.FMovieCategoryId)
 					{
 						<div>
-							<input type="checkbox" name="CategoryCheck" value="@item.Value" />
+							<input type="checkbox" name="CategoryCheck" value="@item.Value" id="@item.Value"/>
 							<label for="@item.Value">@item.Text</label>
 						</div>
 					}

@@ -115,7 +115,7 @@
 		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn btn-secondary">留言</button>
+		<button type="button" id="btnComment" class="btn btn-light">留言</button>
 	</div>
 </div>
 
@@ -127,7 +127,7 @@
 		function CommentDetail(FSerialNumber,  FMovieId, FComment, FDeleted) {
 			$.ajax({
 				method: "post",
-				url: "/TMovies/MovieComment",
+				url: "/MovieDetail/MovieComment",
 				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
 					alert(data)
@@ -178,7 +178,7 @@
 		function ScoreDetail( FMovieId, FScore) {
 			$.ajax({
 				method: "post",
-				url: "/TMovies/MovieScore",
+				url: "/MovieDetail/MovieScore",
 				data: { FMovieId, FScore },
 				success: function (data) {
 					let context = JSON.parse(data);
@@ -213,7 +213,7 @@
 						<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
-						<button type="button" id="btnComment" class="btn btn-secondary" value="${serialNumber}">儲存</button>
+						<button type="button" id="btnComment" class="btn btn-light" value="${serialNumber}">儲存</button>
 					</div>
 					<input type="hidden" id="hidden${serialNumber}" />
 				</div>
@@ -244,7 +244,7 @@
 		});
 
 		//單選按鈕組，按下時改變顏色
-		$(document).on('click', '.btn', function () {
+		$(document).on('click', '.btnScore', function () {
 			$('.btn-primary').addClass('btn-secondary');
 			$('.btn-secondary').removeClass('btn-primary');
 
@@ -268,7 +268,7 @@
 		function ShowOwnScore(movieId) {
 			$.ajax({
 				method: "post",
-				url: "/TMovies/ShowOwnScore",
+				url: "/MovieDetail/ShowOwnScore",
 				data: { movieId },
 				success: function (data) {
 					let score = JSON.parse(data);
