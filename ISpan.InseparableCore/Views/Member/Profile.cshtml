@@ -26,7 +26,7 @@
 
 </style>
 
-<h1>Profile</h1>
+<h1>會員首頁</h1>
 <div class="card">
     <div class="card-body profile-card pt-4">
         <div class="row pb-4">
@@ -34,7 +34,11 @@
             <div class="col-sm-10">
                 <div class="d-flex justify-content-between align-items-center pb-2">
                     <h2>@Html.DisplayFor(model => model.FLastName)@Html.DisplayFor(model => model.FFirstName)</h2>
-                    <button class="btn btn-primary" id="btnAddFriend" data-friend-status="" value="@Model.FId">加好友</button>
+                    @if (ViewBag.isSameMember == false)
+                    {
+                        <button class="btn @(ViewBag.FriendStatus == "is-friend" ? "btn-secondary" : "btn-primary")" id="btnAddFriend" data-friend-status="@ViewBag.FriendStatus" value="@Model.FId">@ViewBag.FriendBtnText</button>
+                    }
+                    
                 </div>
                 <div>
                     @Model.FIntroduction
@@ -73,7 +77,7 @@
                 var id =  btn.val();
 
                 // 取得好友的狀態
-                const friendStatus = friendButton.data("friend-status");
+                const friendStatus = btn.data("friend-status");
 
                 if (friendStatus === "not-friend") {
                     $.ajax({

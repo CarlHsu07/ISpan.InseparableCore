@@ -14,7 +14,8 @@ namespace ISpan.InseparableCore.Models.DAL
             TArticleLikeDetails = new HashSet<TArticleLikeDetails>();
             TArticles = new HashSet<TArticles>();
             TComments = new HashSet<TComments>();
-            TFriends = new HashSet<TFriends>();
+            TFriendsFFriend = new HashSet<TFriends>();
+            TFriendsFMember = new HashSet<TFriends>();
             TMemberFavoriteMovieCategories = new HashSet<TMemberFavoriteMovieCategories>();
             TMemberPoints = new HashSet<TMemberPoints>();
             TMemberReportsFReportMember = new HashSet<TMemberReports>();
@@ -101,7 +102,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual ICollection<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }
-        public virtual ICollection<TFriends> TFriends { get; set; }
+        public virtual ICollection<TFriends> TFriendsFFriend { get; set; }
+        public virtual ICollection<TFriends> TFriendsFMember { get; set; }
         public virtual ICollection<TMemberFavoriteMovieCategories> TMemberFavoriteMovieCategories { get; set; }
         public virtual ICollection<TMemberPoints> TMemberPoints { get; set; }
         public virtual ICollection<TMemberReports> TMemberReportsFReportMember { get; set; }

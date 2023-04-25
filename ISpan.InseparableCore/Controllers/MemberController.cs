@@ -158,22 +158,32 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Member/Profile/5
         public async Task<IActionResult> Profile(int? id)
         {
+            MemberService memberService = new MemberService(_context);
+
             if (id == null || _context.TMembers == null)
             {
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers
+            var member = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
                 .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
-            if (tMembers == null)
+
+            if (member == null)
             {
                 return NotFound();
             }
 
-            return View(tMembers);
+            bool isFriend = memberService.IsFriend(GetMemberID(), member.FId);
+            bool isSameMember = memberService.IsCurrentMember(GetMemberID(), member.FId);
+
+            ViewData["FriendStatus"] = isFriend ? "is-friend" : "not-friend";
+            ViewData["FriendBtnText"] = isFriend ? "已是好友" : "加入好友";
+            ViewData["isSameMember"] = isSameMember;
+
+            return View(member);
         }
 
         // POST: Member/AddFriend/7
@@ -205,6 +215,32 @@ namespace ISpan.InseparableCore.Controllers
             else
             {
                 return Json(new { success = false, message = "加好友失敗 in C#" });
+            }
+        }
+
+        // POST: Member/AddFriend/7
+        [HttpPost]
+        public IActionResult UnFriend(int friendId)
+        {
+            int? memberId = GetMemberID();
+            if (memberId != null)
+            {
+                TMembers friend = _context.TMembers.FirstOrDefault(m => m.FId == friendId);
+                if (friend == null)
+                {
+                    return Json(new { success = false, message = "取消好友失敗 in C#" });
+                }
+
+                
+                //_context.TFriends.Remove();
+                _context.SaveChanges();
+
+                // 返回 JSON 格式的結果
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, message = "取消好友失敗 in C#" });
             }
         }
 

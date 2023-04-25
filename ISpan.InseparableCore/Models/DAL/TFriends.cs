@@ -28,6 +28,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// </summary>
         public DateTime FFriendDateTime { get; set; }
 
+        public virtual TMembers FFriend { get; set; }
         public virtual TMembers FMember { get; set; }
     }
 }

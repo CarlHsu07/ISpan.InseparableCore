@@ -52,5 +52,33 @@ namespace ISpan.InseparableCore.Models.BLL
         {
             return DateTime.Now;
         }
+
+        // 判斷是否為好友
+        public bool IsFriend(int? memberAId, int? memberBId)
+        {
+            bool isFriend = false;
+
+            if (memberAId != null && memberBId != null)
+            {
+                isFriend = _context.TFriends.Any(f =>
+                        (f.FMemberId == memberAId && f.FFriendId == memberBId) ||
+                        (f.FMemberId == memberBId && f.FFriendId == memberAId));
+            }
+
+            return isFriend;
+        }
+
+        // 判斷是否為同一個會員
+        public bool IsCurrentMember(int? memberAId, int? memberBId)
+        {
+            bool isCurrentMember = false;
+
+            if (memberAId != null && memberBId != null)
+            {
+                isCurrentMember = memberAId == memberBId;
+            }
+
+            return isCurrentMember;
+        }
     }
 }
