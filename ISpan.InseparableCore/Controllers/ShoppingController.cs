@@ -346,6 +346,8 @@ namespace ISpan.InseparableCore.Controllers
                 string error = "位置已售出請重新選擇!";
                 return RedirectToAction("Error", new { error });
             }
+            string json = JsonSerializer.Serialize(orderid);
+            HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
             var web = "https://localhost:7021/"; //todo 上線要改
@@ -479,7 +481,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 item.FOrderId = orderid;
-                item.Fstatus = false;  //todo 如果在結帳同時有人訂怎麼辦
+                item.Fstatus = true;  //todo 如果在結帳同時有人訂怎麼辦
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -532,10 +534,17 @@ namespace ISpan.InseparableCore.Controllers
             return orderid;
         }
 
-        //todo 
-        public IActionResult CancelOrder(int? id)
+        //todo 確定那些需要刪除
+        public IActionResult CancelOrder()
         {
-            string error= string.Empty;
+            string error = string.Empty;
+            string json = string.Empty;
+            int? id = null;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_ORDER_ID))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_ORDER_ID);
+                id = JsonSerializer.Deserialize<int>(json);
+            }
             if (id == null)
             {
                 error = "網頁加載時出現問題";
