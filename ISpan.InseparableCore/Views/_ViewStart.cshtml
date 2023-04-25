@@ -1,9 +1,8 @@
 ﻿@{
     //Layout = "_Layout";
     var controllerName = ViewContext.RouteData.Values["controller"].ToString();
-    var folderName = controllerName.Split('/')[0];
 
-    switch (folderName)
+    switch (controllerName)
     {
         case "AdminMember":
             Layout = "~/Views/Shared/_Layout.cshtml";

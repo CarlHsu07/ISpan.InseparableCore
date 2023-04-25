@@ -268,8 +268,9 @@ namespace ISpan.InseparableCore.Controllers
             }
             if (ticket == null)
                 return RedirectToAction("seat");
+
             vm.seats = new Dictionary<int, string>();
-            var seats = ticket.Select(t => t.FSeatId);
+            var seats = ticket.Select(t => t.FSeatId); 
             if (seats == null)
             {
                 string error = "網頁加載時出現問題";
@@ -289,6 +290,7 @@ namespace ISpan.InseparableCore.Controllers
                     vm.seats.Add(item, seatid);
                 }
             }
+            
             vm.concession = (int)concession;
             vm.regular = (int)regular;
             vm.session = _session_repo.GetOneSession(sessionid);
@@ -373,6 +375,7 @@ namespace ISpan.InseparableCore.Controllers
             get.FCreditTradeNo = TradeNo;
             _db.SaveChanges();
 
+            ViewBag.order = orderid;
             return View(order);
 
         }
@@ -476,7 +479,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 item.FOrderId = orderid;
-                item.Fstatus = false;
+                item.Fstatus = false;  //todo 如果在結帳同時有人訂怎麼辦
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -502,11 +505,11 @@ namespace ISpan.InseparableCore.Controllers
                     HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
                     return null;
                 }
-
+                
             }
 
             //product
-            if(product_list != null)
+            if (product_list != null)
             {
                 foreach (var item in product_list)
                 {
@@ -528,7 +531,31 @@ namespace ISpan.InseparableCore.Controllers
            
             return orderid;
         }
+        public IActionResult CancelOrder(int? id)
+        {
+            string error= string.Empty;
+            if (id == null)
+            {
+                error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
+            var ticket = _ticket_repo.GetById(id);
+            if (ticket == null)
+            {
+                error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
 
+            foreach(var item in ticket)
+            {
+                item.FStatus = false;
+            }
+
+            _db.SaveChanges();
+
+            error = "結帳失敗!!";
+            return RedirectToAction("Error", new { error });
+        }
         //清除session
         public IActionResult Clearticket()
         {

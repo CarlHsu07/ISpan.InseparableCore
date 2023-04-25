@@ -152,11 +152,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         //todo membet會員中心訂單紀錄
-        public IPagedList<CorderVM> MemberorderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
+        public IPagedList<TOrders> MemberorderPageList(int? pageIndex, int? pageSize, List<TOrders> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
-            IPagedList<CorderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            IPagedList<TOrders> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
             if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
                 return null;
             return pagelist;
@@ -175,8 +175,13 @@ namespace ISpan.InseparableCore.Controllers.Server
 
             var data = _context.TOrders.Where(t => t.FMemberId == member.FId).ToList();
             //todo pagelist
+            var pagesize = 5;
+            var pageIndex = 1;
 
-            return View();
+            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.page = MemberorderPageList(pageIndex, pagesize, data);
+
+            return View(pagedItems);
         }
         [HttpPost]
         public IActionResult MemberOrderDetail(int? order)
