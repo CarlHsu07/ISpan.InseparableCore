@@ -35,7 +35,7 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("下映日期")]
 		public string? OffDate { get; set; }
 		[Required]
-		[DisplayName("片長")]
+		[DisplayName("片長(分鐘)")]
 		public int FMovieLength { get; set; }
 		[DisplayName("圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }

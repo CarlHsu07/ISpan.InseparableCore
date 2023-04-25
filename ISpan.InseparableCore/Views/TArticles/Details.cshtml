@@ -124,9 +124,6 @@
 	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
 </div>
 <div id="divComment"></div>
-<div class="form-group">
-	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
-</div>
 
 <div class="divContainerRow">
 	<div class="input-group">
@@ -142,19 +139,18 @@
 		function backToIndex() { window.location.href = "/TArticles/Index" }
 
 		//送出評論及展示評論ajax函數
-		function CommentDetail(FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted) {
+		function CommentDetail(FCommentId, FArticleId, FCommentContent, FDeleted) {
 			$.ajax({
 				method: "post",
 				url: "/TComments/ArticleComment",
-				data: { FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted },
+				data: { FCommentId, FArticleId, FCommentContent, FDeleted },
 				success: function (data) {
 					let context = JSON.parse(data);
 					//alert(data)
-					let memberId = $("#FMemberId").find(":selected").attr("value")
-
+					let UserId = context.UserId
 					$("#divComment").html("")
-					$.each(context, function (index, value) {
-						if (value.FMemberId == memberId && !value.FDeleted) {
+					$.each(context.Vm, function (index, value) {
+						if (value.FMemberId == UserId && !value.FDeleted) {
 							$("#divComment").append(`
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
@@ -242,28 +238,27 @@
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let articleId = @Model.FArticleId
-				let comment = $(`#FCommentContent`).val();
-			CommentDetail(commentId, memberId, articleId, comment, false)
+			let comment = $(`#FCommentContent`).val();
+			$(`#FCommentContent`).val("");
+			CommentDetail(commentId, articleId, comment, false)
 		})
 		//刪除評論
 		$(document).on('click', '#btnDeleteComment', function () {
 			let commentId = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let articleId = @Model.FArticleId
-				let comment = "留言已刪除"
+			let comment = "留言已刪除"
 			let deleted = true
 			confirm('你確定要刪除嗎？')
-			CommentDetail(commentId, memberId, articleId, comment, deleted)
+			CommentDetail(commentId, articleId, comment, deleted)
 		})
 
 		//點讚ajax
-		function ArticleLike(FMemberId, FArticleId) {
+		function ArticleLike( FArticleId) {
 			$.ajax({
 				method: "post",
 				url: "/TArticles/ArticleLike",
-				data: { FMemberId, FArticleId },
+				data: { FArticleId },
 				success: function (data) {
 					let context = JSON.parse(data);
 					$("#spanLikes").html(`${context.LikeCount}`)
@@ -281,15 +276,14 @@
 				if (timeDiff > 1000) { // 如果距離上一次點擊的時間大於1秒，執行下面的代碼
 					$(this).data('clicked-time', now); // 更新最後點擊時間
 					// 执行按钮的操作
-					let memberId = $("#FMemberId").find(":selected").attr("value")
 					let articleId = @Model.FArticleId
-						ArticleLike(memberId, articleId)
+					ArticleLike(articleId)
 				}
 			});
 		});
 
 		//展示評論
-		CommentDetail(0, 0, @Model.FArticleId, "", false)
+		CommentDetail(0, @Model.FArticleId, "", false)
 
 	</script>
 

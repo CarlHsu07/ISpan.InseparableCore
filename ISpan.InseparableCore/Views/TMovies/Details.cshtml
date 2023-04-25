@@ -68,7 +68,7 @@
 					@Html.DisplayNameFor(model => model.OffDate) : @Model.OffDate
 				</p>
 				<p>
-					@Html.DisplayNameFor(model => model.FMovieLength) : @Model.FMovieLength 分
+					@Html.DisplayNameFor(model => model.FMovieLength) : @Model.FMovieLength 
 				</p>
 				<p>
 					<div class="divContainer">
@@ -110,10 +110,6 @@
 @*存放評論*@
 <div id="divComment"></div>
 
-<div class="form-group">
-	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
-</div>
-
 <div class="divContainer">
 	<div class="input-group">
 		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
@@ -128,19 +124,20 @@
 		function backToIndex() { window.location.href = "/TMovies/Index" }
 
 		//送出評論及展示評論ajax函數
-		function CommentDetail(FSerialNumber, FMemberId, FMovieId, FComment, FDeleted) {
+		function CommentDetail(FSerialNumber,  FMovieId, FComment, FDeleted) {
 			$.ajax({
 				method: "post",
 				url: "/TMovies/MovieComment",
-				data: { FSerialNumber, FMemberId, FMovieId, FComment, FDeleted },
+				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
+					alert(data)
 					let context = JSON.parse(data);
 					//alert(data)
-					let memberId = $("#FMemberId").find(":selected").attr("value")
-
+					let UserId = context.UserId
+					alert(UserId)
 					$("#divComment").html("")
-					$.each(context, function (index, value) {
-						if (value.FMemberId == memberId &&!value.FDeleted){
+					$.each(context.Vm, function (index, value) {
+						if (value.FMemberId == UserId &&!value.FDeleted){
 						$("#divComment").append(`
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
@@ -178,11 +175,11 @@
 			})
 		}
 		//評分ajax
-		function ScoreDetail(FMemberId, FMovieId, FScore) {
+		function ScoreDetail( FMovieId, FScore) {
 			$.ajax({
 				method: "post",
 				url: "/TMovies/MovieScore",
-				data: { FMemberId, FMovieId, FScore },
+				data: { FMovieId, FScore },
 				success: function (data) {
 					let context = JSON.parse(data);
 					$("#AverageScore").html(context);
@@ -194,12 +191,11 @@
 		//刪除評論
 		$(document).on('click', '#btnDeleteComment', function () {
 			let serialNumber = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FMovieId
 			let comment = "留言已刪除"
 			let deleted = true
 			confirm('你確定要刪除嗎？')
-			CommentDetail(serialNumber, memberId, movieId, comment, deleted)
+			CommentDetail(serialNumber,  movieId, comment, deleted)
 		})
 
 		//開始編輯評論，生成編輯textarea
@@ -241,11 +237,10 @@
 		//送出評分
 		$('.btnScore').click(function () {
 			let score = $(this).attr("value");
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FMovieId
 			$(this).html(score);
 
-			ScoreDetail(memberId, movieId, score)
+			ScoreDetail( movieId, score)
 		});
 
 		//單選按鈕組，按下時改變顏色
@@ -260,15 +255,14 @@
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
 			let serialNumber = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let movieId = @Model.FMovieId
 			let comment = $("#FComment").val();
 			alert(serialNumber)
 
-			CommentDetail(serialNumber, memberId, movieId, comment, false)
+			CommentDetail(serialNumber,  movieId, comment, false)
 		})
 		//展示評論
-		CommentDetail(0, 0, @Model.FMovieId, "",false)
+		CommentDetail(0, @Model.FMovieId, "",false)
 
 		//顯示自己的評分
 		function ShowOwnScore(movieId) {

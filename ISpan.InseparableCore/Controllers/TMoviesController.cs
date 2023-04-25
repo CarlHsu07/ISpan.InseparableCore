@@ -16,7 +16,7 @@ using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
 {
-	public class TMoviesController : Controller
+	public class TMoviesController : SuperController
 	{
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
@@ -27,16 +27,6 @@ namespace ISpan.InseparableCore.Controllers
 			_context = context;
 			this._enviro = enviro;
 			repo = new MovieRepository(context, enviro);
-		}
-		public int GetUserId()
-		{
-			int userId = 0;
-			if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
-			{
-				var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
-				userId = JsonSerializer.Deserialize<TMembers>(serializedTMembers).FId;
-			}
-			return userId;
 		}
 
 		//產生頁碼
@@ -200,18 +190,18 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> MovieComment(TMovieCommentDetails comment)
 		{
-			if (GetUserId() != 0) comment.FMemberId = GetUserId();
+			comment.FMemberId = _user.FId;
 			List<MovieDetailVm> vms = new List<MovieDetailVm>();
 			//無參數=>預設顯示
-			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FComment))
+			if (string.IsNullOrEmpty(comment.FComment))
 			{
-				vms = _context.TMovieCommentDetails
-						.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
-				foreach (var vm in vms)
-				{
-					vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
-				}
-				return Ok(vms.ToJson());
+				//vms = _context.TMovieCommentDetails
+				//		.Where(t => t.FMovieId == comment.FMovieId).ToList().ModelToVms();
+				//foreach (var vm in vms)
+				//{
+				//	vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
+				//}
+				//return Ok(vms.ToJson());
 			}
 			else if (comment.FSerialNumber != 0 || comment.FDeleted)//comment已存在=>跟新
 			{
@@ -233,27 +223,29 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				vm.MemberName = _context.TMembers.FirstOrDefault(t => t.FId == vm.FMemberId).FFirstName;
 			}
-			return Ok(vms.ToJson());
+			return Ok(new 
+			{
+				Vm = vms,
+				UserId = _user.FId,
+			}.
+			ToJson());
 		}
 		[HttpPost]
 		public IActionResult ShowOwnScore(int movieId)
 		{
 			int score = 0;
-			if (GetUserId() != 0)
+			int memberId = _user.FId;
+			var scoreDetail = _context.TMovieScoreDetails.
+				FirstOrDefault(t => t.FMemberId == memberId && t.FMovieId == movieId);
+			if (scoreDetail != null)
 			{
-				int memberId = GetUserId();
-				var scoreDetail = _context.TMovieScoreDetails.
-					FirstOrDefault(t => t.FMemberId == memberId && t.FMovieId == movieId);
-				if (scoreDetail != null)
-				{
-					score = scoreDetail.FScore;
-				}
+				score = scoreDetail.FScore;
 			}
 			return Ok(score);
 		}
 		public async Task<IActionResult> MovieScore(TMovieScoreDetails score)
 		{
-			if (GetUserId() != 0) score.FMemberId = GetUserId();
+			score.FMemberId = _user.FId;
 
 			TMovieScoreDetails scoreInDb = _context.TMovieScoreDetails.FirstOrDefault(t => t.FMovieId == score.FMovieId && t.FMemberId == score.FMemberId);
 			if (scoreInDb == null)
