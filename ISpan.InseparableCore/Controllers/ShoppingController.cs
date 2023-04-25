@@ -50,6 +50,9 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
 
             vm.cinema = _cinema_repo.QueryAll();
+            if(vm.cinema==null)
+                return RedirectToAction("Index", "Home");
+
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
             //限制時間區間
@@ -107,6 +110,9 @@ namespace ISpan.InseparableCore.Controllers
             if (productId == null)
                 return Ok(responseText);
             var product = _product_repo.GetOneProduct(productId);
+
+            if (product == null)
+                return BadRequest("糟糕...出錯了");
 
             List<CproductCartItem> cart = null;
             string json = string.Empty;
@@ -198,8 +204,7 @@ namespace ISpan.InseparableCore.Controllers
             var session = _session_repo.GetOneSession(sessionId);
             if(session ==null)
             {
-                string error = "網頁加載時出現問題";
-                return RedirectToAction("Error", new { error });
+                return BadRequest("糟糕...出錯啦");
             }
             List<CticketCartItemVM> cart = null;
             string json = string.Empty;
@@ -265,10 +270,19 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("seat");
             vm.seats = new Dictionary<int, string>();
             var seats = ticket.Select(t => t.FSeatId);
+            if (seats == null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             foreach (var item in seats)
             {
-
                 var seat = _seat_repo.GetSeat().Where(t => t.FSeatId == item);
+                if (seat == null)
+                {
+                    string error = "網頁加載時出現問題";
+                    return RedirectToAction("Error", new { error });
+                }
                 foreach (var name in seat)
                 {
                     seatid = name.FSeatRow + name.FSeatColumn;
@@ -444,7 +458,7 @@ namespace ISpan.InseparableCore.Controllers
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = member.FId==0? 1:member.FId;  //todo 如果加上supercontroller會結帳失敗
+            vm.FMemberId = member.FId==0? 1:member.FId; //todo 要不要讓訪客下單
             vm.FStatus = false;
 
             try

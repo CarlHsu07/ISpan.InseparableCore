@@ -48,6 +48,8 @@ namespace ISpan.InseparableCore.Controllers.Server
         public async Task<IActionResult> Index()
         {
             var inseparableContext = session_repo.SessionSearch(null);
+            if (inseparableContext == null)
+                return RedirectToAction("Index", "Admin");
 
             var pagesize = 5;
             var pageIndex = 1;
@@ -63,6 +65,8 @@ namespace ISpan.InseparableCore.Controllers.Server
         public async Task<IActionResult> Index(CSessionSearch vm)
         {
             var inseparableContext = session_repo.SessionSearch(vm);
+            if (inseparableContext == null)
+                return RedirectToAction("Index", "Admin");
 
             var pagesize = 5;
             var pageIndex = vm.pageIndex;
@@ -86,13 +90,13 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TSessions == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var tSessions = session_repo.GetSession(id);
             if (tSessions == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(tSessions);
@@ -141,11 +145,15 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TSessions == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             SessionEditVM vm = new SessionEditVM();
             var tSessions = await _context.TSessions.FindAsync(id);
+            if (tSessions == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
             vm.FSessionId = tSessions.FSessionId;
             vm.FMovieId = tSessions.FMovieId;
             vm.FRoomId = tSessions.FRoomId;
@@ -153,10 +161,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             vm.FCinemaId = tSessions.FCinemaId;
             vm.FSessionDate = tSessions.FSessionDate;
             vm.FSessionTime = tSessions.FSessionTime;
-            if (tSessions == null)
-            {
-                return NotFound();
-            }
+            
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName", tSessions.FCinemaId);
             ViewData["FMovieId"] = new SelectList(movie_repo.GetByOffDay(), "FMovieId", "FMovieName", tSessions.FMovieId);
             ViewData["FRoomId"] = new SelectList(room_repo.GetByCinema(tSessions.FCinemaId), "FRoomId", "FRoomName", tSessions.FRoomId);
@@ -172,7 +177,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id != tSessions.FSessionId)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName", tSessions.FCinemaId);
             ViewData["FMovieId"] = new SelectList(_context.TMovies, "FMovieId", "FMovieName", tSessions.FMovieId);
@@ -190,7 +195,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 {
                     if (!TSessionsExists(tSessions.FSessionId))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
@@ -209,13 +214,13 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TSessions == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index)); ;
             }
 
             var tSessions = session_repo.GetSession(id);
             if (tSessions == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             ViewBag.error = TempData["error"];
             return View(tSessions);

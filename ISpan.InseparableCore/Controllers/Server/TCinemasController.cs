@@ -43,7 +43,10 @@ namespace ISpan.InseparableCore.Controllers.Server
         // GET: TCinemas
         public IActionResult Index()
         {
-            var data = cinema_repo.CinemaSearch(null);
+            List<CTCinemasVM> data =cinema_repo.CinemaSearch(null);
+            if (data == null)
+                return RedirectToAction("Index", "Admin");
+
             int pageIndex = 1;
             int pagesize = 5;
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
@@ -58,6 +61,8 @@ namespace ISpan.InseparableCore.Controllers.Server
         public IActionResult Index(CTCinemaSearch vm)
         {
             var inseparableContext = cinema_repo.CinemaSearch(vm);
+            if (inseparableContext == null)
+                return RedirectToAction("Index", "Admin");
 
             var pagesize = 5;
             var pageIndex = vm.pageIndex;
@@ -81,14 +86,14 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var tCinemas =cinema_repo.GetCinema(id);
 
             if (tCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(tCinemas);
@@ -132,13 +137,13 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var tCinemas = cinema_repo.GetCinema(id);
             if (tCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
             CTCinemasCreateVM vm = new CTCinemasCreateVM();
@@ -165,7 +170,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             CinemaService service = new CinemaService(repo);
             if (id != tCinemas.FCinemaId)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             if (ModelState.IsValid)
@@ -179,7 +184,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 {
                     if (!TCinemasExists(tCinemas.FCinemaId))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
@@ -197,13 +202,13 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             var tCinemas = cinema_repo.GetCinema(id);
             if (tCinemas == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(tCinemas);

@@ -28,7 +28,7 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult Index()
         {
             ChomeIndexVM vm = new ChomeIndexVM();
-            
+
             vm.showing = _repo.Showing(); 
             vm.soon = _repo.Soon();
             return View(vm);

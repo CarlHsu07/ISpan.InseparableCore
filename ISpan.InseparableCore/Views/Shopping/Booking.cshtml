@@ -8,67 +8,71 @@
     <link href="~/css/Booking.css" rel="stylesheet">
 }
     <form action="/Shopping/Seat" method="post">
-    @foreach (var item in Model.movie)
+    @if (Model.movie != null)
     {
-        <h1>@item.FMovieName</h1>
-
+        foreach (var item in Model.movie)
+        {
+            <h1>@item.FMovieName</h1>
+        }
     }
     <section id="blog" class="pt-4 pb-4 bg_grey">
         <div class="row blog_1">
             <div class="col-md-8">
                 <div class="blog_1l1">
-                    @foreach (var item in Model.sessions)
+                    @if (Model.sessions != null)
                     {
-                        <input type="hidden" name="sessionid" value="@item.FSessionId" />
+                        foreach (var item in Model.sessions)
+                        {
+                            <input type="hidden" name="sessionid" value="@item.FSessionId" />
 
-                        <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @item.FSessionDate.ToString("yyyy/MM/dd")  @item.FSessionTime.Hours : @item.FSessionTime.Minutes.ToString("D2")</h4>
+                            <h4><img src="https://img.icons8.com/ultraviolet/40/null/overtime.png" /> @item.FSessionDate.ToString("yyyy/MM/dd")  @item.FSessionTime.Hours : @item.FSessionTime.Minutes.ToString("D2")</h4>
 
-                        <div>
-                            <h4 class="background">選擇電影票</h4>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>票種</th>
-                                        <th>價格</th>
-                                        <th>張數</th>
-                                        <th>合計</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td id="regular">全票</td>
-                                        <td id="regularprice">@Convert.ToInt32(item.FTicketPrice)</td>
-                                        <td>
-                                            <select id="regularnum" name="regularnum" onchange="cal();caritem()">
-                                                @for (int i = 0; i < 11; i++)
-                                                {
-                                                    <option value="@i">@i</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td id="regularsubtotal">0</td>
-                                    </tr>
-                                    <tr>
-                                        <td id="concession">優待票</td>
-                                        <td id="concessionprice"></td>
-                                        <td>
-                                            <select id="concessionnum" name="concessionnum" onchange="cal();caritem()">
-                                                @for (int i = 0; i < 11; i++)
-                                                {
-                                                    <option value="@i">@i</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td id="concessionsubtotal">0</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
+                            <div>
+                                <h4 class="background">選擇電影票</h4>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>票種</th>
+                                            <th>價格</th>
+                                            <th>張數</th>
+                                            <th>合計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td id="regular">全票</td>
+                                            <td id="regularprice">@Convert.ToInt32(item.FTicketPrice)</td>
+                                            <td>
+                                                <select id="regularnum" name="regularnum" onchange="cal();caritem()">
+                                                    @for (int i = 0; i < 11; i++)
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td id="regularsubtotal">0</td>
+                                        </tr>
+                                        <tr>
+                                            <td id="concession">優待票</td>
+                                            <td id="concessionprice"></td>
+                                            <td>
+                                                <select id="concessionnum" name="concessionnum" onchange="cal();caritem()">
+                                                    @for (int i = 0; i < 11; i++)
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td id="concessionsubtotal">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
                     }
                     <div>
                         <h4 class="background">選擇商品</h4>
-                        @{
+                        @if(Model.products!=null){
                             int count = 0;
                             foreach (var item in Model.products)
                             {

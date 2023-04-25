@@ -84,9 +84,9 @@
                         <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
                     </div>
-                    <div class="carousel-inner">
-
-                        <div class="carousel-item active">
+                <div class="carousel-inner">
+                    @if(Model.showing!=null){
+                     <div class="carousel-item active">
                             <div class="trend_2i row">
                             @foreach (var item in Model.showing.Take(3))
                             {
@@ -151,8 +151,8 @@
                                 </div>
                             }
                         </div>
-                    </div>
-
+                        </div>
+                    }
                 </div>
 
             </div>
@@ -181,7 +181,7 @@
                     <button type="button" data-bs-target="#carouselExampleCaptions3" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
                 </div>
                 <div class="carousel-inner">
-
+                    @if(Model.soon!=null){
                     <div class="carousel-item active">
                         <div class="trend_2i row">
                             @foreach (var item in Model.soon.Take(3))
@@ -248,7 +248,9 @@
                             }
                         </div>
                     </div>
+                    }
                 </div>
+                    
             </div>
         </div>
     </div>

@@ -48,6 +48,9 @@ namespace ISpan.InseparableCore.Controllers
             CMapVM vm = new CMapVM();
             var data = _db.TCinemas.FirstOrDefault(t => t.FCinemaId == id);
 
+            if (data == null)
+                return BadRequest("糟糕...出現錯誤");
+
             vm.Name = data.FCinemaName;
             vm.FLat = data.FLat;
             vm.FLng = data.FLng;

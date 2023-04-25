@@ -46,6 +46,9 @@ namespace ISpan.InseparableCore.Controllers.Server
             ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FMemberId");
 
             var inseparableContext = order_repo.GetOrder(null);
+            if (inseparableContext == null)
+                return RedirectToAction("Index", "Admin");
+
             var pagesize = 5;
             var pageIndex = 1;
 
@@ -59,6 +62,9 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
 
             var inseparableContext = order_repo.GetOrder(vm);
+            if (inseparableContext == null)
+                return RedirectToAction("Index", "Admin");
+
             List<TMovies> movie = new List<TMovies>();
             List<TCinemas> cinema = new List<TCinemas>();
             List<TSessions> session = new List<TSessions>();
@@ -84,7 +90,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TOrders == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             CorderDetaillVM vm =new CorderDetaillVM();
 
@@ -95,7 +101,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             vm.FMember = vm.orders.FMember;
             if (vm.orders== null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             
             return View(vm);
@@ -106,7 +112,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (id == null || _context.TOrders == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
             CorderVM vm =new CorderVM();
             vm.orders = order_repo.GetOneOrder(id);
@@ -114,7 +120,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             vm.FMember=vm.orders.FMember;
             if (vm.orders == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
 
             return View(vm);
