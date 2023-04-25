@@ -84,8 +84,11 @@
                 method: 'POST',
                 data: { movie },
                 success: function (data) {
+                    var date = JSON.parse(data);
                     $('#Date').attr('max', '');
-                    $('#Date').attr('max', data);
+                    $('#Date').attr('max', date.max);
+                    $('#Date').attr('min', '');
+                    $('#Date').attr('min', date.min);
                 },
                 error: function (err) {
 

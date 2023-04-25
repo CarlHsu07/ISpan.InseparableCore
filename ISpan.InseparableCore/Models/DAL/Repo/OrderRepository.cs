@@ -22,15 +22,21 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             {
                 throw new Exception(ex.Message);
             }
-
+            //todo ppt 會員中心取消訂單
         }
         public TOrders GetByAll(TOrders orders)
         {
+            if (orders == null)
+                return null;
+
             var data = _db.TOrders.FirstOrDefault(t => t == orders);
             return data;
         }
         public TOrders GetById(int? id)
         {
+            if (id == null)
+                return null;
+
             var data = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
             return data;
         }
@@ -38,6 +44,8 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         {
 
             var inseparableContext = _db.TOrders.Include(t => t.FCinema).Include(t => t.FMember).OrderByDescending(t=>t.FOrderId).Select(t=>t);
+            if (inseparableContext == null)
+                return null;
 
             if (search != null)
             {
@@ -61,6 +69,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         }
         public TOrders GetOneOrder(int? id)
         {
+            if (id == null)
+                return null;
+
             var data = _db.TOrders
                 .Include(t => t.FCinema)
                 .Include(t => t.FMember)
@@ -72,9 +83,11 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         {
             if (id == null)
                 throw new Exception("沒有資料可以刪除");
+
             var order = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
             if(order==null)
                 throw new Exception("沒有資料可以刪除");
+
             order.FStatus = false;
 
             var ticket = _db.TTicketOrderDetails.Where(t => t.FOrderId == id);

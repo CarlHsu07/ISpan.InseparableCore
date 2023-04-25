@@ -9,11 +9,17 @@
         }
         public IEnumerable<TProducts> GetProductByCinema(int? cinema)
         {
+            if (cinema == null)
+                return null;
+
             var data = _db.TProducts.Where(t => t.FCinemaId == cinema);
             return data;
         }
         public TProducts GetOneProduct(int? product)
         {
+            if (product == null)
+                return null;
+
             var data = _db.TProducts.FirstOrDefault(t => t.FProductId == product);
             return data;
         }

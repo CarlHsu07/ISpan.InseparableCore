@@ -34,6 +34,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         {
             List<CTCinemasVM> vm = new List<CTCinemasVM>();
             var data = QueryAll();
+            
+            if (data == null)
+                return null;
 
             if (search != null)
             {

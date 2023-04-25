@@ -45,17 +45,26 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         }
         public TSessions GetOneSession(int? session)
         {
+            if (session == null)
+                return null;
+
             var data = _db.TSessions.FirstOrDefault(t => t.FSessionId == session);
 
             return data;
         }
         public IEnumerable<TMovies> GetMovieBySEssion(int? session)
         {
+            if (session == null)
+                return null;
+
             var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FMovie);
             return data;
         }
         public IEnumerable<TCinemas> GetCinemaBySEssion(int? session)
         {
+            if (session == null)
+                return null;
+
             var data = _db.TSessions.Where(t => t.FSessionId == session).Select(t => t.FCinema);
             return data;
         }
@@ -64,6 +73,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             var today = DateTime.Now.Date;
             List<CSessionVM> data = new List<CSessionVM>();
             var inseparableContext = _db.TSessions.OrderByDescending(t => t.FSessionDate).Include(t => t.FCinema).Include(t => t.FMovie).Include(t => t.FRoom).Where(t=>t.FSessionDate>=today);
+
+            if (inseparableContext == null)
+                return null;
 
             if (item != null)
             {
@@ -98,7 +110,12 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         }
         public void Edit(SessionEntity entity)
         {
+            if (entity == null)
+                throw new Exception("資料傳輸錯誤..");
+
             var edit = _db.TSessions.FirstOrDefault(t => t.FSessionId == entity.FSessionId);
+            if (edit == null) throw new Exception("找不到該資料");
+
             edit.FRoomId = entity.FRoomId;
             edit.FSessionDate = entity.FSessionDate;
             edit.FSessionTime = entity.FSessionTime;
@@ -116,6 +133,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         }
         public TSessions GetByDateTime(int? room, DateTime date, TimeSpan time)
         {
+            if (room == null || date == null || time == null)
+                return null;
+
             var data = _db.TSessions.FirstOrDefault(t => t.FRoomId == room && t.FSessionDate == date && t.FSessionTime == time);
 
             return data;
@@ -143,6 +163,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         }
        public void Delete(TSessions sessions)
         {
+            if (sessions == null)
+                throw new Exception("資料傳輸錯誤");
+
             try
             {
                 _db.Remove(sessions);

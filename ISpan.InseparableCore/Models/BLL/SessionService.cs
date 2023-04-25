@@ -14,7 +14,6 @@ namespace ISpan.InseparableCore.Models.BLL
 
         public void Create(SessionCreateDto dto)
         {
-
             var entityInDb = repo.GetByDateTime(dto.FRoomId, dto.FSessionDate, dto.FSessionTime);
             if (entityInDb != null) throw new Exception("該時段影廳已有電影播放!!");
 
@@ -22,7 +21,6 @@ namespace ISpan.InseparableCore.Models.BLL
         }
         public void Edit(SessionEditDto dto)
         {
-
             var entityInDb = repo.GetByDateTime(dto.FRoomId, dto.FSessionDate, dto.FSessionTime);
             if (entityInDb != null && entityInDb.FSessionId != dto.FSessionId) throw new Exception("該時段影廳已有電影播放!!");
 

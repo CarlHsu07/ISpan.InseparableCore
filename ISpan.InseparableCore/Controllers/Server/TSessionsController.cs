@@ -264,8 +264,13 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (movie == null)
                 return null;
-            var data = movie_repo.GetOneMovie(movie).FMovieOffDate.Value.Date.ToString("yyyy-MM-dd");
-            return Ok(data);
+            var max = movie_repo.GetOneMovie(movie).FMovieOffDate.Value.Date.ToString("yyyy-MM-dd");
+            var min = movie_repo.GetOneMovie(movie).FMovieOnDate.Date.ToString("yyyy-MM-dd");
+            return Ok(new
+            {
+                max=max,
+                min=min,
+            }.ToJson());
         }
         public IActionResult GetRoom(int? cinema)
         {
