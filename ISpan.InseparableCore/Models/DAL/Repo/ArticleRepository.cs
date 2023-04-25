@@ -88,6 +88,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			await context.SaveChangesAsync();
 
 		}
+
 		public async Task UpdateLikeAsync(ArticleVm vm)
 		{
 			TArticles article = context.TArticles.Find(vm.FArticleId);

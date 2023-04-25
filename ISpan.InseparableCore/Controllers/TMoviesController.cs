@@ -140,11 +140,6 @@ namespace ISpan.InseparableCore.Controllers
 			}
 
 			MovieVm vm = repo.GetVmById((int)id);
-			if (vm == null)
-			{
-				return NotFound();
-			}
-
 			return View(vm);
 		}
 
