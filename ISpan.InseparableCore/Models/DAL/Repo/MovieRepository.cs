@@ -208,9 +208,23 @@ namespace ISpan.InseparableCore.Models.DAL
 		public IEnumerable<TMovies> GetByOffDay()
 		{
 			var today = DateTime.Now.Date;
-			var data = context.TMovies.Where(t => t.FMovieOffDate >= today);
+			var data = context.TMovies.Where(t => t.FMovieOffDate >= today && t.FDeleted==false);
 
 			return data;
 		}
+		public IEnumerable<TMovies> Showing()
+		{
+            DateTime today = DateTime.Now.Date;
+            var data = context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today && t.FDeleted == false).OrderByDescending(t => t.FMovieOffDate).Take(6);
+
+			return data;
+        }
+        public IEnumerable<TMovies> Soon()
+        {
+            DateTime today = DateTime.Now.Date;
+            var data = context.TMovies.Where(t => t.FMovieOnDate > today && t.FDeleted == false).OrderBy(t => t.FMovieOffDate).Take(6); 
+
+            return data;
+        }
     }
 }

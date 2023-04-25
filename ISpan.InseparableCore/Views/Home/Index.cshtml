@@ -3,15 +3,15 @@
     ViewData["Title"] = "Home Page";
 }
 @section Styles{
-                <style>
-                    .h-380 {
-                        max-height: 380px;
-                    }
+    <style>
+        .h-380 {
+            max-height: 380px;
+        }
 
-                    .h-500 {
-                        max-height: 500px;
-                    }
-                </style>
+        .h-500 {
+            max-height: 500px;
+        }
+    </style>
 }
     <section id="center" class="center_home">
         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
@@ -62,7 +62,7 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-    @* 熱映*@
+        @* 熱映*@
     </section>
     <section id="upcome" class="pt-4 pb-5">
         <div class="container">
@@ -90,20 +90,20 @@
                             <div class="trend_2i row">
                             @foreach (var item in Model.showing.Take(3))
                             {
-                                            <div class="col-md-4">
-                                                <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
-                                                    <div class="trend_2im clearfix position-relative">
-                                                        <div class="trend_2im1 clearfix">
-                                                            <div class="grid">
-                                                                <figure class="effect-jazz mb-0">
-                                                                    <img src="~/images/@item.FMovieImagePath " class="w-100 h-500" alt="@item.FMovieName">
-                                                                </figure>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="trend_2ilast bg_grey p-3 clearfix">
-                                                        <h5><p class="col_red">@item.FMovieName</p></h5>
-                                                        <p class="mb-2 ">
+                                <div class="col-md-4">
+                                    <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
+                                        <div class="trend_2im clearfix position-relative">
+                                            <div class="trend_2im1 clearfix">
+                                                <div class="grid">
+                                                    <figure class="effect-jazz mb-0">
+                                                        <img src="~/images/@item.FMovieImagePath " class="w-100 h-500" alt="@item.FMovieName">
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                            <h5><p class="col_red">@item.FMovieName</p></h5>
+                                            <p class="mb-2 ">
                                                 @if (item.FMovieIntroduction.Length > 30)
                                                 {
                                                     @item.FMovieIntroduction.Substring(0,30);
@@ -111,33 +111,32 @@
                                                 else
                                                 {
                                                     @item.FMovieIntroduction;
-                                                }...</p>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                                }...
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>
-
-
                     <div class="carousel-item">
                         <div class="trend_2i row">
                             @foreach (var item in Model.showing.Skip(3))
                             {
-                                            <div class="col-md-4">
-                                                <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
-                                                    <div class="trend_2im clearfix position-relative">
-                                                        <div class="trend_2im1 clearfix">
-                                                            <div class="grid">
-                                                                <figure class="effect-jazz mb-0">
-                                                                    <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="@item.FMovieName">
-                                                                </figure>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="trend_2ilast bg_grey p-3 clearfix">
-                                                        <h5><p class="col_red">@item.FMovieName</p></h5>
-                                                            <p class="mb-2">
+                                <div class="col-md-4">
+                                    <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
+                                        <div class="trend_2im clearfix position-relative">
+                                            <div class="trend_2im1 clearfix">
+                                                <div class="grid">
+                                                    <figure class="effect-jazz mb-0">
+                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="@item.FMovieName">
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                            <h5><p class="col_red">@item.FMovieName</p></h5>
+                                            <p class="mb-2">
                                                 @if (item.FMovieIntroduction.Length > 30)
                                                 {
                                                     @item.FMovieIntroduction.Substring(0,30);
@@ -145,10 +144,11 @@
                                                 else
                                                 {
                                                     @item.FMovieIntroduction;
-                                                }...</p>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                                }...
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>
@@ -186,68 +186,20 @@
                         <div class="trend_2i row">
                             @foreach (var item in Model.soon.Take(3))
                             {
-                                            <div class="col-md-4">
-                                                <a href="/TMovies/Details/@item.FMovieId">
-                                                    <div class="trend_2im clearfix position-relative">
-                                                        <div class="trend_2im1 clearfix">
-                                                            <div class="grid">
-                                                                <figure class="effect-jazz mb-0">
-                                                                    <img src="~/images/@item.FMovieImagePath " class="w-100 h-500" alt="img25">
-                                                                </figure>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="trend_2ilast bg_grey p-3 clearfix">
-                                                        <h5><p class="col_red">@item.FMovieName</p></h5>
-                                                            <p class="mb-2 "><div class="col-md-4">
-                                                    <a href="/TMovies/Details/@item.FMovieId">
-                                                        <div class="trend_2im clearfix position-relative">
-                                                            <div class="trend_2im1 clearfix">
-                                                                <div class="grid">
-                                                                    <figure class="effect-jazz mb-0">
-                                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="img25">
-                                                                    </figure>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="trend_2ilast bg_grey p-3 clearfix">
-                                                            <h5><p class="col_red">@item.FMovieName</p></h5>
-                                                                <p class="mb-2">
-                                                                @if (item.FMovieIntroduction.Length > 30)
-                                                                {
-                                                                    @item.FMovieIntroduction.Substring(0,30);
-                                                                }
-                                                                else
-                                                                {
-                                                                    @item.FMovieIntroduction;
-                                                                }...</p>
-                                                        </div>
-                                                    </a>
-                                                </div></p>
-                                                    </div>
-                                                </a>
+                                <div class="col-md-4">
+                                    <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
+                                        <div class="trend_2im clearfix position-relative">
+                                            <div class="trend_2im1 clearfix">
+                                                <div class="grid">
+                                                    <figure class="effect-jazz mb-0">
+                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="@item.FMovieName">
+                                                    </figure>
+                                                </div>
                                             </div>
-                            }
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="trend_2i row">
-                            @foreach (var item in Model.soon.Skip(3))
-                            {
-                                   <div class="col-md-4">
-                                                    <a href="/TMovies/Details/@item.FMovieId">
-                                                        <div class="trend_2im clearfix position-relative">
-                                                            <div class="trend_2im1 clearfix">
-                                                                <div class="grid">
-                                                                    <figure class="effect-jazz mb-0">
-                                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="img25">
-                                                                    </figure>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="trend_2ilast bg_grey p-3 clearfix">
-                                                            <h5><p class="col_red">@item.FMovieName</p></h5>
-                                                                <p class="mb-2">
+                                        </div>
+                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                            <h5><p class="col_red">@item.FMovieName</p></h5>
+                                            <p class="mb-2">
                                                 @if (item.FMovieIntroduction.Length > 30)
                                                 {
                                                     @item.FMovieIntroduction.Substring(0,30);
@@ -255,16 +207,48 @@
                                                 else
                                                 {
                                                     @item.FMovieIntroduction;
-                                                }...</p>
-                                                        </div>
-                                                    </a>
-                                                </div>             
+                                                }...
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
                             }
                         </div>
                     </div>
-
+                    <div class="carousel-item">
+                        <div class="trend_2i row">
+                            @foreach (var item in Model.soon.Skip(3))
+                            {
+                                <div class="col-md-4">
+                                    <a href="/TMovies/Details/@item.FMovieId">
+                                        <div class="trend_2im clearfix position-relative">
+                                            <div class="trend_2im1 clearfix">
+                                                <div class="grid">
+                                                    <figure class="effect-jazz mb-0">
+                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="img25">
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                            <h5><p class="col_red">@item.FMovieName</p></h5>
+                                            <p class="mb-2">
+                                                @if (item.FMovieIntroduction.Length > 30)
+                                                {
+                                                    @item.FMovieIntroduction.Substring(0,30);
+                                                }
+                                                else
+                                                {
+                                                    @item.FMovieIntroduction;
+                                                }...
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>

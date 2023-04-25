@@ -196,7 +196,11 @@ namespace ISpan.InseparableCore.Controllers
                 return Ok(responseText);
 
             var session = _session_repo.GetOneSession(sessionId);
-
+            if(session ==null)
+            {
+                string error = "網頁加載時出現問題";
+                return RedirectToAction("Error", new { error });
+            }
             List<CticketCartItemVM> cart = null;
             string json = string.Empty;
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
