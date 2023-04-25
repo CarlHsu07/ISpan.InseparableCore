@@ -535,7 +535,7 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         //todo 確定那些需要刪除
-        public IActionResult CancelOrder()
+        public IActionResult Order()
         {
             string error = string.Empty;
             string json = string.Empty;
