@@ -481,7 +481,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 item.FOrderId = orderid;
-                item.Fstatus = true;  //todo 如果在結帳同時有人訂怎麼辦
+                item.Fstatus = true;  //todo false如果在結帳同時有人訂怎麼辦  true如果結帳時直接關掉網頁?//釋出異常座位?
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -624,6 +624,7 @@ namespace ISpan.InseparableCore.Controllers
             var response = new HttpResponseMessage();
             response.Content = new StringContent("0|Error");
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            
             return response;
         }
         private HttpResponseMessage ResponseOK()
