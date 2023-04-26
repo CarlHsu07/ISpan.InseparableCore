@@ -1,5 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
@@ -69,7 +71,7 @@ namespace ISpan.InseparableCore.Models.BLL
         }
 
         // 判斷是否為同一個會員
-        public bool IsCurrentMember(int? memberAId, int? memberBId)
+        public bool IsSameMember(int? memberAId, int? memberBId)
         {
             bool isCurrentMember = false;
 
@@ -79,6 +81,33 @@ namespace ISpan.InseparableCore.Models.BLL
             }
 
             return isCurrentMember;
+        }
+
+        public async Task<List<CFriendListViewModel>> GetFriendListAsync(int? memberId)
+        {
+            List<CFriendListViewModel> friendList = new List<CFriendListViewModel>();
+
+            if (memberId != null)
+            {
+                // 取得好友的member Fid
+                var friends = await _context.TFriends
+                    .Where(f => f.FMemberId == memberId)
+                    .Select(f => f.FFriendId)
+                    .ToListAsync();
+
+                friendList = await _context.TMembers
+                    .Where(m => friends.Contains(m.FId))
+                    .Select(m => new CFriendListViewModel
+                    {
+                        Id = m.FId,
+                        LastName = m.FLastName,
+                        FirstName = m.FFirstName,
+                        PhotoPath = m.FPhotoPath
+                    })
+                    .ToListAsync();
+            }
+
+            return friendList;
         }
     }
 }

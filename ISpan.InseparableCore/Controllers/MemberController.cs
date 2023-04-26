@@ -178,7 +178,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             bool isFriend = memberService.IsFriend(memberId, member.FId);
-            bool isSameMember = memberService.IsCurrentMember(memberId, member.FId);
+            bool isSameMember = memberService.IsSameMember(memberId, member.FId);
             bool isLogedIn = memberId != null;
 
             ViewData["FriendStatus"] = isFriend ? "is-friend" : "not-friend";
@@ -250,25 +250,19 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
-        // GET: Member/ViewProfile/5
-        public async Task<IActionResult> ViewProfile(int? id)
+        // GET: Member/FriendList/2
+        public async Task<IActionResult> FriendList()
 		{
-			if (id == null || _context.TMembers == null)
-			{
-				return NotFound();
-			}
+            MemberService memberService = new MemberService(_context);
+            int? memberId = GetMemberID();
 
-			var tMembers = await _context.TMembers
-				.Include(t => t.FAccountStatusNavigation)
-				.Include(t => t.FArea)
-				.Include(t => t.FGender)
-				.FirstOrDefaultAsync(m => m.FId == id);
-			if (tMembers == null)
-			{
-				return NotFound();
-			}
+            if (memberId != null)
+            {
+                List<CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
+                return View(friendList);
+            }
 
-			return View(tMembers);
+            return NotFound();
 		}
 
 		// GET: Member/Register
