@@ -76,6 +76,12 @@
 				@Html.DisplayFor(model => model.MemberName)
 			</p>
 		</span>
+		<span class=" " style="width:200px">
+			<p>
+				@Html.DisplayNameFor(model => model.FMemberId):
+				@Html.DisplayFor(model => model.FMemberId)
+			</p>
+		</span>
 		<span class=" " style="width:250px">
 			<p>
 				@Html.DisplayNameFor(model => model.PostingDate):
@@ -102,7 +108,7 @@
 				}
 			</p>
 		</span>
-		<span class="" style="width:200px">
+		<span class="" style="width:100px">
 			<p>
 				@Html.DisplayNameFor(model => model.FArticleClicks):
 				@Html.DisplayFor(model => model.FArticleClicks)
@@ -123,8 +129,6 @@
 <div>
 	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
 </div>
-<div id="divComment"></div>
-
 <div class="divContainerRow">
 	<div class="input-group">
 		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
@@ -133,6 +137,8 @@
 		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
 	</div>
 </div>
+<div id="divComment"></div>
+
 @section Scripts{
 	<script>
 		//返回

@@ -6,59 +6,19 @@
 @using X.PagedList;
 @using X.PagedList.Mvc.Core.Fluent
 @using X.PagedList.Web.Common
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/IndexGeneral.css" rel="stylesheet" />
+	<link href="~/css/IndexMaintainer.css" rel="stylesheet" />
+}
 
 <style>
-	.form-group label {
-		font-size: 0.875rem;
-		line-height: 1;
-		vertical-align: baseline;
-		font-size: 20px;
-	}
-	p{
-		text-align: center;
-	}
-	a {
-	  text-decoration: none;
-	}
 	.Delete{
 
-	}
-	PageContainer {
-		margin: 0 auto;
-	}
-
-	.btnPage {
-	}
-
-	.center-container {
-		text-align: center;
-	}
-
-		.center-container div {
-			display: block;
-			margin: 0 auto;
-		}
-
-	.divContainer {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-	.divBorder {
-		border-color: white;
-		border-width: 1px;
-		border-style: solid;
-		border-radius:9px;
 	}
 
 	.go-right {
 		justify-content: flex-end
-	}
-	td {
-		max-height:100px;
-		max-width: 200px;
-		word-wrap: break-word;
 	}
 
 	#Key, #CategoryId, #DateCategoryId, #LevelId {
@@ -71,9 +31,6 @@
 	p, button{
 		font-size:20px;
 	}
-	.divBlock {
-		margin: 20px
-	}
 
 	.inDivBottom {
 		position: absolute;
@@ -85,11 +42,6 @@
 		position: relative;
 		bottom: -35px;
 		right: -600px;
-	}
-	.link-container {
-	  text-align: center;
-	  cursor: pointer;
-	  white-space: normal;
 	}
 </style>
 <h1 style="margin:20px;">電影管理</h1>
@@ -116,11 +68,7 @@
 				<label name="LevelId" class="control-label">分級</label>
 				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
 			</div>
-			@*<div class="form-group divBlock">
-			<label name="Page" class="control-label">頁數</label>
-			<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
-			</div>
-			*@<div class="form-group divBlock" style="position:relative">
+			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition" >
@@ -179,7 +127,7 @@
 			{
 				<tr>
 					<td>
-						<a asp-action="Details" asp-route-id="@item.FMovieId">
+						<a asp-action="AdminDetails" asp-route-id="@item.FMovieId">
 							<p class="link-container">
 								@Html.DisplayFor(modelItem => item.FMovieName)
 							</p>
@@ -257,7 +205,7 @@
 		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
 			$.ajax({
 				method: "post",
-				url: "/AdminMovie/Index",
+				url: "/AdminMovie/IndexMaintainer",
 				data: { Key, CategoryId, DateCategoryId, LevelId, Page },
 				beforeSend: function () {
 				},
@@ -282,7 +230,7 @@
 							<tr>
 								<td>
 									<p>
-										<a href="/AdminMovie/Details/${value.FMovieId}">
+										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
 											${value.FMovieName}
 										</a>
 									</p>
@@ -364,60 +312,6 @@
 			})
 
 		}
-		//換頁function
-		function pageChange(page) {
-			pageNumber = page
-			let key = $("#Key").val()
-			let categoryId = $("#CategoryId").find(":selected").val()
-			let levelId = $("#LevelId").find(":selected").val()
-			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-			show(key, categoryId, dateCategoryId, levelId, page)
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
-		}
-
-		//btnpage換顏色
-		function pageSelected(event) {
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
-			$(event).removeClass('btn-secondary');
-			$(event).addClass('btn-primary');
-
-		}
-		//點頁碼換頁
-		$(document).on('click', '.btnPage', function () {
-			let page = $(this).val()
-			pageChange(page)
-
-			pageSelected(this)
-		});
-		//上一頁
-		$(document).on('click', '#prePage', function () {
-			let page = parseInt(pageNumber) - 1
-
-			if (page <= 0) {
-				page += 1
-			}
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-			$(`#${page}`).removeClass('btn-secondary');
-			$(`#${page}`).addClass('btn-primary');
-			pageChange(page)
-		});
-		//下一頁
-		$(document).on('click', '#nextPage', function () {
-			let page = parseInt(pageNumber) + 1
-			if (page > PageCountNumber) {
-				page -= 1
-			}
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
-			$(`#${page}`).removeClass('btn-secondary');
-			$(`#${page}`).addClass('btn-primary');
-			pageChange(page)
-		});
-
 		//刪除電影
 		$(document).on('click', '.Delete', function () {
 			var movieId = parseInt($(this).attr("value"))
@@ -456,5 +350,6 @@
 		})
 
 	</script>
+		<script type="text/javascript" src="~/js/MoviePage.js"></script>
 
 }

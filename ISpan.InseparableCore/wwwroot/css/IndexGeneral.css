@@ -1,0 +1,32 @@
+﻿body {
+}
+
+.btnPage {
+}
+
+.divContainer {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+}
+
+.center-container {
+	text-align: center;
+}
+
+	.center-container div {
+		display: block;
+		margin: 0 auto;
+	}
+
+.divBorder {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.divBlock {
+	margin: 20px
+}
+

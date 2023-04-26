@@ -174,7 +174,7 @@ namespace ISpan.InseparableCore.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				vm.FMemberId = _user.FId;
+				vm.FMemberPK = _user.FId;
 
 				await articleRepo.CreateAsync(vm);
 				return RedirectToAction(nameof(Index));
@@ -212,7 +212,7 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				try
 				{
-					vm.FMemberId = _user.FId;
+					vm.FMemberPK = _user.FId;
 
 					await articleRepo.UpdateAsync(vm);
 				}

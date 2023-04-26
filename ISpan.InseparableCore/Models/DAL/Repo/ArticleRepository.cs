@@ -61,6 +61,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			ArticleVm vm = article.ModelToVm();
 			vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
 			vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
+			vm.FMemberId = article.FMember.FMemberId;
 			return vm;
 		}
 		public async Task CreateAsync(ArticleVm vm)

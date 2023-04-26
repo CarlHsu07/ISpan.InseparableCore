@@ -14,7 +14,8 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<CommentVm> Search(int articleId)
 		{
-			var comments = context.TComments.Where(t => t.FArticleId == articleId).ToList();
+			var comments = context.TComments.Where(t => t.FArticleId == articleId)
+				.OrderByDescending(t => t.FCommentPostingDate).ToList();
 
 			return ModelToVms(comments);
 		}

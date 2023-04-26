@@ -11,7 +11,9 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("標題")]
 		public string? FArticleTitle { get; set; }
 		[DisplayName("發文者")]
-		public int? FMemberId { get; set; }
+		public int? FMemberPK { get; set; }
+		[DisplayName("發文ID")]
+		public string? FMemberId { get; set; }
 		[DisplayName("發文者")]
 		public string? MemberName { get; set; }
 		[DisplayName("類別")]
@@ -48,7 +50,7 @@ namespace ISpan.InseparableCore.ViewModels
 			{
 				FArticleId = article.FArticleId,
 				FArticleTitle = article.FArticleTitle,
-				FMemberId = article.FMemberId,
+				FMemberPK = article.FMemberId,
 				FArticlePostingDate = article.FArticlePostingDate,
 				PostingDate = article.FArticlePostingDate.ToString("yyyy-MM-dd HH:mm:ss"),
 				FArticleModifiedDate = article.FArticleModifiedDate,
@@ -68,7 +70,7 @@ namespace ISpan.InseparableCore.ViewModels
 			{
 				FArticleId = vm.FArticleId,
 				FArticleTitle = vm.FArticleTitle,
-				FMemberId = (int)vm.FMemberId,
+				FMemberId = (int)vm.FMemberPK,
 				FArticlePostingDate = (DateTime)vm.FArticlePostingDate,
 				FArticleModifiedDate = (DateTime)vm.FArticleModifiedDate,
 				FArticleLikes = vm.FArticleLikes,

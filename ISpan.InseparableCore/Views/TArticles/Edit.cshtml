@@ -101,12 +101,12 @@
 		function backToIndex() { window.location.href = "/TArticles/Index" }
 
 		$(document).on('click', '.Delete', function () {
-			var movieId = parseInt($(this).attr("value"))
+			var articleId = parseInt($(this).attr("value"))
 			//confirm('你確定要刪除嗎？' + movieId)
 			$.ajax({
 				type: "POST",
 				url: "/TArticles/DeleteAjax",
-				data: { "articleId": parseInt($(this).attr("value")) },
+				data: { articleId },
 				success: function (data) {
 					alert("已刪除")
 				},

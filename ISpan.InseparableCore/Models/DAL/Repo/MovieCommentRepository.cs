@@ -14,7 +14,8 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 
 		public IEnumerable<MovieCommemtVm> Search(int movieId)
 		{
-			var comments = context.TMovieCommentDetails.Where(t => t.FMovieId == movieId).ToList();
+			var comments = context.TMovieCommentDetails.Where(t => t.FMovieId == movieId)
+				.OrderByDescending(t => t.FPostingDate).ToList();
 
 			return ModelToVms(comments);
 		}

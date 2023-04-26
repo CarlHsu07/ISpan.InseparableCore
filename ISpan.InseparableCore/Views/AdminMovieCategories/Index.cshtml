@@ -1,0 +1,117 @@
+﻿@model IEnumerable<ISpan.InseparableCore.Models.DAL.TMovieCategories>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+
+	.divContainerRow {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+
+	.divBorder {
+		border-color: white;
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 9px;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -200px;
+	}
+</style>
+
+<h1>電影類別管理</h1>
+<div class="row">
+	<div class="col-md-4">
+		<form asp-action="Create" class="divContainerRow">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label class="control-label">類別名稱</label>
+				<input name="FMovieCategoryName" class="form-control" />
+@*				<span asp-validation-for="FMovieCategoryName" class="text-danger"></span>
+*@
+			</div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+			<th>編號</th>
+            <th>
+                類別名稱
+            </th>
+        </tr>
+    </thead>
+@{int count = 0;
+	<tbody>
+				
+		@foreach (var item in Model) {
+				count++;
+				<tr>
+				<td>@count</td>
+				<td>
+					<div class="row">
+						<div class="col-md-4">
+							<form asp-action="Edit" class="divContainerRow">
+								<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+								<input type="hidden" value="@item.FMovieCategoryId" />
+								<div class="form-group">
+									<input name="FMovieCategoryName" id="@item.FMovieCategoryId"
+									class="form-control" value="@item.FMovieCategoryName" />
+	@*								<span asp-validation-for="FMovieCategoryName" class="text-danger"></span>
+*@									</div>
+								<div class="form-group">
+									<button value="@item.FMovieCategoryId" class="btn btn-primary">儲存</button>
+									<button value="@item.FMovieCategoryId" class="btn btn-danger">刪除</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</td>
+			</tr>
+		}
+	</tbody>
+}
+</table>
+@section Scripts {
+	<script>
+
+		//刪除電影
+		$(document).on('click', '', function () {
+			let categoryName = $("#CategoryName").val()
+			let categoryId = $("#CategoryId").val()
+			//confirm('你確定要刪除嗎？' + movieId)
+			$.ajax({
+				type: "POST",
+				url: "/AdminMovie/DeleteAjax",
+				data: {  },
+				success: function (data) {
+					alert("已刪除")
+
+				},
+				error: function (xhr, status, error) {
+					// 處理錯誤
+					console.log("AJAX request error: " + status + " - " + error);
+				}
+			});
+		})
+
+	</script>
+
+}
+

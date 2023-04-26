@@ -3,6 +3,7 @@ using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using X.PagedList;
 
 namespace ISpan.InseparableCore.Controllers.Server
@@ -73,6 +74,68 @@ namespace ISpan.InseparableCore.Controllers.Server
 			movies = movies.Take(pageSize).ToList();
 			return View(movies);
 		}
+		[HttpPost]
+		public IActionResult IndexMaintainer(MovieSearchCondition condition)
+		{
+			List<MovieVm> movies = repo.Search(condition).ToList();
+
+			#region ViewData
+
+			//產生頁碼SelectList
+			int pageContent = 2;
+			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
+														   : movies.Count / pageContent + 1;
+			List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			for (int i = 1; i < pageNumber + 1; i++)
+			{
+				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			}
+			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
+
+			//為電影類別SelectList加入預設值
+			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
+			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
+			categorySelectList.Add(defaultCategory);
+			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
+
+			//為電影等級SelectList加入預設值
+			TMovieLevels defaultLevel = new TMovieLevels { FLevelId = 0, FLevelName = "全部" };
+			List<TMovieLevels> LevelSelectList = _context.TMovieLevels.ToList();
+			LevelSelectList.Add(defaultLevel);
+			ViewData["LevelId"] = new SelectList(LevelSelectList, "FLevelId", "FLevelName", condition.LevelId);
+
+			//為上下映日期SelectList加入預設值
+			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
+			SelectList dateCategorySelectList = dateCategories.ToSelectList();
+			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
+			#endregion
+			int pageSize = 10;
+			var pageList = GetPagedProcess(condition.Page, pageSize, movies);
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
+			if (movies.Count == 0) return Ok("noData");
+
+			return Ok(new
+			{
+				Vm = movies,
+				PageCount = pageList.PageCount,
+				TotalItemCount = pageList.TotalItemCount,
+				PageSize = pageSize
+			}.ToJson());
+		}
+
+
+		// GET: TMovies/Details/5
+		public async Task<IActionResult> AdminDetails(int? id)
+		{
+			if (id == null || _context.TMovies == null)
+			{
+				return NotFound();
+			}
+
+			MovieVm vm = repo.GetVmById((int)id);
+			return View(vm);
+		}
+
 		// GET: TMovies/Create
 		public IActionResult Create()
 		{
