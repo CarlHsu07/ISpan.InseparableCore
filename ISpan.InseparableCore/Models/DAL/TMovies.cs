@@ -32,7 +32,6 @@ namespace ISpan.InseparableCore.Models.DAL
         public string FMovieDirectors { get; set; }
         public bool FDeleted { get; set; }
 
-        public virtual TMovieLevels FMovieLevel { get; set; }
         public virtual ICollection<TMovieActorDetails> TMovieActorDetails { get; set; }
         public virtual ICollection<TMovieCategoryDetails> TMovieCategoryDetails { get; set; }
         public virtual ICollection<TMovieCommentDetails> TMovieCommentDetails { get; set; }

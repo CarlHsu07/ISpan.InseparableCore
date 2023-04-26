@@ -71,8 +71,8 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var movie in movies)
 			{
 				MovieVm vm = movie.ModelToVm();
-				vm.Level = context.TMovies.Include(t => t.FMovieLevel)
-					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+				vm.Level = context.TMovies.Include(t => t.FMovieLevelId)
+					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevelId.FLevelName;
 
 				//獲得電影類別
 				IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
