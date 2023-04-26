@@ -44,6 +44,9 @@
 		right: -600px;
 	}
 </style>
+    <div class="loadingdiv" id="loading" style="display: none">
+        <img src="~/images/Infinity-1s-200px.gif" />
+    </div>
 <h1 style="margin:20px;">電影管理</h1>
 
 <div class="row divBlock">
@@ -204,6 +207,9 @@
 
 		function show(Key, CategoryId, DateCategoryId, LevelId, Page) {
 			$.ajax({
+				beforeSend: function () {
+					$('#loading').css("display", "");
+				},
 				method: "post",
 				url: "/AdminMovie/IndexMaintainer",
 				data: { Key, CategoryId, DateCategoryId, LevelId, Page },

@@ -39,6 +39,9 @@
 	}
 
 </style>
+    <div class="loadingdiv" id="loading" style="display: none">
+        <img src="~/images/Infinity-1s-200px.gif" />
+    </div>
 
 <h1 style="margin:50px 0 0 50px;">貼文搜尋</h1>
 
@@ -179,6 +182,9 @@
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
+				beforeSend: function () {
+					$('#loading').css("display", "");
+				},
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
