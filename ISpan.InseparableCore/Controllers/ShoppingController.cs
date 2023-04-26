@@ -467,7 +467,6 @@ namespace ISpan.InseparableCore.Controllers
         {
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
-            TMembers member = new TMembers();
             string json = string.Empty;
 
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
@@ -481,16 +480,11 @@ namespace ISpan.InseparableCore.Controllers
                 json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_TICKET_LIST);
                 ticket_list = JsonSerializer.Deserialize<List<CticketCartItemVM>>(json);
             }
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
-            {
-                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
-                member = JsonSerializer.Deserialize<TMembers>(json);
-            }
 
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = member.FId==0? 1:member.FId; //todo 要不要讓訪客下單
+            vm.FMemberId = _user.FId==0? 1:_user.FId; //todo 要不要讓訪客下單
             vm.FStatus = false;
 
             try
