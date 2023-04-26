@@ -81,7 +81,7 @@ namespace ISpan.InseparableCore.Controllers
                     if (item==start)
                         sessions = _session_repo.GetSessionByTwoCondition(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
 
-                    vm.sessions.Add(item, sessions);
+                   vm.sessions.Add(item, sessions);
                 }
             }
             return View(vm);
@@ -384,7 +384,7 @@ namespace ISpan.InseparableCore.Controllers
         [HttpPost]
         public HttpResponseMessage AddPayInfo(JObject info)
         {
-            //todo 不確定這裡要做什麼判斷
+            //todo 不確定這裡要做什麼判斷 等上線測試
             if (!HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
             {
                 return ResponseOK();
@@ -450,17 +450,6 @@ namespace ISpan.InseparableCore.Controllers
 
             order.FStatus = true;
 
-            var ticket = _ticket_repo.GetById(order.FOrderId);
-            if (ticket == null)
-            {
-                string error = "網頁加載時出現問題 請重新下單!!";
-                return RedirectToAction("Error", new { error });
-            }
-            foreach (var item in ticket)
-            {
-                item.FStatus = true;
-            }
-
             _db.SaveChanges();
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
@@ -519,7 +508,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 item.FOrderId = orderid;
-                item.Fstatus = true;  //todo false如果在結帳同時有人訂怎麼辦  true如果結帳時直接關掉網頁?//釋出異常座位?
+                item.Fstatus = true;  //todo 問題為當使用者再付款畫面關閉 如何將座位釋出 目前解決辦法為在後台寫一隻code去撈問題資料
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -572,7 +561,6 @@ namespace ISpan.InseparableCore.Controllers
             return orderid;
         }
 
-        //todo 確定那些需要刪除
         public IActionResult Order()
         {
             string error = string.Empty;

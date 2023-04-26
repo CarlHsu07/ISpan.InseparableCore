@@ -151,12 +151,12 @@ namespace ISpan.InseparableCore.Controllers.Server
             return RedirectToAction(nameof(Index));
         }
 
-        //todo membet會員中心訂單紀錄
-        public IPagedList<TOrders> MemberorderPageList(int? pageIndex, int? pageSize, List<TOrders> vm)
+        //todo membet會員中心訂單紀錄 完成
+        public IPagedList<CorderVM> MemberorderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
-            IPagedList<TOrders> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            IPagedList<CorderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
             if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
                 return null;
             return pagelist;
@@ -173,28 +173,125 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (member == null)
                 return NotFound(); //todo 待改
 
-            var data = _context.TOrders.Where(t => t.FMemberId == member.FId).ToList();
-            //todo pagelist
+            var data = order_repo.GetMemberOrder(member.FId,null);
             var pagesize = 5;
             var pageIndex = 1;
-
+           
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.page = MemberorderPageList(pageIndex, pagesize, data);
 
             return View(pagedItems);
         }
         [HttpPost]
-        public IActionResult MemberOrderDetail(int? order)
+        public IActionResult MemberOrder(MemberOrderSearch search)
+        {
+            TMembers member = new TMembers();
+            string json = string.Empty;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                member = JsonSerializer.Deserialize<TMembers>(json);
+            }
+            if (member == null)
+                return NotFound(); //todo 待改
+
+            var data = order_repo.GetMemberOrder(member.FId,search);
+            var pagesize = 5;
+            var pageIndex = search.pageindex;
+            
+            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.page = MemberorderPageList(pageIndex, pagesize, data);
+
+            var count = data.Count();
+            var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string jsons = JsonSerializer.Serialize(pagedItems, options);
+            return Ok(new
+            {
+                Items = jsons,
+                totalpage = totalpage,
+            }.ToJson());
+        }
+        public IActionResult MemberOrderDetail(int? id)
         {
             CorderDetaillVM vm = new CorderDetaillVM();
-            if (order == null)
+            if (id == null)
                 return View();
 
-            vm.orders = order_repo.GetOneOrder(order);
-            vm.ticket = ticket_repo.GetById(order);//_context.TTicketOrderDetails.Where(t => t.FOrderId == item.FOrderId);
-            vm.product = product_repo.GetById(order);//_context.TProductOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+            vm.orders = order_repo.GetOneOrder(id);
+            vm.ticket = ticket_repo.GetById(id);//_context.TTicketOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+            vm.product = product_repo.GetById(id);//_context.TProductOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+
+
+            if (id == null || _context.TOrders == null)
+            {
+                return RedirectToAction(nameof(MemberOrder));
+            }
 
             return View(vm);
+        }
+        public IActionResult MemberOrderDelete(int? id)
+        {
+            if (id == null || _context.TOrders == null)
+            {
+                return RedirectToAction(nameof(MemberOrder));
+            }
+            CorderVM vm = new CorderVM();
+            vm.orders = order_repo.GetOneOrder(id);
+            vm.FCinema = vm.orders.FCinema;
+            vm.FMember = vm.orders.FMember;
+            if (vm.orders == null)
+            {
+                return RedirectToAction(nameof(MemberOrder));
+            }
+
+            return View(vm);
+        }
+
+        // POST: TOrders/Delete/5
+        [HttpPost, ActionName("MemberOrderDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MemberOrderDeleteConfirmed(int id)
+        {
+            if (_context.TOrders == null)
+            {
+                return Problem("Entity set 'InseparableContext.TOrders'  is null.");
+            }
+            try
+            {
+                order_repo.Delete(id);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.error = ex.Message;
+                return RedirectToAction("MemberOrderDelete", new { id });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MemberOrder));
+        }
+        //Ajax
+        //釋出問題座位
+        public IActionResult Status()
+        {
+            List<TTicketOrderDetails> list = new List<TTicketOrderDetails>();
+            var hourago = DateTime.Now.AddMinutes(-30);
+            var ticket = _context.TTicketOrderDetails.Join(_context.TOrders,t=>t.FOrderId,o=>o.FOrderId,(t , o)=>new { t, o }).Where(x=>x.o.FOrderDate<=hourago &&x.t.FStatus!=x.o.FStatus).Select(x=>x.t);
+
+            if (ticket == null)
+                return Ok();
+
+            foreach(var item in ticket)
+            {
+                item.FStatus = false;
+            }
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }
