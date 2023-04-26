@@ -15,7 +15,7 @@ namespace ISpan.InseparableCore.Controllers
 
 			var actionName = context.ActionDescriptor.RouteValues["action"];
 
-			if (actionName == "Register" || actionName == "GetAreas") // 如果是註冊頁面就不進行權限控管
+			if (actionName == "Register" || actionName == "GetAreas" ||actionName== "Paydone") // 如果是註冊頁面就不進行權限控管
 			{
 				return;
 			}
