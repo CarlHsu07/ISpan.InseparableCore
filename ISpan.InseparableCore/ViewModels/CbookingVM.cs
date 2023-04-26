@@ -8,6 +8,5 @@ namespace ISpan.InseparableCore.ViewModels
         public IEnumerable<TMovies> movie { get; set; }
         public IEnumerable<TSessions> sessions { get; set; }
         public IEnumerable<TProducts> products { get; set; }
-        //public int ticket { get; set; }
     }
 }

@@ -2,35 +2,34 @@
     //Layout = "_Layout";
 	var controllerName = ViewContext.RouteData.Values["controller"].ToString();
 
-	switch (controllerName)
-	{
-		case "AdminMember":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "Cinema":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "Home":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "Member":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "Shopping":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "TArticles":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "TMovies":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		case "TComments":
-			Layout = "~/Views/Shared/_Layout.cshtml";
-			break;
-		default:
-			Layout = "~/Views/Shared/admin_Layout.cshtml";
-			break;
-	}
-
+    switch (controllerName)
+    {
+        case "AdminMember":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Cinema":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Home":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Member":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "Shopping":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TArticles":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TMovies":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        case "TComments":
+            Layout = "~/Views/Shared/_Layout.cshtml";
+            break;
+        default:
+            Layout = "~/Views/Shared/admin_Layout.cshtml";
+            break;
+    }
 }

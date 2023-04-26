@@ -1,0 +1,79 @@
+﻿@model ISpan.InseparableCore.ViewModels.TCinemasVM.CTCinemasCreateVM
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@section Styles{
+    <style>
+        .input:focus{
+            color:aliceblue;
+        }
+        #city {
+            color: aliceblue;
+            font-size: 15px;
+        }
+    </style>
+}
+<h1>維護影院</h1>
+
+<hr />
+<div class="row">
+    @if (ViewBag.error != null)
+    {
+        <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+    }
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FCinemaId" />
+            <div class="form-group">
+                <label asp-for="FCinemaName" class="control-label"></label>
+                <input asp-for="FCinemaName" class="form-control input" />
+                <span asp-validation-for="FCinemaName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaRegion" class="control-label"></label>
+                <select asp-for="FCinemaRegion" class="form-control" asp-items="ViewBag.FCity" id="city">
+                    <option>請選擇</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaAddress" class="control-label"></label>
+                <input asp-for="FCinemaAddress" class="form-control input" />
+                <span asp-validation-for="FCinemaAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaTel" class="control-label"></label>
+                <input asp-for="FCinemaTel" class="form-control input" />
+                <span asp-validation-for="FCinemaTel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FLat" class="control-label"></label>
+                <input asp-for="FLat" class="form-control input" />
+                <span asp-validation-for="FLat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FLng" class="control-label"></label>
+                <input asp-for="FLng" class="form-control input" />
+                <span asp-validation-for="FLng" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FTraffic" class="control-label"></label>
+                <input asp-for="FTraffic" class="form-control input" />
+                <span asp-validation-for="FTraffic" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="送出" class="btn btn-primary" /> |
+                <a asp-action="Index" class="btn btn-light">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

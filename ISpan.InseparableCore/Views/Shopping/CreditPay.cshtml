@@ -15,8 +15,14 @@
         <br />
     }
 </form>
+<div id="order"></div>
 <script>
+    //var id = @ViewBag.order;
     window.onload = function () {
         document.getElementById("form").submit();
     }
+    
+    window.addEventListener("popstate", e => {
+        window.location.href = `../Shopping/Order`;
+    });
 </script>

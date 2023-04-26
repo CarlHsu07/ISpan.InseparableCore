@@ -1,0 +1,219 @@
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.TCinemasVM.CTCinemasVM>
+
+@{
+    ViewData["Title"] = "Index";
+    var _page = ViewBag.page;
+}
+
+@section Styles{
+    <style>
+        .search {
+            display: flex;
+        }
+
+        .margin5 {
+            margin: 5px;
+        }
+
+        #brand, #city {
+            color: aliceblue;
+            font-size:15px;
+        }
+
+        button {
+            margin: 2px;
+        }
+    </style>
+}
+<h1>影城</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-rounded btn-success">新增</a>
+    </p>
+    <div class="search">
+        <span class="margin5">
+            <label class="control-label">地區</label>
+            <select id="city" class="form-control" asp-items="ViewBag.FCity">
+                <option>請選擇</option>
+            </select>
+        </span>
+        <span class="margin5">
+            <label class="control-label">影城</label>
+            <select id="brand" class="form-control" asp-items="ViewBag.brand">
+                <option>請選擇</option>
+            </select>
+        </span>
+        <span>
+            <br />
+            <input type="button" value="搜尋" class="btn btn-info btn-rounded" style="margin-left:15px;" />
+        </span>
+    </div>
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FCinemaName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FCinemaRegion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FCinemaAddress)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FCinemaTel)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FLat)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FLng)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FTraffic)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FCinemaName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FCinemaRegion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FCinemaAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FCinemaTel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FLat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FLng)
+                </td>
+                <td>
+                    @{
+                        string result = "";
+                        if(item.FTraffic.Length>2){
+                            result = item.FTraffic.Substring(0, 3);
+                        }else{
+                            result = item.FTraffic;
+                        }
+                    }
+                    @result ...
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.FCinemaId" class="btn btn-warning">修改</a> |
+                    <a asp-action="Details" asp-route-id="@item.FCinemaId" class="btn btn-light">詳細資料</a> |
+                    <a asp-action="Delete" asp-route-id="@item.FCinemaId" class="btn btn-danger">刪除</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div style="margin:15px;" id="pagebtn">
+    <button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
+    <button type="button" class="btn btn-primary first" id="page" value="1">1</button>
+    @for (int i = 2; i < _page.PageCount + 1; i++)
+    {
+        <button type="button" class="btn btn-secondary" id="page" value="@i">@i</button>
+    }
+    <button type="button" class="btn btn-secondary" id="page" value="@_page.PageCount">>></button>
+</div>
+@section Scripts{
+    <script>
+        var pagecount = @_page.PageCount;
+        function search(brand, city, pageIndex) {
+            $.ajax({
+                url: '/TCinemas/Index',
+                method: 'POST',
+                data: {
+                    brand,
+                    city,
+                    pageIndex
+                },
+                success: function (data) {
+                    var Model = JSON.parse(data);
+                    var item = JSON.parse(Model.Items);
+                    var session = item.$values;
+                    $('tbody').html(``);
+                    $.each(session, function (index, value) {
+                        var result = value.FTraffic.substring(0,3);
+                        $('tbody').append(`
+                        <tr>
+                        <td>
+                            ${value.FCinemaName}
+                        </td>
+                        <td>
+                            ${value.FCinemaRegion}
+                        </td>
+                        <td>
+                            ${value.FCinemaAddress}
+                        </td>
+                        <td>
+                            ${value.FCinemaTel}
+                        </td>
+                        <td>
+                            ${value.FLat}
+                        </td>
+                        <td>
+                            ${value.FLng}
+                        </td>
+                        <td>
+                            ${result} ...
+                        </td>
+                        <td>
+                            <a href="Edit/${value.FCinemaId}" class="btn btn-warning">修改</a> |
+                            <a href="Details/${value.FCinemaId}" class="btn btn-light">詳細資料</a> |
+                            <a href="Delete/${value.FCinemaId}" class="btn btn-danger">刪除</a>
+                        </td>
+                        </tr>`)
+                    });
+                    if (Model.totalpage != pagecount) {
+                        pagecount = Model.totalpage;
+                        $('#pagebtn').html(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
+                                            <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
+                        for (var i = 2; i < Model.totalpage + 1; i++) {
+                            $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                        }
+                        $('#pagebtn').append(` <button type="button" class="btn btn-secondary" id="page" value="${Model.totalpage}">>></button>`)
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+        $(document).on('click', '#page', function () {
+            var brand = $('#brand').val();
+            var city = $('#city').val();
+            var pageIndex = $(this).val();
+            search(brand, city, pageIndex);
+
+            $('.btn-primary').addClass('btn-secondary');
+            $('.btn-primary').removeClass('btn-primary');
+
+            $(this).addClass('btn-primary');
+            $(this).removeClass('btn-secondary');
+        });
+        $('.btn-info').click(function () {
+            var brand = $('#brand').val();
+            var city = $('#city').val();
+
+            var pageIndex = 1;
+            search(brand, city, pageIndex);
+            $('.btn-primary').addClass('btn-secondary');
+            $('.btn-primary').removeClass('btn-primary');
+            $('.first').removeClass('btn-secondary');
+            $('.first').addClass('btn-primary');
+        });
+        $(function () {
+            $('').removeClass('active');
+        });
+    </script>
+    }

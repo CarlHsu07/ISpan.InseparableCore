@@ -4,9 +4,9 @@
     ViewData["Title"] = "CartView";
 }
 @section Styles{
-    <link href="~/css/CartView.css" rel="stylesheet"/>
+    <link href="~/css/CartView.css" rel="stylesheet" />
 }
-<h1>確認訂單</h1>
+    <h1>確認訂單</h1>
 @using (Html.BeginForm("CreditPay", "Shopping", FormMethod.Post, new { id = "form" }))
 {
     <div>
@@ -95,7 +95,7 @@
 @section Scripts{
     <script type="text/javascript" src="~/js/CartView.js"></script>
     <script>
-        window.history.pushState("", "", ""); //讓他到error
-        //window.history.pushState("", "", '../Shopping/Ticket'); 直接回到ticket
+        //window.history.pushState("", "", ""); //讓他到error
+        window.history.pushState(null, null, '/Shopping/Order');
     </script>
 }

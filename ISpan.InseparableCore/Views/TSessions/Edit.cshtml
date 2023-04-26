@@ -1,0 +1,100 @@
+﻿@model ISpan.InseparableCore.ViewModels.SessionEditVM
+
+@{
+    ViewData["Title"] = "Edit";
+}
+@section Styles{
+    <style>
+        #movie, #room, #Date, #time {
+            color: aliceblue;
+            font-size: 15px;
+        }
+        .input:focus {
+            color: aliceblue;
+        }
+    </style>
+}
+
+    <h1>更新場次</h1>
+
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+        @if (ViewBag.error != null)
+        {
+            <h3 style="background-color:palevioletred;color:dimgrey;">@ViewBag.error</h3>
+        }
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="FSessionId" />
+            <div class="form-group">
+                <label asp-for="FMovieId" class="control-label"></label>
+                <select asp-for="FMovieId" class="form-control" asp-items="ViewBag.FMovieId" id="movie"></select>
+                <span asp-validation-for="FMovieId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FCinemaId" class="control-label"></label>
+                <input type="hidden" asp-for="FCinemaId" />
+                <select class="form-control" asp-items="ViewBag.FCinemaId" id="cinema" disabled></select>
+                <span asp-validation-for="FCinemaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FRoomId" class="control-label"></label>
+                <select asp-for="FRoomId" class="form-control" asp-items="ViewBag.FRoomId" id="room"></select>
+                <span asp-validation-for="FRoomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FSessionDate" class="control-label"></label>
+                <input asp-for="FSessionDate" class="form-control" type="date" id="Date" />
+                <span asp-validation-for="FSessionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FSessionTime" class="control-label"></label>
+                <input asp-for="FSessionTime" class="form-control" type="time" id="time" />
+                <span asp-validation-for="FSessionTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FTicketPrice" class="control-label"></label>
+                <input asp-for="FTicketPrice" class="form-control input"/>
+                <span asp-validation-for="FTicketPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="送出" class="btn btn-primary" id="btn" /> |
+                <a asp-action="Index" class="btn btn-light">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(function () {
+            var movie = $('#movie').val();
+            var cinema = $('#cinema').val();
+            console.log(movie);
+            console.log(cinema);
+            $.ajax({
+                url: '/TSessions/GetDate',
+                method: 'POST',
+                data: { movie },
+                success: function (data) {
+                    var date = JSON.parse(data);
+                    $('#Date').attr('max', '');
+                    $('#Date').attr('max', date.max);
+                    $('#Date').attr('min', '');
+                    $('#Date').attr('min', date.min);
+                },
+                error: function (err) {
+
+                }
+            });
+
+        });
+    </script>
+}

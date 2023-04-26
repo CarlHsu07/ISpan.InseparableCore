@@ -84,9 +84,9 @@
                         <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="0" class="active" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleCaptions2" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
                     </div>
-                    <div class="carousel-inner">
-
-                        <div class="carousel-item active">
+                <div class="carousel-inner">
+                    @if(Model.showing!=null){
+                     <div class="carousel-item active">
                             <div class="trend_2i row">
                             @foreach (var item in Model.showing.Take(3))
                             {
@@ -103,15 +103,22 @@
                                         </div>
                                         <div class="trend_2ilast bg_grey p-3 clearfix">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
-                                            <p class="mb-2 "></p>
+                                            <p class="mb-2 ">
+                                                @if (item.FMovieIntroduction.Length > 30)
+                                                {
+                                                    @item.FMovieIntroduction.Substring(0,30);
+                                                }
+                                                else
+                                                {
+                                                    @item.FMovieIntroduction;
+                                                }...
+                                            </p>
                                         </div>
                                     </a>
                                 </div>
                             }
                         </div>
                     </div>
-
-
                     <div class="carousel-item">
                         <div class="trend_2i row">
                             @foreach (var item in Model.showing.Skip(3))
@@ -129,14 +136,23 @@
                                         </div>
                                         <div class="trend_2ilast bg_grey p-3 clearfix">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
-                                            <p class="mb-2">@item.FMovieIntroduction.Substring(0, 30)....</p>
+                                            <p class="mb-2">
+                                                @if (item.FMovieIntroduction.Length > 30)
+                                                {
+                                                    @item.FMovieIntroduction.Substring(0,30);
+                                                }
+                                                else
+                                                {
+                                                    @item.FMovieIntroduction;
+                                                }...
+                                            </p>
                                         </div>
                                     </a>
                                 </div>
                             }
                         </div>
-                    </div>
-
+                        </div>
+                    }
                 </div>
 
             </div>
@@ -165,25 +181,34 @@
                     <button type="button" data-bs-target="#carouselExampleCaptions3" data-bs-slide-to="1" aria-label="Slide 2" class="" aria-current="true"></button>
                 </div>
                 <div class="carousel-inner">
-
+                    @if(Model.soon!=null){
                     <div class="carousel-item active">
                         <div class="trend_2i row">
                             @foreach (var item in Model.soon.Take(3))
                             {
                                 <div class="col-md-4">
-                                    <a href="/TMovies/Details/@item.FMovieId">
+                                    <a asp-controller="TMovies" asp-action="Details" asp-route-id="@item.FMovieId">
                                         <div class="trend_2im clearfix position-relative">
                                             <div class="trend_2im1 clearfix">
                                                 <div class="grid">
                                                     <figure class="effect-jazz mb-0">
-                                                        <img src="~/images/@item.FMovieImagePath " class="w-100 h-500" alt="img25">
+                                                        <img src="~/images/@item.FMovieImagePath" class="w-100 h-500" alt="@item.FMovieName">
                                                     </figure>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="trend_2ilast bg_grey p-3 clearfix">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
-                                            <p class="mb-2 ">@item.FMovieIntroduction.Substring(0, 30)....</p>
+                                            <p class="mb-2">
+                                                @if (item.FMovieIntroduction.Length > 30)
+                                                {
+                                                    @item.FMovieIntroduction.Substring(0,30);
+                                                }
+                                                else
+                                                {
+                                                    @item.FMovieIntroduction;
+                                                }...
+                                            </p>
                                         </div>
                                     </a>
                                 </div>
@@ -207,16 +232,25 @@
                                         </div>
                                         <div class="trend_2ilast bg_grey p-3 clearfix">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
-                                            <p class="mb-2">@item.FMovieIntroduction.Substring(0, 30)....</p>
+                                            <p class="mb-2">
+                                                @if (item.FMovieIntroduction.Length > 30)
+                                                {
+                                                    @item.FMovieIntroduction.Substring(0,30);
+                                                }
+                                                else
+                                                {
+                                                    @item.FMovieIntroduction;
+                                                }...
+                                            </p>
                                         </div>
                                     </a>
                                 </div>
                             }
                         </div>
                     </div>
-
+                    }
                 </div>
-
+                    
             </div>
         </div>
     </div>

@@ -18,17 +18,22 @@
         <img src="~/images/Infinity-1s-200px.gif" />
     </div>
     <div id="city">
-        @foreach (var item in Model.city)
+        @if (Model.city != null)
         {
-
-            <button class="city btn btn-outline-primary" value="@item">@item</button>
-
+            foreach (var item in Model.city)
+            {
+                <button class="city btn btn-outline-primary" value="@item">@item</button>
+            }
         }
     </div>
     <div id="brand">
-        @foreach (var item in Model.brand)
+        @if (Model.brand != null)
         {
-            <button class="brand btn btn-outline-primary" value="@item">@item</button>
+            foreach (var item in Model.brand)
+            {
+                <button class="brand btn btn-outline-primary" value="@item">@item</button>
+            }
+
         }
     </div>
 </div>

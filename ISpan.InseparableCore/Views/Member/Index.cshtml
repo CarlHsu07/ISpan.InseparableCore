@@ -59,7 +59,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth.Value.ToString("yyyy/MM/dd")</span></div>
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
@@ -73,10 +73,10 @@
                     <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
                     <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
                 </div>
-                <div class="row">
+                @*<div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="TotalMemberPoint" class="control-label"></label></div>
                     <div class="col-lg-9 col-md-8"><span class="form-label">@Model.TotalMemberPoint</span></div>
-                </div>
+                </div>*@
 
             </div>
             
@@ -151,7 +151,7 @@
                     <div class="row mb-3">
                         <label asp-for="GenderId" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="GenderId" class="form-control">
+                            <select asp-for="GenderId" class="form-control" asp-items="ViewBag.FGenderId"></select>
                             <span asp-validation-for="GenderId" class="text-danger"></span>
                         </div>
                     </div>

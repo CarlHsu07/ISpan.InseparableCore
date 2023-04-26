@@ -71,8 +71,8 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var movie in movies)
 			{
 				MovieVm vm = movie.ModelToVm();
-				vm.Level = context.TMovies.Include(t => t.FMovieLevel)
-					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+				vm.Level = context.TMovies.Include(t => t.FMovieLevelId)
+					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevelId.FLevelName;
 
 				//獲得電影類別
 				IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
@@ -205,6 +205,31 @@ namespace ISpan.InseparableCore.Models.DAL
 				await context.SaveChangesAsync();
 			}
 		}
+        public TMovies GetOneMovie(int? movie)
+        {
+            var data = context.TMovies.FirstOrDefault(t => t.FMovieId == movie);
+            return data;
+        }
+		public IEnumerable<TMovies> GetByOffDay()
+		{
+			var today = DateTime.Now.Date;
+			var data = context.TMovies.Where(t => t.FMovieOffDate >= today && t.FDeleted==false);
 
-	}
+			return data;
+		}
+		public IEnumerable<TMovies> Showing()
+		{
+            DateTime today = DateTime.Now.Date;
+            var data = context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today && t.FDeleted == false).OrderByDescending(t => t.FMovieOffDate).Take(6);
+
+			return data;
+        }
+        public IEnumerable<TMovies> Soon()
+        {
+            DateTime today = DateTime.Now.Date;
+            var data = context.TMovies.Where(t => t.FMovieOnDate > today && t.FDeleted == false).OrderBy(t => t.FMovieOffDate).Take(6); 
+
+            return data;
+        }
+    }
 }

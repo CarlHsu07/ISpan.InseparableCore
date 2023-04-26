@@ -14,6 +14,7 @@ namespace ISpan.InseparableCore.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly InseparableContext _context;
+        private readonly MovieRepository _repo;
         IWebHostEnvironment _enviro;
 
         public HomeController(ILogger<HomeController> logger, InseparableContext context, IWebHostEnvironment enviro)
@@ -21,14 +22,15 @@ namespace ISpan.InseparableCore.Controllers
             _logger = logger;
             _context = context;
             _enviro = enviro;
+            _repo = new MovieRepository(context, null);
         }
 
         public IActionResult Index()
         {
             ChomeIndexVM vm = new ChomeIndexVM();
-            DateTime today = DateTime.Now.Date;
-            vm.showing = _context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today).OrderByDescending(t => t.FMovieOffDate).Take(6); 
-            vm.soon = _context.TMovies.Where(t => t.FMovieOnDate > today).OrderBy(t => t.FMovieOffDate).Take(6); 
+
+            vm.showing = _repo.Showing(); 
+            vm.soon = _repo.Soon();
             return View(vm);
         }
 
