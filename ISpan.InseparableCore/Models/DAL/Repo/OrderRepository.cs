@@ -22,7 +22,6 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             {
                 throw new Exception(ex.Message);
             }
-            //todo ppt 會員中心取消訂單
         }
         public TOrders GetByAll(TOrders orders)
         {

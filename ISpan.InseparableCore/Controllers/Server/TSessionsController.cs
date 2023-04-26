@@ -51,7 +51,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (inseparableContext == null)
                 return RedirectToAction("Index", "Admin");
 
-            var pagesize = 5;
+            var pagesize = 10;
             var pageIndex = 1;
 
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
@@ -68,7 +68,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (inseparableContext == null)
                 return RedirectToAction("Index", "Admin");
 
-            var pagesize = 5;
+            var pagesize =10;
             var pageIndex = vm.pageIndex;
             var count = inseparableContext.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位

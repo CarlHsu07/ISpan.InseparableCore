@@ -141,6 +141,7 @@ function mapshow(id) {
 
             moveMapToBerlin(map, lat, lng);
             addMarkersToMap(map, lat, lng);
+            //bobble(map, lat, lng, platform);
         });
 
 }
@@ -152,7 +153,8 @@ function moveMapToBerlin(map, lat, lng) {
 
 //標記
 function addMarkersToMap(map, lat, lng) {
-    var parisMarker = new H.map.Marker({ lat, lng });
+    var parisMarkerIcon = new H.map.Icon('https://img.icons8.com/ios-filled/50/D81111/marker.png');
+    var parisMarker = new H.map.Marker({ lat, lng }, { icon: parisMarkerIcon });
     map.addObject(parisMarker);
 };
 
@@ -165,4 +167,15 @@ function switchMapLanguage(map, platform) {
     map.setBaseLayer(defaultLayers.vector.normal.map);
     var ui = H.ui.UI.createDefault(map, defaultLayers, 'zh-CN');
     ui.removeControl('mapsettings');
+};
+
+//泡泡 因為會擋到座標所以不放
+function bobble(map, lat, lng, platform) {
+    var infoBubble = new H.ui.InfoBubble({ lat, lng }, {
+        content: '',
+    });
+    var defaultLayers = platform.createDefaultLayers();
+    // 添加 InfoBubble 對象到地圖上
+    var ui = H.ui.UI.createDefault(map, defaultLayers);
+    ui.addBubble(infoBubble);
 };

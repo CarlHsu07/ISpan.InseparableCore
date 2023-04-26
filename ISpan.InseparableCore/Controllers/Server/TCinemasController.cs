@@ -48,7 +48,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return RedirectToAction("Index", "Admin");
 
             int pageIndex = 1;
-            int pagesize = 5;
+            int pagesize = 10;
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
             ViewBag.page = CinemaPageList(pageIndex, pagesize, data);
             ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
@@ -64,7 +64,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (inseparableContext == null)
                 return RedirectToAction("Index", "Admin");
 
-            var pagesize = 5;
+            var pagesize = 10;
             var pageIndex = vm.pageIndex;
             var count = inseparableContext.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位

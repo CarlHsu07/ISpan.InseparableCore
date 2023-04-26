@@ -51,7 +51,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (inseparableContext == null)
                 return RedirectToAction("Index", "Admin");
 
-            var pagesize = 5;
+            var pagesize = 10;
             var pageIndex = 1;
 
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
@@ -70,7 +70,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             List<TMovies> movie = new List<TMovies>();
             List<TCinemas> cinema = new List<TCinemas>();
             List<TSessions> session = new List<TSessions>();
-            var pagesize = 5;
+            var pagesize = 10;
             var pageIndex = vm.pageIndex;
             var count = inseparableContext.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
@@ -222,8 +222,8 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return View();
 
             vm.orders = order_repo.GetOneOrder(id);
-            vm.ticket = ticket_repo.GetById(id);//_context.TTicketOrderDetails.Where(t => t.FOrderId == item.FOrderId);
-            vm.product = product_repo.GetById(id);//_context.TProductOrderDetails.Where(t => t.FOrderId == item.FOrderId);
+            vm.ticket = ticket_repo.GetById(id);
+            vm.product = product_repo.GetById(id);
 
 
             if (id == null || _context.TOrders == null)
