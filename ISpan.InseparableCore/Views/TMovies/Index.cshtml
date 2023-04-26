@@ -6,45 +6,26 @@
 @using X.PagedList;
 @using X.PagedList.Mvc.Core.Fluent
 @using X.PagedList.Web.Common
-
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/IndexGeneral.css" rel="stylesheet" />
+}
 <style>
-	PageContainer{
-		margin:0 auto;
-	}
-	.btnPage{
+		.inDivBottom {
+			position: absolute;
+			bottom: 0px;
+			right: -100px;
+		}
 
-	}
-
-	.divContainer {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-	.divBorder {
-		border-color: white;
-		border-width: 3px;
-		border-style: solid;
-	}
-
-	.divBlock {
-		margin: 20px
-	}
-
-	.inDivBottom {
-		position: absolute;
-		bottom: 0px;
-		right: -100px;
-	}
-	.inDivPosition {
-		position: relative;
-		bottom: -20px;
-		right: -500px;
-	}
+		.inDivPosition {
+			position: relative;
+			bottom: -20px;
+			right: -500px;
+		}
 
 </style>
-<h1>電影搜尋</h1>
-<a asp-action="IndexMaintainer">IndexMaintainer</a>
+<h1 class="divBlock">電影搜尋</h1>
+<a href="/AdminMovie/IndexMaintainer">IndexMaintainer</a>
 
 
 <div class="row divBlock">
@@ -131,9 +112,9 @@
 		</p>
 	</div>
 </div>
-<div style=" font-size:larger" class="PageContainer">
-	<div class="btn-toolbar inDivPosition PageContainer" role="toolbar" aria-label="Toolbar with button groups">
-		<div class="btn-group me-2 PageContainer" role="group" aria-label="First group" id="divPageContainer">
+<div style=" font-size:larger" class="">
+	<div class="btn-toolbar center-container" role="toolbar" aria-label="Toolbar with button groups">
+		<div class="btn-group " role="group" aria-label="First group" id="divPageContainer" style="margin:10px auto; ">
 			<button type="button" class="btn btn-secondary" id="prePage"><</button>
 			<button type="button" class="btn btn-primary btnPage" id="1" value="1">1</button>
 			@for (int i = 2; i < pagedList.PageCount + 1; i++)
@@ -249,59 +230,6 @@
 			})
 
 		}
-		//換頁function
-		function pageChange(page) {
-			pageNumber = page
-			let key = $("#Key").val()
-			let categoryId = $("#CategoryId").find(":selected").val()
-			let levelId = $("#LevelId").find(":selected").val()
-			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-			show(key, categoryId, dateCategoryId, levelId, page)
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId+ "/" + levelId )
-		}
-
-		//btnpage換顏色
-		function pageSelected(event) {
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
-			$(event).removeClass('btn-secondary');
-			$(event).addClass('btn-primary');
-
-		}
-		//點頁碼換頁
-		$(document).on('click', '.btnPage', function () {
-			let page = $(this).val()
-			pageChange(page)
-
-			pageSelected(this)
-		});
-		//上一頁
-		$(document).on('click', '#prePage', function () {
-			let page = parseInt(pageNumber) - 1
-
-			if (page <= 0) {
-				page += 1
-			}
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-			$(`#${page}`).removeClass('btn-secondary');
-			$(`#${page}`).addClass('btn-primary');
-			pageChange(page)
-		});
-		//下一頁
-		$(document).on('click', '#nextPage', function () {
-			let page = parseInt(pageNumber) + 1
-			if (page > PageCountNumber) {
-				page -= 1
-			}
-			$('.btn-primary').addClass('btn-secondary');
-			$('.btn-secondary').removeClass('btn-primary');
-
-			$(`#${page}`).removeClass('btn-secondary');
-			$(`#${page}`).addClass('btn-primary');
-			pageChange(page)
-		});
 
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
@@ -316,5 +244,6 @@
 		})
 
 	</script>
+	<script type="text/javascript" src="~/js/MoviePage.js"></script>
 
 }

@@ -2,24 +2,23 @@
 
 namespace ISpan.InseparableCore.ViewModels
 {
-	public class MovieDetailVm
+	public class MovieCommemtVm
 	{
 		public int FSerialNumber { get; set; }
 		public int FMovieId { get; set; }
 		public string? MemberName { get; set; }
 		public int FMemberId { get; set; }
-		public int FScore { get; set; }
 		public string? FComment { get; set; }
 		public DateTime FPostingDate { get; set; }
 		public string? PostDate { get; set; }
 		public bool FDeleted { get; set; }
 
 	}
-	public static class MovieScoreVmExtensions
+	public static class MovieCommentVmExtensions
 	{
-		public static MovieDetailVm ModelToVm(this TMovieCommentDetails model)
+		public static MovieCommemtVm ModelToVm(this TMovieCommentDetails model)
 		{
-			return new MovieDetailVm
+			return new MovieCommemtVm
 			{
 				FMovieId = model.FMovieId,
 				FMemberId = model.FMemberId,
@@ -30,7 +29,7 @@ namespace ISpan.InseparableCore.ViewModels
 				PostDate = model.FPostingDate.ToString("yyyy-MM-dd HH:mm:ss"),
 			};
 		}
-		public static TMovieCommentDetails VmToModel(this MovieDetailVm vm)
+		public static TMovieCommentDetails VmToModel(this MovieCommemtVm vm)
 		{
 			return new TMovieCommentDetails
 			{
@@ -41,16 +40,6 @@ namespace ISpan.InseparableCore.ViewModels
 				FDeleted = vm.FDeleted,
 				FPostingDate = vm.FPostingDate,
 			};
-		}
-
-		public static List<MovieDetailVm> ModelToVms(this List<TMovieCommentDetails> details)
-		{
-			List<MovieDetailVm> vms = new List<MovieDetailVm>();
-			foreach (var detail in details)
-			{
-				vms.Add(detail.ModelToVm());
-			}
-			return vms;
 		}
 	}
 }

@@ -1,28 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ISpan.InseparableCore.Models;
-using ISpan.InseparableCore.ViewModels;
 using NuGet.Protocol;
-using ISpan.InseparableCore.Models.DAL;
-using static System.Formats.Asn1.AsnWriter;
 using X.PagedList;
-using prjMvcCoreDemo.Models;
-using System.Text.Json;
 
-namespace ISpan.InseparableCore.Controllers
+namespace ISpan.InseparableCore.Controllers.Server
 {
-	public class TMoviesController : SuperController
+	public class AdminMovieController : Controller
 	{
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
 		private readonly MovieRepository repo;
 
-		public TMoviesController(InseparableContext context, IWebHostEnvironment enviro)
+		public AdminMovieController(InseparableContext context, IWebHostEnvironment enviro)
 		{
 			_context = context;
 			this._enviro = enviro;
@@ -44,7 +36,8 @@ namespace ISpan.InseparableCore.Controllers
 			return pagelist;
 		}
 
-		public IActionResult Index()
+		// GET: TMovies
+		public async Task<IActionResult> IndexMaintainer()
 		{
 			List<MovieVm> movies = repo.Search(null).ToList();
 
@@ -82,7 +75,7 @@ namespace ISpan.InseparableCore.Controllers
 			return View(movies);
 		}
 		[HttpPost]
-		public IActionResult Index(MovieSearchCondition condition)
+		public IActionResult IndexMaintainer(MovieSearchCondition condition)
 		{
 			List<MovieVm> movies = repo.Search(condition).ToList();
 
@@ -132,7 +125,7 @@ namespace ISpan.InseparableCore.Controllers
 
 
 		// GET: TMovies/Details/5
-		public async Task<IActionResult> Details(int? id)
+		public async Task<IActionResult> AdminDetails(int? id)
 		{
 			if (id == null || _context.TMovies == null)
 			{
@@ -141,6 +134,117 @@ namespace ISpan.InseparableCore.Controllers
 
 			MovieVm vm = repo.GetVmById((int)id);
 			return View(vm);
+		}
+
+		// GET: TMovies/Create
+		public IActionResult Create()
+		{
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName");
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View();
+		}
+
+		// POST: TMovies/Create
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create(MovieVm vm)
+		{
+			if (ModelState.IsValid)
+			{
+				await repo.CreateAsync(vm);
+				return RedirectToAction(nameof(IndexMaintainer));
+			}
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View(vm);
+		}
+
+		// GET: TMovies/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			if (id == null || _context.TMovies == null)
+			{
+				return NotFound();
+			}
+
+			var movie = await _context.TMovies.FindAsync(id);
+			if (movie == null)
+			{
+				return NotFound();
+			}
+			MovieVm vm = movie.ModelToVm();
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			return View(vm);
+		}
+
+		// POST: TMovies/Edit/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to.
+		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, MovieVm vm)
+		{
+			if (id != vm.FMovieId)
+			{
+				return NotFound();
+			}
+
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					await repo.UpdateAsync(vm);
+				}
+				catch (DbUpdateConcurrencyException)
+				{
+					if (!TMoviesExists(vm.FMovieId))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
+				}
+				return RedirectToAction(nameof(IndexMaintainer));
+			}
+			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			return View(vm);
+		}
+
+		// POST: TMovies/Delete/5
+		[HttpPost]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Delete(int movieId)
+		{
+			if (_context.TMovies == null)
+			{
+				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
+			}
+			var movie = await _context.TMovies.FindAsync(movieId);
+
+			await repo.DeleteAsync(movieId);
+
+			return RedirectToAction(nameof(IndexMaintainer));
+		}
+		[HttpPost]
+		public async Task<IActionResult> DeleteAjax(int movieId)
+		{
+			if (_context.TMovies == null)
+			{
+				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
+			}
+			var movie = await _context.TMovies.FindAsync(movieId);
+			await repo.DeleteAsync(movieId);
+			return Ok();
+		}
+
+		private bool TMoviesExists(int id)
+		{
+			return (_context.TMovies?.Any(e => e.FMovieId == id)).GetValueOrDefault();
 		}
 
 	}

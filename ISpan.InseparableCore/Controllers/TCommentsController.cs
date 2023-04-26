@@ -11,7 +11,7 @@ using NuGet.Protocol;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class TCommentsController : Controller
+    public class TCommentsController : SuperController
     {
         private readonly InseparableContext _context;
 		private readonly CommentRepository repo;
@@ -30,11 +30,12 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ArticleComment(CommentVm comment)
 		{
+			comment.FMemberId = _user.FId;
 			List<CommentVm> vms = new List<CommentVm>();
 			//無參數=>預設顯示
-			if (comment.FMemberId == 0 || string.IsNullOrEmpty(comment.FCommentContent))
+			if (string.IsNullOrEmpty(comment.FCommentContent))
 			{
-				repo.Search(comment.FArticleId);
+				//repo.Search(comment.FArticleId);
 			}
 			else if (comment.FCommentId != 0 || comment.FDeleted)//comment已存在=>跟新or刪除
 			{
@@ -42,13 +43,16 @@ namespace ISpan.InseparableCore.Controllers
 			}
 			else // 新comment=>新增
 			{
-				repo.CreateAsync(comment);
+				await repo.CreateAsync(comment);
 			}
 
-			var comments = _context.TComments.Where(t => t.FArticleId == comment.FArticleId).ToList();
-			vms = repo.ModelToVms(comments).ToList();
+			vms = repo.Search(comment.FArticleId).ToList();
 
-			return Ok(vms.ToJson());
+			return Ok(new
+			{
+				Vm = vms,
+				UserId = _user.FId,
+			}.ToJson());
 		}
 
 

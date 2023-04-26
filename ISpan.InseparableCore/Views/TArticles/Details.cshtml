@@ -2,49 +2,54 @@
 <style>
 	.btnEditComment {
 	}
-	.btnCommentCancel{
 
+	.btnCommentCancel {
 	}
 
-	.displayNone{
-		display:none;
+	.displayNone {
+		display: none;
 	}
-	.divComment{
-		margin:5px;
-		font-size:20px;
+
+	.divComment {
+		margin: 5px;
+		font-size: 20px;
 	}
-	.divArticle{
+
+	.divArticle {
 		font-size: 30px;
-		text-align:justify;
+		text-align: justify;
 	}
 
-	pre{
-		white-space:pre-wrap;
-		word-wrap:break-word;
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
 	}
+
 	.divContainerRow {
 		display: flex;
 		flex-direction: row;
 		padding: 5px;
+	}
 
-	}
-	.divContainerRow span{
-		display: flex;
-		flex-direction: column;
-		padding: 5px;
-		margin:0;
-	}
-	.divContainerRow span span{
-		display:inline;
-		flex-direction: column;
-		padding: 0px;
-		margin:0;
-	}
+		.divContainerRow span {
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			margin: 0;
+		}
+
+			.divContainerRow span span {
+				display: inline;
+				flex-direction: column;
+				padding: 0px;
+				margin: 0;
+			}
 
 	.divBorder {
 		border-color: white;
-		border-width: 3px;
+		border-width: 1px;
 		border-style: solid;
+		border-radius:9px;
 	}
 
 	.divBlock {
@@ -57,34 +62,40 @@
 		right: -200px;
 	}
 </style>
-<div class="" >
+<div class="">
 	<div class="divContainerRow " style="">
-		<span class=" " style="width:200px">
-			<p >
+		<span class=" " style="width:100px">
+			<p>
 				@Html.DisplayNameFor(model => model.ArticleCategory):
 				@Model.ArticleCategory
 			</p>
 		</span>
-		<span class=" " style="width:150px">
-			<p >
+		<span class=" " style="width:125px">
+			<p>
 				@Html.DisplayNameFor(model => model.MemberName):
 				@Html.DisplayFor(model => model.MemberName)
 			</p>
 		</span>
-		<span class=" " style="width:300px">
-			<p >
+		<span class=" " style="width:200px">
+			<p>
+				@Html.DisplayNameFor(model => model.FMemberId):
+				@Html.DisplayFor(model => model.FMemberId)
+			</p>
+		</span>
+		<span class=" " style="width:250px">
+			<p>
 				@Html.DisplayNameFor(model => model.PostingDate):
 				@Html.DisplayFor(model => model.PostingDate)
 			</p>
 		</span>
-		<span class=" " style="width:300px">
-			<p >
+		<span class=" " style="width:250px">
+			<p>
 				@Html.DisplayNameFor(model => model.ModifiedDate):
 				@Html.DisplayFor(model => model.ModifiedDate)
 			</p>
 		</span>
 		<span class=" " style="width:150px">
-			<p >
+			<p>
 				@Html.DisplayNameFor(model => model.FArticleLikes):
 				<span id="spanLikes">@Html.DisplayFor(model => model.FArticleLikes)</span>
 				@if (Model.LikeOrUnlike == true)
@@ -97,52 +108,55 @@
 				}
 			</p>
 		</span>
-		<span class=""  style="width:300px">
-			<p >
+		<span class="" style="width:100px">
+			<p>
 				@Html.DisplayNameFor(model => model.FArticleClicks):
 				@Html.DisplayFor(model => model.FArticleClicks)
 			</p>
 		</span>
-    </div>
-    <h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>
-    <hr />
+		<span>
+			<a href="/TMovies/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
+		</span>
+		<span>
+			<button type="button" class="btn btn-info"  onclick="backToIndex()">
+				返回
+			</button>
+		</span>
+	</div>
+	<h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>
+	<hr />
 </div>
 <div>
 	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
 </div>
-<div id="divComment"></div>
-<div class="form-group">
-	<select name="FMemberId" class="" id="FMemberId" asp-items="ViewBag.FMemberId"></select>
-</div>
-
 <div class="divContainerRow">
 	<div class="input-group">
 		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn-secondary" value="0">留言</button>
+		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
 	</div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.FArticleId">編輯</a> |
-    <a asp-action="Index">返回</a>
-</div>
+<div id="divComment"></div>
+
 @section Scripts{
 	<script>
+		//返回
+		function backToIndex() { window.location.href = "/TArticles/Index" }
+
 		//送出評論及展示評論ajax函數
-		function CommentDetail(FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted) {
+		function CommentDetail(FCommentId, FArticleId, FCommentContent, FDeleted) {
 			$.ajax({
 				method: "post",
 				url: "/TComments/ArticleComment",
-				data: { FCommentId, FMemberId, FArticleId, FCommentContent, FDeleted },
+				data: { FCommentId, FArticleId, FCommentContent, FDeleted },
 				success: function (data) {
 					let context = JSON.parse(data);
 					//alert(data)
-					let memberId = $("#FMemberId").find(":selected").attr("value")
-
+					let UserId = context.UserId
 					$("#divComment").html("")
-					$.each(context, function (index, value) {
-						if (value.FMemberId == memberId && !value.FDeleted) {
+					$.each(context.Vm, function (index, value) {
+						if (value.FMemberId == UserId && !value.FDeleted) {
 							$("#divComment").append(`
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
@@ -163,15 +177,15 @@
 						}
 						else {
 							$("#divComment").append(`
-									<div class=" divBorder">
-										<div style="font-size:large; margin:10px 0 0 10px" >
-											<div  class="divComment">
-												${value.MemberName}	 ${value.PostingDate}
-											</div>
-											<hr style="margin:0"/>
-											<div class="divComment">${value.FCommentContent}</div>
+								<div class=" divBorder">
+									<div style="font-size:large; margin:10px 0 0 10px" >
+										<div  class="divComment">
+											${value.MemberName}	 ${value.PostingDate}
 										</div>
-									</div>`
+										<hr style="margin:0"/>
+										<div class="divComment">${value.FCommentContent}</div>
+									</div>
+								</div>`
 							)
 						}
 
@@ -214,7 +228,7 @@
 			let commentContent = $(`#hidden${commentId}`).attr("value");
 			//alert(commentContent)
 			$(`#Container${commentId}`).html(`
-					<div class="divComment"  id="divComment${commentId}">${commentContent}</div>
+				<div class="divComment"  id="divComment${commentId}">${commentContent}</div>
 			`)
 		})
 
@@ -230,27 +244,27 @@
 		//送出評論
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let articleId = @Model.FArticleId
 			let comment = $(`#FCommentContent`).val();
-			CommentDetail(commentId, memberId, articleId, comment,false)
+			$(`#FCommentContent`).val("");
+			CommentDetail(commentId, articleId, comment, false)
 		})
 		//刪除評論
 		$(document).on('click', '#btnDeleteComment', function () {
 			let commentId = $(this).attr("value")
-			let memberId = $("#FMemberId").find(":selected").attr("value")
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			CommentDetail(commentId, memberId, articleId, comment, deleted)
+			confirm('你確定要刪除嗎？')
+			CommentDetail(commentId, articleId, comment, deleted)
 		})
 
 		//點讚ajax
-		function ArticleLike(FMemberId, FArticleId) {
+		function ArticleLike( FArticleId) {
 			$.ajax({
 				method: "post",
 				url: "/TArticles/ArticleLike",
-				data: { FMemberId, FArticleId},
+				data: { FArticleId },
 				success: function (data) {
 					let context = JSON.parse(data);
 					$("#spanLikes").html(`${context.LikeCount}`)
@@ -268,17 +282,15 @@
 				if (timeDiff > 1000) { // 如果距離上一次點擊的時間大於1秒，執行下面的代碼
 					$(this).data('clicked-time', now); // 更新最後點擊時間
 					// 执行按钮的操作
-					let memberId = $("#FMemberId").find(":selected").attr("value")
 					let articleId = @Model.FArticleId
-					ArticleLike(memberId, articleId)
+					ArticleLike(articleId)
 				}
 			});
 		});
 
 		//展示評論
-		CommentDetail(0, 0, @Model.FArticleId, "", false)
+		CommentDetail(0, @Model.FArticleId, "", false)
 
-		//likeOrUnlike
 	</script>
 
 }
