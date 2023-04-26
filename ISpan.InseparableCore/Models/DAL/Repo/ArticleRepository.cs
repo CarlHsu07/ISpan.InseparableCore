@@ -14,15 +14,24 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<ArticleVm> Search(ArticleSearchCondition? condition)
 		{
-			var articles = context.TArticles.ToList();
+			var articles = context.TArticles.Where(t => t.FDeleted == false).Include(t => t.FMember)
+				.OrderByDescending(t => t.FArticlePostingDate).ToList();
 
 			if (condition == null) return ModelToVms(articles);
+			//id搜尋
+			if (int.TryParse(condition.Key, out int articleId))
+			{
+				articles = articles.Where(t => t.FArticleId == articleId).ToList();
+				return ModelToVms(articles);
+			}
+
 
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
 				articles = articles.Where(t => t.FArticleTitle.Contains(condition.Key) 
-											|| t.FArticleContent.Contains(condition.Key)).ToList();
+											|| t.FArticleContent.Contains(condition.Key)
+											|| (t.FMember.FLastName + t.FMember.FFirstName).Contains(condition.Key)).ToList();
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)
@@ -37,11 +46,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			List<ArticleVm> vms = new List<ArticleVm>();
 			foreach (var article in articles)
 			{
-				ArticleVm vm = article.ModelToVm();
-				vm.ArticleCategory = context.TArticles.Include(t => t.FArticleCategory)
-					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FArticleCategory.FMovieCategoryName;
-				vm.MemberName = context.TArticles.Include(t => t.FMember)
-					.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FMember.FFirstName;
+				ArticleVm vm = GetVmById(article.FArticleId);
 
 				vms.Add(vm);
 			}
@@ -50,13 +55,13 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public ArticleVm GetVmById(int id)
 		{
-			TArticles article = context.TArticles.FirstOrDefault(t => t.FArticleId == id);
+			TArticles article = context.TArticles.Include(t => t.FArticleCategory)
+				.Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
 
 			ArticleVm vm = article.ModelToVm();
-			vm.ArticleCategory = context.TArticles.Include(t => t.FArticleCategory)
-	.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FArticleCategory.FMovieCategoryName;
-			vm.MemberName = context.TArticles.Include(t => t.FMember)
-				.FirstOrDefault(t => t.FArticleId == vm.FArticleId).FMember.FFirstName;
+			vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
+			vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
+			vm.FMemberId = article.FMember.FMemberId;
 			return vm;
 		}
 		public async Task CreateAsync(ArticleVm vm)
@@ -84,13 +89,14 @@ namespace ISpan.InseparableCore.Models.DAL
 			await context.SaveChangesAsync();
 
 		}
+
 		public async Task UpdateLikeAsync(ArticleVm vm)
 		{
 			TArticles article = context.TArticles.Find(vm.FArticleId);
 			article.FArticleLikes = vm.FArticleLikes;
 
 			context.Update(article);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 
 		}
 		public void Click(int articleId)
@@ -100,12 +106,13 @@ namespace ISpan.InseparableCore.Models.DAL
 			context.Update(article);
 			context.SaveChanges();
 		}
-		public async Task DeleteAsync(int articleId)
+		public void Delete(int articleId)
 		{
-			var article = await context.TArticles.FindAsync(articleId);
+			var article = context.TArticles.Find(articleId);
 			if (article != null)
 			{
-				context.TArticles.Remove(article);
+				article.FDeleted = true;
+				context.TArticles.Update(article);
 			}
 		}
 

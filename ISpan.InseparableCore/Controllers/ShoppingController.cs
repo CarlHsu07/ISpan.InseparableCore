@@ -18,7 +18,7 @@ using System.Web;
 
 namespace ISpan.InseparableCore.Controllers
 {
-    public class ShoppingController :  Controller
+    public class ShoppingController :  SuperController
     {
         private readonly InseparableContext _db;
         private readonly ApiKeys _key;

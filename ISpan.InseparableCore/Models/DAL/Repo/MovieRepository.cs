@@ -17,10 +17,16 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<MovieVm> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.ToList();
+			var movies = context.TMovies.Where(t => t.FDeleted == false).ToList();
 
 			if (condition == null) return ModelToVms(movies);
 
+			//id搜尋
+			if (int.TryParse(condition.Key, out int movieId))
+			{
+				movies = movies.Where(t => t.FMovieId == movieId).ToList();
+				return ModelToVms(movies);
+			}
 			//電影等級
 			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId).ToList();
 
@@ -42,8 +48,10 @@ namespace ISpan.InseparableCore.Models.DAL
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
-				// || t.FMovieActors.Contains(condition.Key) || t.FMovieDirectors.Contains(condition.Key)
-				movies = movies.Where(t => t.FMovieName.Contains(condition.Key)).ToList();
+				
+				movies = movies.Where(t => t.FMovieName.Contains(condition.Key) 
+										|| t.FMovieActors.Contains(condition.Key) 
+										|| t.FMovieDirectors.Contains(condition.Key)).ToList();
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)
@@ -189,15 +197,12 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task DeleteAsync(int movieId)
 		{
-			var tMovies = await context.TMovies.FindAsync(movieId);
-			if (tMovies != null)
+			var movie = await context.TMovies.FindAsync(movieId);
+			if (movie != null)
 			{
-				IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == tMovies.FMovieId);
-				foreach (TMovieCategoryDetails detail in categoryDetails)
-				{
-					context.Remove(detail);
-				}
-				context.TMovies.Remove(tMovies);
+				movie.FDeleted = true;
+				context.Update(movie);
+				await context.SaveChangesAsync();
 			}
 		}
         public TMovies GetOneMovie(int? movie)

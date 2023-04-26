@@ -1,0 +1,207 @@
+﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+<style>
+	.btnEditComment {
+	}
+
+	.btnCommentCancel {
+	}
+
+	.displayNone {
+		display: none;
+	}
+
+	.divComment {
+		margin: 5px;
+		font-size: 20px;
+	}
+
+	.divArticle {
+		font-size: 30px;
+		text-align: justify;
+	}
+
+	pre {
+		white-space: pre-wrap;
+		word-wrap: break-word;
+	}
+
+	.divContainerRow {
+		display: flex;
+		flex-direction: row;
+		padding: 5px;
+	}
+
+		.divContainerRow span {
+			display: flex;
+			flex-direction: column;
+			padding: 5px;
+			margin: 0;
+		}
+
+			.divContainerRow span span {
+				display: inline;
+				flex-direction: column;
+				padding: 0px;
+				margin: 0;
+			}
+
+	.divBorder {
+		border-color: white;
+		border-width: 1px;
+		border-style: solid;
+		border-radius:9px;
+	}
+
+	.divBlock {
+		margin: 20px
+	}
+
+	.inDivPosition {
+		position: relative;
+		bottom: 0px;
+		right: -200px;
+	}
+</style>
+<div class="">
+	<div class="divContainerRow " style="">
+		<span class=" " style="width:100px">
+			<p>
+				@Html.DisplayNameFor(model => model.ArticleCategory):
+				@Model.ArticleCategory
+			</p>
+		</span>
+		<span class=" " style="width:125px">
+			<p>
+				@Html.DisplayNameFor(model => model.MemberName):
+				@Html.DisplayFor(model => model.MemberName)
+			</p>
+		</span>
+		<span class=" " style="width:200px">
+			<p>
+				@Html.DisplayNameFor(model => model.FMemberId):
+				@Html.DisplayFor(model => model.FMemberId)
+			</p>
+		</span>
+		<span class=" " style="width:250px">
+			<p>
+				@Html.DisplayNameFor(model => model.PostingDate):
+				@Html.DisplayFor(model => model.PostingDate)
+			</p>
+		</span>
+		<span class=" " style="width:250px">
+			<p>
+				@Html.DisplayNameFor(model => model.ModifiedDate):
+				@Html.DisplayFor(model => model.ModifiedDate)
+			</p>
+		</span>
+		<span class=" " style="width:150px">
+			<p>
+				@Html.DisplayNameFor(model => model.FArticleLikes):
+				<span id="spanLikes">@Html.DisplayFor(model => model.FArticleLikes)</span>
+			</p>
+		</span>
+		<span class="" style="width:100px">
+			<p>
+				@Html.DisplayNameFor(model => model.FArticleClicks):
+				@Html.DisplayFor(model => model.FArticleClicks)
+			</p>
+		</span>
+		<span>
+			<button value="@Model.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+			<button type="button" class="btn btn-info"  onclick="backToIndex()">返回</button>
+		</span>
+	</div>
+	<h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>
+	<hr />
+</div>
+<div>
+	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
+</div>
+<div id="divComment"></div>
+
+@section Scripts{
+	<script>
+		//返回
+		function backToIndex() { window.location.href = "/AdminArticle/IndexMaintainer" }
+
+		//刪除評論ajax函數
+		function CommentDetail(FCommentId, FArticleId, FCommentContent, FDeleted) {
+			alert(FCommentId + "/" + FArticleId + "/" + FCommentContent + "/" + FDeleted)
+			$.ajax({
+				method: "post",
+				url: "/TComments/ArticleComment",
+				data: { FCommentId, FArticleId, FCommentContent, FDeleted },
+				success: function (data) {
+					let context = JSON.parse(data);
+					$("#divComment").html("")
+					$.each(context.Vm, function (index, value) {
+						$("#divComment").append(`
+							<div class=" divBorder">
+								<div style="font-size:large; margin:10px 0 0 10px">
+									<div class="divComment " id="Delete${value.FCommentId}">
+										${value.MemberName}	 ${value.PostingDate}
+									</div>
+									<hr style="margin:0"/>
+									<div id="Container${value.FCommentId}">
+										<div class="divComment" id="divComment${value.FCommentId}">
+											${value.FCommentContent}
+										</div>
+									</div>
+								</div>
+							</div>`
+						)
+						if(!value.FDeleted){
+							$(`#Delete${value.FCommentId}`).append(`
+								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
+							`)
+						}
+					})
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+				},
+			})
+		}
+
+		//按鈕組時改變顏色
+		$(document).on('click', '.btn-secondary', function () {
+			$(this).removeClass('btn-secondary');
+			$(this).addClass('btn-primary');
+		});
+		$(document).on('click', '.btn-primary', function () {
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-secondary');
+		});
+		//刪除評論
+		$(document).on('click', '#btnDeleteComment', function () {
+			let commentId = $(this).attr("value")
+			let articleId = @Model.FArticleId
+			let comment = "留言已刪除"
+			let deleted = true
+			confirm('你確定要刪除嗎？')
+			CommentDetail(commentId, articleId, comment, deleted)
+		})
+		//刪除文章
+		$(document).on('click', '.Delete', function () {
+			var articleId = parseInt($(this).attr("value"))
+			//confirm('你確定要刪除嗎？' + movieId)
+			$.ajax({
+				type: "POST",
+				url: "/AdminArticle/DeleteAjax",
+				data: { articleId },
+				success: function (data) {
+					alert("已刪除")
+				},
+				error: function (xhr, status, error) {
+					// 處理錯誤
+					console.log("AJAX request error: " + status + " - " + error);
+				}
+			});
+		})
+
+
+		//展示評論
+		CommentDetail(0, @Model.FArticleId, "", false)
+
+	</script>
+
+}

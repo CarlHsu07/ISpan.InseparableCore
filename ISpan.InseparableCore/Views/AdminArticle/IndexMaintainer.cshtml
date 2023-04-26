@@ -10,10 +10,22 @@
 @section Styles{
 	<link href="~/css/loading.css" rel="stylesheet" />
 	<link href="~/css/IndexGeneral.css" rel="stylesheet" />
+	<link href="~/css/IndexMaintainer.css" rel="stylesheet" />
 }
 
 <style>
+	#Key, #CategoryId{
+		color: aliceblue;
+		font-size: 15px;
+	}
 
+		#Key:focus {
+			color: aliceblue;
+		}
+
+	p, button {
+		font-size: 20px;
+	}
 
 	.inDivBottom {
 		position: absolute;
@@ -25,7 +37,11 @@
 		bottom: -20px;
 		right: -700px;
 	}
+
 </style>
+    <div class="loadingdiv" id="loading" style="display: none">
+        <img src="~/images/Infinity-1s-200px.gif" />
+    </div>
 
 <h1 style="margin:50px 0 0 50px;">貼文搜尋</h1>
 
@@ -43,15 +59,8 @@
 				<label name="CategoryId" class="control-label">類別</label>
 				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
-@*			<div class="form-group divBlock">
-				<label name="Page" class="control-label">頁數</label>
-				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
-			</div>
-*@			<div class="form-group divBlock" style="position:relative">
+			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
-			</div>
-			<div class="form-group divBlock inDivPosition ">
-				<h3><a asp-action="Create" class="btn btn-warning">發文</a></h3>
 			</div>
 		</div>
 	</form>
@@ -95,6 +104,7 @@
 						@Html.DisplayNameFor(model => model.PostingDate)
 					</p>
 				</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -102,7 +112,7 @@
 			{
 				<tr>
 					<td>
-						<a asp-action="Details" asp-route-id="@item.FArticleId">
+						<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="link-container">
 							<p>
 								@Html.DisplayFor(modelItem => item.FArticleTitle)
 							</p>
@@ -138,6 +148,9 @@
 							@Html.DisplayFor(modelItem => item.PostingDate)
 						</p>
 					</td>
+					<td>
+						<button value="@item.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+					</td>
 				</tr>
 			}
 		</tbody>
@@ -169,6 +182,9 @@
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
+				beforeSend: function () {
+					$('#loading').css("display", "");
+				},
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
@@ -180,14 +196,9 @@
 					{
 						alert("nodata")
 						$("#tableSearch").html(`
-			<tfoot>
-				<tr>
-					<td class="text-muted" colspan="5">
-						每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
-					</td>
-				</tr>
-			</tfoot>
-
+							<p class="text-muted" colspan="5">
+								每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
+							</p>
 						`)
 						return;
 					}
@@ -240,7 +251,7 @@
 						<tbody>
 							<tr>
 								<td>
-									<a href="/TArticles/Details/${value.FArticleId}">
+									<a href="/AdminArticle/AdminDetails/${value.FArticleId}"  class="link-container">
 										<p>
 											${value.FArticleTitle}
 										</p>
@@ -276,19 +287,18 @@
 										${value.PostingDate}
 									</p>
 								</td>
+								<td>
+									<button value="${value.FArticleId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+								</td>
 							</tr>
 						</tbody>
 
 						`)
 					})
 					$("#divDataCount").html(`
-						<tfoot>
-							<tr>
-								<td class="text-muted" colspan="5">
-									每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
-								</td>
-							</tr>
-						</tfoot>
+						<p class="text-muted" colspan="5">
+							每頁 ${context.PageSize} 筆資料，共 ${context.PageCount} 頁，全部共有 ${context.TotalItemCount} 筆資料。
+						<p>
 					`)
 					if(PageCountNumber != context.PageCount){
 						PageCountNumber = context.PageCount
@@ -319,6 +329,24 @@
 		}
 
 
+		//刪除文章
+		$(document).on('click', '.Delete', function () {
+			var articleId = parseInt($(this).attr("value"))
+			//confirm('你確定要刪除嗎？' + movieId)
+			$.ajax({
+				type: "POST",
+				url: "/AdminArticle/DeleteAjax",
+				data: { articleId },
+				success: function (data) {
+					alert("已刪除")
+				},
+				error: function (xhr, status, error) {
+					// 處理錯誤
+					console.log("AJAX request error: " + status + " - " + error);
+				}
+			});
+		})
+
 		//搜尋
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
@@ -331,6 +359,6 @@
 		})
 
 	</script>
-		<script type="text/javascript" src="~/js/ArticlePage.js"></script>
+	<script type="text/javascript" src="~/js/ArticlePage.js"></script>
 
 }

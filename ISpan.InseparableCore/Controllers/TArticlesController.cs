@@ -12,39 +12,41 @@ using X.PagedList;
 using Azure;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using prjMvcCoreDemo.Models;
+using System.Text.Json;
+using System.Diagnostics.Metrics;
+using ISpan.InseparableCore.Models.DAL.Repo;
 
 namespace ISpan.InseparableCore.Controllers
 {
-	public class TArticlesController : Controller
+	public class TArticlesController : SuperController
 	{
 		private readonly InseparableContext _context;
-		private readonly ArticleRepository repo;
-
+		private readonly ArticleRepository articleRepo;
+		private readonly ArticleLikeRepository likeRepo;
 		public TArticlesController(InseparableContext context)
 		{
 			_context = context;
-			repo = new ArticleRepository(context);
+			articleRepo = new ArticleRepository(context);
+			likeRepo = new ArticleLikeRepository(context);
 		}
 
 		//產生頁碼
 		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
 		{
 			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1)
-				return null;
+			if (page.HasValue && page < 1) return null;
 			// 從資料庫取得資料
 			var listUnpaged = articles;
 			IPagedList<ArticleVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
 			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
-				return null;
+			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount) return null;
 			return pagelist;
 		}
 		// GET: TArticles
 		public async Task<IActionResult> Index()
 		{
-
-			List<ArticleVm> articles = repo.Search(null).ToList();
+			List<ArticleVm> articles = articleRepo.Search(null).ToList();
 
 			#region ViewData
 
@@ -65,17 +67,17 @@ namespace ISpan.InseparableCore.Controllers
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
 
-			int pageSize = 2;
+			int pageSize = 10;
 
 			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
 			articles = articles.Take(pageSize).ToList();
 
-			return View(articles); 
+			return View(articles);
 		}
 		[HttpPost]
 		public async Task<IActionResult> Index(ArticleSearchCondition condition)
 		{
-			List<ArticleVm> articles = repo.Search(condition).ToList();
+			List<ArticleVm> articles = articleRepo.Search(condition).ToList();
 
 			#region ViewData
 			int pageContent = 2;
@@ -94,15 +96,18 @@ namespace ISpan.InseparableCore.Controllers
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 			#endregion
 
-			int pageSize = 2;
+			int pageSize = 10;
 			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
 			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
 			if (articles.Count == 0) return Ok("noData");
 
-			return Ok(new { Vm = articles,
-							PageCount = pageList.PageCount,
-							TotalItemCount = pageList.TotalItemCount, 
-							PageSize = pageSize}.ToJson());
+			return Ok(new
+			{
+				Vm = articles,
+				PageCount = pageList.PageCount,
+				TotalItemCount = pageList.TotalItemCount,
+				PageSize = pageSize
+			}.ToJson());
 		}
 
 		// GET: TArticles/Details/5
@@ -113,63 +118,50 @@ namespace ISpan.InseparableCore.Controllers
 				return NotFound();
 			}
 
-			var article = await _context.TArticles.FirstOrDefaultAsync(m => m.FArticleId == id);
-
-			if (article == null)
-			{
-				return NotFound();
-			}
-			var vm = repo.GetVmById(article.FArticleId);
+			var vm = articleRepo.GetVmById((int)id);
 
 			//是否點讚
-			int memberId = 1;
-			var detailInDb = _context.TArticleLikeDetails.FirstOrDefault(t => t.FMemberId == memberId
-																		&& t.FArticleId == vm.FArticleId);
-			if (detailInDb == null) vm.LikeOrUnlike = false;
-			else vm.LikeOrUnlike = true;
+			 vm.LikeOrUnlike = likeRepo.LikeOrNot((int)id, _user.FId);
 
 			//點閱數+1
-			repo.Click(vm.FArticleId);
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
+			articleRepo.Click(vm.FArticleId);
 
 			return View(vm);
 		}
 		[HttpPost]
-		public async Task<IActionResult> ArticleLike(TArticleLikeDetails detail)
+		public async Task<IActionResult> ArticleLike(ArticleLikeVm vm)
 		{
+			vm.FMemberId = _user.FId;
 			bool like = false;
-			var detailInDb = _context.TArticleLikeDetails
-				.FirstOrDefault(t => t.FMemberId == detail.FMemberId
-								  && t.FArticleId == detail.FArticleId);
 
-			ArticleVm article = repo.GetVmById(detail.FArticleId);
+			var detailInDb = likeRepo.GetLikeVm(vm.FArticleId, vm.FMemberId);
+
+			ArticleVm article = articleRepo.GetVmById(vm.FArticleId);
 
 			if (detailInDb == null)
 			{
 				article.FArticleLikes++;
-				repo.UpdateLikeAsync(article);
+				await articleRepo.UpdateLikeAsync(article);
 
 				like = true;
-				_context.Add(detail);
+				likeRepo.Create(vm);
 			}
 			else
 			{
 				article.FArticleLikes--;
-				repo.UpdateLikeAsync(article);
+				await articleRepo.UpdateLikeAsync(article);
 
 				like = false;
-				_context.Remove(detailInDb);
+				likeRepo.Delete(detailInDb.FSerialNumber);
 			}
-			await _context.SaveChangesAsync();
 
-			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes}).ToJson());
+			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes }).ToJson());
 		}
 
 		// GET: TArticles/Create
 		public IActionResult Create()
 		{
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName");
 			return View();
 		}
 
@@ -182,30 +174,25 @@ namespace ISpan.InseparableCore.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				repo.CreateAsync(vm);
+				vm.FMemberPK = _user.FId;
+
+				await articleRepo.CreateAsync(vm);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", vm.FMemberId);
 			return View(vm);
 		}
 
 		// GET: TArticles/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+		public async Task<IActionResult> Edit(int? articleId)
 		{
-			if (id == null || _context.TArticles == null)
+			if (articleId == null || _context.TArticles == null)
 			{
 				return NotFound();
 			}
 
-			var article = await _context.TArticles.FindAsync(id);
-			if (article == null)
-			{
-				return NotFound();
-			}
-			var vm = article.ModelToVm();
+			var vm = articleRepo.GetVmById((int)articleId);
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", vm.FMemberId);
 			return View(vm);
 		}
 
@@ -225,7 +212,9 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				try
 				{
-					repo.UpdateAsync(vm);
+					vm.FMemberPK = _user.FId;
+
+					await articleRepo.UpdateAsync(vm);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
@@ -241,27 +230,20 @@ namespace ISpan.InseparableCore.Controllers
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
-			ViewData["FMemberId"] = new SelectList(_context.TMembers, "FId", "FFirstName", vm.FMemberId);
 			return View(vm);
 		}
 
 		// POST: TArticles/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int articleId)
+		[HttpPost]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteAjax(int articleId)
 		{
 			if (_context.TArticles == null)
 			{
 				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
 			}
-			var article = await _context.TArticles.FindAsync(articleId);
+			articleRepo.Delete(articleId);
 
-			if (article != null)
-			{
-				_context.TArticles.Remove(article);
-			}
-
-			await _context.SaveChangesAsync();
 			return RedirectToAction(nameof(Index));
 		}
 
