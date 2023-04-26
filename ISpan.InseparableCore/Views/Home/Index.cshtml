@@ -3,6 +3,7 @@
     ViewData["Title"] = "Home Page";
 }
 @section Styles{
+    <link href="~/css/loading.css" rel="stylesheet" />
     <style>
         .h-380 {
             max-height: 380px;
@@ -13,6 +14,9 @@
         }
     </style>
 }
+    <div class="loadingdiv" id="loading" style="opacity:1;">
+        <img src="~/images/ezgif-4-7e4b2989a2.gif" />
+    </div>
     <section id="center" class="center_home">
         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-indicators">
@@ -101,7 +105,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                        <div class="trend_2ilast bg_grey p-3 clearfix h-100">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
                                             <p class="mb-2 ">
                                                 @if (item.FMovieIntroduction.Length > 30)
@@ -134,7 +138,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                        <div class="trend_2ilast bg_grey p-3 clearfix h-100">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
                                             <p class="mb-2">
                                                 @if (item.FMovieIntroduction.Length > 30)
@@ -197,7 +201,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                        <div class="trend_2ilast bg_grey p-3 clearfix h-100">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
                                             <p class="mb-2">
                                                 @if (item.FMovieIntroduction.Length > 30)
@@ -230,7 +234,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="trend_2ilast bg_grey p-3 clearfix">
+                                        <div class="trend_2ilast bg_grey p-3 clearfix h-100">
                                             <h5><p class="col_red">@item.FMovieName</p></h5>
                                             <p class="mb-2">
                                                 @if (item.FMovieIntroduction.Length > 30)
@@ -255,3 +259,19 @@
         </div>
     </div>
 </section>
+@section Scripts{
+    <script>
+        $(function(){
+                if (!sessionStorage.getItem('isFirstLoad')) {
+            sessionStorage.setItem('isFirstLoad', 'true');
+            // 只在第一次載入頁面時執行
+            setTimeout(function () {
+                $('#loading').css("display", "none");
+            }, 2000);
+        } else {
+            // 第二次載入頁面直接隱藏
+            $('#loading').css("display", "none");
+        }
+        });
+    </script>
+}
