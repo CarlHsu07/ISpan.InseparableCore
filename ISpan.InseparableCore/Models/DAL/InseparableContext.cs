@@ -551,8 +551,14 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fMemberID")
                     .HasComment("會員ID");
 
+                entity.HasOne(d => d.FFriend)
+                    .WithMany(p => p.TFriendsFFriend)
+                    .HasForeignKey(d => d.FFriendId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tFriends_tMembers1");
+
                 entity.HasOne(d => d.FMember)
-                    .WithMany(p => p.TFriends)
+                    .WithMany(p => p.TFriendsFMember)
                     .HasForeignKey(d => d.FMemberId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tFriends_tMembers");
@@ -1082,6 +1088,12 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FMovieScore)
                     .HasColumnType("decimal(2, 1)")
                     .HasColumnName("fMovieScore");
+
+                entity.HasOne(d => d.FMovieLevel)
+                    .WithMany(p => p.TMovies)
+                    .HasForeignKey(d => d.FMovieLevelId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_tMovies_tMovieLevels");
             });
 
             modelBuilder.Entity<TOrders>(entity =>
