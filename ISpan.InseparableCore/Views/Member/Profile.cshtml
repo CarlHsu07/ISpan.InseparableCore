@@ -34,7 +34,7 @@
             <div class="col-sm-10">
                 <div class="d-flex justify-content-between align-items-center pb-2">
                     <h2>@Html.DisplayFor(model => model.FLastName)@Html.DisplayFor(model => model.FFirstName)</h2>
-                    @if (ViewBag.isSameMember == false)
+                    @if (ViewBag.isSameMember == false && ViewBag.isLogedIn == true)
                     {
                         <button class="btn @(ViewBag.FriendStatus == "is-friend" ? "btn-secondary" : "btn-primary")" id="btnAddFriend" data-friend-status="@ViewBag.FriendStatus" value="@Model.FId">@ViewBag.FriendBtnText</button>
                     }
@@ -72,6 +72,29 @@
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
     <script>
         $(document).ready(function () {
+            $("#btnAddFriend").hover(
+                function () {
+                    const friendStatus = $(this).data("friend-status");
+
+                    if (friendStatus === "is-friend") {
+                        $(this).addClass("btn-danger").removeClass("btn-secondary");
+                        $(this).text('解除好友');
+                    } else {
+                        $(this).text('加入好友');
+                    }
+                },
+                function () {
+                    const friendStatus = $(this).data("friend-status");
+
+                    if (friendStatus === "is-friend") {
+                        $(this).addClass("btn-secondary").removeClass("btn-danger");
+                        $(this).text('已是好友');
+                    } else {
+                        $(this).text('加入好友');
+                    }
+                }
+            );
+
             $("#btnAddFriend").click(function () {
                 var btn = $(this);
                 var id =  btn.val();
@@ -87,7 +110,7 @@
                         success: function (result) {
                             if (result.success) {
                                 console.log("加好友成功 in all");
-                                btn.text("已加好友");
+                                btn.text("已是好友");
                                 btn.addClass("btn-secondary").removeClass("btn-primary");
                             }
                             else {
@@ -95,12 +118,31 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                            console.log("ajax失敗，請重試！");
+                            console.log("加好友的ajax失敗，請重試！");
 
                         }
                     });
-                } else if (friendStatus === "is-friend") {
+                }
+                else if (friendStatus === "is-friend") {
+                    $.ajax({
+                        type: "POST",
+                        url: "/member/UnFriend",
+                        data: { friendId: id },
+                        success: function (result) {
+                            if (result.success) {
+                                console.log("解除好友成功 in all");
+                                btn.text("加入好友");
+                                btn.addClass("btn-primary").removeClass("btn-secondary");
+                            }
+                            else {
+                                console.log(result.message); // 失敗訊息
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log("解除好友的ajax失敗，請重試！");
 
+                        }
+                    });
                 }
 
                 

@@ -159,6 +159,7 @@ namespace ISpan.InseparableCore.Controllers
         public async Task<IActionResult> Profile(int? id)
         {
             MemberService memberService = new MemberService(_context);
+            int? memberId = GetMemberID();
 
             if (id == null || _context.TMembers == null)
             {
@@ -176,12 +177,14 @@ namespace ISpan.InseparableCore.Controllers
                 return NotFound();
             }
 
-            bool isFriend = memberService.IsFriend(GetMemberID(), member.FId);
-            bool isSameMember = memberService.IsCurrentMember(GetMemberID(), member.FId);
+            bool isFriend = memberService.IsFriend(memberId, member.FId);
+            bool isSameMember = memberService.IsCurrentMember(memberId, member.FId);
+            bool isLogedIn = memberId != null;
 
             ViewData["FriendStatus"] = isFriend ? "is-friend" : "not-friend";
             ViewData["FriendBtnText"] = isFriend ? "已是好友" : "加入好友";
             ViewData["isSameMember"] = isSameMember;
+            ViewData["isLogedIn"] = isLogedIn;
 
             return View(member);
         }
@@ -218,25 +221,28 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
-        // POST: Member/AddFriend/7
+        // POST: Member/UnFriend/7
         [HttpPost]
         public IActionResult UnFriend(int friendId)
         {
+            MemberService memberService = new MemberService(_context);
             int? memberId = GetMemberID();
-            if (memberId != null)
+
+            if (memberId != null && memberService.IsFriend(memberId, friendId))
             {
-                TMembers friend = _context.TMembers.FirstOrDefault(m => m.FId == friendId);
-                if (friend == null)
+                var friendShip = _context.TFriends.FirstOrDefault(f =>
+                    (f.FMemberId == memberId && f.FFriendId == friendId) ||
+                    (f.FMemberId == friendId && f.FFriendId == memberId));
+
+                if (friendShip == null)
                 {
-                    return Json(new { success = false, message = "取消好友失敗 in C#" });
+                    return Json(new { success = false, message = "找不到好友關係 in C#" });
                 }
 
-                
-                //_context.TFriends.Remove();
+                _context.TFriends.Remove(friendShip); // 刪除好友關係資料
                 _context.SaveChanges();
 
-                // 返回 JSON 格式的結果
-                return Json(new { success = true });
+                return Json(new { success = true }); // 返回 JSON 格式的結果
             }
             else
             {

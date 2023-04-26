@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.Controllers
             var actionName = context.ActionDescriptor.RouteValues["action"];
 
             // todo 指定的action不進行權限控管
-            if (actionName == "Register" || actionName == "GetAreas" || actionName == "Paydone") // 指定的action不進行權限控管
+            if (actionName == "Register" || actionName == "GetAreas" || actionName == "Paydone" || actionName == "Profile") // 指定的action不進行權限控管
             {
                 return;
             }
