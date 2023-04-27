@@ -22,7 +22,7 @@ namespace ISpan.InseparableCore.Models.BLL
             int newSequence = 0; // 新的序號
 
             // 查詢當日已經新增的會員數量
-            int todayNewMemberCount = _context.TMembers.Count(m => m.FSignUpTime.Value.Date == now.Date);
+            int todayNewMemberCount = _context.TMembers.Count(m => m.FSignUpTime.GetValueOrDefault().Date == now.Date);
 
             if (todayNewMemberCount == 0)
             {

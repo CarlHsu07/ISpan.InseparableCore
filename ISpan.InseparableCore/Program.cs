@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using NuGet.Configuration;
 using System.Configuration;
+using ISpan.InseparableCore.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession();
+builder.Services.AddSignalR(); //¥[¤J SignalR
 
 // InseparableContext
 builder.Services.AddDbContext<InseparableContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("InseparableConnection")));
@@ -41,5 +43,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Login}/{id?}");
     //pattern: "{controller=Member}/{action=EditProfile}/{id?}");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
