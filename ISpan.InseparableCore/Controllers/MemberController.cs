@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using System.Diagnostics.Metrics;
 using prjMvcCoreDemo.Models;
 using System.Text.Json;
+using System.Security.Claims;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -122,46 +123,146 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        // GET: Member/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Member/OrderHistorys/2
+        public async Task<IActionResult> OrderHistorys(int? id)
         {
+            if (id == null || _context.TOrders == null)
+            {
+                return NotFound();
+            }
+
+            var orders = await _context.TOrders
+                .Include(t => t.TProductOrderDetails)
+                .Include(t => t.TTicketOrderDetails)
+                .Where(m => m.FMemberId == id)
+                .ToListAsync();
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = orders.Select(o => new CMemberOrderHistoryViewModel
+            {
+                OrderId = o.FOrderId,
+                CinemaId = o.FCinemaId,
+                OrderDate = o.FOrderDate,
+                ModifiedTime = o.FModifiedTime,
+                TotalMoney = o.FTotalMoney,
+                Status = o.FStatus
+            }).ToList();
+
+            return View(viewModel);
+        }
+
+        // GET: Member/Profile/5
+        public async Task<IActionResult> Profile(int? id)
+        {
+            MemberService memberService = new MemberService(_context);
+            int? memberId = GetMemberID();
+
             if (id == null || _context.TMembers == null)
             {
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers
+            var member = await _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
                 .Include(t => t.FArea)
                 .Include(t => t.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
-            if (tMembers == null)
+
+            if (member == null)
             {
                 return NotFound();
             }
 
-            return View(tMembers);
+            bool isFriend = memberService.IsFriend(memberId, member.FId);
+            bool isSameMember = memberService.IsSameMember(memberId, member.FId);
+            bool isLogedIn = memberId != null;
+
+            ViewData["FriendStatus"] = isFriend ? "is-friend" : "not-friend";
+            ViewData["FriendBtnText"] = isFriend ? "已是好友" : "加入好友";
+            ViewData["isSameMember"] = isSameMember;
+            ViewData["isLogedIn"] = isLogedIn;
+
+            return View(member);
         }
 
-		// GET: Member/ViewProfile/5
-		public async Task<IActionResult> ViewProfile(int? id)
+        // POST: Member/AddFriend/7
+        [HttpPost]
+        public IActionResult AddFriend(int friendId)
+        {
+            int? memberId = GetMemberID();
+            if (memberId != null)
+            {
+                TMembers friend = _context.TMembers.FirstOrDefault(m => m.FId == friendId);
+                if (friend == null)
+                {
+                    return Json(new { success = false, message = "加好友失敗 in C#" });
+                }
+
+                // 做加好友的操作，向DB中的 tFriends 中插入一條記錄
+                var friendship = new TFriends
+                {
+                    FMemberId = (int)memberId,
+                    FFriendId = friend.FId,
+                    FFriendDateTime = DateTime.Now
+                };
+                _context.TFriends.Add(friendship);
+                _context.SaveChanges();
+
+                // 返回 JSON 格式的結果
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, message = "加好友失敗 in C#" });
+            }
+        }
+
+        // POST: Member/UnFriend/7
+        [HttpPost]
+        public IActionResult UnFriend(int friendId)
+        {
+            MemberService memberService = new MemberService(_context);
+            int? memberId = GetMemberID();
+
+            if (memberId != null && memberService.IsFriend(memberId, friendId))
+            {
+                var friendShip = _context.TFriends.FirstOrDefault(f =>
+                    (f.FMemberId == memberId && f.FFriendId == friendId) ||
+                    (f.FMemberId == friendId && f.FFriendId == memberId));
+
+                if (friendShip == null)
+                {
+                    return Json(new { success = false, message = "找不到好友關係 in C#" });
+                }
+
+                _context.TFriends.Remove(friendShip); // 刪除好友關係資料
+                _context.SaveChanges();
+
+                return Json(new { success = true }); // 返回 JSON 格式的結果
+            }
+            else
+            {
+                return Json(new { success = false, message = "取消好友失敗 in C#" });
+            }
+        }
+
+        // GET: Member/FriendList/2
+        public async Task<IActionResult> FriendList()
 		{
-			if (id == null || _context.TMembers == null)
-			{
-				return NotFound();
-			}
+            MemberService memberService = new MemberService(_context);
+            int? memberId = GetMemberID();
 
-			var tMembers = await _context.TMembers
-				.Include(t => t.FAccountStatusNavigation)
-				.Include(t => t.FArea)
-				.Include(t => t.FGender)
-				.FirstOrDefaultAsync(m => m.FId == id);
-			if (tMembers == null)
-			{
-				return NotFound();
-			}
+            if (memberId != null)
+            {
+                List<CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
+                return View(friendList);
+            }
 
-			return View(tMembers);
+            return NotFound();
 		}
 
 		// GET: Member/Register
@@ -308,6 +409,7 @@ namespace ISpan.InseparableCore.Controllers
                         member.FAreaId = MemberIn.Area;
                         member.FAddress = MemberIn.Address;
                         member.FIntroduction = MemberIn.Introduction;
+                        // todo 字數太長的處理
 
                         if (MemberIn.Password != null) // 加密會員密碼
                         {
@@ -397,15 +499,13 @@ namespace ISpan.InseparableCore.Controllers
                         throw;
                     }
                 }
+
                 return Json(new { success = true });
-                //return RedirectToAction(nameof(Index));
             }
             else
             {
                 return Json(new { success = false, message = "更改密碼失敗 in C#" });
             }
-
-            //return View(MemberIn);
         }
 
         // GET: Home/Logout
@@ -441,6 +541,19 @@ namespace ISpan.InseparableCore.Controllers
 
             // 將區域資料轉換成 JSON 格式回傳給前端
             return Json(areas);
+        }
+
+        // 從Session中取得會員的fID
+        private int? GetMemberID()
+        {
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                var member = JsonSerializer.Deserialize<TMembers>(serializedTMembers);
+                return member.FId;
+            }
+
+            return null;
         }
     }
 }

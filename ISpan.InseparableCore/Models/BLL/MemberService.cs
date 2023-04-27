@@ -1,5 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
@@ -51,6 +53,61 @@ namespace ISpan.InseparableCore.Models.BLL
         public DateTime GenerateSignUpTime()
         {
             return DateTime.Now;
+        }
+
+        // 判斷是否為好友
+        public bool IsFriend(int? memberAId, int? memberBId)
+        {
+            bool isFriend = false;
+
+            if (memberAId != null && memberBId != null)
+            {
+                isFriend = _context.TFriends.Any(f =>
+                        (f.FMemberId == memberAId && f.FFriendId == memberBId) ||
+                        (f.FMemberId == memberBId && f.FFriendId == memberAId));
+            }
+
+            return isFriend;
+        }
+
+        // 判斷是否為同一個會員
+        public bool IsSameMember(int? memberAId, int? memberBId)
+        {
+            bool isCurrentMember = false;
+
+            if (memberAId != null && memberBId != null)
+            {
+                isCurrentMember = memberAId == memberBId;
+            }
+
+            return isCurrentMember;
+        }
+
+        public async Task<List<CFriendListViewModel>> GetFriendListAsync(int? memberId)
+        {
+            List<CFriendListViewModel> friendList = new List<CFriendListViewModel>();
+
+            if (memberId != null)
+            {
+                // 取得好友的member Fid
+                var friends = await _context.TFriends
+                    .Where(f => f.FMemberId == memberId)
+                    .Select(f => f.FFriendId)
+                    .ToListAsync();
+
+                friendList = await _context.TMembers
+                    .Where(m => friends.Contains(m.FId))
+                    .Select(m => new CFriendListViewModel
+                    {
+                        Id = m.FId,
+                        LastName = m.FLastName,
+                        FirstName = m.FFirstName,
+                        PhotoPath = m.FPhotoPath
+                    })
+                    .ToListAsync();
+            }
+
+            return friendList;
         }
     }
 }
