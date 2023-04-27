@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\TMoviesController.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="wwwroot\js\Ticket.js" />
   </ItemGroup>
 
