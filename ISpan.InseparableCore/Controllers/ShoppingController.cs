@@ -463,6 +463,7 @@ namespace ISpan.InseparableCore.Controllers
                 string error = "網頁加載時出現問題 請重新下單!";
                 return RedirectToAction("Error", new { error });
             }
+            order.FStatus = true;
 
             _db.SaveChanges();
 
@@ -698,7 +699,7 @@ namespace ISpan.InseparableCore.Controllers
             if (_user.FEmail == null)
             {
                 var member = _db.TOrders.FirstOrDefault(t => t.FOrderId == id).FMemberId;
-                _user.FEmail = _db.TMembers.FirstOrDefault(t => t.FId == member).FEmail;
+                _user = _db.TMembers.FirstOrDefault(t => t.FId == member);
             }
 
             var product = _product_order_repo.GetById(id);
@@ -707,14 +708,14 @@ namespace ISpan.InseparableCore.Controllers
             foreach(var item in ticket)
             {
                 count += 1;
-                body += $"<p>${count}：{item.FSession.FSessionDate.ToString("yyyy/MM/dd")}     {item.FSession.FSessionTime.Hours} : {item.FSession.FSessionTime.Minutes.ToString("D2")}   {item.FMovieName}  座位：{item.FSeat.FSeatRow}{item.FSeat.FSeatColumn}</p><br />";
+                body += $"<p>{count}：{item.FSession.FSessionDate.ToString("yyyy/MM/dd")}     {item.FSession.FSessionTime.Hours} : {item.FSession.FSessionTime.Minutes.ToString("D2")}   {item.FMovieName}  座位：{item.FSeat.FSeatRow}{item.FSeat.FSeatColumn}</p><br />";
             }
             if (product != null)
             {
                 foreach (var item in product)
                 {
                     count += 1;
-                    body += $"<p>${count}：{item.FProductName} x {item.FProductQty}</p><br />";
+                    body += $"<p>{count}：{item.FProductName} x {item.FProductQty}</p><br />";
                 }
             }
             body += $"</div></div><a href=\"#\"><p style=\"color:\t#FF0000\">INSEPARABLE</p></a>";//todo 網址
