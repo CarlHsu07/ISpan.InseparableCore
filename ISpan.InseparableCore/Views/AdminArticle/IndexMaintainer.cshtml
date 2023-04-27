@@ -188,9 +188,7 @@
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
-				beforeSend: function () {
-				},
-				success: function (data) {
+.				success: function (data) {
 					$("#tableSearch").html(``)
 					if (data == "noData") 
 					{
