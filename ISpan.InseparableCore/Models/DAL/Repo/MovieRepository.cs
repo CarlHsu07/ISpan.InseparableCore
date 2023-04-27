@@ -71,7 +71,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var movie in movies)
 			{
 				MovieVm vm = movie.ModelToVm();
-				vm.Level = context.TMovies.Include(t => t.FMovieLevelId)
+				vm.Level = context.TMovies.Include(t => t.FMovieLevel)
 					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
 
 				//獲得電影類別
@@ -105,10 +105,10 @@ namespace ISpan.InseparableCore.Models.DAL
 			//context.Database.CloseConnection();
 			if (categorydetails != null)
 			{
-				List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
+				vm.CategoryIdsContained = categorydetails.Select(t => t.FMovieCategoryId).ToList();
 
 				List<string> categories = context.TMovieCategories
-					.Where(t => categoryIds.Contains(t.FMovieCategoryId))
+					.Where(t => vm.CategoryIdsContained.Contains(t.FMovieCategoryId))
 					.Select(t => t.FMovieCategoryName).ToList();
 				vm.Categories = String.Join(", ", categories.ToArray());
 			}

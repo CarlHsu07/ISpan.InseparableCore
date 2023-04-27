@@ -43,6 +43,7 @@ namespace ISpan.InseparableCore.ViewModels
 		public decimal? FMovieScore { get; set; } = 0;
 		[DisplayName("電影類別")]
 		public string? CategoryIds { get; set; }
+		public List<int>? CategoryIdsContained { get; set; }
 
 		[DisplayName("電影類別")]
 		public string? Categories { get; set; }
