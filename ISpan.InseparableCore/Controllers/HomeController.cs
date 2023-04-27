@@ -101,12 +101,17 @@ namespace ISpan.InseparableCore.Controllers
 
             var movie = movie_repo.Movie(keyword);
             var cinema = cinema_repo.Cinema(keyword);
-            var member =_context.TMembers.Where(t => t.FFirstName.Contains(keyword)
+            IEnumerable<TMembers> member = null;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                member = _context.TMembers.Where(t => t.FFirstName.Contains(keyword)
                                             || t.FLastName.Contains(keyword)
                                             || t.FAddress.Contains(keyword)
                                             || t.FIntroduction.Contains(keyword)
                                             || t.FArea.FAreaName.Contains(keyword)
                                             || t.FEmail.Contains(keyword));
+            }
+            
             JsonSerializerOptions options = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve
