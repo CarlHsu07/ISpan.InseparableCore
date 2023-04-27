@@ -468,6 +468,18 @@ namespace ISpan.InseparableCore.Controllers
             order.FStatus = true;
 
             _db.SaveChanges();
+
+            try
+            {
+                SendEmail();
+
+            }
+            catch (Exception)
+            {
+                string error = "Oops";
+                return RedirectToAction("Error", new { error });
+            }
+
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
 
