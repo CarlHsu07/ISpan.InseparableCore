@@ -6,6 +6,11 @@
 @section Styles{
     <link href="~/css/loading.css" rel="stylesheet" />
     <link href="~/css/Ticket.css" rel="stylesheet" />
+    <style>
+        form{
+            min-height:300px;
+        }
+    </style>
 }
 @using (Html.BeginForm(FormMethod.Post, new { autocomplete = "off" ,id="test"}))
 {
