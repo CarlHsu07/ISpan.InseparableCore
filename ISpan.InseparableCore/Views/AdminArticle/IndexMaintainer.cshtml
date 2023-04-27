@@ -71,6 +71,11 @@
 			<tr>
 				<th>
 					<p>
+						@Html.DisplayNameFor(model => model.FArticleId)
+					</p>
+				</th>
+				<th>
+					<p>
 						@Html.DisplayNameFor(model => model.FArticleTitle)
 					</p>
 				</th>
@@ -111,6 +116,11 @@
 			@foreach (var item in Model)
 			{
 				<tr>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FArticleId)
+						</p>
+					</td>
 					<td>
 						<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="link-container">
 							<p>
@@ -188,7 +198,7 @@
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
-.				success: function (data) {
+				success: function (data) {
 					$("#tableSearch").html(``)
 					if (data == "noData") 
 					{
@@ -322,6 +332,10 @@
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
+				complete: function () {
+                    setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
+                }
+
 			})
 
 		}

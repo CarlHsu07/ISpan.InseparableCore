@@ -1,0 +1,47 @@
+﻿body {
+}
+.btnEditAndDeleted {
+	justify-content: flex-end
+}
+
+.divContainerRow {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+}
+
+.divContainerCol {
+	display: flex;
+	flex-direction: column;
+	padding: 5px;
+	margin: 0;
+}
+
+.text {
+	font-size: 30px;
+}
+
+.inputTextarea {
+	height: 700px;
+	max-width: 3000px;
+}
+
+.divBorder {
+	border-color: white;
+	border-width: 3px;
+	border-style: solid;
+}
+
+.divContainerRow label {
+	margin: 10px 10px 0 30px;
+	font-size: 30px;
+}
+
+titleInput {
+	width: 700px;
+}
+
+.divContainerRow select, .divContainerRow input, divContainerRow button {
+	margin: 10px;
+	font-size: 20px;
+}

@@ -1,49 +1,11 @@
 ﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/ArticleEditAndCreate.css" rel="stylesheet" />
+}
 
 <style>
 	.Delete {
-	}
-
-	.btnEditAndDeleted{
-		justify-content: flex-end
-	}
-
-	.divContainerRow {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-	.divContainerCol {
-		display: flex;
-		flex-direction: column;
-		padding: 5px;
-		margin: 0;
-	}
-	.text{
-		font-size: 30px;
-	}
-	.textarea{
-		height: 700px;
-		max-width: 3000px;
-	}
-	.divBorder {
-		border-color: white;
-		border-width: 3px;
-		border-style: solid;
-	}
-	
-	titleInput {
-		width: 700px;
-	}
-	.divContainerRow label {
-		margin: 10px 10px 0 30px;
-		font-size:30px;
-	}
-
-	.divContainerRow select, .divContainerRow input {
-		margin: 5px;
-		font-size:20px;
 	}
 
 	.inDivPosition {
@@ -79,7 +41,7 @@
 			</div>
 			<div class="form-group ">
 				<label asp-for="FArticleContent" class="control-label text"></label>
-				<textarea asp-for="FArticleContent" class="form-control text textarea" style=""></textarea>
+				<textarea asp-for="FArticleContent" class="form-control text inputTextarea tinymce" style="" id="textarea"></textarea>
 				<span asp-validation-for="FArticleContent" class="text-danger"></span>
 			</div>
 			<div class="form-group divContainerRow btnEditAndDeleted">

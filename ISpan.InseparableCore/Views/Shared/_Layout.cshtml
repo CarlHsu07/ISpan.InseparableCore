@@ -12,7 +12,9 @@
     <link href="~/css/index.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani&display=swap" rel="stylesheet">
     <script src="~/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Styles", required: false)
+	<script type="text/javascript" src="~/js/tinymce/tinymce.min.js"></script>
+	@*<script src="https://cdn.tiny.cloud/1/b3g7kemxc2ub7nr6pnp1z3f037h4ob77q9zdgu65ie148vop/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>	*@
+	@await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
@@ -235,6 +237,19 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script>
+		tinymce.init({
+			selector: '#textarea', //容器，可使用css选择器
+			language: 'zh_TW', //调用放在langs文件夹内的语言包
+			toolbar: true, //隐藏工具栏
+			menubar: false, //隐藏菜单栏
+			//inline: true, //开启内联模式
+			plugins: ['quickbars', 'link', 'table'], //选择需加载的插件
+			//选中时出现的快捷工具，与插件有依赖关系
+			quickbars_selection_toolbar: 'bold italic forecolor | link blockquote quickimage',
+			skin: 'oxide-dark',
+		});
+	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

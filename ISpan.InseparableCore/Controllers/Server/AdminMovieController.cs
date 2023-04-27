@@ -169,12 +169,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			var movie = await _context.TMovies.FindAsync(id);
-			if (movie == null)
-			{
-				return NotFound();
-			}
-			MovieVm vm = movie.ModelToVm();
+			MovieVm vm = repo.GetVmById((int)id);
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(vm);

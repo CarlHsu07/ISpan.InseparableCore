@@ -89,6 +89,11 @@
 			<tr>
 				<th>
 					<p>
+						@Html.DisplayNameFor(model => model.FMovieId)
+					</p>
+				</th>
+				<th>
+					<p>
 						@Html.DisplayNameFor(model => model.FMovieName)
 					</p>
 				</th>
@@ -129,6 +134,11 @@
 			@foreach (var item in Model)
 			{
 				<tr>
+					<td>
+						<p>
+							@Html.DisplayFor(modelItem => item.FMovieId)
+						</p>
+					</td>
 					<td>
 						<a asp-action="AdminDetails" asp-route-id="@item.FMovieId">
 							<p class="link-container">
@@ -315,6 +325,9 @@
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
+				complete: function () {
+                    setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
+                }
 			})
 
 		}

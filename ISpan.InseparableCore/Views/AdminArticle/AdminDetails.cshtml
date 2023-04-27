@@ -1,60 +1,10 @@
 ﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/ArticleDetail.css" rel="stylesheet" />
+}
+
 <style>
-	.btnEditComment {
-	}
-
-	.btnCommentCancel {
-	}
-
-	.displayNone {
-		display: none;
-	}
-
-	.divComment {
-		margin: 5px;
-		font-size: 20px;
-	}
-
-	.divArticle {
-		font-size: 30px;
-		text-align: justify;
-	}
-
-	pre {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-	}
-
-	.divContainerRow {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-		.divContainerRow span {
-			display: flex;
-			flex-direction: column;
-			padding: 5px;
-			margin: 0;
-		}
-
-			.divContainerRow span span {
-				display: inline;
-				flex-direction: column;
-				padding: 0px;
-				margin: 0;
-			}
-
-	.divBorder {
-		border-color: white;
-		border-width: 1px;
-		border-style: solid;
-		border-radius:9px;
-	}
-
-	.divBlock {
-		margin: 20px
-	}
 
 	.inDivPosition {
 		position: relative;
@@ -107,8 +57,14 @@
 			</p>
 		</span>
 		<span>
-			<button value="@Model.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
-			<button type="button" class="btn btn-info"  onclick="backToIndex()">返回</button>
+			<p>
+				<button value="@Model.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+			</p>
+		</span>
+		<span>
+			<p>
+				<button type="button" class="btn btn-info" onclick="backToIndex()">返回</button>
+			</p>
 		</span>
 	</div>
 	<h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>

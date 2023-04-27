@@ -1,0 +1,91 @@
+﻿body {
+}
+.form-group label {
+	font-size: 0.875rem;
+	line-height: 1;
+	vertical-align: baseline;
+}
+
+form .form-control {
+	border-radius: 5px;
+	background-color: rgb(20,20,20);
+	color: white;
+}
+
+	form .form-control:focus {
+		background-color: rgb(20,20,20);
+	}
+
+form div {
+	font-size: 20px;
+	text-align: justify;
+	margin: 10px 10px 10px 50px;
+}
+
+.go-right {
+	justify-content: flex-end
+}
+
+.image-container {
+	text-align: center;
+}
+
+	.image-container img {
+		display: block;
+		margin: 0 auto;
+		width: 300px
+	}
+
+
+.divContainerRow {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+}
+
+	.divContainerRow > div {
+		width: 550px;
+	}
+
+.textarea {
+	height: 200px;
+	width: 500px;
+}
+
+.divBorder {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.checkbox-container {
+	width: 500px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 20px;
+}
+
+	.checkbox-container > div {
+		width: 30%;
+		margin: initial;
+	}
+
+.divBlock {
+	padding: 0;
+	margin: 20px 0;
+}
+#Edit input, #Create input, #Edit select, #Create select, #Edit textarea, #Create textarea {
+	color: aliceblue;
+	font-size: 18px;
+}
+#Edit input:focus,#Create input:focus {
+	color: aliceblue;
+}
+.form-group label {
+	font-size: 0.875rem;
+	line-height: 1;
+	vertical-align: baseline;
+	font-size: 20px;
+}
