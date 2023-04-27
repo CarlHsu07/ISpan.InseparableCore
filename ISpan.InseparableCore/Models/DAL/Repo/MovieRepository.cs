@@ -17,7 +17,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<MovieVm> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.Where(t => t.FDeleted == false).ToList();
+			var movies = context.TMovies/*.Include(t => t.FMovieLevel)*/.Where(t => t.FDeleted == false).ToList();
 
 			if (condition == null) return ModelToVms(movies);
 
@@ -71,22 +71,12 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var movie in movies)
 			{
 				MovieVm vm = movie.ModelToVm();
-				vm.Level = context.TMovies.Include(t => t.FMovieLevel)
-					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+				vm.Level = context.TMovieLevels.FirstOrDefault(t => t.FLevelId == vm.FMovieLevelId).FLevelName;
 
 				//獲得電影類別
-				IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
-																.Where(t => t.FMovieId == vm.FMovieId);
-				//context.Database.CloseConnection();
-				if (categorydetails != null)
-				{
-					List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
-
-					List<string> categories = context.TMovieCategories
-						.Where(t => categoryIds.Contains(t.FMovieCategoryId))
-						.Select(t => t.FMovieCategoryName).ToList();
-					vm.Categories = String.Join(", ", categories.ToArray());
-				}
+				List<string> categories = context.TMovieCategoryDetails
+					.Include(t => t.FMovieCategory).Where(t => t.FMovieId == vm.FMovieId).Select(t => t.FMovieCategory.FMovieCategoryName).ToList();
+				vm.Categories = String.Join(", ", categories.ToArray());
 				vms.Add(vm);
 			}
 			return vms;
@@ -96,8 +86,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		{
 			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieId == id);
 			MovieVm vm = movie.ModelToVm();
-			vm.Level = context.TMovies.Include(t => t.FMovieLevel)
-				.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+			vm.Level = context.TMovieLevels.FirstOrDefault(t => t.FLevelId == vm.FMovieLevelId).FLevelName;
 
 			//獲得電影類別
 			IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
