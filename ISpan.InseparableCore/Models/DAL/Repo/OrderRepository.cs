@@ -39,7 +39,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             var data = _db.TOrders.FirstOrDefault(t => t.FOrderId == id);
             return data;
         }
-        public List<CorderVM> GetOrder(CorderSearch search)
+        public List<COrderVM> GetOrder(CorderSearch search)
         {
 
             var inseparableContext = _db.TOrders.Include(t => t.FCinema).Include(t => t.FMember).OrderByDescending(t=>t.FOrderId).Select(t=>t);
@@ -58,10 +58,10 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                     inseparableContext = inseparableContext.Where(t => t.FOrderDate >= search.min);
 
             }
-            List<CorderVM> data = new List<CorderVM>();
+            List<COrderVM> data = new List<COrderVM>();
             foreach (var item in inseparableContext)
             {
-                CorderVM vm = new CorderVM();
+                COrderVM vm = new COrderVM();
                 vm.orders = item;
                 vm.FCinema = item.FCinema;
                 vm.FMember = item.FMember;
@@ -112,7 +112,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             }
         }
 
-        public List<CorderVM> GetMemberOrder(int? member,MemberOrderSearch search)
+        public List<COrderVM> GetMemberOrder(int? member,MemberOrderSearch search)
         {
             if (member == null)
                 return null;
@@ -129,10 +129,10 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                     inseparableContext = inseparableContext.Where(t => t.FOrderDate >= search.min);
 
             }
-            List<CorderVM> data = new List<CorderVM>();
+            List<COrderVM> data = new List<COrderVM>();
             foreach (var item in inseparableContext)
             {
-                CorderVM vm = new CorderVM();
+                COrderVM vm = new COrderVM();
                 vm.orders = item;
                 vm.FCinema = item.FCinema;
                 vm.FMember = item.FMember;

@@ -131,28 +131,7 @@ namespace ISpan.InseparableCore.Controllers
                 return NotFound();
             }
 
-            var orders = await _context.TOrders
-                .Include(t => t.TProductOrderDetails)
-                .Include(t => t.TTicketOrderDetails)
-                .Where(m => m.FMemberId == id)
-                .ToListAsync();
-
-            if (orders == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = orders.Select(o => new CMemberOrderHistoryViewModel
-            {
-                OrderId = o.FOrderId,
-                CinemaId = o.FCinemaId,
-                OrderDate = o.FOrderDate,
-                ModifiedTime = o.FModifiedTime,
-                TotalMoney = o.FTotalMoney,
-                Status = o.FStatus
-            }).ToList();
-
-            return View(viewModel);
+            return View();
         }
 
         // GET: Member/Profile/5

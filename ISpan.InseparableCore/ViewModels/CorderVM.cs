@@ -4,7 +4,7 @@ using System.Security.Cryptography.Xml;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class CorderVM
+    public class COrderVM
     {
         private TOrders _orders;
         public TOrders orders
@@ -12,7 +12,7 @@ namespace ISpan.InseparableCore.ViewModels
             get { return _orders; }
             set { _orders = value; }
         }
-        public CorderVM()
+        public COrderVM()
         {
             _orders = new TOrders();
         }
