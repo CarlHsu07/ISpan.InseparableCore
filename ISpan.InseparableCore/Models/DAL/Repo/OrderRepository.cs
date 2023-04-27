@@ -117,7 +117,12 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             if (member == null)
                 return null;
 
-            var inseparableContext = _db.TOrders.Include(t => t.FCinema).Include(t => t.FMember).Where(t=>t.FMemberId==member).OrderByDescending(t => t.FOrderId).Select(t=>t);
+            var inseparableContext = _db.TOrders
+                .Include(t => t.FCinema)
+                .Include(t => t.FMember)
+                .Where(t=>t.FMemberId==member)
+                .OrderByDescending(t => t.FOrderId)
+                .Select(t=>t);
             if (inseparableContext == null)
                 return null;
 
@@ -129,6 +134,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                     inseparableContext = inseparableContext.Where(t => t.FOrderDate >= search.min);
 
             }
+
             List<COrderVM> data = new List<COrderVM>();
             foreach (var item in inseparableContext)
             {
@@ -139,6 +145,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 
                 data.Add(vm);
             }
+
             return data;
         }
     }

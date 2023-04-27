@@ -16,17 +16,20 @@ using System.Diagnostics.Metrics;
 using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using System.Security.Claims;
+using ISpan.InseparableCore.Models.DAL.Repo;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class MemberController : SuperController
     {
         private readonly InseparableContext _context;
+        private readonly OrderRepository _orderRepo;
         IWebHostEnvironment _enviro;
 
         public MemberController(InseparableContext context, IWebHostEnvironment enviro)
         {
             _context = context;
+            _orderRepo = new OrderRepository(context);
             _enviro = enviro;
         }
 
@@ -504,7 +507,7 @@ namespace ISpan.InseparableCore.Controllers
           return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
         }
 
-        // 取得指定縣市的區域(鄉鎮市區)
+        // AJAX 取得指定縣市的區域(鄉鎮市區)
         public IActionResult GetAreas(int cityId)
         {
             // 根據縣市值，查詢對應的區域資料

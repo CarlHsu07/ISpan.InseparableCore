@@ -29,8 +29,8 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             _context = context;
             order_repo = new OrderRepository(context);
-            ticket_repo=new TicketOrderRepository(context);
-            product_repo=new ProductOrderRepository(context);
+            ticket_repo = new TicketOrderRepository(context);
+            product_repo = new ProductOrderRepository(context);
         }
         public IPagedList<COrderVM> OrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
@@ -274,6 +274,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(MemberOrder));
         }
+
         //Ajax
         //釋出問題座位
         public IActionResult Status()
