@@ -311,8 +311,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
             var orderid = DbSave(vm);
-            string json = JsonSerializer.Serialize(orderid);
-            HttpContext.Session.SetString(CDictionary.SK_ORDER_ID, json);
+
             if (orderid == null)
             {
                 string error = "位置已售出請重新選擇!";
@@ -341,7 +340,7 @@ namespace ISpan.InseparableCore.Controllers
 
             try
             {
-                SendEmail();
+                SendEmail(orderid);
 
             }
             catch (Exception)
@@ -465,13 +464,11 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
 
-            order.FStatus = true;
-
             _db.SaveChanges();
 
             try
             {
-                SendEmail();
+                SendEmail(id);
 
             }
             catch (Exception)
@@ -689,45 +686,44 @@ namespace ISpan.InseparableCore.Controllers
 
 
         //Email寄送
-        public void SendEmail()
+        public void SendEmail(int? id)
         {
-            string json = string.Empty;
-            int? id = null ;
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_ORDER_ID))
-            {
-                json = HttpContext.Session.GetString(CDictionary.SK_ORDER_ID);
-                id = JsonSerializer.Deserialize<int>(json);
-            }
             if (id == null)
                 throw new Exception("找不到訂單");
 
             var ticket = _ticket_repo.GetById(id);
             if (ticket == null)
                 throw new Exception("找不到訂單");
+
+            if (_user.FEmail == null)
+            {
+                var member = _db.TOrders.FirstOrDefault(t => t.FOrderId == id).FMemberId;
+                _user.FEmail = _db.TMembers.FirstOrDefault(t => t.FId == member).FEmail;
+            }
+
             var product = _product_order_repo.GetById(id);
-            string body = $"<h3>{_user.FFirstName}您好，您有新訂單:</h3><br />";
+            string body = $"<h3>{_user.FFirstName}您好，您有新訂單:</h3><br /><h5>INSEPARABLE感謝您的訂購!</h5>\r\n<div style=\"text-align:center;\">\r\n<div style=\"border:1.5px #E7B152 solid; text-align:left; padding:5px;\">\r\n<p>訂購日期:${DateTime.Now.ToString("yyyy/MM/dd  HH:mm")}</p><br /><p>訂購商品如下:</p><br />";
             int count = 0;
             foreach(var item in ticket)
             {
                 count += 1;
-                body += $"<div style=\"text-align:center;\"><table style=\"background-color:\t#E0E0E0;border:solid \t#AD5A5A 1.5px;border-radius:5px;\" border=\"1\">\r\n<thead>\r\n<tr>\r\n <th>項次</th>\r\n<th>電影</th>\r\n<th>場次</th>\r\n<th>座位</th>\r\n<th>票價</th>\r\n</tr>\r\n</thead>\r\n<tbody>\r\n\r\n\r\n<tr>\r\n      <td>{count}</td>\r\n<td>{item.FMovieName}</td>\r\n<td>{item.FSession.FSessionDate.ToString("yyyy/MM/dd")}         {item.FSession.FSessionTime.Hours} : {item.FSession.FSessionTime.Minutes.ToString("D2")}</td>\r\n<td>{item.FSeat.FSeatRow}{item.FSeat.FSeatColumn}</td>\r\n<td>{item.FTicketUnitprice.ToString("###")}</td>\r\n</tr>\r\n\r\n\r\n</tbody>\r\n</table>\r\n</div><br />";
+                body += $"<p>${count}：{item.FSession.FSessionDate.ToString("yyyy/MM/dd")}     {item.FSession.FSessionTime.Hours} : {item.FSession.FSessionTime.Minutes.ToString("D2")}   {item.FMovieName}  座位：{item.FSeat.FSeatRow}{item.FSeat.FSeatColumn}</p><br />";
             }
             if (product != null)
             {
-                count = 0;
                 foreach (var item in product)
                 {
                     count += 1;
-                    body += $"<div style=\"text-align:center;\"><table style=\"background-color:\t#E0E0E0;border:solid \t#AD5A5A 1.5px;border-radius:5px;\" border=\"1\">\r\n<thead>\r\n<tr>\r\n<th>項次</th>\r\n<th>商品</th>\r\n<th>數量</th>\r\n<th>單價</th>\r\n<th>小記</th>\r\n</tr>\r\n</thead>\r\n<tbody>\r\n<tr>\r\n<td>{count}</td>\r\n<td>{item.FProductName}</td>\r\n<td>{item.FProductQty}</td>\r\n<td>{item.FProductUnitprice.ToString("###")}</td>\r\n<td>{item.FProductSubtotal.ToString("###")}</td>\r\n</tr>\r\n</tbody>\r\n</table></div><br />";
+                    body += $"<p>${count}：{item.FProductName} x {item.FProductQty}</p><br />";
                 }
             }
-            body += $"<a href=\"#\"><p style=\"color:\t#FF0000\">INSEPARABLE</p></a>";//todo 網址
+            body += $"</div></div><a href=\"#\"><p style=\"color:\t#FF0000\">INSEPARABLE</p></a>";//todo 網址
             SmtpClient mysmpt = new SmtpClient("smtp-mail.outlook.com", 587);
             mysmpt.Credentials = new NetworkCredential(_key.Email, _key.Password);
             mysmpt.EnableSsl = true;
 
             MailMessage mail = new MailMessage();
-            mail.To.Add(_user.FEmail);
+            mail.To.Add(_user.FEmail);  //todo 刷卡後偵測不到
             mail.From = new MailAddress(_key.Email, "INSEPARABLE", System.Text.Encoding.UTF8);
             mail.Priority = MailPriority.Normal;
             mail.Subject = "[訂單]您在INSEPARABLE,訂單資料";
