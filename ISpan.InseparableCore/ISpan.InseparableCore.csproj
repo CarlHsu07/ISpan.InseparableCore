@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\TMoviesController.cs" />
-    <Compile Remove="Models\DAL\Repo\MovieRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>
