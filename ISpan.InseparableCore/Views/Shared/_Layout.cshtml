@@ -243,9 +243,7 @@
 					if(data==null){
 						return;
 					}
-					debugger
 					var all =JSON.parse(data);
-					console.log(all.cinema);
 					
 					var cinema=null;
 					if(all.cinema!=null){
@@ -269,8 +267,11 @@
 						
 						console.log(member);
 					}
-					if (cinema == [] && movie == [] && movie == []) {
+					
+					if(member==null && movie.length==0 && cinema.length==0){
+						alert(`Oopas...查無資料`);
 						return;
+						//$('#mainbody').append(`<div style="text-align:center; margin-top:20px;"><h4>Oopas...查無資料</h4></div>`)
 					}
 					$('#mainbody').html('');
 					if (member != null) {
@@ -286,10 +287,9 @@
 													</span></a></div>`)
 						});
 					}
-					//<p>${value.FArea.FAreaName}</p>
-					if (movie != []) {
+					if (movie.length != 0) {
 						movie.forEach(function (value, index) {
-							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;dispaly:flex;">
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;">
 													<span><a href="/TMovies/Details/${value.FMovieId}">
 													<img src="/images/${value.FMovieImagePath}" width="250";></span>
 													<span><h4>${value.FMovieName}</h4>
@@ -298,7 +298,7 @@
 						});
 					}
 
-					if (cinema != []) {
+					if (cinema.length != 0) {
 						cinema.forEach(function (value, index) {
 							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;"><span><a ><h4>${value.FCinemaName}</h4></a>
 													<p>${value.FCinemaAddress}</p>
