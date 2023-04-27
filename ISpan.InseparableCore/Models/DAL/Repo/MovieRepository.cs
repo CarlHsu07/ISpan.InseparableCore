@@ -231,5 +231,16 @@ namespace ISpan.InseparableCore.Models.DAL
 
             return data;
         }
+		public IEnumerable<TMovies> Movie(string keyword)
+		{
+			if (string.IsNullOrEmpty(keyword))
+				return null;
+
+			var movies = context.TMovies.Where(t => t.FMovieName.Contains(keyword)
+                                            || t.FMovieActors.Contains(keyword)
+                                            || t.FMovieDirectors.Contains(keyword)).ToList();
+
+			return movies;
+        }
     }
 }

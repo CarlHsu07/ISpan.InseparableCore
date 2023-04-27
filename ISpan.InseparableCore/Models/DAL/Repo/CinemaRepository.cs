@@ -131,5 +131,18 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                 throw new Exception(ex.Message);
             }
         }
+
+        public IEnumerable<TCinemas> Cinema(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                return null;
+
+            var cinema = _db.TCinemas.Where(t=>t.FCinemaName.Contains(keyword) ||
+                                            t.FCinemaAddress.Contains(keyword) ||
+                                            t.FCinemaTel.Contains(keyword) ||
+                                            t.FCinemaRegion.Contains(keyword)).ToList();
+
+            return cinema;
+        }
     }
 }
