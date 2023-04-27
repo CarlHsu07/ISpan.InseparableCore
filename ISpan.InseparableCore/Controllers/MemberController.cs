@@ -17,6 +17,9 @@ using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using System.Security.Claims;
 using ISpan.InseparableCore.Models.DAL.Repo;
+using NuGet.Protocol;
+using System.Text.Json.Serialization;
+using X.PagedList;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -24,33 +27,44 @@ namespace ISpan.InseparableCore.Controllers
     {
         private readonly InseparableContext _context;
         private readonly OrderRepository _orderRepo;
+        private readonly TicketOrderRepository _ticketRepo;
+        private readonly ProductOrderRepository _productRepo;
         IWebHostEnvironment _enviro;
 
         public MemberController(InseparableContext context, IWebHostEnvironment enviro)
         {
             _context = context;
             _orderRepo = new OrderRepository(context);
+            _ticketRepo = new TicketOrderRepository(context);
+            _productRepo = new ProductOrderRepository(context);
             _enviro = enviro;
         }
 
         // GET: Member/Index/2
-        public async Task<IActionResult> Index(int? id)
+        public async Task<IActionResult> Index()
         {
             string genderString = string.Empty;
             string cityString = string.Empty;
             string areaString = string.Empty;
             string accountStatusString = string.Empty;
+            int? memberId = GetMemberFID();
 
-            if (id == null || _context.TMembers == null)
+            if (memberId == null || _context.TMembers == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home", null);
             }
 
-            var member = await _context.TMembers.FindAsync(id);
+            var member = await _context.TMembers
+                .Include(m => m.FGender)
+                .Include(m => m.FArea.FCity)
+                .Include(m => m.FArea)
+                //.Include(m => m.FAccountStatus)
+                .Where(m => m.FId == memberId)
+                .FirstOrDefaultAsync();
 
             if (member == null) // 沒找到會員
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
             }
 
             if (member.FGenderId != null) // 取性別
@@ -126,22 +140,134 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        // GET: Member/OrderHistorys/2
-        public async Task<IActionResult> OrderHistorys(int? id)
+        //todo member會員中心訂單紀錄 in Member(已複製好的)
+        public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
+        {
+            if (!pageIndex.HasValue || pageIndex < 1)
+                return null;
+            IPagedList<COrderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
+                return null;
+            return pagelist;
+        }
+        public IActionResult OrderHistory()
+        {
+            TMembers member = new TMembers();
+            string json = string.Empty;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                member = JsonSerializer.Deserialize<TMembers>(json);
+            }
+            if (member == null)
+                return NotFound(); //todo 待改
+
+            var data = _orderRepo.GetMemberOrder(member.FId, null);
+            var pagesize = 5;
+            var pageIndex = 1;
+
+            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
+
+            return View(pagedItems);
+        }
+        [HttpPost]
+        public IActionResult OrderHistory(MemberOrderSearch search)
+        {
+            TMembers member = new TMembers();
+            string json = string.Empty;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            {
+                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
+                member = JsonSerializer.Deserialize<TMembers>(json);
+            }
+            if (member == null)
+                return NotFound(); //todo 待改
+
+            var data = _orderRepo.GetMemberOrder(member.FId, search);
+            var pagesize = 5;
+            var pageIndex = search.pageindex;
+
+            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
+            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
+
+            var count = data.Count();
+            var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string jsons = JsonSerializer.Serialize(pagedItems, options);
+            return Ok(new
+            {
+                Items = jsons,
+                totalpage = totalpage,
+            }.ToJson());
+        }
+        public IActionResult MemberOrderDetail(int? id)
+        {
+            CorderDetaillVM vm = new CorderDetaillVM();
+            if (id == null)
+                return View();
+
+            vm.orders = _orderRepo.GetOneOrder(id);
+            vm.ticket = _ticketRepo.GetById(id);
+            vm.product = _productRepo.GetById(id);
+
+
+            if (id == null || _context.TOrders == null)
+            {
+                return RedirectToAction(nameof(OrderHistory));
+            }
+
+            return View(vm);
+        }
+        public IActionResult MemberOrderDelete(int? id)
         {
             if (id == null || _context.TOrders == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(OrderHistory));
+            }
+            COrderVM vm = new COrderVM();
+            vm.orders = _orderRepo.GetOneOrder(id);
+            vm.FCinema = vm.orders.FCinema;
+            vm.FMember = vm.orders.FMember;
+            if (vm.orders == null)
+            {
+                return RedirectToAction(nameof(OrderHistory));
             }
 
-            return View();
+            return View(vm);
+        }
+
+        [HttpPost, ActionName("MemberOrderDelete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MemberOrderDeleteConfirmed(int id)
+        {
+            if (_context.TOrders == null)
+            {
+                return Problem("Entity set 'InseparableContext.TOrders'  is null.");
+            }
+            try
+            {
+                _orderRepo.Delete(id);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.error = ex.Message;
+                return RedirectToAction("MemberOrderDelete", new { id });
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(OrderHistory));
         }
 
         // GET: Member/Profile/5
         public async Task<IActionResult> Profile(int? id)
         {
             MemberService memberService = new MemberService(_context);
-            int? memberId = GetMemberID();
+            int? memberId = GetMemberFID();
 
             if (id == null || _context.TMembers == null)
             {
@@ -171,11 +297,11 @@ namespace ISpan.InseparableCore.Controllers
             return View(member);
         }
 
-        // POST: Member/AddFriend/7
+        // AJAX 加入好友
         [HttpPost]
         public IActionResult AddFriend(int friendId)
         {
-            int? memberId = GetMemberID();
+            int? memberId = GetMemberFID();
             if (memberId != null)
             {
                 TMembers friend = _context.TMembers.FirstOrDefault(m => m.FId == friendId);
@@ -203,18 +329,16 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
-        // POST: Member/UnFriend/7
+        // AJAX 解除好友
         [HttpPost]
         public IActionResult UnFriend(int friendId)
         {
             MemberService memberService = new MemberService(_context);
-            int? memberId = GetMemberID();
+            int? memberId = GetMemberFID();
 
             if (memberId != null && memberService.IsFriend(memberId, friendId))
             {
-                var friendShip = _context.TFriends.FirstOrDefault(f =>
-                    (f.FMemberId == memberId && f.FFriendId == friendId) ||
-                    (f.FMemberId == friendId && f.FFriendId == memberId));
+                var friendShip = memberService.GetOneFriendShip((int)memberId, friendId);
 
                 if (friendShip == null)
                 {
@@ -232,11 +356,12 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
-        // GET: Member/FriendList/2
+        // todo 在View中把大頭貼照改成正圓
+        // GET: Member/FriendList
         public async Task<IActionResult> FriendList()
 		{
             MemberService memberService = new MemberService(_context);
-            int? memberId = GetMemberID();
+            int? memberId = GetMemberFID();
 
             if (memberId != null)
             {
@@ -526,7 +651,7 @@ namespace ISpan.InseparableCore.Controllers
         }
 
         // 從Session中取得會員的fID
-        private int? GetMemberID()
+        private int? GetMemberFID()
         {
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {

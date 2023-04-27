@@ -1,0 +1,111 @@
+﻿@model ISpan.InseparableCore.ViewModels.CorderDetaillVM
+
+@{
+    ViewData["Title"] = "MemberOrderDetail";
+}
+
+<h1>訂單明細</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FOrderDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FOrderDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FModifiedTime)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FModifiedTime)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FCinema)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FCinema.FCinemaName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FTotalMoney)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FTotalMoney)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FCreditTradeNo)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FCreditTradeNo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FStatus)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FStatus)
+        </dd>
+    </dl>
+</div>
+<table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
+    <thead>
+        <tr>
+            <th>項次</th>
+            <th>電影</th>
+            <th>場次</th>
+            <th>座位</th>
+            <th>票價</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model.ticket)
+            {
+                count += 1;
+                <tr>
+                    <td>@count</td>
+                    <td>@item.FMovieName</td>
+                    <td>@item.FSession.FSessionDate.ToString("yyyy/MM/dd") @item.FSession.FSessionTime.Hours : @item.FSession.FSessionTime.Minutes.ToString("D2")</td>
+                    <td>@item.FSeat.FSeatRow @item.FSeat.FSeatColumn</td>
+                    <td>@item.FTicketUnitprice.ToString("###")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<br />
+@if (Model.product.Count() != 0)
+{
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
+        <thead>
+            <tr>
+                <th>項次</th>
+                <th>商品</th>
+                <th>數量</th>
+                <th>單價</th>
+                <th>小記</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                count = 0;
+                foreach (var item in Model.product)
+                {
+                    count += 1;
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.FProductName</td>
+                        <td>@item.FProductQty</td>
+                        <td>@item.FProductUnitprice.ToString("###")</td>
+                        <td>@item.FProductSubtotal.ToString("###")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+<div style="margin:15px;">
+    @*<a asp-action="MemberOrderDelete" asp-route-id="@Model.FOrderId" class="btn btn-danger">刪除</a> |*@
+    <a asp-action="OrderHistory" class="btn btn-warning">返回</a>
+</div>

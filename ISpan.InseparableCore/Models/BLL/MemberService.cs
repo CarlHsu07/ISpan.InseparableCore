@@ -83,6 +83,13 @@ namespace ISpan.InseparableCore.Models.BLL
             return isCurrentMember;
         }
 
+        public TFriends? GetOneFriendShip(int memberId, int friendId)
+        {
+            return _context.TFriends.FirstOrDefault(f =>
+                    (f.FMemberId == memberId && f.FFriendId == friendId) ||
+                    (f.FMemberId == friendId && f.FFriendId == memberId));
+        }
+
         public async Task<List<CFriendListViewModel>> GetFriendListAsync(int? memberId)
         {
             List<CFriendListViewModel> friendList = new List<CFriendListViewModel>();
@@ -91,7 +98,7 @@ namespace ISpan.InseparableCore.Models.BLL
             {
                 // 取得好友的member Fid
                 var friends = await _context.TFriends
-                    .Where(f => f.FMemberId == memberId)
+                    .Where(f => (f.FMemberId == memberId) || (f.FFriendId == memberId))
                     .Select(f => f.FFriendId)
                     .ToListAsync();
 
