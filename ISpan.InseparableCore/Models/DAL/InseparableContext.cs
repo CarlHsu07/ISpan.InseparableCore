@@ -879,6 +879,10 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FSerialNumber).HasColumnName("fSerialNumber");
 
+                entity.Property(e => e.FMoiveCategoryName)
+                    .HasMaxLength(50)
+                    .HasColumnName("fMoiveCategoryName");
+
                 entity.Property(e => e.FMovieCategoryId).HasColumnName("fMovieCategoryID");
 
                 entity.Property(e => e.FMovieId).HasColumnName("fMovieID");

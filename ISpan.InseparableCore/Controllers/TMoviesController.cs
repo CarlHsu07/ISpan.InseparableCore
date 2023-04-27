@@ -16,7 +16,7 @@ using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers
 {
-	public class TMoviesController : SuperController
+	public class TMoviesController : Controller
 	{
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
@@ -142,6 +142,5 @@ namespace ISpan.InseparableCore.Controllers
 			MovieVm vm = repo.GetVmById((int)id);
 			return View(vm);
 		}
-
 	}
 }
