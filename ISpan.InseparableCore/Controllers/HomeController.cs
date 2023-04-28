@@ -64,13 +64,13 @@ namespace ISpan.InseparableCore.Controllers
                 ModelState.AddModelError("Email", "Email錯誤，請檢查您的輸入並重試");
             }
 
-            if (ModelState.IsValid) // 驗證
+            if (ModelState.IsValid) // 驗證通過
             {
                 if (member != null && CPasswordHelper.VerifyPassword(model.Password, member.FPasswordHash, member.FPasswordSalt))
                 {
                     string json = JsonSerializer.Serialize(member);
                     HttpContext.Session.SetString(CDictionary.SK_LOGINED_USER, json);
-                    return RedirectToAction(nameof(MemberController.Index), "Member", new { id = member.FId });
+                    return RedirectToAction(nameof(MemberController.Index), "Member");
                 }
                 else
                 {

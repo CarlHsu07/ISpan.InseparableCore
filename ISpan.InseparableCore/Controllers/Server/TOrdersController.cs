@@ -29,14 +29,14 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             _context = context;
             order_repo = new OrderRepository(context);
-            ticket_repo=new TicketOrderRepository(context);
-            product_repo=new ProductOrderRepository(context);
+            ticket_repo = new TicketOrderRepository(context);
+            product_repo = new ProductOrderRepository(context);
         }
-        public IPagedList<CorderVM> OrderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
+        public IPagedList<COrderVM> OrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
-            IPagedList<CorderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            IPagedList<COrderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
             if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
                 return null;
             return pagelist;
@@ -116,7 +116,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 return RedirectToAction(nameof(Index));
             }
-            CorderVM vm =new CorderVM();
+            COrderVM vm =new COrderVM();
             vm.orders = order_repo.GetOneOrder(id);
             vm.FCinema=vm.orders.FCinema;
             vm.FMember=vm.orders.FMember;
@@ -151,12 +151,12 @@ namespace ISpan.InseparableCore.Controllers.Server
             return RedirectToAction(nameof(Index));
         }
 
-        //todo membet會員中心訂單紀錄 完成
-        public IPagedList<CorderVM> MemberorderPageList(int? pageIndex, int? pageSize, List<CorderVM> vm)
+        //todo member會員中心訂單紀錄 完成
+        public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
                 return null;
-            IPagedList<CorderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
+            IPagedList<COrderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
             if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
                 return null;
             return pagelist;
@@ -178,7 +178,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pageIndex = 1;
            
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = MemberorderPageList(pageIndex, pagesize, data);
+            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
 
             return View(pagedItems);
         }
@@ -200,7 +200,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pageIndex = search.pageindex;
             
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = MemberorderPageList(pageIndex, pagesize, data);
+            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
 
             var count = data.Count();
             var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
@@ -239,7 +239,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 return RedirectToAction(nameof(MemberOrder));
             }
-            CorderVM vm = new CorderVM();
+            COrderVM vm = new COrderVM();
             vm.orders = order_repo.GetOneOrder(id);
             vm.FCinema = vm.orders.FCinema;
             vm.FMember = vm.orders.FMember;
@@ -274,6 +274,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(MemberOrder));
         }
+
         //Ajax
         //釋出問題座位
         public IActionResult Status()

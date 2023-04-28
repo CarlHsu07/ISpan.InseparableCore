@@ -7,7 +7,9 @@
 <h1>會員中心</h1>
 
 <p>
-    <a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料(舊)</a>
+    @*<a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料(舊)</a>*@
+    <a asp-action="OrderHistory" class="btn btn-primary">訂單紀錄</a>
+    <a asp-action="FriendList" class="btn btn-primary">好友清單</a>
     <a asp-action="Logout" class="btn btn-danger">登出</a>
 </p>
 
@@ -59,7 +61,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label"></span></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
