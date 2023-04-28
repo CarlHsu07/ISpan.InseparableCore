@@ -260,15 +260,15 @@
 					var member = null;
 					if (all.member != null) {
 						var item = JSON.parse(all.member);
-						member=null;
-						if(item!=null){
-							member = item.$values;
-						}
-						
+						member = item.$values;
 						console.log(member);
 					}
-					
-					if(member==null && movie.length==0 && cinema.length==0){
+					if (all.articles != null) {
+						var item = JSON.parse(all.articles);
+						articles = item.$values;
+						console.log(articles);
+					}
+					if (articles.length == 0 && member.length == 0 && movie.length == 0 && cinema.length == 0) {
 						alert(`Oopas...查無資料`);
 						return;
 						//$('#mainbody').append(`<div style="text-align:center; margin-top:20px;"><h4>Oopas...查無資料</h4></div>`)
@@ -304,6 +304,16 @@
 													<p>${value.FCinemaAddress}</p>
 													<p>${value.FCinemaTel}</p>
 													</span></div>`)
+						});
+					}
+					if (articles != null) {
+						articles.forEach(function (value, index) {
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;">
+													<span><a href="/TArticles/Details/${value.FArticleId}">
+													<span><h4>${value.FArticleTitle}</h4>
+													<h5>${value.FMemberId}</h5>
+													${value.FArticleContent.length > 30 ? `<p>${value.FArticleContent.substring(0, 30)}...</p>` : `<p>${value.FArticleContent} < /p>`}
+													</span></a></div>`)
 						});
 					}
 				},

@@ -116,5 +116,21 @@ namespace ISpan.InseparableCore.Models.DAL
 			}
 		}
 
+		public IEnumerable<TArticles> Articles (string keyword)
+		{
+			if (keyword == null)
+				return null;
+
+			List<TArticles> articles = null;
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                articles = context.TArticles.Where(t => t.FArticleTitle.Contains(keyword)
+													|| t.FArticleContent.Contains(keyword)
+													|| (t.FMember.FFirstName).Contains(keyword)
+													|| (t.FMember.FLastName).Contains(keyword)).ToList();
+            }
+
+			return articles;
+        }
 	}
 }

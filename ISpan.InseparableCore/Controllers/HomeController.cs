@@ -19,6 +19,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly InseparableContext _context;
         private readonly MovieRepository movie_repo;
         private readonly CinemaRepository cinema_repo;
+        private readonly ArticleRepository article_repo;
         IWebHostEnvironment _enviro;
 
         public HomeController(ILogger<HomeController> logger, InseparableContext context, IWebHostEnvironment enviro)
@@ -28,6 +29,7 @@ namespace ISpan.InseparableCore.Controllers
             _enviro = enviro;
             movie_repo = new MovieRepository(context, null);
             cinema_repo = new CinemaRepository(context);
+            article_repo = new ArticleRepository(context);
         }
 
         public IActionResult Index()
@@ -101,7 +103,8 @@ namespace ISpan.InseparableCore.Controllers
 
             var movie = movie_repo.Movie(keyword);
             var cinema = cinema_repo.Cinema(keyword);
-            IEnumerable<TMembers> member = null;
+            IEnumerable<TMembers> member = Enumerable.Empty<TMembers>();
+            IEnumerable<TArticles> articles = Enumerable.Empty<TArticles>();
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
                 member = _context.TMembers.Where(t => t.FFirstName.Contains(keyword)
@@ -110,6 +113,8 @@ namespace ISpan.InseparableCore.Controllers
                                             || t.FIntroduction.Contains(keyword)
                                             || t.FArea.FAreaName.Contains(keyword)
                                             || t.FEmail.Contains(keyword));
+
+                articles = article_repo.Articles(keyword);
             }
             
             JsonSerializerOptions options = new JsonSerializerOptions
@@ -128,12 +133,17 @@ namespace ISpan.InseparableCore.Controllers
                 ReferenceHandler = ReferenceHandler.Preserve
             };
             string memberjson = JsonSerializer.Serialize(member, memberoptions);
-
+            JsonSerializerOptions articlesoptions = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+            string articlesjson = JsonSerializer.Serialize(articles, articlesoptions);
             return Ok(new
             {
                 cinema = cinemajson,
                 movie = moviejson,
                 member = memberjson,
+                articles = articlesjson,
             }.ToJson());
         }
     }
