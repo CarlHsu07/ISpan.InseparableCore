@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -249,19 +250,16 @@
 					if(all.cinema!=null){
 						var item = JSON.parse(all.cinema);
 						cinema = item.$values;
-						console.log(cinema);
 					}
 					var movie = null;
 					if (all.movie != null) {
 						var item = JSON.parse(all.movie);
 						movie = item.$values;
-						console.log(movie);
 					}
 					var member = null;
 					if (all.member != null) {
 						var item = JSON.parse(all.member);
 						member = item.$values;
-						console.log(member);
 					}
 					if (all.articles != null) {
 						var item = JSON.parse(all.articles);
@@ -283,7 +281,9 @@
 													`<img src="/images/memberProfilePhotos/${value.FPhotoPath}" width = "150";>`}
 													</span>
 													<span><h4>${value.FLastName} ${value.FFirstName}</h4>
-													<p>${value.FIntroduction}</p>
+													${value.FIntroduction==null? "":
+													`${value.FIntroduction.length > 60 ? `<p>${value.FIntroduction.substring(0, 60)}...</p>` :
+													`<p>${value.FIntroduction} < /p>`}`}
 													</span></a></div>`)
 						});
 					}
@@ -293,7 +293,9 @@
 													<span><a href="/TMovies/Details/${value.FMovieId}">
 													<img src="/images/${value.FMovieImagePath}" width="250";></span>
 													<span><h4>${value.FMovieName}</h4>
-													<p>${value.FMovieIntroduction}</p>
+													${value.FMovieIntroduction == null ? "" :
+													`${value.FMovieIntroduction.length > 60 ? `<p>${value.FMovieIntroduction.substring(0, 60)}...</p>` :
+													`<p>${value.FMovieIntroduction} < /p>`}`}
 													</span></a></div>`)
 						});
 					}
@@ -311,8 +313,9 @@
 							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;">
 													<span><a href="/TArticles/Details/${value.FArticleId}">
 													<span><h4>${value.FArticleTitle}</h4>
-													<h5>${value.FMemberId}</h5>
-													${value.FArticleContent.length > 30 ? `<p>${value.FArticleContent.substring(0, 30)}...</p>` : `<p>${value.FArticleContent} < /p>`}
+													${value.FArticleContent == null ? "" :
+													`${value.FArticleContent.length > 30 ? `<p>${value.FArticleContent.substring(0, 30)}...</p>` : 
+													`<p>${value.FArticleContent} < /p>`}`}
 													</span></a></div>`)
 						});
 					}

@@ -127,7 +127,8 @@ namespace ISpan.InseparableCore.Models.DAL
                 articles = context.TArticles.Where(t => t.FArticleTitle.Contains(keyword)
 													|| t.FArticleContent.Contains(keyword)
 													|| (t.FMember.FFirstName).Contains(keyword)
-													|| (t.FMember.FLastName).Contains(keyword)).ToList();
+													|| (t.FMember.FLastName).Contains(keyword))
+											.Where(t=>t.FDeleted==false).ToList();
             }
 
 			return articles;
