@@ -10,6 +10,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public int FSerialNumber { get; set; }
         public int FMovieId { get; set; }
         public int FMovieCategoryId { get; set; }
+        public string FMoiveCategoryName { get; set; }
 
         public virtual TMovies FMovie { get; set; }
         public virtual TMovieCategories FMovieCategory { get; set; }

@@ -8,7 +8,7 @@
     <link href="~/css/Booking.css" rel="stylesheet">
 }
     <form action="/Shopping/Seat" method="post">
-    @if (Model.movie != null)
+    @if (Model.movie.Count()!=0)
     {
         foreach (var item in Model.movie)
         {

@@ -8,9 +8,6 @@
 //取得電影院
 function getCinema(url, name) {
     $.ajax({
-        //beforeSend: function () {
-        //    $('#loading').css("display", "");
-        //}, 
         method: 'POST',
         url,
         data: {
@@ -25,14 +22,9 @@ function getCinema(url, name) {
                                              <p>${value.FCinemaTel}</p>
                                              </span></div>`)
             })
-            console.log('pass');
         },
         error: function () {
-            console.log('QQ');
         },
-        //complete: function () {
-        //    $('#loading').css("display", "none");
-        //} 
     });
 }
 $('button').click(function () {
