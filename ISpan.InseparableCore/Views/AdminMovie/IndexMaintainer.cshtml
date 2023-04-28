@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieVm>
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieSearchVm>
 @{
 	var pagedList = (IPagedList)ViewBag.MovieModel;
 }
@@ -104,12 +104,12 @@
 				</th>
 				<th>
 					<p>
-						@Html.DisplayNameFor(model => model.FMovieOnDate)
+						@Html.DisplayNameFor(model => model.OnDate)
 					</p>
 				</th>
 				<th>
 					<p>
-						@Html.DisplayNameFor(model => model.FMovieOffDate)
+						@Html.DisplayNameFor(model => model.OffDate)
 					</p>
 				</th>
 				<th>

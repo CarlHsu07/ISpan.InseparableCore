@@ -2,8 +2,9 @@
 
 namespace ISpan.InseparableCore.Models.BLL.DTOs
 {
-	public class MovieCreateDto
+	public class MovieUpdateDto
 	{
+		public int FMovieId { get; set; }
 		public string FMovieName { get; set; }
 		public string FMovieIntroduction { get; set; }
 		public int FMovieLevelId { get; set; }
@@ -11,12 +12,29 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
 		public DateTime? FMovieOffDate { get; set; }
 		public int FMovieLength { get; set; }
 		public string FMovieImagePath { get; set; }
+		public decimal FMovieScore { get; set; }
 		public string FMovieActors { get; set; }
 		public string FMovieDirectors { get; set; }
+		public bool FDeleted { get; set; }
 	}
-	public static class MovieCreateDtoExtension
+	public static class MovieUpdateDtoExtensions
 	{
-		public static MovieEntity CreateDtoToEntity(this MovieCreateDto dto)
+		public static MovieUpdateDto UpdateEntityToDto(this MovieEntity entity)
+		{
+			return new MovieUpdateDto
+			{
+				FMovieName = entity.FMovieName,
+				FMovieIntroduction = entity.FMovieIntroduction,
+				FMovieLevelId = entity.FMovieLevelId,
+				FMovieOnDate = entity.FMovieOnDate,
+				FMovieOffDate = entity.FMovieOffDate,
+				FMovieLength = entity.FMovieLength,
+				FMovieImagePath = entity.FMovieImagePath,
+				FMovieActors = entity.FMovieActors,
+				FMovieDirectors = entity.FMovieDirectors,
+			};
+		}
+		public static MovieEntity UpdateDtoToEntity(this MovieUpdateDto dto)
 		{
 			return new MovieEntity
 			{
@@ -31,5 +49,7 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
 				FMovieDirectors = dto.FMovieDirectors,
 			};
 		}
+
 	}
+
 }
