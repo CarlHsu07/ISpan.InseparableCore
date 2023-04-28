@@ -65,16 +65,16 @@ namespace ISpan.InseparableCore.Controllers
             if (vm.cinemaId != 0)
             {
                 vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
-                if (vm.movie == null)
-                    return View();
+                if (vm.movie.Count()==0)
+                    return View(vm);
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
 
             if (vm.movieId > 0)
             {
                 var date = _session_repo.GetSessionByTwoCondition(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
-                if (date == null)
-                    return View();
+                if (date.Count() == 0)
+                    return View(vm);
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
@@ -84,7 +84,8 @@ namespace ISpan.InseparableCore.Controllers
                     if (item==start)
                         sessions = _session_repo.GetSessionByTwoCondition(vm.cinemaId, vm.movieId).Where(t => t.FSessionDate == item && t.FSessionTime>now).OrderBy(t => t.FSessionTime);
 
-                   vm.sessions.Add(item, sessions);
+                    if(sessions.Count()!=0)
+                        vm.sessions.Add(item, sessions);
                 }
             }
             return View(vm);
@@ -167,11 +168,7 @@ namespace ISpan.InseparableCore.Controllers
             vm.solid = new List<int>();
 
             var solid = _ticket_repo.GetSolid(vm.sessionid ,true);
-            if (solid == null)
-            {
-                string error = "網頁加載時出現問題";
-                return RedirectToAction("Error", new { error });
-            }
+
             foreach (var item in solid)
             {
                 vm.solid.Add(item.FSeatId);
@@ -179,7 +176,7 @@ namespace ISpan.InseparableCore.Controllers
 
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
             var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key);
-            if( row == null)
+            if( row.Count()==0)
             {
                 string error = "網頁加載時出現問題";
                 return RedirectToAction("Error", new { error });
@@ -187,7 +184,8 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in row)
             {
                 var column = _seat_repo.GetSeat().Where(t => t.FSeatRow == item);
-                vm.seats.Add(item, column);
+                if(column.Count()!=0)
+                    vm.seats.Add(item, column);
             }
 
             vm.sessions = _session_repo.GetOneSession(vm.sessionid);
@@ -282,7 +280,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in seats)
             {
                 var seat = _seat_repo.GetSeat().Where(t => t.FSeatId == item);
-                if (seat == null)
+                if (seat.Count()==0)
                 {
                     string error = "網頁加載時出現問題";
                     return RedirectToAction("Error", new { error });
@@ -326,7 +324,7 @@ namespace ISpan.InseparableCore.Controllers
             order.FStatus = true;
 
             var ticket =_ticket_repo.GetById(orderid);
-            if (ticket == null)
+            if (ticket.Count()==0)
             {
                 string error = "網頁加載時出現問題 請重新下單!!";
                 return RedirectToAction("Error", new { error });
@@ -351,6 +349,8 @@ namespace ISpan.InseparableCore.Controllers
             
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
+            HttpContext.Session.Remove(CDictionary.SK_ORDER_ID);
+
             return View(order);
         }
         //綠界API
@@ -480,7 +480,7 @@ namespace ISpan.InseparableCore.Controllers
 
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
-
+            HttpContext.Session.Remove(CDictionary.SK_ORDER_ID);
             
             return View();
         }
@@ -601,7 +601,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
             var ticket = _ticket_repo.GetById(id);
-            if (ticket == null)
+            if (ticket.Count()==0)
             {
                 error = "網頁加載時出現問題";
                 return RedirectToAction("Error", new { error });
@@ -693,7 +693,7 @@ namespace ISpan.InseparableCore.Controllers
                 throw new Exception("找不到訂單");
 
             var ticket = _ticket_repo.GetById(id);
-            if (ticket == null)
+            if (ticket.Count() == 0)
                 throw new Exception("找不到訂單");
 
             if (_user.FEmail == null)
@@ -711,7 +711,7 @@ namespace ISpan.InseparableCore.Controllers
                 body += $"<tr>\r\n<td>{count}</td>\r\n<td>{item.FMovieName}</td>\r\n<td>{item.FSession.FSessionDate.ToString("yyyy/MM/dd")}         {item.FSession.FSessionTime.Hours} : {item.FSession.FSessionTime.Minutes.ToString("D2")}</td>\r\n<td>{item.FSeat.FSeatRow}{item.FSeat.FSeatColumn}</td>\r\n<td>{item.FTicketUnitprice.ToString("###")}</td>\r\n</tr>";
             }
             body += "\r\n</tbody>\r\n</table>\r\n";
-            if (product != null)
+            if (product.Count()!=0)
             {
                 count = 0;
                 body += $"<br /><table style=\"border:solid \t#AD5A5A 1.5px;border-radius:5px; width:100%;\" border=\"1\">\r\n<thead style=\"background-color:black;color:white;\">\r\n<tr>\r\n<th>項次</th>\r\n<th>商品</th>\r\n<th>數量</th>\r\n<th>單價</th>\r\n<th>小記</th>\r\n</tr>\r\n</thead>\r\n<tbody style=\"background-color:#181616;color: white;\">";
