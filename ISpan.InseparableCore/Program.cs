@@ -39,7 +39,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=AdminMovie}/{action=IndexMaintainer}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
     //pattern: "{controller=Member}/{action=EditProfile}/{id?}");
 
 app.Run();

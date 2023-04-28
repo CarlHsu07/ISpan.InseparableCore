@@ -6,6 +6,11 @@
 @section Styles{
     <link href="~/css/loading.css" rel="stylesheet" />
     <link href="~/css/Ticket.css" rel="stylesheet" />
+    <style>
+        form{
+            min-height:300px;
+        }
+    </style>
 }
 @using (Html.BeginForm(FormMethod.Post, new { autocomplete = "off" ,id="test"}))
 {
@@ -14,7 +19,7 @@
     </div>
     <h1>購票系統</h1>
     <div class="mydiv">
-        <h3>
+        <h5>
             <select name="cinemaId" id="cinema" onchange="this.form.submit()">
                 <option value="0" >請選擇</option>
                 @foreach (var item in Model.cinema)
@@ -22,10 +27,10 @@
                     <option value="@item.FCinemaId">@item.FCinemaName</option>
                 }
             </select>
-        </h3>
+        </h5>
     </div>
     <div class="mydiv border-bottom">
-        <h3>
+        <h5>
             @if (Model.movie != null)
             {
                 <select name="movieId" id="movie" onchange="this.form.submit()">
@@ -36,7 +41,7 @@
                     }
                 </select>
             }
-        </h3>
+        </h5>
     </div>
     <div class="mydiv top">
         @if (Model.sessions != null)

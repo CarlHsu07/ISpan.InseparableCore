@@ -29,9 +29,9 @@
 				<div class="col-md-5">
 					<div class="top_1m">
 						<div class="input-group">
-							<input type="text" class="form-control bg-black" placeholder="Search Site...">
+							<input type="text" class="form-control bg-black" placeholder="Search Site..." id="keyword">
 							<span class="input-group-btn">
-								<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
+								<button class="btn btn text-white bg_red rounded-0 border-0" type="button" onclick="search()">
 									Search
 								</button>
 							</span>
@@ -83,7 +83,7 @@
 	</section>
 
 	<div class="container">
-		<main role="main" class="pb-3">
+		<main role="main" class="pb-3" id="mainbody">
 			@RenderBody()
 		</main>
 	</div>
@@ -94,25 +94,24 @@
 				<div class="row footer_1">
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h3><a class="text-white" href="index.html"><i class="fa fa-video-camera col_red me-1"></i> Planet</a></h3>
-							<p class="mt-3">Lorem ipsum dolor sit amet consect etur adi pisicing elit sed do eiusmod tempor incididunt. Lorem ipsum dolor sit amet consect etur. </p>
+							<h3><a class="text-white" href="~/Home/Index"><i class="fa fa-video-camera col_red me-1"></i> 關於我們</a></h3>
+							<p class="mt-3">資展國際</p>
 							<h6 class="fw-normal">
-								<i class="fa fa-map-marker fs-5 align-middle col_red me-1"></i> 5311 Ceaver Sidge Td.
-								Pakland, DE 13507
+								<i class="fa fa-map-marker fs-5 align-middle col_red me-1"></i>INSEPARABLE小組
 							</h6>
-							<h6 class="fw-normal mt-3"><i class="fa fa-envelope fs-5 align-middle col_red me-1"></i> info@gmail.com</h6>
-							<h6 class="fw-normal mt-3 mb-0"><i class="fa fa-phone fs-5 align-middle col_red me-1"></i>  +123 123 456</h6>
+							<h6 class="fw-normal mt-3"><i class="fa fa-envelope fs-5 align-middle col_red me-1"></i>第三組</h6>
+							<h6 class="fw-normal mt-3 mb-0"><i class="fa fa-phone fs-5 align-middle col_red me-1"></i>。。。</h6>
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h4>Flickr <span class="col_red">Stream</span></h4>
+							<h4> <span class="col_red"></span></h4>
 							<div class="footer_1i1 row mt-4">
 								<div class="col-md-3 col-3">
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -121,7 +120,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -130,7 +129,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -139,7 +138,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -150,7 +149,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -159,7 +158,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -168,7 +167,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -177,7 +176,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -187,22 +186,18 @@
 					</div>
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h4>Sign  <span class="col_red">Newsletter</span></h4>
-							<p class="mt-3">Subscribe to our newsletter list to get latest news and updates from us</p>
+							<h4>  <span class="col_red"></span></h4>
+							<p class="mt-3"></p>
 							<div class="input-group">
-								<input type="text" class="form-control bg-black" placeholder="Email">
+								@*<input type="text" class="form-control bg-black" placeholder="Email">*@
 								<span class="input-group-btn">
-									<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
-										Subscribe
-									</button>
+									@*<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
+										
+									</button>*@
 								</span>
 							</div>
 							<ul class="social-network social-circle mb-0 mt-4">
-								<li><a href="#" class="icoRss" title="Rss"><i class="fa fa-instagram"></i></a></li>
-								<li><a href="#" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#" class="icoTwitter" title="Twitter"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#" class="icoGoogle" title="Google +"><i class="fa fa-youtube"></i></a></li>
-								<li><a href="#" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+								@*<li><a href="href=" https://www.youtube.com/"" class="icoGoogle" title="Google +"><i class="fa fa-youtube"></i></a></li>*@
 							</ul>
 						</div>
 					</div>
@@ -216,18 +211,18 @@
 			<div class="row footer_1">
 				<div class="col-md-8">
 					<div class="footer_1l">
-						<p class="mb-0">© 2013 Your Website Name. All Rights Reserved | Design by <a class="col_red" href="http://www.templateonweb.com">TemplateOnWeb</a></p>
+						<p class="mb-0">© 2023 INSEPARABLE Website . All Rights Reserved | Design by <a class="col_red" href="http://www.templateonweb.com">TemplateOnWeb</a></p>
 					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="footer_1r">
 						<ul class="mb-0">
-							<li class="d-inline-block me-2"><a href="#">Home</a></li>
+							@*<li class="d-inline-block me-2"><a href="#">Home</a></li>
 							<li class="d-inline-block me-2"><a href="#">Features</a></li>
 							<li class="d-inline-block me-2"><a href="#">Pages</a></li>
 							<li class="d-inline-block me-2"><a href="#">Portfolio</a></li>
 							<li class="d-inline-block me-2"><a href="#">Blog</a></li>
-							<li class="d-inline-block"><a href="#">Contact</a></li>
+							<li class="d-inline-block"><a href="#">Contact</a></li>*@
 						</ul>
 					</div>
 				</div>
@@ -238,6 +233,77 @@
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
 	<script>
+		function search(){
+			var keyword=$('#keyword').val();
+			$.ajax({
+				url:'/Home/Search',
+				method:'POST',
+				data: { keyword },
+				success:function(data){
+					if(data==null){
+						return;
+					}
+					$('#mainbody').html('');
+					var all =JSON.parse(data);
+					var cinema=null;
+					if(all.cinema!=null){
+						var item = JSON.parse(all.cinema);
+						cinema = item.$values;
+						console.log(cinema);
+					}
+					var movie = null;
+					if (all.movie != null) {
+						var item = JSON.parse(all.movie);
+						movie = item.$values;
+						console.log(movie);
+					}
+					var member = null;
+					if (all.movie != null) {
+						var item = JSON.parse(all.member);
+						member = item.$values;
+						console.log(member);
+					}
+					if (member != null) {
+						member.forEach(function (value, index) {
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;dispaly:flex;">
+													<span><a href="/Member/Profile/${value.FId}">
+													${value.FPhotoPath == null ?
+													`<img src= "/images/nobody.jpg" width = "150";>` : 
+													`<img src="/images/memberProfilePhotos/${value.FPhotoPath}" width = "150";>`}
+													</span>
+													<span><h4>${value.FLastName} ${value.FFirstName}</h4>
+													<p>${value.FIntroduction}</p>
+													</span></a></div>`)
+						});
+					}
+					//<p>${value.FArea.FAreaName}</p>
+					if (movie != null) {
+						movie.forEach(function (value, index) {
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;dispaly:flex;">
+													<span><a href="/TMovies/Details/${value.FMovieId}">
+													<img src="/images/${value.FMovieImagePath}" width="250";></span>
+													<span><h4>${value.FMovieName}</h4>
+													<p>${value.FMovieIntroduction}</p>
+													</span></a></div>`)
+						});
+					}
+
+					if (cinema != null) {
+						cinema.forEach(function (value, index) {
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;"><span><a ><h4>${value.FCinemaName}</h4></a>
+													<p>${value.FCinemaAddress}</p>
+													<p>${value.FCinemaTel}</p>
+													</span></div>`)
+						});
+					}
+				},
+				error:function(){
+
+				}
+			});
+		}
+
+
 		tinymce.init({
 			selector: '#textarea', //容器，可使用css选择器
 			language: 'zh_TW', //调用放在langs文件夹内的语言包
