@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
 using NuGet.Protocol;
+using ISpan.InseparableCore.Models.BLL.DTOs;
+using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -12,42 +14,52 @@ namespace ISpan.InseparableCore.Controllers.Server
 	{
 		private readonly InseparableContext _context;
 		private readonly ArticleRepository articleRepo;
+		private readonly ArticleService articleService;
 		private readonly ArticleLikeRepository likeRepo;
 		public AdminArticleController(InseparableContext context)
 		{
 			_context = context;
 			articleRepo = new ArticleRepository(context);
+			articleService = new ArticleService(articleRepo);
 			likeRepo = new ArticleLikeRepository(context);
 		}
-
-		//產生頁碼
-		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
+		public IEnumerable<ArticleSearchVm> DtosToVms(IEnumerable<ArticleSearchDto> dtos)
 		{
-			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1) return null;
-			// 從資料庫取得資料
-			var listUnpaged = articles;
-			IPagedList<ArticleVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
-			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount) return null;
-			return pagelist;
+			List<ArticleSearchVm> vms = new List<ArticleSearchVm>();
+
+			foreach (var dto in dtos)
+			{
+				var vm = dto.SearchDtoToVm();
+				vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+				var member = articleRepo.GetMemberByPK(dto.FMemberId);
+				vm.FMemberId = member.FMemberId;
+				vm.MemberName = member.FLastName + member.FFirstName;
+				vms.Add(vm);
+			}
+			return vms;
 		}
+
 		// GET: TArticles
 		public async Task<IActionResult> IndexMaintainer()
 		{
-			List<ArticleVm> articles = articleRepo.Search(null).ToList();
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+
+			ViewBag.ArticleModel = GetPage.GetPagedProcess(1, pageSize, dtos);
+			dtos = dtos.Take(pageSize).ToList();
+			var vms = DtosToVms(dtos);
 
 			#region ViewData
 
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			//articles = articles.Take(pageContent).ToList();
+			//dtos = dtos.Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -56,22 +68,23 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
 
-			int pageSize = 10;
-
-			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
-			articles = articles.Take(pageSize).ToList();
-
-			return View(articles);
+			return View(dtos);
 		}
 		[HttpPost]
 		public async Task<IActionResult> IndexMaintainer(ArticleSearchCondition condition)
 		{
-			List<ArticleVm> articles = articleRepo.Search(condition).ToList();
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+
+			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
+			dtos = dtos.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
+			if (dtos.Count == 0) return Ok("noData");
+			var vms = DtosToVms(dtos);
 
 			#region ViewData
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
@@ -85,14 +98,9 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 			#endregion
 
-			int pageSize = 10;
-			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
-			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
-			if (articles.Count == 0) return Ok("noData");
-
 			return Ok(new
 			{
-				Vm = articles,
+				Vm = dtos,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -106,7 +114,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			var vm = articleRepo.GetVmById((int)id);
+			var vm = articleService.GetSearchDto((int)id).SearchDtoToVm();
 
 			return View(vm);
 		}

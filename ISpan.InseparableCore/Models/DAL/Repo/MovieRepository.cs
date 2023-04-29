@@ -81,6 +81,7 @@ namespace ISpan.InseparableCore.Models.DAL
 				FMovieImagePath = movie.FMovieImagePath,
 				FMovieActors = movie.FMovieActors,
 				FMovieDirectors = movie.FMovieDirectors,
+				FDeleted = movie.FDeleted,
 			};
 		}
 

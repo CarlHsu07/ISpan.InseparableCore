@@ -5,22 +5,22 @@ using ISpan.InseparableCore.ViewModels;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
-	public class MovieService
+	public class ArticleService
 	{
-		private readonly MovieRepository repo;
+		private readonly ArticleRepository repo;
 
-		public MovieService(MovieRepository repo)
+		public ArticleService(ArticleRepository repo)
 		{
 			this.repo = repo;
 		}
-		public IEnumerable<MovieSearchDto> Search(MovieSearchCondition? condition)
+		public IEnumerable<ArticleSearchDto> Search(ArticleSearchCondition? condition)
 		{
-			IEnumerable<MovieEntity> entities = repo.Search(condition);
+			IEnumerable<ArticleEntity> entities = repo.Search(condition);
 
 			return entities.SearchEntitiesToDtos();
 		}
 
-		public void Create(MovieCreateDto dto)
+		public void Create(ArticleCreateDto dto)
 		{
 			var entity = dto.CreateDtoToEntity();
 
@@ -33,9 +33,9 @@ namespace ISpan.InseparableCore.Models.BLL
 			repo.Create(entity);
 		}
 
-		public void Update(MovieUpdateDto dto)
+		public void Update(ArticleUpdateDto dto)
 		{
-			var currentMovie = repo.GetByMovieId(dto.FMovieId);
+			var currentArticle = repo.GetByArticleId(dto.FArticleId);
 
 			var updateEntity = dto.UpdateDtoToEntity();
 
@@ -43,20 +43,30 @@ namespace ISpan.InseparableCore.Models.BLL
 
 			//// 驗證Title 是否唯一
 			//var entityInDb = repo.GetByTitle(updateEntity.Title);
-			//if (entityInDb != null && entityInDb.MovieID != updateEntity.MovieID) throw new Exception("此標題已被使用");
+			//if (entityInDb != null && entityInDb.ArticleID != updateEntity.ArticleID) throw new Exception("此標題已被使用");
 
 			repo.Update(updateEntity);
 		}
-		public MovieUpdateDto GetUpdateDto(int movieId)
+		public ArticleUpdateDto GetUpdateDto(int movieId)
 		{
-			var entity = repo.GetByMovieId(movieId);
+			var entity = repo.GetByArticleId(movieId);
 			return entity.UpdateEntityToDto();
 		}
 
-		public MovieSearchDto GetSearchDto(int movieId)
+		public ArticleSearchDto GetSearchDto(int movieId)
 		{
-			var entity = repo.GetByMovieId(movieId);
+			var entity = repo.GetByArticleId(movieId);
 			return entity.SearchEntityToDto();
+		}
+
+		public int getArticleLikes(int articleId)
+		{
+			return repo.GetByArticleId(articleId).FArticleLikes;
+		}
+
+		public void Click(int articleId)
+		{
+			repo.Click(articleId);
 		}
 	}
 }

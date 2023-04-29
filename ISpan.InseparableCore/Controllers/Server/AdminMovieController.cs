@@ -85,7 +85,6 @@ namespace ISpan.InseparableCore.Controllers.Server
 			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
 			dtos = dtos.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
 			if (dtos.Count == 0) return Ok("noData");
-
 			List<MovieSearchVm> vms = DtosToVms(dtos).ToList();
 
 			#region ViewData

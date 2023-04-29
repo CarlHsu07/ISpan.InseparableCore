@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+﻿@model ISpan.InseparableCore.ViewModels.ArticleSearchVm
 @section Styles{
 	<link href="~/css/loading.css" rel="stylesheet" />
 	<link href="~/css/ArticleDetail.css" rel="stylesheet" />
@@ -65,7 +65,7 @@
 			</p>
 		</span>
 		<span>
-			<a href="/TMovies/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
+			<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
 		</span>
 		<span>
 			<button type="button" class="btn btn-info"  onclick="backToIndex()">
