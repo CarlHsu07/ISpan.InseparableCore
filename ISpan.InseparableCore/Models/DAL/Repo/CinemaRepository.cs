@@ -132,8 +132,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             }
         }
 
-        public IEnumerable<TCinemas> Cinema(string keyword)
+        public IEnumerable<CinemaEntity> Cinema(string keyword)
         {
+            List<CinemaEntity> list = new List<CinemaEntity>();
             if (string.IsNullOrEmpty(keyword))
                 return null;
 
@@ -141,8 +142,14 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                                             t.FCinemaAddress.Contains(keyword) ||
                                             t.FCinemaTel.Contains(keyword) ||
                                             t.FCinemaRegion.Contains(keyword)).ToList();
+            foreach(var item in cinema)
+            {
+                CinemaEntity entity = new CinemaEntity();
+                entity.cinemas = item;
 
-            return cinema;
+                list.Add(entity);
+            }
+            return list;
         }
     }
 }

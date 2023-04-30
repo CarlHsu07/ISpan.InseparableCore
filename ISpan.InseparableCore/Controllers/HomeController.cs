@@ -20,6 +20,7 @@ namespace ISpan.InseparableCore.Controllers
         private readonly MovieRepository movie_repo;
         private readonly CinemaRepository cinema_repo;
         private readonly ArticleRepository article_repo;
+        private readonly MemberRepository member_repo;
         IWebHostEnvironment _enviro;
 
         public HomeController(ILogger<HomeController> logger, InseparableContext context, IWebHostEnvironment enviro)
@@ -30,6 +31,7 @@ namespace ISpan.InseparableCore.Controllers
             movie_repo = new MovieRepository(context, null);
             cinema_repo = new CinemaRepository(context);
             article_repo = new ArticleRepository(context);
+            member_repo = new MemberRepository(context);
         }
 
         public IActionResult Index()
@@ -104,15 +106,10 @@ namespace ISpan.InseparableCore.Controllers
             var movie = movie_repo.Movie(keyword);
             var cinema = cinema_repo.Cinema(keyword);
             IEnumerable<TMembers> member = Enumerable.Empty<TMembers>();
-            IEnumerable<TArticles> articles = Enumerable.Empty<TArticles>();
+            IEnumerable<ArticleVm> articles = Enumerable.Empty<ArticleVm>();
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
-                member = _context.TMembers.Where(t => t.FFirstName.Contains(keyword)
-                                            || t.FLastName.Contains(keyword)
-                                            || t.FAddress.Contains(keyword)
-                                            || t.FIntroduction.Contains(keyword)
-                                            || t.FArea.FAreaName.Contains(keyword)
-                                            || t.FEmail.Contains(keyword));
+                member = member_repo.members(keyword);
 
                 articles = article_repo.Articles(keyword);
             }
