@@ -481,7 +481,7 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
             HttpContext.Session.Remove(CDictionary.SK_ORDER_ID);
-            
+
             return View();
         }
 
