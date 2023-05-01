@@ -77,11 +77,11 @@
 	<hr />
 </div>
 <div>
-	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
+	<pre class="divArticle" id="content">@Html.Raw(Model.FArticleContent)</pre>
 </div>
 <div class="divContainerRow">
 	<div class="input-group">
-		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FCommentContent0" aria-label="With textarea"></textarea>
 	</div>
 	<div>
 		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
@@ -91,6 +91,7 @@
 
 @section Scripts{
 	<script>
+		
 		//返回
 		function backToIndex() { window.location.href = "/TArticles/Index" }
 
@@ -111,7 +112,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
 										<div class="divComment" >
-											${value.MemberName}	 ${value.PostingDate}
+											${value.MemberName}${value.FMemberId}${value.PostingDate}
 								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
 								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
 										</div>
@@ -130,7 +131,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px" >
 										<div  class="divComment">
-											${value.MemberName}	 ${value.PostingDate}
+											${value.MemberName}	${value.FMemberId} ${value.PostingDate}
 										</div>
 										<hr style="margin:0"/>
 										<div class="divComment">${value.FCommentContent}</div>
@@ -156,7 +157,7 @@
 			$(`#Container${commentId}`).html(`
 				<div class="divContainerRow">
 					<div class="input-group">
-						<textarea class="form-control divComment" id="FCommentContent" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control divComment" id="FCommentContent${commentId}" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
 						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">儲存</button>
@@ -195,8 +196,8 @@
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
 			let articleId = @Model.FArticleId
-			let comment = $(`#FCommentContent`).val();
-			$(`#FCommentContent`).val("");
+			let comment = $(`#FCommentContent${commentId}`).val();
+			$(`#FCommentContent${commentId}`).val("");
 			CommentDetail(commentId, articleId, comment, false)
 		})
 		//刪除評論

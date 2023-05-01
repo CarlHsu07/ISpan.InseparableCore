@@ -19,6 +19,7 @@ using ISpan.InseparableCore.Models.DAL.Repo;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using System.Buffers;
+using Humanizer;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -84,7 +85,7 @@ namespace ISpan.InseparableCore.Controllers
 		public async Task<IActionResult> Index(ArticleSearchCondition condition)
 		{
 			int pageSize = 10;
-			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+			List<ArticleSearchDto> dtos = articleService.Search(condition).ToList();
 
 			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
 			dtos = dtos.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
@@ -124,11 +125,15 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
-
-			ArticleSearchVm vm = articleService.GetSearchDto((int)id).SearchDtoToVm();
+			var dto = articleService.GetSearchDto((int)id);
+			ArticleSearchVm vm = dto.SearchDtoToVm();
+			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+			var member = articleRepo.GetMemberByPK(dto.FMemberId);
+			vm.FMemberId = member.FMemberId;
+			vm.MemberName = member.FLastName + member.FFirstName;
 
 			//是否點讚
-			 vm.LikeOrUnlike = likeRepo.LikeOrNot((int)id, _user.FId);
+			vm.LikeOrUnlike = likeRepo.LikeOrNot((int)id, _user.FId);
 
 			//點閱數+1
 			articleService.Click(vm.FArticleId);
@@ -173,6 +178,7 @@ namespace ISpan.InseparableCore.Controllers
 		public IActionResult Create()
 		{
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			ViewBag.UserId = _user.FId;
 			return View();
 		}
 
@@ -185,12 +191,13 @@ namespace ISpan.InseparableCore.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				vm.FMemberId = _user.FId;
 				var dto = vm.CreateVmToDto();
 				articleService.Create(dto);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
+			ViewBag.UserId = _user.FId;
+
 			return View(vm);
 		}
 
@@ -223,7 +230,6 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				try
 				{
-					vm.FMemberId = _user.FId;
 					var dto = vm.UpdateVmToDto();
 					articleService.Update(dto);
 				}

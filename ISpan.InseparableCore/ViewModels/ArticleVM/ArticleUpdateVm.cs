@@ -1,7 +1,6 @@
 ﻿using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Components.Forms;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
@@ -9,12 +8,16 @@ namespace ISpan.InseparableCore.ViewModels
 	public class ArticleUpdateVm
 	{
 		public int FArticleId { get; set; }
+		[Display(Name = "會員Id")]
 		public int FMemberId { get; set; }
-		[DisplayName("標題")]
+		[Display(Name = "標題")]
+		[Required(ErrorMessage = "必填")]
 		public string? FArticleTitle { get; set; }
-		[DisplayName("類別")]
+		[Display(Name = "類別")]
+		[Required(ErrorMessage = "必填")]
 		public int FArticleCategoryId { get; set; }
-		[DisplayName("內容")]
+		[Display(Name = "內容")]
+		[Required(ErrorMessage = "必填")]
 		public string? FArticleContent { get; set; }
 	}
 	public static class ArticleUpdateVmExtensions

@@ -2,41 +2,39 @@
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
-using Microsoft.Build.Framework;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
 	public class MovieSearchVm
 	{
-		[DisplayName("電影ID")]
+		[Display(Name = "電影ID")]
 		public int FMovieId { get; set; }
-		[DisplayName("名稱")]
+		[Display(Name = "名稱")]
 		public string? FMovieName { get; set; }
-		[DisplayName("簡介")]
+		[Display(Name = "簡介")]
 		public string? PartialIntro { get; set; }
-		[DisplayName("簡介")]
+		[Display(Name = "簡介")]
 		public string? FMovieIntroduction { get; set; }
-		[DisplayName("電影分級")]
+		[Display(Name = "電影分級")]
 		public string? Level { get; set; }
-		[DisplayName("上映日期")]
+		[Display(Name = "上映日期")]
 		public string? OnDate { get; set; }
-		[DisplayName("下映日期")]
+		[Display(Name = "下映日期")]
 		public string? OffDate { get; set; }
-		[Required]
-		[DisplayName("片長(分鐘)")]
+		[Display(Name = "片長(分鐘)")]
 		public int FMovieLength { get; set; }
-		[DisplayName("圖片檔路徑")]
+		[Display(Name = "圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }
-		[DisplayName("會員評分")]
-		public decimal? FMovieScore { get; set; } = 0;
-
-		[DisplayName("電影類別")]
+		[Display(Name = "會員評分")]
+		public decimal? FMovieScore { get; set; }
+		[Display(Name = "電影類別")]
 		public string? Categories { get; set; }
-		[DisplayName("主要演員")]
+		[Display(Name = "主要演員")]
 		public string? FMovieActors { get; set; }
-		[DisplayName("導演")]
+		[Display(Name = "導演")]
 		public string? FMovieDirectors { get; set; }
+		public bool FDeleted { get; set; }
 	}
 	public static class MovieSearchVmExtensions
 	{
@@ -44,7 +42,7 @@ namespace ISpan.InseparableCore.ViewModels
 		{
 			int len = Math.Min(dto.FMovieIntroduction.Length, 10);
 
-			MovieSearchVm vm = new MovieSearchVm()
+			return new MovieSearchVm()
 			{
 				FMovieId = dto.FMovieId,
 				FMovieIntroduction = dto.FMovieIntroduction,
@@ -56,9 +54,9 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieScore = dto.FMovieScore,
 				FMovieImagePath = dto.FMovieImagePath,
 				FMovieActors = dto.FMovieActors,
-				FMovieDirectors= dto.FMovieDirectors,
+				FMovieDirectors = dto.FMovieDirectors,
+				FDeleted = dto.FDeleted,
 			};
-			return vm;
 		}
 	}
 }

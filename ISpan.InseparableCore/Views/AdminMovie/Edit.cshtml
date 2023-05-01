@@ -64,7 +64,7 @@
 					@foreach (var item in ViewBag.FMovieCategoryId)
 					{
 						<div>
-						@if (Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
+						@if (Model.CategoryIdsContained.Count > 0 && Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
 						{
 							<input type="checkbox" name="CategoryCheck" value="@item.Value" id="@item.Value" checked/>
 							<label for="@item.Value">@item.Text</label>
@@ -112,13 +112,6 @@
 
 @section Scripts {
 	<script>
-		@foreach (var item in ViewBag.FMovieCategoryId)
-		{
-			if (Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
-			{
-				@:$(`#${item.Value}`).prop('checked', true);
-			}
-		}
 		var categoryIds = "";
 		
 		$("#Edit").submit(function () {

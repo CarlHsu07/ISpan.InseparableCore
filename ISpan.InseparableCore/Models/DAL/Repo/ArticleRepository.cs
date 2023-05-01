@@ -15,15 +15,15 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public IEnumerable<ArticleEntity> Search(ArticleSearchCondition? condition)
 		{
-			IEnumerable<TArticles> articles = context.TArticles.Where(t => t.FDeleted == false).Include(t => t.FMember)
+			IEnumerable<TArticles> articles = context.TArticles.Where(t => t.FDeleted == false)
 				.OrderByDescending(t => t.FArticlePostingDate);
 
-			if (condition == null) return ModelsToVms(articles);
+			if (condition == null) return articles.ModelsToEntities();
 			//id搜尋
 			if (int.TryParse(condition.Key, out int articleId))
 			{
 				articles = articles.Where(t => t.FArticleId == articleId);
-				return ModelsToVms(articles);
+				return articles.ModelsToEntities();
 			}
 
 			//關鍵字key
@@ -39,34 +39,7 @@ namespace ISpan.InseparableCore.Models.DAL
 				articles = articles.Where(t => t.FArticleCategoryId == condition.CategoryId);
 			}
 
-			return ModelsToVms(articles);
-		}
-		public ArticleEntity ModelToEntity(TArticles article)
-		{
-			return new ArticleEntity()
-			{
-				FArticleId = article.FArticleId,
-				FArticleTitle = article.FArticleTitle,
-				FMemberId = article.FMemberId,
-				FArticleCategoryId = article.FArticleCategoryId,
-				FArticlePostingDate = article.FArticlePostingDate,
-				FArticleModifiedDate = article.FArticleModifiedDate,
-				FArticleContent = article.FArticleContent,
-				FArticleClicks = article.FArticleClicks,
-				FArticleLikes = article.FArticleLikes,
-				FDeleted = article.FDeleted,
-			};
-		}
-		public IEnumerable<ArticleEntity> ModelsToVms(IEnumerable<TArticles> articles)
-		{
-			List<ArticleEntity> entities = new List<ArticleEntity>();
-			foreach (var article in articles)
-			{
-				ArticleEntity entity = article.ModelToEntity();
-
-				entities.Add(entity);
-			}
-			return entities;
+			return articles.ModelsToEntities();
 		}
 		public ArticleEntity GetByArticleId(int articleId)
 		{
@@ -130,6 +103,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			{
 				article.FDeleted = true;
 				context.TArticles.Update(article);
+				context.SaveChanges();
 			}
 		}
 		public IEnumerable<TArticles> Articles(string keyword)

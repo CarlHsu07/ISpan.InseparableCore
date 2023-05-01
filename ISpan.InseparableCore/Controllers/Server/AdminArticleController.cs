@@ -68,13 +68,13 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
 
-			return View(dtos);
+			return View(vms);
 		}
 		[HttpPost]
 		public async Task<IActionResult> IndexMaintainer(ArticleSearchCondition condition)
 		{
 			int pageSize = 10;
-			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+			List<ArticleSearchDto> dtos = articleService.Search(condition).ToList();
 
 			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
 			dtos = dtos.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
@@ -100,7 +100,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			return Ok(new
 			{
-				Vm = dtos,
+				Vm = vms,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -114,10 +114,14 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			var vm = articleService.GetSearchDto((int)id).SearchDtoToVm();
+			var dto = articleService.GetSearchDto((int)id);
+			ArticleSearchVm vm = dto.SearchDtoToVm();
+			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+			var member = articleRepo.GetMemberByPK(dto.FMemberId);
+			vm.FMemberId = member.FMemberId;
+			vm.MemberName = member.FLastName + member.FFirstName;
 
 			return View(vm);
 		}
-
 	}
 }

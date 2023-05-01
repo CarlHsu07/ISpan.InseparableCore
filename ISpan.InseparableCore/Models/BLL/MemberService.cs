@@ -43,7 +43,7 @@ namespace ISpan.InseparableCore.Models.BLL
             // 將序號轉換為固定長度的字串，補足至 5 位數，補足的字元為 0
             string sequenceString = newSequence.ToString().PadLeft(5, '0');
 
-            // 將日期和序號結合，形成 FMemberId，格式為 yyyyMMdd-序號
+            // 將日期和序號結合，形成 FMemberPk，格式為 yyyyMMdd-序號
             string fMemberId = "M" + now.ToString("yyyyMMdd") + sequenceString;
 
             return fMemberId;

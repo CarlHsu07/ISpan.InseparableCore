@@ -20,13 +20,13 @@ namespace ISpan.InseparableCore.Models.DAL
 		{
 			var movies = context.TMovies.Where(t => t.FDeleted == false);
 
-			if (condition == null) return ModelsToEntities(movies);
+			if (condition == null) return movies.ModelsToEntities();
 
 			//id搜尋
 			if (int.TryParse(condition.Key, out int movieId))
 			{
 				movies = movies.Where(t => t.FMovieId == movieId);
-				return ModelsToEntities(movies);
+				return movies.ModelsToEntities();
 			}
 			//電影等級
 			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId);
@@ -64,36 +64,7 @@ namespace ISpan.InseparableCore.Models.DAL
 				movies = movies.Where(t => movieIds.Contains(t.FMovieId));
 			}
 
-			return ModelsToEntities(movies);
-		}
-		public MovieEntity ModelToEntity(TMovies movie)
-		{
-			return new MovieEntity()
-			{
-				FMovieId = movie.FMovieId,
-				FMovieIntroduction = movie.FMovieIntroduction,
-				FMovieName = movie.FMovieName,
-				FMovieLevelId = movie.FMovieLevelId,
-				FMovieOnDate = movie.FMovieOnDate,
-				FMovieOffDate = movie.FMovieOffDate,
-				FMovieLength = movie.FMovieLength,
-				FMovieScore = movie.FMovieScore,
-				FMovieImagePath = movie.FMovieImagePath,
-				FMovieActors = movie.FMovieActors,
-				FMovieDirectors = movie.FMovieDirectors,
-				FDeleted = movie.FDeleted,
-			};
-		}
-
-		public IEnumerable<MovieEntity> ModelsToEntities(IEnumerable<TMovies> movies)
-		{
-			List<MovieEntity> entities = new List<MovieEntity>();
-			foreach (var movie in movies)
-			{
-				MovieEntity vm = movie.ModelToEntity();
-				entities.Add(vm);
-			}
-			return entities;
+			return movies.ModelsToEntities();
 		}
 		public string GetMovieLevel(int levelId)
 		{

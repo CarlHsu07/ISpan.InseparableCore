@@ -193,6 +193,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			MovieUpdateDto dto = service.GetUpdateDto((int)id);
 			MovieUpdateVm vm = dto.UpdateDtoToVm();
+			vm.CategoryIdsContained = _context.TMovieCategoryDetails.Where(t => t.FMovieId == id).Select(t => t.FMovieCategoryId).ToList();
 
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
@@ -235,6 +236,8 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+
 			return View(vm);
 		}
 

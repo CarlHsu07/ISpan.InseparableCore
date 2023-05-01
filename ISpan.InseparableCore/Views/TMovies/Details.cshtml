@@ -109,10 +109,10 @@
 </div>
 <div class="divContainer">
 	<div class="input-group">
-		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FComment0" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn btn-light">留言</button>
+		<button type="button" id="btnComment" class="btn btn-light" value="0">留言</button>
 	</div>
 </div>
 @*存放評論*@
@@ -142,7 +142,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
 									<div style="margin:5px" >
-										${value.MemberName}	 ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 							<button type="button" class="btn btn-warning btnEditComment" value="${value.FSerialNumber}">編輯</button>
 									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FSerialNumber}">刪除</button>
 									</div>
@@ -160,7 +160,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" >
 									<div style="margin:5px">
-										${value.MemberName}	 ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 									</div>
 									<hr style="margin:0"/>
 									<div style="margin:5px">${value.FComment}</div>
@@ -210,7 +210,7 @@
 			$(`#Container${serialNumber}`).html(`
 				<div class="divContainer">
 					<div class="input-group">
-						<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control" id="FComment${serialNumber}" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
 						<button type="button" id="btnComment" class="btn btn-light" value="${serialNumber}">儲存</button>
@@ -256,8 +256,9 @@
 		$(document).on('click', '#btnComment', function () {
 			let serialNumber = $(this).attr("value")
 			let movieId = @Model.FMovieId
-			let comment = $("#FComment").val();
+			let comment = $(`#FComment${serialNumber}`).val();
 			alert(serialNumber)
+			$(`#FComment${serialNumber}`).val("");
 
 			CommentDetail(serialNumber,  movieId, comment, false)
 		})
