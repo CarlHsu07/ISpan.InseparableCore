@@ -9,21 +9,28 @@
 @section Styles{
 	<link href="~/css/loading.css" rel="stylesheet" />
 	<link href="~/css/IndexGeneral.css" rel="stylesheet" />
-}
+
 <style>
+	.container {
+	width: 1200px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding: 20px;
+}
 		.inDivBottom {
 			position: absolute;
 			bottom: 0px;
 			right: -100px;
-		}
+		}	
 
 		.inDivPosition {
 			position: relative;
 			bottom: -20px;
 			right: -500px;
 		}
-
 </style>
+}
 <h1 class="divBlock">電影搜尋</h1>
 <div class="row divBlock">
 
@@ -59,14 +66,14 @@
 
 </div>
 
-<div class="divBlock" id="divSearch">
+<div class="divBlock container" id="divSearch">
 
 	@foreach (var item in Model)
 	{
-		<div class="divContainer divBorder">
+		<div class="divContainer divBorder " style="width:49%">
 			<div style="margin:0 20px 0 0">
 				<p>
-					<img src="~/images/@item.FMovieImagePath" width="250">
+					<img src="~/images/@item.FMovieImagePath" width="200">
 				</p>
 			</div>
 
@@ -92,12 +99,6 @@
 				</p>
 				<p>
 					@Html.DisplayNameFor(model => model.Level) : @item.Level
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieActors) : @item.FMovieActors
-				</p>
-				<p>
-					@Html.DisplayNameFor(model => model.FMovieDirectors) : @item.FMovieDirectors
 				</p>
 			</div>
 		</div>
@@ -137,7 +138,6 @@
 				success: function (data) {
 					$("#divSearch").html(``)
 					if (data == "noData") {
-						alert("nodata")
 						$("#divSearch").html(`
 
 							<div>
@@ -153,10 +153,10 @@
 					$("#divSearch").html(``)
 					$.each(context.Vm, function (index, value) {
 						$("#divSearch").append(`
-							<div class="divContainer divBorder">
+							<div class="divContainer divBorder"  style="width:49%">
 								<div style="margin:0 20px 0 0">
 									<p>
-										<img src="../images/${value.FMovieImagePath}" width="250">
+										<img src="../images/${value.FMovieImagePath}" width="200">
 									</p>
 								</div>
 
@@ -183,13 +183,6 @@
 									<p>
 		@Html.DisplayNameFor(model => model.Level) : ${value.Level}
 									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieActors) : ${value.FMovieActors}
-									</p>
-									<p>
-		@Html.DisplayNameFor(model => model.FMovieDirectors) : ${value.FMovieDirectors}
-									</p>
-
 								</div>
 							</div>`)
 					})
@@ -235,7 +228,6 @@
 			let categoryId = $("#CategoryId").find(":selected").val()
 			let levelId = $("#LevelId").find(":selected").val()
 			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 			show(key, categoryId, dateCategoryId, levelId, page)
 		})

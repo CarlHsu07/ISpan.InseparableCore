@@ -1,4 +1,5 @@
 ﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
@@ -16,21 +17,21 @@ namespace ISpan.InseparableCore.Models.DAL
 			this.enviro = enviro;
 		}
 
-		public IEnumerable<MovieEntity> Search(MovieSearchCondition? condition)
+		public IQueryable<TMovies> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.Where(t => t.FDeleted == false);
+			var movies = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).Where(t => t.FDeleted == false);
 
-			if (condition == null) return movies.ModelsToEntities();
+			if (condition == null) return movies;
 
 			//id搜尋
 			if (int.TryParse(condition.Key, out int movieId))
 			{
 				movies = movies.Where(t => t.FMovieId == movieId);
-				return movies.ModelsToEntities();
+				return movies;
 			}
 			//電影等級
 			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId);
-
 			//上下映日期
 			if (condition.DateCategoryId == 1)//熱映中
 			{
@@ -45,7 +46,6 @@ namespace ISpan.InseparableCore.Models.DAL
 			{
 				movies = movies.Where(t => t.FMovieOffDate < DateTime.Now);
 			}
-
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
@@ -63,20 +63,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 				movies = movies.Where(t => movieIds.Contains(t.FMovieId));
 			}
-
-			return movies.ModelsToEntities();
-		}
-		public string GetMovieLevel(int levelId)
-		{
-			return context.TMovieLevels.Find(levelId).FLevelName;
-		}
-		public string GetCategories(int movieId)
-		{
-			//if (categorydetails == null) return String.Empty;
-
-			List<string> categories = context.TMovieCategoryDetails.Where(t => t.FMovieId == movieId)
-				.Select(t => t.FMoiveCategoryName).ToList();
-			return String.Join(", ", categories.ToArray());
+			return movies;
 		}
 		public MovieEntity GetByMovieId(int movieId)
 		{
@@ -85,6 +72,15 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return movie.ModelToEntity();
 		}
+		public MovieSearchVm GetMovieVm(int movieId)
+		{
+			TMovies movie = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId.Equals(movieId));
+			if (movie == null) return null;
+
+			return movie.ModelToVm();
+		}
+
 		public int GetMovieId(string movieName)
 		{
 			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));

@@ -28,6 +28,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
         public virtual DbSet<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual DbSet<TArticles> TArticles { get; set; }
+        public virtual DbSet<TChat> TChat { get; set; }
         public virtual DbSet<TCinemas> TCinemas { get; set; }
         public virtual DbSet<TCities> TCities { get; set; }
         public virtual DbSet<TComments> TComments { get; set; }
@@ -227,6 +228,11 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fPasswordSalt")
                     .HasComment("管理員密碼鹽值");
 
+                entity.Property(e => e.FPhotoPath)
+                    .HasMaxLength(500)
+                    .HasColumnName("fPhotoPath")
+                    .HasComment("管理員大頭貼的檔案路徑");
+
                 entity.Property(e => e.FSignUpTime)
                     .HasColumnType("datetime")
                     .HasColumnName("fSignUpTime")
@@ -403,6 +409,31 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasForeignKey(d => d.FMemberId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tArticles_tMembers");
+            });
+
+            modelBuilder.Entity<TChat>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("tChat");
+
+                entity.Property(e => e.FId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("fID");
+
+                entity.Property(e => e.FMessage)
+                    .HasMaxLength(4000)
+                    .HasColumnName("fMessage");
+
+                entity.Property(e => e.FReceiverId).HasColumnName("fReceiverID");
+
+                entity.Property(e => e.FSenderId)
+                    .HasColumnName("fSenderID")
+                    .HasComment("發送者的會員ID");
+
+                entity.Property(e => e.FTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fTime");
             });
 
             modelBuilder.Entity<TCinemas>(entity =>
@@ -794,7 +825,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("密碼鹽值");
 
                 entity.Property(e => e.FPhotoPath)
-                    .HasMaxLength(200)
+                    .HasMaxLength(500)
                     .HasColumnName("fPhotoPath")
                     .HasComment("大頭貼的檔案路徑");
 

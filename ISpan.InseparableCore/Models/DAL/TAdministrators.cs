@@ -36,6 +36,10 @@ namespace ISpan.InseparableCore.Models.DAL
         /// </summary>
         public string FPasswordSalt { get; set; }
         /// <summary>
+        /// 管理員大頭貼的檔案路徑
+        /// </summary>
+        public string FPhotoPath { get; set; }
+        /// <summary>
         /// 管理員註冊時間
         /// </summary>
         public DateTime FSignUpTime { get; set; }

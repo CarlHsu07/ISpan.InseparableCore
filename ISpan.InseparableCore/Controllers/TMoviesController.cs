@@ -32,39 +32,23 @@ namespace ISpan.InseparableCore.Controllers
 			service = new MovieService(repo);
 		}
 
-
-		public IEnumerable<MovieSearchVm> DtosToVms(IEnumerable<MovieSearchDto> dtos)
-		{
-			List<MovieSearchVm> vms = new List<MovieSearchVm>();
-
-			foreach (var dto in dtos)
-			{
-				var vm = dto.SearchDtoToVm();
-				vm.Categories = repo.GetCategories(dto.FMovieId);
-				vm.Level = repo.GetMovieLevel(dto.FMovieLevelId);
-				vms.Add(vm);
-			}
-			return vms;
-		}
 		public IActionResult Index()
 		{
 			int pageSize = 10;
-			List<MovieSearchDto> dtos = service.Search(null).ToList();
-			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, dtos);
-
-			dtos = dtos.Take(pageSize).ToList();
-			List<MovieSearchVm> vms = DtosToVms(dtos).ToList();
-
+			var movies = repo.Search(null);
+			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Take(pageSize);
+			var vms = movies.ModelsToVms();
 			#region ViewData
-			int pageContent = 2;
-			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
-														   : dtos.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
@@ -83,29 +67,29 @@ namespace ISpan.InseparableCore.Controllers
 			#endregion
 			return View(vms);
 		}
-		[HttpPost]
+		[HttpPost]//可改成get
 		public IActionResult Index(MovieSearchCondition condition)
 		{
-			List<MovieSearchDto> dtos = service.Search(condition).ToList();
 			int pageSize = 10;
-			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
-			dtos = dtos.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
-			if (dtos.Count == 0) return Ok("noData");
+			var movies = repo.Search(condition);
+			var pageList = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize);
+			var vms = movies.ModelsToVms();
 
-			List<MovieSearchVm> vms = DtosToVms(dtos).ToList();
+			if (vms.ToList().Count == 0) return Ok("noData");
 
 			#region ViewData
 
 			//產生頁碼SelectList
-			int pageContent = 2;
-			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
-														   : dtos.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
+			//int pageContent = 2;
+			//int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+			//											   : dtos.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
 
 			//為電影類別SelectList加入預設值
 			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -143,10 +127,7 @@ namespace ISpan.InseparableCore.Controllers
 				return NotFound();
 			}
 
-			var dto = service.GetSearchDto((int)id);
-			var vm = dto.SearchDtoToVm();
-			vm.Categories = repo.GetCategories(dto.FMovieId);
-			vm.Level = repo.GetMovieLevel(dto.FMovieLevelId);
+			var vm = repo.GetMovieVm((int)id);
 
 			return View(vm);
 		}

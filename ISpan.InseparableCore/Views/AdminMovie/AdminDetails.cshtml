@@ -113,9 +113,7 @@
 				url: "/MovieDetail/MovieComment",
 				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
-					alert(data)
 					let context = JSON.parse(data);
-					//alert(data)
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
 						$("#divComment").append(`

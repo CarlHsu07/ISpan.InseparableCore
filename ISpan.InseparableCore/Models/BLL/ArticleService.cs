@@ -24,12 +24,6 @@ namespace ISpan.InseparableCore.Models.BLL
 		{
 			var entity = dto.CreateDtoToEntity();
 
-			//if (string.IsNullOrEmpty(entity.Title) || string.IsNullOrEmpty(entity.Content)) throw new Exception("請正確填寫標題及內容");
-
-			//// 驗證Title 是否唯一
-			//var entityInDbByTitle = repo.GetByTitle(entity.Title);
-			//if (entityInDbByTitle != null) throw new Exception("此標題已被使用");
-
 			repo.Create(entity);
 		}
 
