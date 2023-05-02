@@ -21,9 +21,11 @@ namespace ISpan.InseparableCore.Models.BLL
             DateTime now = DateTime.Now; // 取得現在時間
             int newSequence = 0; // 新的序號
 
-            // 查詢當日已經新增的會員數量
-            int todayNewMemberCount = _context.TMembers.Count(m => m.FSignUpTime.GetValueOrDefault().Date == now.Date);
+            // todo 會員ID，先抓出最後一筆的會員ID，拆分成日期與序號，檢查日期
 
+            // 查詢當日已經新增的會員數量
+           // int todayNewMemberCount = _context.TMembers.Count(m => m.FSignUpTime.GetValueOrDefault().Date == now.Date);
+            int todayNewMemberCount = _context.TMembers.Count();
             if (todayNewMemberCount == 0)
             {
                 // 新的序號為當日新會員數量加1
@@ -32,8 +34,10 @@ namespace ISpan.InseparableCore.Models.BLL
             else
             {
                 string lastMemberSequence = _context.TMembers
-                    .OrderByDescending(m => m.FSignUpTime.Value.Date == now.Date)
+                    .OrderByDescending(m => m.FSignUpTime)
                     .FirstOrDefault().FMemberId;
+
+                //todo 檢查是不是今天 lastMemberSequence M 20230502 00002
 
                 int length = lastMemberSequence.Length;
                 string lastFiveChars = length >= 5 ? lastMemberSequence.Substring(length - 5) : lastMemberSequence;
