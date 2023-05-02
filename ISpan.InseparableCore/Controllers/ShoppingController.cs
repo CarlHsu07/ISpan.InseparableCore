@@ -366,7 +366,7 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
-            var web = "https://inseparable.fun/"; //todo 上線要改
+            var web = "https://inseparable.fun/"; //https://localhost:7021/
             var order = new Dictionary<string, string>
             {
                 { "MerchantID",  "3002607"},
@@ -397,58 +397,45 @@ namespace ISpan.InseparableCore.Controllers
             return View(order);
 
         }
+        
         [HttpPost]
-        public HttpResponseMessage AddPayInfo(JObject info)
+        public IActionResult AddPayInfo(ECPayResponse info)
         {
-            //todo 不確定這裡要做什麼判斷 等上線測試
-            if (!HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_TICKET_LIST))
+            //todo 不確定這裡要做什麼判斷
+            string error = string.Empty;
+            string json = string.Empty;
+            int? id = null;
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_ORDER_ID))
             {
-                return ResponseOK();
+                json = HttpContext.Session.GetString(CDictionary.SK_ORDER_ID);
+                id = JsonSerializer.Deserialize<int>(json);
             }
-            else
+            if (info.RtnCode != 1)
             {
-                return ResponseError();
+                var ticket = _ticket_repo.GetById(id);
+                if (ticket == null)
+                {
+                    return Content("0|Error");
+                }
+
+                foreach (var item in ticket)
+                {
+                    item.FStatus = false;
+                }
+
+                _db.SaveChanges();
             }
-            //todo 好像因為沒有網址所以不會跑
+            var order = _order_repo.GetOneOrder(id);
+            if (order == null)
+            {
+                return Content("0|Error");
+            }
+            if (info.MerchantTradeNo != order.FCreditTradeNo)
+            {
+                return Content("0|Error");
+            }
+            return Content("1|OK");
         }
-        //[HttpPost]
-        //public IActionResult AddPayInfo(ECPayResponse info)
-        //{
-        //    //todo 不確定這裡要做什麼判斷
-        //    string error = string.Empty;
-        //    string json = string.Empty;
-        //    int? id = null;
-        //    if (HttpContext.Session.Keys.Contains(CDictionary.SK_ORDER_ID))
-        //    {
-        //        json = HttpContext.Session.GetString(CDictionary.SK_ORDER_ID);
-        //        id = JsonSerializer.Deserialize<int>(json);
-        //    }
-        //    if (info.RtnCode != 1)
-        //    {
-        //        var ticket = _ticket_repo.GetById(id);
-        //        if (ticket == null)
-        //        {
-        //            return Content("0|Error");
-        //        }
-
-        //        foreach (var item in ticket)
-        //        {
-        //            item.FStatus = false;
-        //        }
-
-        //        _db.SaveChanges();
-        //    }
-        //    var order = _order_repo.GetOneOrder(id);
-        //    if (order == null)
-        //    {
-        //        return Content("0|Error");
-        //    }
-        //    if (info.MerchantTradeNo != order.FCreditTradeNo)
-        //    {
-        //        return Content("0|Error");
-        //    }
-        //    return Content("1|OK");
-        //}
         [HttpPost]
         public IActionResult Paydone(int? id,string tradeNo)
         {
@@ -723,13 +710,13 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 body += "\r\n</tbody>\r\n</table>";
             }
-            body += $"<br /></div><br /></div><a href=\"#\"><p style=\"color:\t#FF0000\">INSEPARABLE</p></a>";//todo 網址
+            body += $"<br /></div><br /></div><a href=\"https://inseparable.fun/\"><p style=\"color:\t#FF0000;text-decoration:none;\">INSEPARABLE</p></a>"; //todo 待測試
             SmtpClient mysmpt = new SmtpClient("smtp-mail.outlook.com", 587);
             mysmpt.Credentials = new NetworkCredential(_key.Email, _key.Password);
             mysmpt.EnableSsl = true;
 
             MailMessage mail = new MailMessage();
-            mail.To.Add(_user.FEmail);  //todo 刷卡後偵測不到
+            mail.To.Add(_user.FEmail); 
             mail.From = new MailAddress(_key.Email, "INSEPARABLE", System.Text.Encoding.UTF8);
             mail.Priority = MailPriority.Normal;
             mail.Subject = "[訂單]您在INSEPARABLE,訂單資料";
