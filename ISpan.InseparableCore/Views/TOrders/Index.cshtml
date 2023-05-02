@@ -108,7 +108,18 @@
                     @Html.DisplayFor(modelItem => item.FTotalMoney)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FCreditTradeNo)
+                    @{
+                        string TradeNo = string.Empty;
+                        if (item.FCreditTradeNo == null)
+                        {
+                            TradeNo = "";
+                        }
+                        else
+                        {
+                            TradeNo = item.FCreditTradeNo;
+                        }
+                    }
+                    <label>@TradeNo</label>
                 </td>
                 <td>
                     @{
@@ -195,7 +206,8 @@
                             ${value.FTotalMoney}
                              </td>
                             <td>
-                            ${value.FCreditTradeNo}
+                            ${value.FCreditTradeNo==null?
+                                `""`:`${value.FCreditTradeNo`}}
                             </td>
                              <td>
                              ${result}
