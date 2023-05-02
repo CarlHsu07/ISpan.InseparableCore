@@ -32,15 +32,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             ticket_repo = new TicketOrderRepository(context);
             product_repo = new ProductOrderRepository(context);
         }
-        public IPagedList<COrderVM> OrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
-        {
-            if (!pageIndex.HasValue || pageIndex < 1)
-                return null;
-            IPagedList<COrderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
-            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
-                return null;
-            return pagelist;
-        }
+        
         // GET: TOrders
         public async Task<IActionResult> Index()
         {
@@ -55,7 +47,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pageIndex = 1;
 
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = OrderPageList(pageIndex, pagesize, inseparableContext);
+            ViewBag.page = GetPage.GetPagedProcess(pageIndex, pagesize, inseparableContext);
 
             return View(pagedItems);
         }
@@ -149,130 +141,6 @@ namespace ISpan.InseparableCore.Controllers.Server
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        //todo member會員中心訂單紀錄 完成
-        public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
-        {
-            if (!pageIndex.HasValue || pageIndex < 1)
-                return null;
-            IPagedList<COrderVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
-            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
-                return null;
-            return pagelist;
-        }
-        public IActionResult MemberOrder()
-        {
-            TMembers member = new TMembers();
-            string json = string.Empty;
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
-            {
-                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
-                member = JsonSerializer.Deserialize<TMembers>(json);
-            }
-            if (member == null)
-                return NotFound(); //todo 待改
-
-            var data = order_repo.GetMemberOrder(member.FId,null);
-            var pagesize = 5;
-            var pageIndex = 1;
-           
-            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
-
-            return View(pagedItems);
-        }
-        [HttpPost]
-        public IActionResult MemberOrder(MemberOrderSearch search)
-        {
-            TMembers member = new TMembers();
-            string json = string.Empty;
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
-            {
-                json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
-                member = JsonSerializer.Deserialize<TMembers>(json);
-            }
-            if (member == null)
-                return NotFound(); //todo 待改
-
-            var data = order_repo.GetMemberOrder(member.FId,search);
-            var pagesize = 5;
-            var pageIndex = search.pageindex;
-            
-            var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = MemberOrderPageList(pageIndex, pagesize, data);
-
-            var count = data.Count();
-            var totalpage = (int)Math.Ceiling(count / (double)pagesize);  //無條件進位
-            JsonSerializerOptions options = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve
-            };
-            string jsons = JsonSerializer.Serialize(pagedItems, options);
-            return Ok(new
-            {
-                Items = jsons,
-                totalpage = totalpage,
-            }.ToJson());
-        }
-        public IActionResult MemberOrderDetail(int? id)
-        {
-            CorderDetaillVM vm = new CorderDetaillVM();
-            if (id == null)
-                return View();
-
-            vm.orders = order_repo.GetOneOrder(id);
-            vm.ticket = ticket_repo.GetById(id);
-            vm.product = product_repo.GetById(id);
-
-
-            if (id == null || _context.TOrders == null)
-            {
-                return RedirectToAction(nameof(MemberOrder));
-            }
-
-            return View(vm);
-        }
-        public IActionResult MemberOrderDelete(int? id)
-        {
-            if (id == null || _context.TOrders == null)
-            {
-                return RedirectToAction(nameof(MemberOrder));
-            }
-            COrderVM vm = new COrderVM();
-            vm.orders = order_repo.GetOneOrder(id);
-            vm.FCinema = vm.orders.FCinema;
-            vm.FMember = vm.orders.FMember;
-            if (vm.orders == null)
-            {
-                return RedirectToAction(nameof(MemberOrder));
-            }
-
-            return View(vm);
-        }
-
-        // POST: TOrders/Delete/5
-        [HttpPost, ActionName("MemberOrderDelete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MemberOrderDeleteConfirmed(int id)
-        {
-            if (_context.TOrders == null)
-            {
-                return Problem("Entity set 'InseparableContext.TOrders'  is null.");
-            }
-            try
-            {
-                order_repo.Delete(id);
-
-            }
-            catch (Exception ex)
-            {
-                ViewBag.error = ex.Message;
-                return RedirectToAction("MemberOrderDelete", new { id });
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(MemberOrder));
         }
 
         //Ajax
