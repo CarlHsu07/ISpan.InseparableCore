@@ -207,16 +207,16 @@
                              </td>
                             <td>
                             ${value.FCreditTradeNo==null?
-                                `""`:`${value.FCreditTradeNo`}}
+                                "":value.FCreditTradeNo}
                             </td>
-                             <td>
-                             ${result}
-                             </td>
                             <td>
-                                <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
-                                ${value.FStatus ?
-                                `<a href="MemberOrderDelete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
-                                `<button class="btn btn-danger" disabled>取消</button>`}
+                             ${result}
+                            </td>
+                            <td>
+                              <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
+                              ${value.FStatus ?
+                              `<a href="MemberOrderDelete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
+                              `<button class="btn btn-danger" disabled>取消</button>`}
                             </td>
                         </tr>`)
                     });
