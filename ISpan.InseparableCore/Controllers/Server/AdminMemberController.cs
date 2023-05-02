@@ -10,7 +10,7 @@ using System.Text;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.BLL;
 
-namespace ISpan.InseparableCore.Controllers
+namespace ISpan.InseparableCore.Controllers.Server
 {
     public class AdminMemberController : Controller
     {
@@ -24,7 +24,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: AdminMember
         public async Task<IActionResult> Index(CQueryKeywordViewModel vm)
         {
-            if(string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
+            if (string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
             {
                 var inseparableContext = _context.TMembers
                 .Include(t => t.FAccountStatusNavigation)
@@ -36,7 +36,7 @@ namespace ISpan.InseparableCore.Controllers
             else // 搜尋關鍵字不是空的
             {
                 var inseparableContext = _context.TMembers
-                    .Where(m => 
+                    .Where(m =>
                     m.FFirstName.Contains(vm.txtKeyword) ||
                     m.FLastName.Contains(vm.txtKeyword) ||
                     m.FEmail.Contains(vm.txtKeyword) ||
@@ -103,9 +103,9 @@ namespace ISpan.InseparableCore.Controllers
                 {
                     MemberIn.FTotalMemberPoint = 0;
                 }
-                
+
                 // 加密會員密碼
-                # region
+                #region
                 string password = MemberIn.FPasswordHash; // 要加密的密碼
 
                 // 產生鹽值
@@ -222,14 +222,14 @@ namespace ISpan.InseparableCore.Controllers
             {
                 _context.TMembers.Remove(tMembers);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TMembersExists(int id)
         {
-          return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
+            return (_context.TMembers?.Any(e => e.FId == id)).GetValueOrDefault();
         }
 
     }
