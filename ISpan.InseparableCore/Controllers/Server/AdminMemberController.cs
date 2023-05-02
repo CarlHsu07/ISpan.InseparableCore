@@ -12,7 +12,7 @@ using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class AdminMemberController : Controller
+    public class AdminMemberController : AdminSuperController
     {
         private readonly InseparableContext _context;
 

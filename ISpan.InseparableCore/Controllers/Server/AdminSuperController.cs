@@ -24,7 +24,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                 {
-                    Controller = "Home",
+                    Controller = "AdminHome",
                     Action = "Login"
                 }));
             }

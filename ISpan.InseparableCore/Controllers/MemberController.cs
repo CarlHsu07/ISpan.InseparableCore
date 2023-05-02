@@ -140,7 +140,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        //todo member會員中心訂單紀錄 in Member(已複製好的)
+        //todo 以下是member會員中心訂單紀錄 in Member(已複製好)
         public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
@@ -176,6 +176,7 @@ namespace ISpan.InseparableCore.Controllers
         {
             TMembers member = new TMembers();
             string json = string.Empty;
+            // todo 改用super給的_user
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
                 json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
@@ -653,6 +654,8 @@ namespace ISpan.InseparableCore.Controllers
         // 從Session中取得會員的fID
         private int? GetMemberFID()
         {
+            // todo 改用super給的_user
+
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
                 var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
