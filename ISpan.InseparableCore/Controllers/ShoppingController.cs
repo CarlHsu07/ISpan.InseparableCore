@@ -366,7 +366,7 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
-            var web = "inseparable.fun"; //todo 上線要改
+            var web = "https://inseparable.fun/"; //todo 上線要改
             var order = new Dictionary<string, string>
             {
                 { "MerchantID",  "3002607"},
