@@ -366,7 +366,7 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
-            var web = "https://localhost:7021/"; //todo 上線要改
+            var web = "inseparable.fun"; //todo 上線要改
             var order = new Dictionary<string, string>
             {
                 { "MerchantID",  "3002607"},
@@ -377,7 +377,7 @@ namespace ISpan.InseparableCore.Controllers
                 { "TradeDesc","無"},
                 { "ItemName","電影票"},
                 { "ReturnURL",$"{web}Shopping/AddPayInfo"},
-                { "OrderResultURL",$"{web}Shopping/Paydone/{orderid}"},
+                { "OrderResultURL",$"{web}Shopping/Paydone/?id={orderid}&tradeNo={TradeNo}"},
                 { "ClientBackURL",$"{web}Shopping/Ticket"},
                 { "ChoosePayment","Credit"},
                 { "EncryptType","1"},
@@ -450,7 +450,7 @@ namespace ISpan.InseparableCore.Controllers
         //    return Content("1|OK");
         //}
         [HttpPost]
-        public IActionResult Paydone(int? id)
+        public IActionResult Paydone(int? id,string tradeNo)
         {
             if (id == null)
             {
@@ -482,6 +482,7 @@ namespace ISpan.InseparableCore.Controllers
             HttpContext.Session.Remove(CDictionary.SK_PURCHASED_TICKET_LIST);
             HttpContext.Session.Remove(CDictionary.SK_ORDER_ID);
 
+            ViewBag.No = tradeNo;
             return View();
         }
 
