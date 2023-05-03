@@ -86,7 +86,7 @@
 		</form>
 		<div class="go-right divContainerRow">
 			<div class="divBlock" style="width:100px">
-				<a asp-action="Index" class="btn btn-light ">返回</a>
+				<a asp-action="IndexMaintainer" class="btn btn-light ">返回</a>
 			</div>
 		</div>
 	</div>
@@ -100,7 +100,7 @@
 				categoryIds += $(this).val() + ',';
 			});
 			$("#CategoryIds").val(categoryIds);
-			alert($("#CategoryIds").val())
+			//alert($("#CategoryIds").val())
 		})
 		const fileInput = document.getElementById('fileInput');
 		const preview = document.getElementById('preview');

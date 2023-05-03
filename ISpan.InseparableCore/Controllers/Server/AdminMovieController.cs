@@ -1,4 +1,5 @@
-﻿using ISpan.InseparableCore.Models.BLL;
+﻿using Humanizer;
+using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
@@ -25,40 +26,24 @@ namespace ISpan.InseparableCore.Controllers.Server
 			service = new MovieService(repo);
 		}
 
-		public IEnumerable<MovieSearchVm> DtosToVms(IEnumerable<MovieSearchDto> dtos)
-		{
-			List<MovieSearchVm> vms = new List<MovieSearchVm>();
-
-			foreach (var dto in dtos)
-			{
-				var vm = dto.SearchDtoToVm();
-				vm.Categories = repo.GetCategories(dto.FMovieId);
-				vm.Level = repo.GetMovieLevel(dto.FMovieLevelId);
-				vms.Add(vm);
-			}
-			return vms;
-		}
-
 		// GET: TMovies
-		public async Task<IActionResult> IndexMaintainer()
+		public async Task<IActionResult> IndexMaintainer(string errorMessage = "")
 		{
 			int pageSize = 10;
-			List<MovieSearchDto> dtos = service.Search(null).ToList();
-			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, dtos);
-
-			dtos = dtos.Take(pageSize).ToList();
-			List<MovieSearchVm> vms = DtosToVms(dtos).ToList();
-
+			var movies = repo.Search(null);
+			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Take(pageSize);
+			var vms = movies.ModelsToVms();
 			#region ViewData
-			int pageContent = 2;
-			int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
-														   : vms.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
@@ -74,32 +59,33 @@ namespace ISpan.InseparableCore.Controllers.Server
 			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
+			ViewBag.errorMessage = errorMessage;
 			#endregion
 			return View(vms);
 		}
 		[HttpPost]
 		public IActionResult IndexMaintainer(MovieSearchCondition condition)
 		{
-			List<MovieSearchDto> dtos = service.Search(condition).ToList();
 			int pageSize = 10;
-			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
-			dtos = dtos.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
-			if (dtos.Count == 0) return Ok("noData");
+			var movies = repo.Search(condition);
+			var pageList = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize);
+			var vms = movies.ModelsToVms();
 
-			List<MovieSearchVm> vms = DtosToVms(dtos).ToList();
+			if (vms.ToList().Count == 0) return Ok("noData");
 
 			#region ViewData
 
 			//產生頁碼SelectList
-			int pageContent = 2;
-			int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
-														   : vms.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
 
 			//為電影類別SelectList加入預設值
 			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -137,11 +123,15 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			MovieSearchDto dto = service.GetSearchDto((int)id);
-			if (dto == null) return RedirectToAction(nameof(IndexMaintainer));
-			var vm = dto.SearchDtoToVm();
-			vm.Categories = repo.GetCategories(dto.FMovieId);
-			vm.Level = repo.GetMovieLevel(dto.FMovieLevelId);
+			MovieSearchVm vm = new MovieSearchVm();
+			try
+			{
+				vm = repo.GetMovieVm((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
 			return View(vm);
 		}
@@ -173,7 +163,14 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			if (ModelState.IsValid)
 			{
-				service.Create(dto);
+				try
+				{
+					service.Create(dto);
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
 				int movieId = repo.GetMovieId(dto.FMovieName);
 				repo.CreateCategoryDetail(movieId, vm.CategoryIds);
 
@@ -191,9 +188,17 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return NotFound();
 			}
-
-			MovieUpdateDto dto = service.GetUpdateDto((int)id);
+			MovieUpdateDto dto = new MovieUpdateDto();
+			try
+			{
+				dto = service.GetUpdateDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 			MovieUpdateVm vm = dto.UpdateDtoToVm();
+			vm.CategoryIdsContained = _context.TMovieCategoryDetails.Where(t => t.FMovieId == id).Select(t => t.FMovieCategoryId).ToList();
 
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
@@ -222,21 +227,22 @@ namespace ISpan.InseparableCore.Controllers.Server
 					service.Update(dto);
 					repo.UpdateCategoryDetail(dto.FMovieId, vm.CategoryIds);
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (Exception ex)
 				{
-					if (!TMoviesExists(vm.FMovieId))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
+					return ShowError(ex);
 				}
 				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+
 			return View(vm);
+		}
+
+		private IActionResult ShowError(Exception ex)
+		{
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(IndexMaintainer), new { errorMessage });
 		}
 
 		// POST: TMovies/Delete/5
@@ -248,9 +254,15 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var movie = await _context.TMovies.FindAsync(movieId);
 
-			await repo.Delete(movieId);
+			try
+			{
+				await service.Delete(movieId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
 			return RedirectToAction(nameof(IndexMaintainer));
 		}
@@ -261,9 +273,16 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var movie = await _context.TMovies.FindAsync(movieId);
-			await repo.Delete(movieId);
-			return Ok();
+			try
+			{
+				await service.Delete(movieId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
+			return RedirectToAction(nameof(IndexMaintainer));
 		}
 
 		private bool TMoviesExists(int id)

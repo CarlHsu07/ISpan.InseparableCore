@@ -7,7 +7,8 @@ namespace ISpan.InseparableCore.ViewModels
 		public int FSerialNumber { get; set; }
 		public int FMovieId { get; set; }
 		public string? MemberName { get; set; }
-		public int FMemberId { get; set; }
+		public string? FMemberId { get; set; }
+		public int FMemberPk { get; set; }
 		public string? FComment { get; set; }
 		public DateTime FPostingDate { get; set; }
 		public string? PostDate { get; set; }
@@ -21,7 +22,7 @@ namespace ISpan.InseparableCore.ViewModels
 			return new MovieCommemtVm
 			{
 				FMovieId = model.FMovieId,
-				FMemberId = model.FMemberId,
+				FMemberPk = model.FMemberId,
 				FSerialNumber = model.FSerialNumber,
 				FComment = model.FComment,
 				FDeleted = model.FDeleted,
@@ -34,7 +35,7 @@ namespace ISpan.InseparableCore.ViewModels
 			return new TMovieCommentDetails
 			{
 				FMovieId = vm.FMovieId,
-				FMemberId = vm.FMemberId,
+				FMemberId = vm.FMemberPk,
 				FSerialNumber = vm.FSerialNumber,
 				FComment = vm.FComment,
 				FDeleted = vm.FDeleted,

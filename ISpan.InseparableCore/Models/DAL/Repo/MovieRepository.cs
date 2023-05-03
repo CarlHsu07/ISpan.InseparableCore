@@ -1,4 +1,5 @@
 ﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
@@ -16,21 +17,21 @@ namespace ISpan.InseparableCore.Models.DAL
 			this.enviro = enviro;
 		}
 
-		public IEnumerable<MovieEntity> Search(MovieSearchCondition? condition)
+		public IQueryable<TMovies> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.Where(t => t.FDeleted == false);
+			var movies = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).Where(t => t.FDeleted == false);
 
-			if (condition == null) return ModelsToEntities(movies);
+			if (condition == null) return movies;
 
 			//id搜尋
 			if (int.TryParse(condition.Key, out int movieId))
 			{
 				movies = movies.Where(t => t.FMovieId == movieId);
-				return ModelsToEntities(movies);
+				return movies;
 			}
 			//電影等級
 			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId);
-
 			//上下映日期
 			if (condition.DateCategoryId == 1)//熱映中
 			{
@@ -45,7 +46,6 @@ namespace ISpan.InseparableCore.Models.DAL
 			{
 				movies = movies.Where(t => t.FMovieOffDate < DateTime.Now);
 			}
-
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
@@ -63,61 +63,36 @@ namespace ISpan.InseparableCore.Models.DAL
 
 				movies = movies.Where(t => movieIds.Contains(t.FMovieId));
 			}
-
-			return ModelsToEntities(movies);
-		}
-		public MovieEntity ModelToEntity(TMovies movie)
-		{
-			return new MovieEntity()
-			{
-				FMovieId = movie.FMovieId,
-				FMovieIntroduction = movie.FMovieIntroduction,
-				FMovieName = movie.FMovieName,
-				FMovieLevelId = movie.FMovieLevelId,
-				FMovieOnDate = movie.FMovieOnDate,
-				FMovieOffDate = movie.FMovieOffDate,
-				FMovieLength = movie.FMovieLength,
-				FMovieScore = movie.FMovieScore,
-				FMovieImagePath = movie.FMovieImagePath,
-				FMovieActors = movie.FMovieActors,
-				FMovieDirectors = movie.FMovieDirectors,
-			};
-		}
-
-		public IEnumerable<MovieEntity> ModelsToEntities(IEnumerable<TMovies> movies)
-		{
-			List<MovieEntity> entities = new List<MovieEntity>();
-			foreach (var movie in movies)
-			{
-				MovieEntity vm = movie.ModelToEntity();
-				entities.Add(vm);
-			}
-			return entities;
-		}
-		public string GetMovieLevel(int levelId)
-		{
-			return context.TMovieLevels.Find(levelId).FLevelName;
-		}
-		public string GetCategories(int movieId)
-		{
-			//if (categorydetails == null) return String.Empty;
-
-			List<string> categories = context.TMovieCategoryDetails.Where(t => t.FMovieId == movieId)
-				.Select(t => t.FMoiveCategoryName).ToList();
-			return String.Join(", ", categories.ToArray());
+			return movies;
 		}
 		public MovieEntity GetByMovieId(int movieId)
 		{
 			TMovies movie = context.TMovies.Find(movieId);
-			if(movie == null) return null;
+			if (movie == null || movie.FDeleted) return null;
 
 			return movie.ModelToEntity();
 		}
+		public MovieSearchVm GetMovieVm(int movieId)
+		{
+			TMovies movie = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId.Equals(movieId));
+			if (movie == null || movie.FDeleted) throw new Exception("此電影不存在");
+
+			return movie.ModelToVm();
+		}
+
 		public int GetMovieId(string movieName)
 		{
 			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));
 
 			return movie.FMovieId;
+		}
+		public TMovies GetbyMovieName(string movieName)
+		{
+			TMovies movie = context.TMovies.Where(t => !t.FDeleted)
+				.FirstOrDefault(t => t.FMovieName.Equals(movieName));
+
+			return movie;
 		}
 		public async Task Create(MovieEntity entity)
 		{
@@ -139,9 +114,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task Update(MovieEntity entity)
 		{
-
 			TMovies movie = context.TMovies.Find(entity.FMovieId);
-			if (movie == null) return;
 
 			movie.FMovieName = entity.FMovieName;
 			movie.FMovieIntroduction = entity.FMovieIntroduction;

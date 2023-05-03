@@ -147,7 +147,7 @@
 						</a>
 					</td>
 					<td>
-						<p>
+						<p class="link-container">
 							@Html.DisplayFor(modelItem => item.PartialIntro)
 						</p>
 					</td>
@@ -210,8 +210,17 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" value="@ViewBag.errorMessage" id="error"/>
 @section Scripts {
 	<script>
+		@{
+			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
+			{
+				@:let error = $("#error").val();
+				@:alert(error)
+			}
+		}
+
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
 
@@ -229,7 +238,6 @@
 					$("#divDataCount").html(``)
 					$("#bodySearch").html(``)
 					if (data == "noData") {
-						alert("nodata")
 						$("#divDataCount").html(`
 							<div>
 								<p class="text-muted" colspan="5">
@@ -246,13 +254,18 @@
 							<tr>
 								<td>
 									<p>
+										${value.FMovieId}
+									</p>
+								</td>
+								<td>
+									<p>
 										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
 											${value.FMovieName}
 										</a>
 									</p>
 								</td>
 								<td>
-									<p>
+									<p class="link-container">
 										${value.PartialIntro}
 									</p>
 								</td>
@@ -302,10 +315,8 @@
 						</div>
 					`)
 					if (PageCountNumber != context.PageCount) {
-						alert(PageCountNumber.toString() + context.PageCount)
 						PageCountNumber = context.PageCount
 						$("#divPageContainer").html(``)
-						alert(PageCountNumber.toString() + context.PageCount)
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
@@ -346,7 +357,6 @@
 					let categoryId = $("#CategoryId").find(":selected").val()
 					let levelId = $("#LevelId").find(":selected").val()
 					let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-					alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 					show(key, categoryId, dateCategoryId, levelId, page)
 				},
@@ -363,12 +373,10 @@
 			let categoryId = $("#CategoryId").find(":selected").val()
 			let levelId = $("#LevelId").find(":selected").val()
 			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 			show(key, categoryId, dateCategoryId, levelId, page)
 		})
 
 	</script>
 		<script type="text/javascript" src="~/js/MoviePage.js"></script>
-
 }

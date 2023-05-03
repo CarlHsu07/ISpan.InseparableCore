@@ -34,6 +34,7 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
 				FMovieImagePath = entity.FMovieImagePath,
 				FMovieActors = entity.FMovieActors,
 				FMovieDirectors = entity.FMovieDirectors,
+				FMovieScore = entity.FMovieScore,
 			};
 		}
 		public static IEnumerable<MovieSearchDto> SearchEntitiesToDtos(this IEnumerable<MovieEntity> entities)

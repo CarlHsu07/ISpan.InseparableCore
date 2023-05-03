@@ -2,42 +2,41 @@
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
-using Microsoft.Build.Framework;
-using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
 	public class MovieUpdateVm
 	{
-		[DisplayName("電影ID")]
+		[Display(Name = "電影ID")]
 		public int FMovieId { get; set; }
-		[DisplayName("名稱")]
-		[Required]
+		[Display(Name = "名稱")]
+		[Required(ErrorMessage = "必填")]
 		public string FMovieName { get; set; }
-		[Required]
-		[DisplayName("簡介")]
+		[Display(Name = "簡介")]
+		[Required(ErrorMessage = "必填")]
 		public string FMovieIntroduction { get; set; }
-		[Required]
-		[DisplayName("電影分級")]
+		[Display(Name = "電影分級")]
+		[Required(ErrorMessage = "必填")]
 		public int FMovieLevelId { get; set; }
-		[DisplayName("上映日期")]
-		[Required]
+		[Display(Name = "上映日期")]
+		[Required(ErrorMessage = "必填")]
 		public DateTime FMovieOnDate { get; set; }
-		[DisplayName("下映日期")]
+		[Display(Name = "下映日期")]
 		public DateTime? FMovieOffDate { get; set; }
-		[Required]
-		[DisplayName("片長(分鐘)")]
+		[Display(Name = "片長(分鐘)")]
+		[Required(ErrorMessage = "必填")]
 		public int FMovieLength { get; set; }
-		[DisplayName("圖片檔路徑")]
+		[Display(Name = "圖片檔路徑")]
 		public string? FMovieImagePath { get; set; }
-		[DisplayName("電影類別")]
+		[Display(Name = "電影類別")]
 		public string? CategoryIds { get; set; }
 		public List<int>? CategoryIdsContained { get; set; }
-		[DisplayName("主要演員")]
+		[Display(Name = "主要演員")]
 		public string? FMovieActors { get; set; }
-		[DisplayName("導演")]
+		[Display(Name = "導演")]
 		public string? FMovieDirectors { get; set; }
-		[DisplayName("宣傳照")]
+		[Display(Name = "宣傳照")]
 		public IFormFile? Image { get; set; }
 	}
 	public static class MovieUpdateVmExtensions
@@ -51,6 +50,7 @@ namespace ISpan.InseparableCore.ViewModels
 				FMovieName = movie.FMovieName,
 				FMovieLevelId = movie.FMovieLevelId,
 				FMovieOnDate = movie.FMovieOnDate,
+
 				FMovieOffDate = movie.FMovieOffDate,
 				FMovieLength = movie.FMovieLength,
 				FMovieImagePath = movie.FMovieImagePath,

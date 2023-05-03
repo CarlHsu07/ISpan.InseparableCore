@@ -23,6 +23,7 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
 		{
 			return new MovieUpdateDto
 			{
+				FMovieId = entity.FMovieId,
 				FMovieName = entity.FMovieName,
 				FMovieIntroduction = entity.FMovieIntroduction,
 				FMovieLevelId = entity.FMovieLevelId,
@@ -38,6 +39,7 @@ namespace ISpan.InseparableCore.Models.BLL.DTOs
 		{
 			return new MovieEntity
 			{
+				FMovieId = dto.FMovieId,
 				FMovieName = dto.FMovieName,
 				FMovieIntroduction = dto.FMovieIntroduction,
 				FMovieLevelId = dto.FMovieLevelId,

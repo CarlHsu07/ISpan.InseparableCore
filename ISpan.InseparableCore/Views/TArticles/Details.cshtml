@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+﻿@model ISpan.InseparableCore.ViewModels.ArticleSearchVm
 @section Styles{
 	<link href="~/css/loading.css" rel="stylesheet" />
 	<link href="~/css/ArticleDetail.css" rel="stylesheet" />
@@ -20,7 +20,7 @@
 				@Model.ArticleCategory
 			</p>
 		</span>
-		<span class=" " style="width:125px">
+		<span class=" " style="width:130px">
 			<p>
 				@Html.DisplayNameFor(model => model.MemberName):
 				@Html.DisplayFor(model => model.MemberName)
@@ -32,19 +32,19 @@
 				@Html.DisplayFor(model => model.FMemberId)
 			</p>
 		</span>
-		<span class=" " style="width:250px">
+		<span class=" " style="width:240px">
 			<p>
 				@Html.DisplayNameFor(model => model.PostingDate):
 				@Html.DisplayFor(model => model.PostingDate)
 			</p>
 		</span>
-		<span class=" " style="width:250px">
+		<span class=" " style="width:240px">
 			<p>
 				@Html.DisplayNameFor(model => model.ModifiedDate):
 				@Html.DisplayFor(model => model.ModifiedDate)
 			</p>
 		</span>
-		<span class=" " style="width:150px">
+		<span class=" " style="width:130px">
 			<p>
 				@Html.DisplayNameFor(model => model.FArticleLikes):
 				<span id="spanLikes">@Html.DisplayFor(model => model.FArticleLikes)</span>
@@ -65,7 +65,7 @@
 			</p>
 		</span>
 		<span>
-			<a href="/TMovies/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
+			<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
 		</span>
 		<span>
 			<button type="button" class="btn btn-info"  onclick="backToIndex()">
@@ -77,11 +77,11 @@
 	<hr />
 </div>
 <div>
-	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
+	<pre class="divArticle" id="content">@Html.Raw(Model.FArticleContent)</pre>
 </div>
 <div class="divContainerRow">
 	<div class="input-group">
-		<textarea class="form-control" id="FCommentContent" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FCommentContent0" aria-label="With textarea"></textarea>
 	</div>
 	<div>
 		<button type="button" id="btnComment" class="btn btn-secondary" value="0">留言</button>
@@ -91,6 +91,7 @@
 
 @section Scripts{
 	<script>
+		
 		//返回
 		function backToIndex() { window.location.href = "/TArticles/Index" }
 
@@ -111,7 +112,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
 										<div class="divComment" >
-											${value.MemberName}	 ${value.PostingDate}
+											${value.MemberName}${value.FMemberId}${value.PostingDate}
 								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
 								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
 										</div>
@@ -130,7 +131,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px" >
 										<div  class="divComment">
-											${value.MemberName}	 ${value.PostingDate}
+											${value.MemberName}	${value.FMemberId} ${value.PostingDate}
 										</div>
 										<hr style="margin:0"/>
 										<div class="divComment">${value.FCommentContent}</div>
@@ -156,7 +157,7 @@
 			$(`#Container${commentId}`).html(`
 				<div class="divContainerRow">
 					<div class="input-group">
-						<textarea class="form-control divComment" id="FCommentContent" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control divComment" id="FCommentContent${commentId}" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
 						<button type="button" id="btnComment" class="btn btn-secondary" value="${commentId}">儲存</button>
@@ -195,8 +196,8 @@
 		$(document).on('click', '#btnComment', function () {
 			let commentId = $(this).attr("value")
 			let articleId = @Model.FArticleId
-			let comment = $(`#FCommentContent`).val();
-			$(`#FCommentContent`).val("");
+			let comment = $(`#FCommentContent${commentId}`).val();
+			$(`#FCommentContent${commentId}`).val("");
 			CommentDetail(commentId, articleId, comment, false)
 		})
 		//刪除評論

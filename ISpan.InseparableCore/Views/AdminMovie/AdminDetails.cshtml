@@ -113,16 +113,14 @@
 				url: "/MovieDetail/MovieComment",
 				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
-					alert(data)
 					let context = JSON.parse(data);
-					//alert(data)
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
 						$("#divComment").append(`
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
 									<div style="margin:5px" id="Delete${value.FSerialNumber}">
-										${value.MemberName}	 ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 									</div>
 									<hr style="margin:0"/>
 										<div id="Container${value.FSerialNumber}">
@@ -153,7 +151,6 @@
 			confirm('你確定要刪除嗎？')
 			CommentDetail(serialNumber,  movieId, comment, deleted)
 		})
-
 
 		//刪除電影
 		$(document).on('click', '.Delete', function () {

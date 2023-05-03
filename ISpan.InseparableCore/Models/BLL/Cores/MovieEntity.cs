@@ -66,6 +66,5 @@ namespace ISpan.InseparableCore.Models.BLL.Cores
 			}
 			return entities;
 		}
-
 	}
 }

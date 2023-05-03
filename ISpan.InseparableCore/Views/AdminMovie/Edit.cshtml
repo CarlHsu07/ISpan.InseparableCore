@@ -64,7 +64,7 @@
 					@foreach (var item in ViewBag.FMovieCategoryId)
 					{
 						<div>
-						@if (Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
+						@if (Model.CategoryIdsContained.Count > 0 && Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
 						{
 							<input type="checkbox" name="CategoryCheck" value="@item.Value" id="@item.Value" checked/>
 							<label for="@item.Value">@item.Text</label>
@@ -104,7 +104,7 @@
 				</form>
 			</div>
 			<div class="divBlock" style="width:100px">
-				<a asp-action="Index" class="btn btn-light ">返回</a>
+				<a asp-action="IndexMaintainer" class="btn btn-light ">返回</a>
 			</div>
 		</div>
 	</div>
@@ -112,13 +112,7 @@
 
 @section Scripts {
 	<script>
-		@foreach (var item in ViewBag.FMovieCategoryId)
-		{
-			if (Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
-			{
-				@:$(`#${item.Value}`).prop('checked', true);
-			}
-		}
+
 		var categoryIds = "";
 		
 		$("#Edit").submit(function () {
@@ -127,7 +121,7 @@
 				categoryIds += $(this).val() + ',';
 			});
 			$("#CategoryIds").val(categoryIds);
-			alert($("#CategoryIds").val())
+			//alert($("#CategoryIds").val())
 		})
 		const fileInput = document.getElementById('fileInput');
 		const preview = document.getElementById('preview');
