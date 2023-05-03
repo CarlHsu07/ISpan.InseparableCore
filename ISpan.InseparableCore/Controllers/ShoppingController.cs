@@ -369,7 +369,7 @@ namespace ISpan.InseparableCore.Controllers
             var web = "https://inseparable.fun/"; //https://localhost:7021/
             var order = new Dictionary<string, string>
             {
-                { "MerchantID",  "3002607"},
+                { "MerchantID",  "2000132"},
                 { "MerchantTradeNo",TradeNo},
                 { "MerchantTradeDate",DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")},
                 { "PaymentType","aio"},
