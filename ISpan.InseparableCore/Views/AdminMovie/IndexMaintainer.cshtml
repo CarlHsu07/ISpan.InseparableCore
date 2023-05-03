@@ -210,8 +210,17 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" value="@ViewBag.errorMessage" id="error"/>
 @section Scripts {
 	<script>
+		@{
+			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
+			{
+				@:let error = $("#error").val();
+				@:alert(error)
+			}
+		}
+
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
 

@@ -1,7 +1,9 @@
-﻿using ISpan.InseparableCore.Models.BLL.Cores;
+﻿using Humanizer;
+using ISpan.InseparableCore.Models.BLL.Cores;
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
@@ -24,11 +26,9 @@ namespace ISpan.InseparableCore.Models.BLL
 		{
 			var entity = dto.CreateDtoToEntity();
 
-			//if (string.IsNullOrEmpty(entity.Title) || string.IsNullOrEmpty(entity.Content)) throw new Exception("請正確填寫標題及內容");
-
-			//// 驗證Title 是否唯一
-			//var entityInDbByTitle = repo.GetByTitle(entity.Title);
-			//if (entityInDbByTitle != null) throw new Exception("此標題已被使用");
+			// 驗證Name 是否唯一
+			var entityInDb = repo.GetbyMovieName(entity.FMovieName);
+			if (entityInDb != null && entityInDb.FMovieId != entity.FMovieId) throw new Exception("此名稱已被使用");
 
 			repo.Create(entity);
 		}
@@ -38,25 +38,37 @@ namespace ISpan.InseparableCore.Models.BLL
 			var currentMovie = repo.GetByMovieId(dto.FMovieId);
 
 			var updateEntity = dto.UpdateDtoToEntity();
+			//此處linq語法可用bool輸出
+			if (repo.GetByMovieId(dto.FMovieId) == null) throw new Exception("此電影不存在");
 
-			//if (string.IsNullOrEmpty(updateEntity.Title) || string.IsNullOrEmpty(updateEntity.Content)) throw new Exception("請正確填寫標題及內容");
-
-			//// 驗證Title 是否唯一
-			//var entityInDb = repo.GetByTitle(updateEntity.Title);
-			//if (entityInDb != null && entityInDb.MovieID != updateEntity.MovieID) throw new Exception("此標題已被使用");
+			// 驗證Name 是否唯一
+			var entityInDb = repo.GetbyMovieName(updateEntity.FMovieName);
+			if (entityInDb != null && entityInDb.FMovieId != updateEntity.FMovieId) throw new Exception("此名稱已被使用");
 
 			repo.Update(updateEntity);
 		}
 		public MovieUpdateDto GetUpdateDto(int movieId)
 		{
 			var entity = repo.GetByMovieId(movieId);
+			if (entity == null) throw new Exception("此電影不存在");
+
 			return entity.UpdateEntityToDto();
 		}
 
 		public MovieSearchDto GetSearchDto(int movieId)
 		{
 			var entity = repo.GetByMovieId(movieId);
+			if (entity == null) throw new Exception("此電影不存在");
+
 			return entity.SearchEntityToDto();
+		}
+
+		public async Task Delete(int movieId)
+		{
+			var movie = repo.GetByMovieId(movieId);
+			if (movie == null) throw new Exception("此電影不存在");
+
+			await repo.Delete(movieId);
 		}
 	}
 }

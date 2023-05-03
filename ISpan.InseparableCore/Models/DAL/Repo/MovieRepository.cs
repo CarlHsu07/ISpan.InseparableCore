@@ -68,7 +68,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		public MovieEntity GetByMovieId(int movieId)
 		{
 			TMovies movie = context.TMovies.Find(movieId);
-			if(movie == null) return null;
+			if (movie == null || movie.FDeleted) return null;
 
 			return movie.ModelToEntity();
 		}
@@ -76,7 +76,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		{
 			TMovies movie = context.TMovies.Include(t => t.TMovieCategoryDetails)
 				.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId.Equals(movieId));
-			if (movie == null) return null;
+			if (movie == null || movie.FDeleted) throw new Exception("此電影不存在");
 
 			return movie.ModelToVm();
 		}
@@ -86,6 +86,13 @@ namespace ISpan.InseparableCore.Models.DAL
 			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));
 
 			return movie.FMovieId;
+		}
+		public TMovies GetbyMovieName(string movieName)
+		{
+			TMovies movie = context.TMovies.Where(t => !t.FDeleted)
+				.FirstOrDefault(t => t.FMovieName.Equals(movieName));
+
+			return movie;
 		}
 		public async Task Create(MovieEntity entity)
 		{
@@ -107,9 +114,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public async Task Update(MovieEntity entity)
 		{
-
 			TMovies movie = context.TMovies.Find(entity.FMovieId);
-			if (movie == null) return;
 
 			movie.FMovieName = entity.FMovieName;
 			movie.FMovieIntroduction = entity.FMovieIntroduction;
