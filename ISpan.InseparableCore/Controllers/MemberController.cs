@@ -140,7 +140,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        //todo member會員中心訂單紀錄 in Member(已複製好的)
+        //todo 以下是member會員中心訂單紀錄 in Member(已複製好)
         public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
@@ -160,7 +160,7 @@ namespace ISpan.InseparableCore.Controllers
                 member = JsonSerializer.Deserialize<TMembers>(json);
             }
             if (member == null)
-                return NotFound(); //todo 待改
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
 
             var data = _orderRepo.GetMemberOrder(member.FId, null);
             var pagesize = 5;
@@ -176,13 +176,14 @@ namespace ISpan.InseparableCore.Controllers
         {
             TMembers member = new TMembers();
             string json = string.Empty;
+            // todo 改用super給的_user
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
                 json = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
                 member = JsonSerializer.Deserialize<TMembers>(json);
             }
             if (member == null)
-                return NotFound(); //todo 待改
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
 
             var data = _orderRepo.GetMemberOrder(member.FId, search);
             var pagesize = 5;
@@ -271,7 +272,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(MemberController.Index), "Member");
             }
 
             var member = await _context.TMembers
@@ -282,7 +283,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(MemberController.Index), "Member");
             }
 
             bool isFriend = memberService.IsFriend(memberId, member.FId);
@@ -365,15 +366,16 @@ namespace ISpan.InseparableCore.Controllers
 
             if (memberId != null)
             {
-                List<CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
+                ViewBag.memberId = memberId;
+                List <CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
                 return View(friendList);
             }
 
-            return NotFound();
-		}
+            return RedirectToAction(nameof(HomeController.Login), "Home");
+        }
 
-		// GET: Member/Register
-		public IActionResult Register()
+        // GET: Member/Register
+        public IActionResult Register()
         {
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
@@ -438,13 +440,14 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
+
             }
 
             var member = await _context.TMembers.FindAsync(id);
             if (member == null) // 沒找到會員
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
 
@@ -488,7 +491,7 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (id != MemberIn.Id)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
             if (ModelState.IsValid)
@@ -539,7 +542,7 @@ namespace ISpan.InseparableCore.Controllers
                 {
                     if (!TMembersExists(MemberIn.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(HomeController.Login), "Home");
                     }
                     else
                     {
@@ -653,6 +656,8 @@ namespace ISpan.InseparableCore.Controllers
         // 從Session中取得會員的fID
         private int? GetMemberFID()
         {
+            // todo 改用super給的_user
+
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
                 var serializedTMembers = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);

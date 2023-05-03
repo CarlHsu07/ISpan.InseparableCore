@@ -26,7 +26,7 @@
 }
 
     <h1>訂單紀錄</h1>
-
+<a asp-action="Index" class="btn btn-secondary">返回</a>
     <div class="search">
         <label for="start"> 起 </label>
         <input type="date" max="@DateTime.Now.Date.ToString("yyyy-MM-dd")" id="start" value="@DateTime.Now.AddMonths(-3).Date.ToString("yyyy-MM-dd")" />
