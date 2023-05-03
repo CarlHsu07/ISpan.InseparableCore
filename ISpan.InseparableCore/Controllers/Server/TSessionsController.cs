@@ -244,6 +244,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         //Ajax
+        /// <summary>
+        /// 限制場次可選取時間 因每部電影播放時段不同
+        /// </summary>
+        /// <param name="movie">電影id</param>
+        /// <returns></returns>
         public IActionResult GetDate(int? movie)
         {
             if (movie == null)
@@ -256,6 +261,12 @@ namespace ISpan.InseparableCore.Controllers.Server
                 min=min,
             }.ToJson());
         }
+
+        /// <summary>
+        /// 限制可選擇影廳 每家電影院的影廳不同
+        /// </summary>
+        /// <param name="cinema">影院id</param>
+        /// <returns></returns>
         public IActionResult GetRoom(int? cinema)
         {
             if (cinema == null)

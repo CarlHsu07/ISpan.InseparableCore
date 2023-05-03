@@ -54,7 +54,6 @@ namespace ISpan.InseparableCore.Controllers.Server
         [HttpPost]
         public async Task<IActionResult> Index(CorderSearch vm)
         {
-
             var inseparableContext = order_repo.GetOrder(vm);
             if (inseparableContext == null)
                 return RedirectToAction("Index", "Admin");
@@ -145,7 +144,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         //Ajax
-        //釋出問題座位
+        //釋出問題座位 針對訂單狀態有問題 整理
         public IActionResult Status()
         {
             List<TTicketOrderDetails> list = new List<TTicketOrderDetails>();
