@@ -205,7 +205,8 @@ namespace ISpan.InseparableCore.Models.DAL
 
             return data;
         }
-		public IEnumerable<MovieEntity> Movie(string keyword)
+        
+        public IEnumerable<MovieEntity> Movie(string keyword)
 		{
 			if (string.IsNullOrEmpty(keyword))
 				return null;
@@ -214,7 +215,7 @@ namespace ISpan.InseparableCore.Models.DAL
                                             || t.FMovieActors.Contains(keyword)
                                             || t.FMovieDirectors.Contains(keyword)).ToList();
 
-			return ModelsToEntities(movies);
+			return movies.ModelsToEntities();
         }
     }
 }
