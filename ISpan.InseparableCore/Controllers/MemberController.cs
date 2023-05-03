@@ -160,7 +160,7 @@ namespace ISpan.InseparableCore.Controllers
                 member = JsonSerializer.Deserialize<TMembers>(json);
             }
             if (member == null)
-                return NotFound(); //todo 待改
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
 
             var data = _orderRepo.GetMemberOrder(member.FId, null);
             var pagesize = 5;
@@ -183,7 +183,7 @@ namespace ISpan.InseparableCore.Controllers
                 member = JsonSerializer.Deserialize<TMembers>(json);
             }
             if (member == null)
-                return NotFound(); //todo 待改
+                return RedirectToAction(nameof(HomeController.Login), "Home", null);
 
             var data = _orderRepo.GetMemberOrder(member.FId, search);
             var pagesize = 5;
@@ -272,7 +272,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(MemberController.Index), "Member");
             }
 
             var member = await _context.TMembers
@@ -283,7 +283,7 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(MemberController.Index), "Member");
             }
 
             bool isFriend = memberService.IsFriend(memberId, member.FId);

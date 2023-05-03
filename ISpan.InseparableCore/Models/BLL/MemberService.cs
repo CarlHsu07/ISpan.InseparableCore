@@ -107,7 +107,7 @@ namespace ISpan.InseparableCore.Models.BLL
             {
                 // 取得好友的member Fid
                 var friends = await _context.TFriends
-                    .Where(f => (f.FMemberId == memberId) || (f.FFriendId == memberId))
+                    .Where(f => (f.FMemberId == memberId || f.FFriendId == memberId) && f.FFriendId != memberId)
                     .Select(f => f.FFriendId)
                     .ToListAsync();
 
