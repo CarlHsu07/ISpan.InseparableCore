@@ -205,16 +205,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
             return data;
         }
-        public IEnumerable<MovieEntity> ModelsToEntities(IEnumerable<TMovies> movies)
-        {
-            List<MovieEntity> entities = new List<MovieEntity>();
-            foreach (var movie in movies)
-            {
-                MovieEntity vm = movie.ModelToEntity();
-                entities.Add(vm);
-            }
-            return entities;
-        }
+        
         public IEnumerable<MovieEntity> Movie(string keyword)
 		{
 			if (string.IsNullOrEmpty(keyword))
@@ -224,7 +215,7 @@ namespace ISpan.InseparableCore.Models.DAL
                                             || t.FMovieActors.Contains(keyword)
                                             || t.FMovieDirectors.Contains(keyword)).ToList();
 
-			return ModelsToEntities(movies);
+			return movies.ModelsToEntities();
         }
     }
 }

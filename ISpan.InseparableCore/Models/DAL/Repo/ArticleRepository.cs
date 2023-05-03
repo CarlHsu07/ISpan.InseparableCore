@@ -115,17 +115,17 @@ namespace ISpan.InseparableCore.Models.DAL
         {
             return context.TMembers.Find(pk);
         }
-        public ArticleVm GetVmById(int id)
-        {
-            TArticles article = context.TArticles.Include(t => t.FArticleCategory)
-                .Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
+		public ArticleVm GetVmById(int id)
+		{
+			TArticles article = context.TArticles.Include(t => t.FArticleCategory)
+				.Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
 
-            ArticleVm vm = article.ModelToVm();
-            vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
-            vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
-            vm.FMemberId = article.FMember.FMemberId;
-            return vm;
-        }
+			ArticleVm vm = article.ModelToVm();
+			vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
+			vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
+			vm.FMemberId = article.FMember.FMemberId;
+			return vm;
+		}
         public IEnumerable<ArticleVm> ModelToVms(IEnumerable<TArticles> articles)
         {
             List<ArticleVm> vms = new List<ArticleVm>();
