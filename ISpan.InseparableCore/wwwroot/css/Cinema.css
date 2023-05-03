@@ -11,6 +11,7 @@ p {
     border: solid 1.8px #C4E1E1;
     padding: 5px;
     margin: 5px;
+    border-radius:9px;
 }
 
 #cinema {
@@ -24,6 +25,7 @@ p {
     border: solid 2.5px #C4E1E1;
     overflow: auto;
     padding: 5px;
+    border-radius:9px;
 }
 
 #map {

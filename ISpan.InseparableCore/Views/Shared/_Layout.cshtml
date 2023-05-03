@@ -273,7 +273,7 @@
 					$('#mainbody').html('');
 					if (member != null) {
 						member.forEach(function (value, index) {
-							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;dispaly:flex;">
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;dispaly:flex; border-radius:9px;">
 													<span><a href="/Member/Profile/${value.FId}">
 													${value.FPhotoPath == null ?
 													`<img src= "/images/nobody.jpg" width = "150";>` : 
@@ -288,7 +288,7 @@
 					}
 					if (movie.length != 0) {
 						movie.forEach(function (value, index) {
-							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;">
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;border-radius:9px;">
 													<span><a href="/TMovies/Details/${value.FMovieId}">
 													<img src="/images/${value.FMovieImagePath}" width="250";></span>
 													<span><h4>${value.FMovieName}</h4>
@@ -301,7 +301,7 @@
 
 					if (cinema.length != 0) {
 						cinema.forEach(function (value, index) {
-							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;"><span><a ><h4>${value.FCinemaName}</h4></a>
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px; border-radius:9px;"><span><a ><h4>${value.FCinemaName}</h4></a>
 													<p>${value.FCinemaAddress}</p>
 													<p>${value.FCinemaTel}</p>
 													</span></div>`)
@@ -309,7 +309,7 @@
 					}
 					if (articles != null) {
 						articles.forEach(function (value, index) {
-							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex;">
+							$('#mainbody').append(`<div style="border: solid 1.8px #C4E1E1;padding: 5px;margin: 5px;display:flex; border-radius:9px;">
 													<span><a href="/TArticles/Details/${value.FArticleId}">
 													<span><h4>${value.FArticleTitle}</h4>
 													${value.FArticleContent == null ? "" :
