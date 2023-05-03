@@ -85,6 +85,15 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return movie.ModelToEntity();
 		}
+		public MovieSearchVm GetMovieVm(int movieId)
+		{
+			TMovies movie = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId.Equals(movieId));
+			if (movie == null) return null;
+
+			return movie.ModelToVm();
+		}
+
 		public int GetMovieId(string movieName)
 		{
 			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));

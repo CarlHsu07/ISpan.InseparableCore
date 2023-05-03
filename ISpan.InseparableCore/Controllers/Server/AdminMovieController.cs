@@ -138,9 +138,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			MovieSearchDto dto = service.GetSearchDto((int)id);
 			if (dto == null) return RedirectToAction(nameof(IndexMaintainer));
-			var vm = dto.SearchDtoToVm();
-			vm.Categories = repo.GetCategories(dto.FMovieId);
-			vm.Level = repo.GetMovieLevel(dto.FMovieLevelId);
+			var vm = repo.GetMovieVm((int)id);
 
 			return View(vm);
 		}
