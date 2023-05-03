@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using ISpan.InseparableCore.Models.BLL;
+﻿using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.BLL.DTOs;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
@@ -27,7 +26,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 		}
 
 		// GET: TMovies
-		public async Task<IActionResult> IndexMaintainer(string errorMessage = "")
+		public async Task<IActionResult> IndexMaintainer()
 		{
 			int pageSize = 10;
 			var movies = repo.Search(null);
@@ -59,7 +58,6 @@ namespace ISpan.InseparableCore.Controllers.Server
 			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
-			ViewBag.errorMessage = errorMessage;
 			#endregion
 			return View(vms);
 		}
@@ -123,15 +121,9 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			MovieSearchVm vm = new MovieSearchVm();
-			try
-			{
-				vm = repo.GetMovieVm((int)id);
-			}
-			catch (Exception ex)
-			{
-				return ShowError(ex);
-			}
+			MovieSearchDto dto = service.GetSearchDto((int)id);
+			if (dto == null) return RedirectToAction(nameof(IndexMaintainer));
+			var vm = repo.GetMovieVm((int)id);
 
 			return View(vm);
 		}
@@ -163,14 +155,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			if (ModelState.IsValid)
 			{
-				try
-				{
-					service.Create(dto);
-				}
-				catch (Exception ex)
-				{
-					ShowError(ex);
-				}
+				service.Create(dto);
 				int movieId = repo.GetMovieId(dto.FMovieName);
 				repo.CreateCategoryDetail(movieId, vm.CategoryIds);
 
@@ -188,15 +173,8 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return NotFound();
 			}
-			MovieUpdateDto dto = new MovieUpdateDto();
-			try
-			{
-				dto = service.GetUpdateDto((int)id);
-			}
-			catch (Exception ex)
-			{
-				return ShowError(ex);
-			}
+
+			MovieUpdateDto dto = service.GetUpdateDto((int)id);
 			MovieUpdateVm vm = dto.UpdateDtoToVm();
 			vm.CategoryIdsContained = _context.TMovieCategoryDetails.Where(t => t.FMovieId == id).Select(t => t.FMovieCategoryId).ToList();
 
@@ -227,9 +205,16 @@ namespace ISpan.InseparableCore.Controllers.Server
 					service.Update(dto);
 					repo.UpdateCategoryDetail(dto.FMovieId, vm.CategoryIds);
 				}
-				catch (Exception ex)
+				catch (DbUpdateConcurrencyException)
 				{
-					return ShowError(ex);
+					if (!TMoviesExists(vm.FMovieId))
+					{
+						return NotFound();
+					}
+					else
+					{
+						throw;
+					}
 				}
 				return RedirectToAction(nameof(IndexMaintainer));
 			}
@@ -237,12 +222,6 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 
 			return View(vm);
-		}
-
-		private IActionResult ShowError(Exception ex)
-		{
-			string errorMessage = ex.Message;
-			return RedirectToAction(nameof(IndexMaintainer), new { errorMessage });
 		}
 
 		// POST: TMovies/Delete/5
@@ -254,15 +233,9 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
+			var movie = await _context.TMovies.FindAsync(movieId);
 
-			try
-			{
-				await service.Delete(movieId);
-			}
-			catch (Exception ex)
-			{
-				return ShowError(ex);
-			}
+			await repo.Delete(movieId);
 
 			return RedirectToAction(nameof(IndexMaintainer));
 		}
@@ -273,16 +246,9 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			try
-			{
-				await service.Delete(movieId);
-			}
-			catch (Exception ex)
-			{
-				return ShowError(ex);
-			}
-
-			return RedirectToAction(nameof(IndexMaintainer));
+			var movie = await _context.TMovies.FindAsync(movieId);
+			await repo.Delete(movieId);
+			return Ok();
 		}
 
 		private bool TMoviesExists(int id)
