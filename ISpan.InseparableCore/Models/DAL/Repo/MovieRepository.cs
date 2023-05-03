@@ -22,7 +22,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			var movies = context.TMovies.Include(t => t.TMovieCategoryDetails)
 				.Include(t => t.FMovieLevel).Where(t => t.FDeleted == false);
 
-			if (condition == null) return movies;
+			if (condition == null) return movies.OrderByDescending(t => t.FMovieId);
 
 			//id搜尋
 			if (int.TryParse(condition.Key, out int movieId))
@@ -63,7 +63,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 				movies = movies.Where(t => movieIds.Contains(t.FMovieId));
 			}
-			return movies;
+			return movies.OrderByDescending(t => t.FMovieId);
 		}
 		public MovieEntity GetByMovieId(int movieId)
 		{

@@ -246,7 +246,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 		}
 
 		// POST: TMovies/Delete/5
-		[HttpPost]
+		[HttpPost,HttpPost]
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int movieId)
 		{

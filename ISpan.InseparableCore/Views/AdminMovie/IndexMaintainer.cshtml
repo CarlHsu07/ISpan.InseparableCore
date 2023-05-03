@@ -181,8 +181,11 @@
 							<div class="form-group">
 								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
 							</div>
-							<div class="form-group">
-								<button value="@item.FMovieId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+							<div class="" style="width:100px">
+								<form asp-action="Delete">
+									<input type="hidden" name="movieId" value="@item.FMovieId" />
+									<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+								</form>
 							</div>
 						</div>
 					</td>
@@ -297,10 +300,13 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
+										<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
 										</div>
-										<div class="form-group">
-												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" >刪除</button>
+										<div class="" style="width:100px">
+											<form action="Delete" class="Delete">
+												<input type="hidden" name="movieId" value="${value.FMovieId}" />
+												<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+											</form>
 										</div>
 									</div>
 								</td>
@@ -342,30 +348,9 @@
 			})
 
 		}
-		//刪除電影
-		$(document).on('click', '.Delete', function () {
-			var movieId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminMovie/DeleteAjax",
-				data: { "movieId": parseInt($(this).attr("value")) },
-				success: function (data) {
-					alert("已刪除")
-					let page = pageNumber
-					let key = $("#Key").val()
-					let categoryId = $("#CategoryId").find(":selected").val()
-					let levelId = $("#LevelId").find(":selected").val()
-					let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-
-					show(key, categoryId, dateCategoryId, levelId, page)
-				},
-				error: function(xhr, status, error) {					
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
-		})
+		$('body').on('submit','.Delete',function() {
+			
+		});
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
 			let page = 1

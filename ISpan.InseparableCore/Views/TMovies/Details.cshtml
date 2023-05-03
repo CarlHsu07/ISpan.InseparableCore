@@ -137,12 +137,12 @@
 					//alert(UserId)
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
-						if (value.FMemberId == UserId &&!value.FDeleted){
+						if (value.FMemberPK == UserId &&!value.FDeleted){
 						$("#divComment").append(`
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
 									<div style="margin:5px" >
-										${value.MemberName}	${value.FMemberId} ${value.PostDate}
+										${value.MemberName}	${value.FMemberPK} ${value.PostDate}
 							<button type="button" class="btn btn-warning btnEditComment" value="${value.FSerialNumber}">編輯</button>
 									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FSerialNumber}">刪除</button>
 									</div>
@@ -160,7 +160,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" >
 									<div style="margin:5px">
-										${value.MemberName}	${value.FMemberId} ${value.PostDate}
+										${value.MemberName}	${value.FMemberPK} ${value.PostDate}
 									</div>
 									<hr style="margin:0"/>
 									<div style="margin:5px">${value.FComment}</div>
@@ -194,8 +194,9 @@
 			let movieId = @Model.FMovieId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(serialNumber,  movieId, comment, deleted)
+			if (confirm('你確定要刪除嗎？')){
+				CommentDetail(serialNumber,  movieId, comment, deleted)
+			}
 		})
 
 		//開始編輯評論，生成編輯textarea

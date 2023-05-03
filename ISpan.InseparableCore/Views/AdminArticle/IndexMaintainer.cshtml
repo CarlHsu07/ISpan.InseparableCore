@@ -159,7 +159,7 @@
 						</p>
 					</td>
 					<td>
-						<button value="@item.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+						<button value="@item.FArticleId" class="btn btn-danger Delete">刪除</button>
 					</td>
 				</tr>
 			}
@@ -302,7 +302,7 @@
 									</p>
 								</td>
 								<td>
-									<button value="${value.FArticleId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+									<button value="${value.FArticleId}" class="btn btn-danger Delete">刪除</button>
 								</td>
 							</tr>
 						</tbody>
@@ -341,28 +341,27 @@
 				complete: function () {
                     setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
                 }
-
 			})
-
 		}
 
 
 		//刪除文章
 		$(document).on('click', '.Delete', function () {
 			var articleId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminArticle/DeleteAjax",
-				data: { articleId },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
+			if (confirm('你確定要刪除嗎？')) {
+				$.ajax({
+					type: "POST",
+					url: "/AdminArticle/DeleteAjax",
+					data: { articleId },
+					success: function (data) {
+						alert("已刪除")
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			}
 		})
 
 		//搜尋
