@@ -116,7 +116,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			}
 		}
 
-		public IEnumerable<TArticles> Articles (string keyword)
+		public IEnumerable<ArticleVm> Articles (string keyword)
 		{
 			if (keyword == null)
 				return null;
@@ -131,7 +131,7 @@ namespace ISpan.InseparableCore.Models.DAL
 											.Where(t=>t.FDeleted==false).ToList();
             }
 
-			return articles;
+			return ModelToVms(articles);
         }
 	}
 }

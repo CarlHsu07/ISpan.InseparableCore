@@ -22,7 +22,7 @@ namespace ISpan.InseparableCore.Controllers
         public IActionResult Cinema()
         {
             CcinemaVM vm = new CcinemaVM();
-            //分區 //todorepo
+            //分區
             vm.city = _db.TCities.Select(t => t.FCityName).ToList();
 
             //分品牌
@@ -32,17 +32,21 @@ namespace ISpan.InseparableCore.Controllers
         }
 
 
-        //電影院Ajax傳輸
+        //Ajax 電影院的view輸出
+        //依地區
         public IActionResult City(string name)
         {
             var data = _repo.GetByCity(name).ToJson();
             return Ok(data);
         }
+        //依品牌
         public IActionResult Brand(string name)
         {
             var data = _repo.GetByBrand(name).ToJson();
             return Ok(data);
         }
+
+        //地圖api資料取得
         public IActionResult Map(int? id)
         {
             CMapVM vm = new CMapVM();

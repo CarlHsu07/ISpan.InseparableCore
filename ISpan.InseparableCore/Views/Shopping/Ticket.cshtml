@@ -12,7 +12,7 @@
         }
     </style>
 }
-@using (Html.BeginForm(FormMethod.Post, new { autocomplete = "off" ,id="test"}))
+@using (Html.BeginForm(FormMethod.Get, new { autocomplete = "off" ,id="test"}))
 {
     <div class="loadingdiv" id="loading">
         <img src="~/images/Infinity-1s-200px.gif" />
@@ -79,8 +79,6 @@
                                     <input type="hidden" name="session" value="${session}" />
                                     </form>`);
 
-            var data = { movieId: movie, cinemaId:cinema }
-            window.history.pushState({ data :data}, null, document.URL);
             $('#ticketform').submit();
         });
 

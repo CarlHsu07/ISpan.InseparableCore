@@ -78,7 +78,18 @@
                         @Html.DisplayFor(modelItem => item.FTotalMoney)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FCreditTradeNo)
+                        @{
+                            string TradeNo = string.Empty;
+                            if (item.FCreditTradeNo == null)
+                            {
+                                TradeNo = "";
+                            }
+                            else
+                            {
+                                TradeNo = item.FCreditTradeNo;
+                            }
+                        }
+                       <label>@TradeNo</label>
                     </td>
                     <td>
                         @{
@@ -122,7 +133,7 @@
         var pagecount = @_page.PageCount;
         function search(max, min, pageindex) {
             $.ajax({
-                url: '/TOrders/MemberOrder',
+                url: '/Member/OrderHistory',
                 method: 'POST',
                 data: {
                     max,
@@ -159,7 +170,8 @@
                                         ${value.FTotalMoney}
                                         </td>
                                         <td>
-                                        ${value.FCreditTradeNo}
+                                        ${value.FCreditTradeNo==null?
+                                        "":value.FCreditTradeNo}
                                         </td>
                                         <td>
                                         ${result}
