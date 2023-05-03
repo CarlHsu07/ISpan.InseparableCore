@@ -106,8 +106,39 @@ namespace ISpan.InseparableCore.Models.DAL
 				context.SaveChanges();
 			}
 		}
+        public string GetCategory(int categoryId)
+        {
+            return context.TMovieCategories.Find(categoryId).FMovieCategoryName;
+        }
 
-		public IEnumerable<ArticleVm> Articles (string keyword)
+        public TMembers GetMemberByPK(int pk)
+        {
+            return context.TMembers.Find(pk);
+        }
+        public ArticleVm GetVmById(int id)
+        {
+            TArticles article = context.TArticles.Include(t => t.FArticleCategory)
+                .Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
+
+            ArticleVm vm = article.ModelToVm();
+            vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
+            vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
+            vm.FMemberId = article.FMember.FMemberId;
+            return vm;
+        }
+        public IEnumerable<ArticleVm> ModelToVms(IEnumerable<TArticles> articles)
+        {
+            List<ArticleVm> vms = new List<ArticleVm>();
+            foreach (var article in articles)
+            {
+                ArticleVm vm = GetVmById(article.FArticleId);
+
+                vms.Add(vm);
+            }
+            return vms;
+        }
+
+        public IEnumerable<ArticleVm> Articles (string keyword)
 		{
 			if (keyword == null)
 				return null;
