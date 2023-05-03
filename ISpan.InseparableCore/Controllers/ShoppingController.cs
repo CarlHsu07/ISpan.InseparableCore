@@ -46,6 +46,8 @@ namespace ISpan.InseparableCore.Controllers
             _seat_repo = new SeatRepository(db);
             _movie_repo = new MovieRepository(db, null);
         }
+
+       //選擇影院電影
         public IActionResult Ticket(CticketVM vm)
         {
             //以防萬一只要一開啟訂購畫面 第一件事清空訂單session
@@ -58,10 +60,11 @@ namespace ISpan.InseparableCore.Controllers
 
             vm.cinemaId = vm.cinemaId == null ? 0 : vm.cinemaId;
 
-            //限制時間區間
+            //時間區間一周
             var now = DateTime.Now.TimeOfDay;
             var start = DateTime.Now.Date;
 
+            //第一次傳回cinemaId
             if (vm.cinemaId != 0)
             {
                 vm.movie = _session_repo.GetMovieByCinema(vm.cinemaId);
@@ -69,12 +72,14 @@ namespace ISpan.InseparableCore.Controllers
                     return View(vm);
                 vm.movieId = vm.movieId == null ? 0 : vm.movieId;
             }
-
+            //第二次傳回movieId
             if (vm.movieId > 0)
             {
                 var date = _session_repo.GetSessionByTwoCondition(vm.cinemaId,vm.movieId).OrderBy(t=>t.FSessionDate).GroupBy(t => t.FSessionDate).Select(t => t.Key);
                 if (date.Count() == 0)
                     return View(vm);
+
+                //分日期跟場次 用Dictionary來接資料
                 vm.sessions = new Dictionary<DateTime, IEnumerable<TSessions>>();
                 foreach (var item in date)
                 {
@@ -90,6 +95,7 @@ namespace ISpan.InseparableCore.Controllers
             }
             return View(vm);
         }
+        //選擇商品(餐點 票券)
         public IActionResult Booking(int? cinema, int? session)
         {
             CbookingVM vm = new CbookingVM();
@@ -105,10 +111,9 @@ namespace ISpan.InseparableCore.Controllers
             return View(vm);
         }
 
-        //Ajax
+        //Ajax紀錄商品資訊在session
         public IActionResult ProductItem(int? productId, int? quantity)
         {
-            //產品紀錄在session
             string responseText = "fail";
 
             if (productId == null)
@@ -128,7 +133,7 @@ namespace ISpan.InseparableCore.Controllers
             else
                 cart = new List<CproductCartItem>();
 
-            //同一商品只記錄一次
+            //同一商品只記錄一次 避免同一商品出現兩次
             CproductCartItem delete = null;
             foreach (var p in cart)
             {
@@ -139,6 +144,7 @@ namespace ISpan.InseparableCore.Controllers
             }
             cart.Remove(delete);
 
+            //確認是否有數量 如果沒有就不能存在session裡
             if (quantity > 0)
             {
                 CproductCartItem item = new CproductCartItem();
@@ -158,6 +164,8 @@ namespace ISpan.InseparableCore.Controllers
                 responseText = "fail";
             return Ok(responseText);
         }
+
+        //選擇座位
         public IActionResult Seat(CseatVM vm)
         {
             if (vm == null || vm.sessionid == null)
@@ -165,8 +173,9 @@ namespace ISpan.InseparableCore.Controllers
                 string error = "網頁加載時出現問題";
                 return RedirectToAction("Error", new { error });
             }
-            vm.solid = new List<int>();
 
+            //紀錄已賣出的座位Id
+            vm.solid = new List<int>();
             var solid = _ticket_repo.GetSolid(vm.sessionid ,true);
 
             foreach (var item in solid)
@@ -174,6 +183,7 @@ namespace ISpan.InseparableCore.Controllers
                 vm.solid.Add(item.FSeatId);
             }
 
+            //座位按排紀錄到Dictionary
             vm.seats = new Dictionary<string, IEnumerable<TSeats>>();
             var row = _seat_repo.GetSeat().GroupBy(t => t.FSeatRow).Select(t => t.Key);
             if( row.Count()==0)
@@ -193,10 +203,9 @@ namespace ISpan.InseparableCore.Controllers
             return View(vm);
         }
 
-        //Ajax
+        //Ajax將票券記錄在session
         public IActionResult TicketItem(int? seatId, int? Qty, int? sessionId)
         {
-            //將票券座位記錄在session
             string responseText = "fail";
 
             if (seatId == null || sessionId == null)
@@ -243,6 +252,7 @@ namespace ISpan.InseparableCore.Controllers
             responseText = "pass";
             return Ok(responseText);
         }
+        //購物車預覽
         public IActionResult CartView(int? regular, int? concession, int? sessionid)
         {
             if (regular == null || concession == null || sessionid == null)
@@ -256,6 +266,7 @@ namespace ISpan.InseparableCore.Controllers
             List<CticketCartItemVM> ticket = null;
             string seatid = string.Empty;
 
+            //將存在session的資料輸出在畫面
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
             {
                 json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
@@ -300,7 +311,7 @@ namespace ISpan.InseparableCore.Controllers
 
             return View(vm);
         }
-
+        //現金結帳
         public IActionResult CashPay(CorderForDbVM vm)
         {
             if(vm==null)
@@ -341,9 +352,9 @@ namespace ISpan.InseparableCore.Controllers
                 SendEmail(orderid);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                string error = "Oops";
+                string error = "Oops"+ex.Message;
                 return RedirectToAction("Error", new { error });
             }
             
@@ -353,7 +364,7 @@ namespace ISpan.InseparableCore.Controllers
 
             return View(order);
         }
-        //綠界API
+        //刷卡  綠界API
         public IActionResult CreditPay(CorderForDbVM vm)
         {
             var orderid = DbSave(vm);
@@ -363,6 +374,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
             string json = JsonSerializer.Serialize(orderid);
+            var cinema =_cinema_repo.GetCinema(vm.FCinemaId).FCinemaName;
             HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
@@ -375,7 +387,7 @@ namespace ISpan.InseparableCore.Controllers
                 { "PaymentType","aio"},
                 { "TotalAmount",$"{vm.FTotalMoney}"},
                 { "TradeDesc","無"},
-                { "ItemName","電影票"},
+                { "ItemName",$"{cinema}"},
                 { "ReturnURL",$"{web}Shopping/AddPayInfo"},
                 { "OrderResultURL",$"{web}Shopping/Paydone/?id={orderid}&tradeNo={TradeNo}"},
                 { "ClientBackURL",$"{web}Shopping/Ticket"},
@@ -436,6 +448,8 @@ namespace ISpan.InseparableCore.Controllers
             }
             return Content("1|OK");
         }
+
+        //結帳後導回
         [HttpPost]
         public IActionResult Paydone(int? id,string tradeNo)
         {
@@ -459,9 +473,9 @@ namespace ISpan.InseparableCore.Controllers
                 SendEmail(id);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                string error = "Oops";
+                string error = "Oops" + ex.Message;
                 return RedirectToAction("Error", new { error });
             }
 
@@ -479,13 +493,17 @@ namespace ISpan.InseparableCore.Controllers
             ViewBag.error = error;
             return View();
         }
-        //db儲存
+        /// <summary>
+        /// 資料庫儲存
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns></returns>
         public int? DbSave(CorderForDbVM vm)
         {
             List<CproductCartItem> product_list = null;
             List<CticketCartItemVM> ticket_list = null;
             string json = string.Empty;
-
+            
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_PURCHASED_PRODUCTS_LIST))
             {
                 json = HttpContext.Session.GetString(CDictionary.SK_PURCHASED_PRODUCTS_LIST);
@@ -499,10 +517,11 @@ namespace ISpan.InseparableCore.Controllers
             }
             if (ticket_list == null)
                 return null;
+            
             //order 
             vm.FOrderDate = DateTime.Now;
             vm.FModifiedTime = DateTime.Now;
-            vm.FMemberId = _user.FId==0? 1:_user.FId; //todo 要不要讓訪客下單
+            vm.FMemberId = _user.FId;
             vm.FStatus = false;
 
             try
@@ -520,7 +539,7 @@ namespace ISpan.InseparableCore.Controllers
             foreach (var item in ticket_list)
             {
                 item.FOrderId = orderid;
-                item.Fstatus = true;  //todo 問題為當使用者再付款畫面關閉 如何將座位釋出 目前解決辦法為在後台寫一隻code去撈問題資料
+                item.Fstatus = true;
                 if (vm.regular > 0)
                 {
                     item.FTicketDiscount = 1;
@@ -537,7 +556,7 @@ namespace ISpan.InseparableCore.Controllers
                 TicketOrderService service = new TicketOrderService(repo);
                 try
                 {
-                    service.Create(item.ticket);
+                    service.Create(item.ticket); //需驗證所以到service
                     _db.SaveChanges();
                 }
                 catch (Exception ex)
@@ -573,6 +592,7 @@ namespace ISpan.InseparableCore.Controllers
             return orderid;
         }
 
+        //以防使用者操作不當
         public IActionResult Order()
         {
             string error = string.Empty;
@@ -656,25 +676,11 @@ namespace ISpan.InseparableCore.Controllers
 
             return result.ToString();
         }
-        //回應
-        private HttpResponseMessage ResponseError()
-        {
-            var response = new HttpResponseMessage();
-            response.Content = new StringContent("0|Error");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            
-            return response;
-        }
-        private HttpResponseMessage ResponseOK()
-        {
-            var response = new HttpResponseMessage();
-            response.Content = new StringContent("1|OK");
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            return response;
-        }
-
-
-        //Email寄送
+        /// <summary>
+        /// 結帳成功寄送email
+        /// </summary>
+        /// <param name="id">訂單Id</param>
+        /// <exception cref="Exception"></exception>
         public void SendEmail(int? id)
         {
             if (id == null)
