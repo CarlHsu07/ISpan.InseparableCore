@@ -13,6 +13,8 @@ namespace ISpan.InseparableCore.Models.DAL
             TArticleClickedDetails = new HashSet<TArticleClickedDetails>();
             TArticleLikeDetails = new HashSet<TArticleLikeDetails>();
             TArticles = new HashSet<TArticles>();
+            TChatFReceiver = new HashSet<TChat>();
+            TChatFSender = new HashSet<TChat>();
             TComments = new HashSet<TComments>();
             TFriendsFFriend = new HashSet<TFriends>();
             TFriendsFMember = new HashSet<TFriends>();
@@ -101,6 +103,8 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual ICollection<TArticleClickedDetails> TArticleClickedDetails { get; set; }
         public virtual ICollection<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual ICollection<TArticles> TArticles { get; set; }
+        public virtual ICollection<TChat> TChatFReceiver { get; set; }
+        public virtual ICollection<TChat> TChatFSender { get; set; }
         public virtual ICollection<TComments> TComments { get; set; }
         public virtual ICollection<TFriends> TFriendsFFriend { get; set; }
         public virtual ICollection<TFriends> TFriendsFMember { get; set; }

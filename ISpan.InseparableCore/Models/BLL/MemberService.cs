@@ -99,6 +99,7 @@ namespace ISpan.InseparableCore.Models.BLL
                     (f.FMemberId == friendId && f.FFriendId == memberId));
         }
 
+        // 取得好友清單
         public async Task<List<CFriendListViewModel>> GetFriendListAsync(int? memberId)
         {
             List<CFriendListViewModel> friendList = new List<CFriendListViewModel>();

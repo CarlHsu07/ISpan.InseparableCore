@@ -366,15 +366,16 @@ namespace ISpan.InseparableCore.Controllers
 
             if (memberId != null)
             {
-                List<CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
+                ViewBag.memberId = memberId;
+                List <CFriendListViewModel> friendList = await memberService.GetFriendListAsync(memberId);
                 return View(friendList);
             }
 
-            return NotFound();
-		}
+            return RedirectToAction(nameof(HomeController.Login), "Home");
+        }
 
-		// GET: Member/Register
-		public IActionResult Register()
+        // GET: Member/Register
+        public IActionResult Register()
         {
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
@@ -439,13 +440,14 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (id == null || _context.TMembers == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
+
             }
 
             var member = await _context.TMembers.FindAsync(id);
             if (member == null) // 沒找到會員
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
 
@@ -489,7 +491,7 @@ namespace ISpan.InseparableCore.Controllers
         {
             if (id != MemberIn.Id)
             {
-                return NotFound();
+                return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
             if (ModelState.IsValid)
@@ -540,7 +542,7 @@ namespace ISpan.InseparableCore.Controllers
                 {
                     if (!TMembersExists(MemberIn.Id))
                     {
-                        return NotFound();
+                        return RedirectToAction(nameof(HomeController.Login), "Home");
                     }
                     else
                     {

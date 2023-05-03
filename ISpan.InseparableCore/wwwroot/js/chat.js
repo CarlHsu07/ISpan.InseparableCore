@@ -1,13 +1,14 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+let connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 //Disable the send button until connection is established.
 $("#sendButton").prop("disabled", true);
 
 // 收到訊息
-connection.on("ReceiveMessage", function (user, message) {
-    appendSenderMessage(user, message);
+connection.on("ReceiveMessage", function (senderId, message) {
+    alert("ReceiveMessage");
+    appendSenderMessage(senderId, message);
 });
 
 // 啟動連線
@@ -34,12 +35,15 @@ $('#messageInput').on("keydown", function (event) {
 
 // 送出訊息
 function sendeMessage() {
-    //var user = $("#userInput").val();
-    var user = "mm";
-    var message = $("#messageInput").val();
-    if (message.trim() == "") { return; }
+    console.log("senderId：" + senderId);
+    //console.log("receiverId：" + );
 
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+
+    let receiverId = 9;
+    let message = $("#messageInput").val();
+    if (message.trim() == "") { return; } // 是空字串就不傳送訊息
+
+    connection.invoke("SendMessage", senderId.toString(), receiverId.toString(), message).catch(function (err) {
         return console.error(err.toString());
     });
 
@@ -47,16 +51,13 @@ function sendeMessage() {
     $('#messagesArea').animate({ scrollTop: $('#messagesArea').prop("scrollHeight") }, 1000);
 }
 
-
-function appendSenderMessage(user, message) {
+// 在網頁上附加訊息的元素
+function appendSenderMessage(senderId, message) {
     if (message.trim() == "") {
         return;
     }
 
-    //var li = $("<li></li>");
-    //li.text(`${user} ： ${message}`);
-
-    var element = $(`<!-- Reciever Message-->
+    let element = $(`<!-- Reciever Message-->
                 <div class="media w-50 ml-auto mb-3">
                     <div class="media-body">
                         <div class="bg-primary rounded py-2 px-3 mb-2">
