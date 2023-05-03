@@ -76,6 +76,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 Items = json,
                 totalpage = totalpage,
+                pageIndex = pageIndex
             }.ToJson());
 
         }
