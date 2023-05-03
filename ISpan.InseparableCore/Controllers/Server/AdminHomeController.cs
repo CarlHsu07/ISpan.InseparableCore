@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class AdminHomeController : Controller
+    public class AdminHomeController : AdminSuperController
     {
         private readonly InseparableContext _context;
         IWebHostEnvironment _enviro;

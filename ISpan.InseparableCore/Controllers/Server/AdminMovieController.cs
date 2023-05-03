@@ -11,8 +11,8 @@ using X.PagedList;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-	public class AdminMovieController : Controller
-	{
+	public class AdminMovieController : AdminSuperController
+    {
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
 		private readonly MovieRepository repo;

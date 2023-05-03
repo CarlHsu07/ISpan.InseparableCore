@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class TCinemasController : Controller
+    public class TCinemasController : AdminSuperController
     {
         private readonly InseparableContext _context;
         private readonly CinemaRepository cinema_repo;

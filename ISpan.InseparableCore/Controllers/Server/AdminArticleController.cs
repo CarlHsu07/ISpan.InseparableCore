@@ -10,7 +10,7 @@ using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-	public class AdminArticleController : Controller
+	public class AdminArticleController : AdminSuperController
 	{
 		private readonly InseparableContext _context;
 		private readonly ArticleRepository articleRepo;

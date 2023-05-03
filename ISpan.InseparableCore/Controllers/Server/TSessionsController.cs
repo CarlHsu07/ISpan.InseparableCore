@@ -13,7 +13,7 @@ using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class TSessionsController : Controller
+    public class TSessionsController : AdminSuperController
     {
         private readonly InseparableContext _context;
         private readonly SessionRepository session_repo;

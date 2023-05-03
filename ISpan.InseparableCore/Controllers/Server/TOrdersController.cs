@@ -18,7 +18,7 @@ using System.Drawing.Printing;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class TOrdersController : Controller
+    public class TOrdersController : AdminSuperController
     {
         private readonly InseparableContext _context;
         private readonly OrderRepository order_repo;
