@@ -374,6 +374,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction("Error", new { error });
             }
             string json = JsonSerializer.Serialize(orderid);
+            var cinema =_cinema_repo.GetCinema(vm.FCinemaId).FCinemaName;
             HttpContext.Session.SetString(CDictionary.SK_ORDER_ID,json);
             //綠界
             var TradeNo = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
@@ -386,7 +387,7 @@ namespace ISpan.InseparableCore.Controllers
                 { "PaymentType","aio"},
                 { "TotalAmount",$"{vm.FTotalMoney}"},
                 { "TradeDesc","無"},
-                { "ItemName","電影票"},
+                { "ItemName",$"{cinema}"},
                 { "ReturnURL",$"{web}Shopping/AddPayInfo"},
                 { "OrderResultURL",$"{web}Shopping/Paydone/?id={orderid}&tradeNo={TradeNo}"},
                 { "ClientBackURL",$"{web}Shopping/Ticket"},
