@@ -16,7 +16,7 @@
 
         #member, #cinema {
             color: aliceblue;
-            font-size:15px;
+            font-size: 15px;
         }
 
         button {
@@ -155,8 +155,12 @@
     <button type="button" class="btn btn-primary first" id="page" value="1">1</button>
     @for (int i = 2; i < _page.PageCount + 1; i++)
     {
-        <button type="button" class="btn btn-secondary" id="page" value="@i">@i</button>
+        if (i < 10)
+        {
+            <button type="button" class="btn btn-secondary" id="page" value="@i">@i</button>
+        }
     }
+    <button type="button" class="btn btn-secondary">...</button>
     <button type="button" class="btn btn-secondary" id="page" value="@_page.PageCount">>></button>
 </div>
 @section Scripts{
@@ -190,43 +194,87 @@
                             result = "取消";
                         }
                         $('tbody').append(`<tr>
-                            <td>
-                            ${orderdate}
-                            </td>
-                            <td>
-                            ${modifieddate}
-                            </td>
-                            <td>
-                            ${value.FMemberNo}
-                            </td>
-                            <td>
-                            ${value.FCinemaName}
-                            </td>
-                             <td>
-                            ${value.FTotalMoney}
-                             </td>
-                            <td>
-                            ${value.FCreditTradeNo==null?
-                                "":value.FCreditTradeNo}
-                            </td>
-                            <td>
-                             ${result}
-                            </td>
-                            <td>
-                              <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
-                              ${value.FStatus ?
-                              `<a href="MemberOrderDelete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
-                              `<button class="btn btn-danger" disabled>取消</button>`}
-                            </td>
-                        </tr>`)
+                                    <td>
+                                    ${orderdate}
+                                    </td>
+                                    <td>
+                                    ${modifieddate}
+                                    </td>
+                                    <td>
+                                    ${value.FMemberNo}
+                                    </td>
+                                    <td>
+                                    ${value.FCinemaName}
+                                    </td>
+                                     <td>
+                                    ${value.FTotalMoney}
+                                     </td>
+                                    <td>
+                                    ${value.FCreditTradeNo == null ?
+                                "" : value.FCreditTradeNo}
+                                    </td>
+                                    <td>
+                                     ${result}
+                                    </td>
+                                    <td>
+                                      <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
+                                      ${value.FStatus ?
+                                `<a href="MemberOrderDelete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
+                                `<button class="btn btn-danger" disabled>取消</button>`}
+                                    </td>
+                                </tr>`)
                     });
                     if (Model.totalpage != pagecount) {
                         pagecount = Model.totalpage;
-                        $('#pagebtn').html(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
-                        <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
-                        for (var i = 2; i < Model.totalpage + 1; i++) {
+                        if(Model.totalpage>9){
+                            $('#pagebtn').html(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
+                                        <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
+                            for (var i = 2; i < 10; i++) {
                             $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                            }
+                            $('#pagebtn').append(`<button type="button" class="btn btn-secondary">...</button>`)
+                        }else{
+                            $('#pagebtn').html(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>
+                                        <button type="button" class="btn btn-primary" id="page" value="1">1</button>`)
+                            for (var i = 2; i < Model.totalpage + 1; i++) {
+                                $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                            }
+                            $('#pagebtn').append(` <button type="button" class="btn btn-secondary" id="page" value="${Model.totalpage}">>></button>`)
                         }
+                    } else {
+                        pagecount = Model.totalpage;
+                        $('#pagebtn').html(``)
+                        for (var i = 1; i < Model.totalpage + 1; i++) {
+                            if (Model.totalpage - 5 < Model.pageIndex) {
+                                if (i == Model.pageIndex){
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-primary" id="page" value="${i}">${i}</button>`)
+                                }
+                                else if (i > Model.totalpage - 9) {
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                                }
+                            } else if (Model.pageIndex > 5) {
+                                if (i == Model.pageIndex) {
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-primary" id="page" value="${i}">${i}</button>`)
+                                }
+                                else if (i > Model.pageIndex - 5 && i < Model.pageIndex + 5) {
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                                }
+                            }else{
+                                if (i == Model.pageIndex) {
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-primary" id="page" value="${i}">${i}</button>`)
+                                }
+                                else if (i < 10) {
+                                    $('#pagebtn').append(`<button type="button" class="btn btn-secondary" id="page" value="${i}">${i}</button>`)
+                                }
+                            }
+                        }
+                        if(Model.totalpage-4>Model.pageIndex){
+                            $('#pagebtn').append(`<button type="button" class="btn btn-secondary">...</button>`)
+                        }
+                        if (Model.pageIndex>5){
+                            $('#pagebtn').prepend(`<button type="button" class="btn btn-secondary">...</button>`)
+                        }
+                        $('#pagebtn').prepend(`<button type="button" class="btn btn-secondary" id="page" value="1"><<</button>`)
                         $('#pagebtn').append(` <button type="button" class="btn btn-secondary" id="page" value="${Model.totalpage}">>></button>`)
                     }
                 },
@@ -241,13 +289,12 @@
             var start = $('#start').val();
             var end = $('#end').val();
             var pageIndex = $(this).val();
-
             var center = end;
             if (start > end) {
                 end = start;
                 start = center;
-            } 
-            search(member, cinema,end,start, pageIndex);
+            }
+            search(member, cinema, end, start, pageIndex);
 
             $('.btn-primary').addClass('btn-secondary');
             $('.btn-primary').removeClass('btn-primary');
@@ -274,15 +321,15 @@
             $('.first').addClass('btn-primary');
         });
 
-        function Status(){
+        function Status() {
             $.ajax({
-                url:'/TOrders/Status',
-                method:'POST',
-                data:{},
-                sucess:function(){
+                url: '/TOrders/Status',
+                method: 'POST',
+                data: {},
+                sucess: function () {
                     console.log('pass');
                 },
-                error:function(err){
+                error: function (err) {
                     console.log(err);
                 }
             });
