@@ -28,7 +28,6 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
         public virtual DbSet<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual DbSet<TArticles> TArticles { get; set; }
-        public virtual DbSet<TChat> TChat { get; set; }
         public virtual DbSet<TCinemas> TCinemas { get; set; }
         public virtual DbSet<TCities> TCities { get; set; }
         public virtual DbSet<TComments> TComments { get; set; }
@@ -227,11 +226,6 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasMaxLength(50)
                     .HasColumnName("fPasswordSalt")
                     .HasComment("管理員密碼鹽值");
-
-                entity.Property(e => e.FPhotoPath)
-                    .HasMaxLength(500)
-                    .HasColumnName("fPhotoPath")
-                    .HasComment("管理員大頭貼的檔案路徑");
 
                 entity.Property(e => e.FSignUpTime)
                     .HasColumnType("datetime")
@@ -840,7 +834,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("密碼鹽值");
 
                 entity.Property(e => e.FPhotoPath)
-                    .HasMaxLength(500)
+                    .HasMaxLength(200)
                     .HasColumnName("fPhotoPath")
                     .HasComment("大頭貼的檔案路徑");
 

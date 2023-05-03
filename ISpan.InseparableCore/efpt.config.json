@@ -55,10 +55,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tChat]",
-         "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[tCinemas]",
          "ObjectType": 0
       },

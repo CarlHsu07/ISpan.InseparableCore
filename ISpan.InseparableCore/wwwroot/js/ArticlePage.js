@@ -4,6 +4,7 @@ function pageChange(page) {
 	let key = $("#Key").val()
 	let categoryId = $("#CategoryId").find(":selected").val()
 	show(key, categoryId, page);
+	alert(page + "/" + key + "/" + categoryId)
 }
 
 //btnpage換顏色

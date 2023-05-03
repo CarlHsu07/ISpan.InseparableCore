@@ -178,6 +178,7 @@
 					$("#tableSearch").html(``)
 					if (data == "noData") 
 					{
+						alert("nodata")
 						$("#tableSearch").html(`
 			<tfoot>
 				<tr>
@@ -186,6 +187,7 @@
 					</td>
 				</tr>
 			</tfoot>
+
 						`)
 						return;
 					}
@@ -323,6 +325,8 @@
 			let page = 1
 			let key = $("#Key").val()
 			let categoryId = $("#CategoryId").find(":selected").val()
+			alert(page + "" + key + "" + categoryId)
+
 			show(key, categoryId, page);
 		})
 

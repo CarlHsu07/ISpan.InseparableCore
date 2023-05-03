@@ -129,7 +129,7 @@
 						</a>
 					</td>
 					<td>
-						<p class="link-container">
+						<p>
 							@Html.DisplayFor(modelItem => item.PartialContent)
 						</p>
 					</td>
@@ -192,6 +192,9 @@
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
+				beforeSend: function () {
+					$('#loading').css("display", "");
+				},
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
@@ -199,6 +202,7 @@
 					$("#tableSearch").html(``)
 					if (data == "noData") 
 					{
+						alert("nodata")
 						$("#tableSearch").html(`
 							<p class="text-muted" colspan="5">
 								每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
@@ -211,11 +215,6 @@
 		<table class="table" id="tableSearch">
 			<thead>
 				<tr>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleId)
-						</p>
-					</th>
 					<th>
 						<p>
 		@Html.DisplayNameFor(model => model.FArticleTitle)
@@ -260,11 +259,6 @@
 						<tbody>
 							<tr>
 								<td>
-									<p>
-										${value.FArticleId}
-									</p>
-								</td>
-								<td>
 									<a href="/AdminArticle/AdminDetails/${value.FArticleId}"  class="link-container">
 										<p>
 											${value.FArticleTitle}
@@ -272,7 +266,7 @@
 									</a>
 								</td>
 								<td>
-									<p class="link-container">
+									<p>
 										${value.PartialContent}
 									</p>
 								</td>
@@ -371,6 +365,7 @@
 			let page = 1
 			let key = $("#Key").val()
 			let categoryId = $("#CategoryId").find(":selected").val()
+			alert(page + "" + key + "" + categoryId)
 
 			show(key, categoryId, page);
 		})

@@ -147,7 +147,7 @@
 						</a>
 					</td>
 					<td>
-						<p class="link-container">
+						<p>
 							@Html.DisplayFor(modelItem => item.PartialIntro)
 						</p>
 					</td>
@@ -229,6 +229,7 @@
 					$("#divDataCount").html(``)
 					$("#bodySearch").html(``)
 					if (data == "noData") {
+						alert("nodata")
 						$("#divDataCount").html(`
 							<div>
 								<p class="text-muted" colspan="5">
@@ -256,7 +257,7 @@
 									</p>
 								</td>
 								<td>
-									<p class="link-container">
+									<p>
 										${value.PartialIntro}
 									</p>
 								</td>
@@ -306,8 +307,10 @@
 						</div>
 					`)
 					if (PageCountNumber != context.PageCount) {
+						alert(PageCountNumber.toString() + context.PageCount)
 						PageCountNumber = context.PageCount
 						$("#divPageContainer").html(``)
+						alert(PageCountNumber.toString() + context.PageCount)
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
@@ -348,6 +351,7 @@
 					let categoryId = $("#CategoryId").find(":selected").val()
 					let levelId = $("#LevelId").find(":selected").val()
 					let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+					alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 					show(key, categoryId, dateCategoryId, levelId, page)
 				},
@@ -364,10 +368,12 @@
 			let categoryId = $("#CategoryId").find(":selected").val()
 			let levelId = $("#LevelId").find(":selected").val()
 			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 			show(key, categoryId, dateCategoryId, levelId, page)
 		})
 
 	</script>
 		<script type="text/javascript" src="~/js/MoviePage.js"></script>
+
 }

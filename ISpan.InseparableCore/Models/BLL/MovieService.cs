@@ -13,12 +13,12 @@ namespace ISpan.InseparableCore.Models.BLL
 		{
 			this.repo = repo;
 		}
-		//public IEnumerable<MovieSearchDto> Search(MovieSearchCondition? condition)
-		//{
-		//	IEnumerable<MovieEntity> entities = repo.Search(condition);
+		public IEnumerable<MovieSearchDto> Search(MovieSearchCondition? condition)
+		{
+			IEnumerable<MovieEntity> entities = repo.Search(condition);
 
-		//	return entities.SearchEntitiesToDtos();
-		//}
+			return entities.SearchEntitiesToDtos();
+		}
 
 		public void Create(MovieCreateDto dto)
 		{

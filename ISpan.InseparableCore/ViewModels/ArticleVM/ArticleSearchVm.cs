@@ -9,7 +9,6 @@ namespace ISpan.InseparableCore.ViewModels
 {
 	public class ArticleSearchVm
 	{
-		[Display(Name = "文章ID")]
 		public int FArticleId { get; set; }
 		[Display(Name = "標題")]
 		public string? FArticleTitle { get; set; }

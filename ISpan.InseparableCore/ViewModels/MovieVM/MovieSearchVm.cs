@@ -38,38 +38,24 @@ namespace ISpan.InseparableCore.ViewModels
 	}
 	public static class MovieSearchVmExtensions
 	{
-		public static IEnumerable<MovieSearchVm> ModelsToVms(this IEnumerable<TMovies> movies)
+		public static MovieSearchVm SearchDtoToVm(this MovieSearchDto dto)
 		{
-			List<MovieSearchVm> vms = new List<MovieSearchVm>();
-
-			foreach (var movie in movies)
-			{
-				var vm = ModelToVm(movie);
-				vms.Add(vm);
-			}
-			return vms;
-		}
-
-		public static MovieSearchVm ModelToVm(this TMovies movie)
-		{
-			int len = Math.Min(movie.FMovieIntroduction.Length, 10);
+			int len = Math.Min(dto.FMovieIntroduction.Length, 10);
 
 			return new MovieSearchVm()
 			{
-				FMovieId = movie.FMovieId,
-				FMovieIntroduction = movie.FMovieIntroduction,
-				PartialIntro = movie.FMovieIntroduction.Trim().Substring(0, len) + "...",
-				FMovieName = movie.FMovieName,
-				OnDate = movie.FMovieOnDate.ToString("yyyy-MM-dd"),
-				OffDate = ((DateTime)movie.FMovieOffDate).ToString("yyyy-MM-dd"),
-				FMovieLength = movie.FMovieLength,
-				FMovieScore = movie.FMovieScore,
-				FMovieImagePath = movie.FMovieImagePath,
-				FMovieActors = movie.FMovieActors,
-				FMovieDirectors = movie.FMovieDirectors,
-				Categories = String.Join(", ", movie.TMovieCategoryDetails
-				.Select(t => t.FMoiveCategoryName).ToArray()),
-				Level = movie.FMovieLevel.FLevelName,
+				FMovieId = dto.FMovieId,
+				FMovieIntroduction = dto.FMovieIntroduction,
+				PartialIntro = dto.FMovieIntroduction.Trim().Substring(0, len) + "...",
+				FMovieName = dto.FMovieName,
+				OnDate = dto.FMovieOnDate.ToString("yyyy-MM-dd"),
+				OffDate = ((DateTime)dto.FMovieOffDate).ToString("yyyy-MM-dd"),
+				FMovieLength = dto.FMovieLength,
+				FMovieScore = dto.FMovieScore,
+				FMovieImagePath = dto.FMovieImagePath,
+				FMovieActors = dto.FMovieActors,
+				FMovieDirectors = dto.FMovieDirectors,
+				FDeleted = dto.FDeleted,
 			};
 		}
 	}
