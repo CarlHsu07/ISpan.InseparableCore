@@ -155,5 +155,12 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return ModelToVms(articles);
         }
+
+		public ArticleEntity GetByTitle(string title)
+		{
+			var article = context.TArticles.FirstOrDefault(t => t.FArticleTitle.Equals(title));
+			if(article == null) return null;
+			return article.ModelToEntity();
+		}
 	}
 }

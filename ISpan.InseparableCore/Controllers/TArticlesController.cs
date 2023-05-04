@@ -51,9 +51,14 @@ namespace ISpan.InseparableCore.Controllers
 			}
 			return vms;
 		}
+		private IActionResult ShowError(Exception ex)
+		{
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(Index), new { errorMessage });
+		}
 
 		// GET: TArticles
-		public async Task<IActionResult> Index()
+		public async Task<IActionResult> Index(string errorMessage = "")
 		{
 			int pageSize = 10;
 			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
@@ -78,6 +83,7 @@ namespace ISpan.InseparableCore.Controllers
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
+			ViewBag.errorMessage = errorMessage;
 
 			return View(vms);
 		}
@@ -125,7 +131,16 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
-			var dto = articleService.GetSearchDto((int)id);
+			var dto = new ArticleSearchDto();
+			try
+			{
+				dto = articleService.GetSearchDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
 			ArticleSearchVm vm = dto.SearchDtoToVm();
 			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
 			var member = articleRepo.GetMemberByPK(dto.FMemberId);
@@ -208,8 +223,17 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
+			var dto = new ArticleUpdateDto();
+			try
+			{
+				dto = articleService.GetUpdateDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
-			var vm = articleService.GetUpdateDto((int)id).UpdateDtoToVm();
+			var vm = dto.UpdateDtoToVm();
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
 			return View(vm);
 		}
@@ -233,16 +257,9 @@ namespace ISpan.InseparableCore.Controllers
 					var dto = vm.UpdateVmToDto();
 					articleService.Update(dto);
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (Exception ex)
 				{
-					if (!TArticlesExists(vm.FArticleId))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
+					ShowError(ex);
 				}
 				return RedirectToAction(nameof(Index));
 			}

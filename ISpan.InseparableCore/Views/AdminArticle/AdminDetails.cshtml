@@ -57,9 +57,12 @@
 			</p>
 		</span>
 		<span>
-			<p>
-				<button value="@Model.FArticleId" class="btn btn-danger Delete">刪除</button>
-			</p>
+			<div>
+				<form asp-action="Delete">
+					<input type="hidden" name="articleId" value="@Model.FArticleId" />
+					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+				</form>
+			</div>
 		</span>
 		<span>
 			<p>

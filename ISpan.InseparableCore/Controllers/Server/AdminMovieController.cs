@@ -59,8 +59,8 @@ namespace ISpan.InseparableCore.Controllers.Server
 			List<string> dateCategories = new List<string> { "全部電影", "熱映中", "即將上映", "已下映" };
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
-			ViewBag.errorMessage = errorMessage;
 			#endregion
+			ViewBag.errorMessage = errorMessage;
 			return View(vms);
 		}
 		[HttpPost]

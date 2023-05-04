@@ -300,18 +300,15 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-										<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
+											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
 										</div>
-										<div class="" style="width:100px">
-											<form action="Delete" class="Delete">
-												<input type="hidden" name="movieId" value="${value.FMovieId}" />
-												<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
-											</form>
+										<div class="" style="width:100px" id="form${value.FMovieId}Container">
 										</div>
 									</div>
 								</td>
 							</tr>
 						`)
+						addDeleteForm(value.FMovieId)
 					})
 					$("#divDataCount").append(`
 						<div>
@@ -346,11 +343,16 @@
                     setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
                 }
 			})
-
 		}
-		$('body').on('submit','.Delete',function() {
-			
-		});
+		function addDeleteForm(movieId){
+			let $form = $(`<form class="Delete"></form>`);
+			$form.attr("method", "post");
+			$form.attr("action", "/AdminMovie/Delete");
+			$form.append(`<input type="hidden" name="movieId" value="${ movieId }" />`);
+			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
+			$(`#form${movieId}Container`).append($form);
+		}
+
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
 			let page = 1

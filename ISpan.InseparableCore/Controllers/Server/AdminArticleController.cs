@@ -38,9 +38,14 @@ namespace ISpan.InseparableCore.Controllers.Server
 			}
 			return vms;
 		}
+		private IActionResult ShowError(Exception ex)
+		{
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(IndexMaintainer), new { errorMessage });
+		}
 
 		// GET: TArticles
-		public async Task<IActionResult> IndexMaintainer()
+		public async Task<IActionResult> IndexMaintainer(string errorMessage = "")
 		{
 			int pageSize = 10;
 			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
@@ -67,6 +72,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
+			ViewBag.errorMessage = errorMessage;
 
 			return View(vms);
 		}
@@ -114,7 +120,15 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			var dto = articleService.GetSearchDto((int)id);
+			var dto = new ArticleSearchDto();
+			try
+			{
+				dto = articleService.GetSearchDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 			ArticleSearchVm vm = dto.SearchDtoToVm();
 			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
 			var member = articleRepo.GetMemberByPK(dto.FMemberId);
@@ -123,5 +137,24 @@ namespace ISpan.InseparableCore.Controllers.Server
 
 			return View(vm);
 		}
+		public async Task<IActionResult> Delete(int articleId)
+		{
+			if (_context.TArticles == null)
+			{
+				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
+			}
+
+			try
+			{
+				articleRepo.Delete(articleId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
+			return RedirectToAction(nameof(IndexMaintainer));
+		}
+
 	}
 }
