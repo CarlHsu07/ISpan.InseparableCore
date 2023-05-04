@@ -1,8 +1,9 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
+using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class MemberVM
+    public class CMemberVM
     {
         private TMembers _member;
 
@@ -12,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member = value; }
         }
 
-        public MemberVM()
+        public CMemberVM()
         {
             _member = new TMembers();
         }
@@ -27,22 +28,34 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 姓氏
         /// </summary>
+        [Display(Name = "姓氏")]
         public string FLastName { get => _member.FLastName; set => _member.FLastName = value; }
 
         /// <summary>
         /// 名字
         /// </summary>
+        [Display(Name = "名字")]
         public string FFirstName { get => _member.FFirstName; set => _member.FFirstName = value; }
 
         /// <summary>
         /// 電子郵件的地址
         /// </summary>
+        [Display(Name = "Email")]
         public string FEmail { get => _member.FEmail; set => _member.FEmail = value; }
 
         /// <summary>
         /// 密碼加密值
         /// </summary>
-        public string FPasswordHash { get => _member.FPasswordHash; set => _member.FPasswordHash = value; }
+        [Display(Name = "密碼")]
+        [Required(ErrorMessage = "請輸入密碼")]
+        [DataType(DataType.Password)]
+        public string Password { get => _member.FPasswordHash; set => _member.FPasswordHash = value; }
+
+        [Display(Name = "確認密碼")]
+        [Required(ErrorMessage = "請再次輸入密碼")]
+        [Compare("Password", ErrorMessage = "密碼不相同！")]
+        [DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; }
 
         /// <summary>
         /// 密碼鹽值
@@ -52,6 +65,7 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 生日
         /// </summary>
+        [Display(Name = "生日")]
         public DateTime? FDateOfBirth { get => _member.FDateOfBirth; set => _member.FDateOfBirth = value; }
 
         /// <summary>
@@ -67,7 +81,8 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 住址
         /// </summary>
-        public string FAddress { get => _member.FAddress; set => _member.FAddress = value; }
+        [Display(Name = "住址")]
+        public string? FAddress { get => _member.FAddress; set => _member.FAddress = value; }
 
         /// <summary>
         /// 區域ID
@@ -82,7 +97,7 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 個人簡介
         /// </summary>
-        public string FIntroduction { get => _member.FIntroduction; set => _member.FIntroduction = value; }
+        public string? FIntroduction { get => _member.FIntroduction; set => _member.FIntroduction = value; }
 
         /// <summary>
         /// 會員帳戶狀態
