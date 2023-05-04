@@ -12,7 +12,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 			_context = context;
 		}
 
-		public IEnumerable<MemberVM> members(string keyword)
+		public IEnumerable<CMemberVM> members(string keyword)
 		{
 			var data = _context.TMembers.Where(t => t.FFirstName.Contains(keyword)
 												|| t.FLastName.Contains(keyword)
@@ -21,10 +21,10 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 												|| t.FArea.FAreaName.Contains(keyword)
 												|| t.FEmail.Contains(keyword));
 			
-			List<MemberVM> list = new List<MemberVM>();
+			List<CMemberVM> list = new List<CMemberVM>();
 			foreach (var member in data)
 			{
-                MemberVM vm = new MemberVM();
+                CMemberVM vm = new CMemberVM();
                 vm.members = member;
 				list.Add(vm);
 			}

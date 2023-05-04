@@ -29,7 +29,7 @@
 		color:aliceblue;
 	}
 	p, button{
-		font-size:20px;
+		font-size:15px;
 	}
 
 	.inDivBottom {
@@ -41,7 +41,7 @@
 	.inDivPosition {
 		position: relative;
 		bottom: -35px;
-		right: -600px;
+		right: -400px;
 	}
 </style>
     <div class="loadingdiv" id="loading" style="display: none">
@@ -72,19 +72,19 @@
 				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
-				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
+				<input type="submit" value="搜尋" class="btn btn-info btn-rounded inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition" >
-				<a href="/AdminMovie/Create" class="btn btn-info">新增</a>
+				<a href="/AdminMovie/Create" class="btn btn-rounded btn-success">新增</a>
 			</div>
 		</div>
 	</form>
 
 </div>
 
-<div class="divBlock divBorder" id="divSearch">
+<div class="divBlock " id="divSearch">
 
-	<table class="table" id="tableSearch">
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
 		<thead>
 			<tr>
 				<th>
@@ -95,11 +95,6 @@
 				<th>
 					<p>
 						@Html.DisplayNameFor(model => model.FMovieName)
-					</p>
-				</th>
-				<th>
-					<p>
-						@Html.DisplayNameFor(model => model.PartialIntro)
 					</p>
 				</th>
 				<th>
@@ -147,11 +142,6 @@
 						</a>
 					</td>
 					<td>
-						<p class="link-container">
-							@Html.DisplayFor(modelItem => item.PartialIntro)
-						</p>
-					</td>
-					<td>
 						<p>
 							@Html.DisplayFor(modelItem => item.OnDate)
 						</p>
@@ -184,7 +174,8 @@
 							<div class="" style="width:100px">
 								<form asp-action="Delete">
 									<input type="hidden" name="movieId" value="@item.FMovieId" />
-									<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+									<input type="submit" value="刪除" class="btn btn-danger" 
+									onclick="return confirm('你確定要刪除嗎？')" />
 								</form>
 							</div>
 						</div>
@@ -250,7 +241,6 @@
 						`)
 						return;
 					}
-
 					let context = JSON.parse(data);
 					$.each(context.Vm, function (index, value) {
 						$("#bodySearch").append(`
@@ -265,11 +255,6 @@
 										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
 											${value.FMovieName}
 										</a>
-									</p>
-								</td>
-								<td>
-									<p class="link-container">
-										${value.PartialIntro}
 									</p>
 								</td>
 								<td>
@@ -352,6 +337,37 @@
 			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
 			$(`#form${movieId}Container`).append($form);
 		}
+		$submitBtn.on("click", function () {
+			// 调用其他函数
+			doSomething();
+
+			// 提交表单
+			$(``).submit();
+		});
+		//刪除電影
+		//$(document).on('click', '.Delete', function () {
+		//	var movieId = parseInt($(this).attr("value"))
+		//	//confirm('你確定要刪除嗎？' + movieId)
+		//	$.ajax({
+		//		type: "POST",
+		//		url: "/AdminMovie/DeleteAjax",
+		//		data: { "movieId": parseInt($(this).attr("value")) },
+		//		success: function (data) {
+		//			alert("已刪除")
+		//			let page = pageNumber
+		//			let key = $("#Key").val()
+		//			let categoryId = $("#CategoryId").find(":selected").val()
+		//			let levelId = $("#LevelId").find(":selected").val()
+		//			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+
+		//			show(key, categoryId, dateCategoryId, levelId, page)
+		//		},
+		//		error: function (xhr, status, error) {
+		//			// 處理錯誤
+		//			console.log("AJAX request error: " + status + " - " + error);
+		//		}
+		//	});
+		//})
 
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();

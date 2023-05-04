@@ -13,6 +13,13 @@
 }
 
 <style>
+	.divBorder1 {
+		border-color: white;
+		border-width: 1px;
+		border-radius: 9px;
+		border-style: none;
+		margin: 0 0 25px 0;
+	}
 
 
 	.inDivBottom {
@@ -56,7 +63,7 @@
 		</div>
 	</form>
 </div>
-<div class="divBorder">
+<div class="divBorder1 bg_grey">
 	<table class="table " id="tableSearch">
 		<thead>
 			<tr>
@@ -100,7 +107,7 @@
 		<tbody>
 			@foreach (var item in Model)
 			{
-				<tr>
+				<tr style="border-color:rgb(50,50,50)">
 					<td>
 						<a asp-action="Details" asp-route-id="@item.FArticleId">
 							<p>
