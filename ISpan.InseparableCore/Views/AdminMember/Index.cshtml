@@ -7,13 +7,13 @@
 <h1>會員管理</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">新增會員</a>
+    <a asp-action="Create" class="btn btn-rounded btn-success">新增會員</a>
 </p>
 <p>
-    @using (Html.BeginForm())
-    {
-        @:關鍵字 @Html.TextBox("txtKeyword") <input type="submit" value="查詢" />
-    }
+    <form asp-action="" method="post">
+        <label for="txtKeyword">關鍵字：</label>@Html.TextBox("txtKeyword") <input type="submit" class="btn btn-rounded btn-info" value="搜尋" />
+    </form>
+    
 </p>
 <table class="table text-light">
     <thead>

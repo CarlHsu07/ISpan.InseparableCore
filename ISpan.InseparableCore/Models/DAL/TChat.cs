@@ -10,7 +10,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// <summary>
         /// 聊天流水號
         /// </summary>
-        public int FMessageId { get; set; }
+        public long FMessageId { get; set; }
         /// <summary>
         /// 發送者的會員ID
         /// </summary>
