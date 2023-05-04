@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>INSEPARABLE_Admin</title>
+    <title>INSEPARABLE Admin</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="~/assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="~/assets/vendors/css/vendor.bundle.base.css">
@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/assets/vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="~/assets/vendors/owl-carousel-2/owl.carousel.min.css">
     <link rel="stylesheet" href="~/assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
@@ -25,16 +26,17 @@
 </head>
 <body>
     <div class="container-scroller">
-        <div class="row p-0 m-0 proBanner" id="proBanner">
+
+        <div class="row p-0 m-0 proBanner" id="proBanner" hidden>
             <div class="col-md-12 p-0 m-0">
-                <div class="card-body card-body-padding d-flex align-items-center justify-content-between" style="display:none;">
+                <div class="card-body card-body-padding d-flex align-items-center justify-content-between" hidden>
                     @*<div class="ps-lg-1">
                         <div class="d-flex align-items-center justify-content-between">
                             <p class="mb-0 font-weight-medium me-3 buy-now-text">Free 24/7 customer support, updates, and more with this template!</p>
                             <a href="https://www.bootstrapdash.com/product/corona-free/?utm_source=organic&utm_medium=banner&utm_campaign=buynow_demo" target="_blank" class="btn me-2 buy-now-btn border-0">Get Pro</a>
                         </div>
                     </div>*@
-                    <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center justify-content-between" hidden>
                        <a href="#"><i class="mdi mdi-home me-3 text-white"></i></a>
                         <button id="bannerClose" class="btn border-0 p-0">
                             <i class="mdi mdi-close text-white me-0"></i>
@@ -43,6 +45,7 @@
                 </div>
             </div>
         </div>
+
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
@@ -54,8 +57,7 @@
                     <div class="profile-desc">
                         <div class="profile-pic">
                             <div class="count-indicator">
-                                <img class="img-xs rounded-circle " src="~/assets/images/faces/face15.jpg" alt="">
-                                <span class="count bg-success"></span>
+                                <a class="img-xs rounded-circle bi bi-person-fill" ></a>
                             </div>
                             <div class="profile-name">
                                 <h5 class="mb-0 font-weight-normal">Admin</h5>
