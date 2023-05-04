@@ -139,7 +139,7 @@
                     <a asp-action="Details" asp-route-id="@item.FOrderId" class="btn btn-light">明細</a> |
                     @if (item.FStatus)
                     {
-                        <a asp-action="MemberOrderDelete" asp-route-id="@item.FOrderId" class="btn btn-danger">取消</a>
+                        <a asp-action="Delete" asp-route-id="@item.FOrderId" class="btn btn-danger">取消</a>
                     }
                     else
                     {
@@ -217,9 +217,9 @@
                                      ${result}
                                     </td>
                                     <td>
-                                      <a href="Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
-                                      ${value.FStatus ?
-                                `<a href="MemberOrderDelete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
+                                 <a href="/TOrders/Details/${value.FOrderId}" class="btn btn-light" >明細</a> |
+                                 ${value.FStatus ?
+                                `<a href="/TOrders/Delete/${value.FOrderId}" class="btn btn-danger">取消</a>` :
                                 `<button class="btn btn-danger" disabled>取消</button>`}
                                     </td>
                                 </tr>`)
