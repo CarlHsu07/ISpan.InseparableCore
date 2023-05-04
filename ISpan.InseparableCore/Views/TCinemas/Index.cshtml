@@ -62,15 +62,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.FCinemaTel)
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FLat)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FLng)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FTraffic)
-                </th>
                 <th></th>
             </tr>
         </thead>
@@ -89,23 +80,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FCinemaTel)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FLat)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FLng)
-                </td>
-                <td>
-                    @{
-                        string result = "";
-                        if(item.FTraffic.Length>2){
-                            result = item.FTraffic.Substring(0, 3);
-                        }else{
-                            result = item.FTraffic;
-                        }
-                    }
-                    @result ...
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.FCinemaId" class="btn btn-warning">修改</a> |
