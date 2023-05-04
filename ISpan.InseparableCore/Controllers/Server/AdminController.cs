@@ -2,7 +2,7 @@
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class AdminController : Controller
+    public class AdminController : AdminSuperController
     {
         public IActionResult Index()
         {

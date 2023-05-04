@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class AdminHomeController : AdminSuperController
+    public class AdminHomeController : Controller
     {
         private readonly InseparableContext _context;
         IWebHostEnvironment _enviro;
@@ -22,7 +22,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         // GET: AdminHome/Login
         public IActionResult Login()
         {
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_ADMINISTRATOR))
             {
                 return RedirectToAction(nameof(AdminMemberController.Index), "AdminMember");
             }
@@ -47,7 +47,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 if (administrator != null && CPasswordHelper.VerifyPassword(model.Password, administrator.FPasswordHash, administrator.FPasswordSalt))
                 {
                     string json = JsonSerializer.Serialize(administrator);
-                    HttpContext.Session.SetString(CDictionary.SK_LOGINED_USER, json);
+                    HttpContext.Session.SetString(CDictionary.SK_LOGINED_ADMINISTRATOR, json);
                     return RedirectToAction(nameof(AdminMemberController.Index), "AdminMember");
                 }
                 else

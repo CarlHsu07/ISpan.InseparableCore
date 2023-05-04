@@ -8,7 +8,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 {
     public class AdminSuperController : Controller
     {
-        protected TAdministrators _user = new TAdministrators();
+        protected TAdministrators _admin = new TAdministrators();
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
@@ -20,7 +20,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return;
             }
 
-            if (!HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+            if (!HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_ADMINISTRATOR))
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                 {
@@ -30,8 +30,8 @@ namespace ISpan.InseparableCore.Controllers.Server
             }
             else
             {
-                var serializedTAdministrators = HttpContext.Session.GetString(CDictionary.SK_LOGINED_USER);
-                _user = JsonSerializer.Deserialize<TAdministrators>(serializedTAdministrators);
+                var serializedTAdministrators = HttpContext.Session.GetString(CDictionary.SK_LOGINED_ADMINISTRATOR);
+                _admin = JsonSerializer.Deserialize<TAdministrators>(serializedTAdministrators);
             }
 
         }
