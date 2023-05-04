@@ -105,7 +105,7 @@ namespace ISpan.InseparableCore.Controllers
 
             var movie = movie_repo.Movie(keyword);
             var cinema = cinema_repo.Cinema(keyword);
-            IEnumerable<MemberVM> member = Enumerable.Empty<MemberVM>();
+            IEnumerable<CMemberVM> member = Enumerable.Empty<CMemberVM>();
             IEnumerable<ArticleVm> articles = Enumerable.Empty<ArticleVm>();
             if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
             {
