@@ -29,7 +29,7 @@
 		color:aliceblue;
 	}
 	p, button{
-		font-size:20px;
+		font-size:15px;
 	}
 
 	.inDivBottom {
@@ -82,9 +82,9 @@
 
 </div>
 
-<div class="divBlock divBorder" id="divSearch">
+<div class="divBlock " id="divSearch">
 
-	<table class="table" id="tableSearch">
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
 		<thead>
 			<tr>
 				<th>
@@ -95,11 +95,6 @@
 				<th>
 					<p>
 						@Html.DisplayNameFor(model => model.FMovieName)
-					</p>
-				</th>
-				<th>
-					<p>
-						@Html.DisplayNameFor(model => model.PartialIntro)
 					</p>
 				</th>
 				<th>
@@ -145,11 +140,6 @@
 								@Html.DisplayFor(modelItem => item.FMovieName)
 							</p>
 						</a>
-					</td>
-					<td>
-						<p class="link-container">
-							@Html.DisplayFor(modelItem => item.PartialIntro)
-						</p>
 					</td>
 					<td>
 						<p>
@@ -265,11 +255,6 @@
 										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
 											${value.FMovieName}
 										</a>
-									</p>
-								</td>
-								<td>
-									<p class="link-container">
-										${value.PartialIntro}
 									</p>
 								</td>
 								<td>

@@ -11,13 +11,21 @@
 	<link href="~/css/IndexGeneral.css" rel="stylesheet" />
 
 <style>
+	.divBorder1 {
+		border-color: white;
+		border-width: 1px;
+		border-radius: 9px;
+		border-style:none;
+		margin:0 0 25px 0;
+	}
+
 	.movieContainer {
-	width: 1200px;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	padding: 20px;
-}
+		width: 1200px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		padding: 20px;
+	}
 		.inDivBottom {
 			position: absolute;
 			bottom: 0px;
@@ -70,7 +78,7 @@
 
 	@foreach (var item in Model)
 	{
-		<div class="divContainer divBorder " style="width:49%">
+		<div class="divContainer divBorder1 bg_grey" style="width:49%">
 			<div style="margin:0 20px 0 0">
 				<p>
 					<img src="~/images/@item.FMovieImagePath" width="200">
@@ -153,7 +161,7 @@
 					$("#divSearch").html(``)
 					$.each(context.Vm, function (index, value) {
 						$("#divSearch").append(`
-							<div class="divContainer divBorder"  style="width:49%">
+							<div class="divContainer divBorder1 bg_grey"  style="width:49%">
 								<div style="margin:0 20px 0 0">
 									<p>
 										<img src="../images/${value.FMovieImagePath}" width="200">
