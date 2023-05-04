@@ -82,8 +82,8 @@
                     @Html.DisplayFor(modelItem => item.FCinemaTel)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.FCinemaId" class="btn btn-warning">修改</a> |
-                    <a asp-action="Details" asp-route-id="@item.FCinemaId" class="btn btn-light">詳細資料</a> |
+                    <a asp-action="Edit" asp-route-id="@item.FCinemaId" class="btn btn-warning">編輯</a> |
+                    <a asp-action="Details" asp-route-id="@item.FCinemaId" class="btn btn-light">明細</a> |
                     <a asp-action="Delete" asp-route-id="@item.FCinemaId" class="btn btn-danger">刪除</a>
                 </td>
             </tr>
@@ -133,18 +133,9 @@
                             ${value.FCinemaTel}
                         </td>
                         <td>
-                            ${value.FLat}
-                        </td>
-                        <td>
-                            ${value.FLng}
-                        </td>
-                        <td>
-                            ${result} ...
-                        </td>
-                        <td>
-                            <a href="Edit/${value.FCinemaId}" class="btn btn-warning">修改</a> |
-                            <a href="Details/${value.FCinemaId}" class="btn btn-light">詳細資料</a> |
-                            <a href="Delete/${value.FCinemaId}" class="btn btn-danger">刪除</a>
+                            <a href="/TCinemas/Edit/${value.FCinemaId}" class="btn btn-warning">編輯</a> |
+                            <a href="/TCinemas/Details/${value.FCinemaId}" class="btn btn-light">明細</a> |
+                            <a href="/TCinemas/Delete/${value.FCinemaId}" class="btn btn-danger">刪除</a>
                         </td>
                         </tr>`)
                     });
