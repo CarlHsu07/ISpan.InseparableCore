@@ -129,16 +129,14 @@
 			{
 				<tr>
 					<td>
-						<p>
+						<p >
 							@Html.DisplayFor(modelItem => item.FMovieId)
 						</p>
 					</td>
 					<td>
-						<a asp-action="AdminDetails" asp-route-id="@item.FMovieId">
-							<p class="link-container">
-								@Html.DisplayFor(modelItem => item.FMovieName)
-							</p>
-						</a>
+						<p class="space-container">
+							@Html.DisplayFor(modelItem => item.FMovieName)
+						</p>
 					</td>
 					<td>
 						<p>
@@ -168,7 +166,10 @@
 					<td>
 						<div class="divContainer">
 							<div class="form-group">
-								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
+								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>&nbsp;|&nbsp;
+							</div>
+							<div>
+								<a asp-action="AdminDetails" class="btn btn-light " asp-route-id="@item.FMovieId">內容</a>&nbsp;|&nbsp;
 							</div>
 							<div class="" style="width:100px">
 								<form asp-action="Delete">
@@ -209,8 +210,8 @@
 		@{
 			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
 			{
-				@:let error = $("#error").val();
-				@:alert(error)
+					@:let error = $("#error").val();
+					@:alert(error)
 			}
 		}
 
@@ -250,10 +251,8 @@
 									</p>
 								</td>
 								<td>
-									<p>
-										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
-											${value.FMovieName}
-										</a>
+									<p class="space-container">
+										${value.FMovieName}
 									</p>
 								</td>
 								<td>
@@ -284,7 +283,10 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
+											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>&nbsp;|&nbsp;
+										</div>
+										<div>
+											<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
 										</div>
 										<div class="" style="width:100px" id="form${value.FMovieId}Container">
 										</div>
@@ -336,13 +338,13 @@
 			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
 			$(`#form${movieId}Container`).append($form);
 		}
-		$submitBtn.on("click", function () {
-			// 调用其他函数
-			doSomething();
+		//$submitBtn.on("click", function () {
+		//	// 调用其他函数
+		//	doSomething();
 
-			// 提交表单
-			$(``).submit();
-		});
+		//	// 提交表单
+		//	$(``).submit();
+		//});
 		//刪除電影
 		//$(document).on('click', '.Delete', function () {
 		//	var movieId = parseInt($(this).attr("value"))

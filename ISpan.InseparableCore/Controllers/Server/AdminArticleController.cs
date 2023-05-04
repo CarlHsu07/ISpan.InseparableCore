@@ -73,7 +73,6 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
 			ViewBag.errorMessage = errorMessage;
-
 			return View(vms);
 		}
 		[HttpPost]

@@ -107,12 +107,13 @@
 					let UserId = context.UserId
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
+						//alert(value.FMemberPK + "/" + UserId)
 						if (value.FMemberPK == UserId && !value.FDeleted) {
 							$("#divComment").append(`
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
 										<div class="divComment" >
-											${value.MemberName}${value.FMemberPK}${value.PostingDate}
+											${value.MemberName}${value.FMemberId}${value.PostingDate}
 								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
 								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
 										</div>
@@ -131,7 +132,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px" >
 										<div  class="divComment">
-											${value.MemberName}	${value.FMemberPK} ${value.PostingDate}
+											${value.MemberName}	${value.FMemberId} ${value.PostingDate}
 										</div>
 										<hr style="margin:0"/>
 										<div class="divComment">${value.FCommentContent}</div>

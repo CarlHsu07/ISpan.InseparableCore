@@ -30,7 +30,7 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ArticleComment(CommentVm comment)
 		{
-			comment.FMemberPk = _user.FId;
+			comment.FMemberPK = _user.FId;
 			List<CommentVm> vms = new List<CommentVm>();
 			//無參數=>預設顯示
 			if (string.IsNullOrEmpty(comment.FCommentContent))
