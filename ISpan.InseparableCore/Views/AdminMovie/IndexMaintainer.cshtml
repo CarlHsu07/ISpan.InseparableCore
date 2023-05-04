@@ -337,13 +337,13 @@
 			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
 			$(`#form${movieId}Container`).append($form);
 		}
-		$submitBtn.on("click", function () {
-			// 调用其他函数
-			doSomething();
+		//$submitBtn.on("click", function () {
+		//	// 调用其他函数
+		//	doSomething();
 
-			// 提交表单
-			$(``).submit();
-		});
+		//	// 提交表单
+		//	$(``).submit();
+		//});
 		//刪除電影
 		//$(document).on('click', '.Delete', function () {
 		//	var movieId = parseInt($(this).attr("value"))

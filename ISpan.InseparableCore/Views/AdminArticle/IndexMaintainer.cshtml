@@ -112,7 +112,7 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody  id="tableSearch">
 			@foreach (var item in Model)
 			{
 				<tr>
@@ -222,57 +222,9 @@
 						return;
 					}
 					let context = JSON.parse(data);
-					$("#tableSearch").html(`
-		<table class="table" id="tableSearch">
-			<thead>
-				<tr>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleId)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleTitle)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PartialContent)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.ArticleCategory)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.MemberName)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleLikes)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleClicks)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PostingDate)
-						</p>
-					</th>
-				</tr>
-			</thead>
-		</table>
-					`)
 					$.each(context.Vm, function (index, value) {
+
 						$("#tableSearch").append(`
-						<tbody>
 							<tr>
 								<td>
 									<p>
@@ -321,7 +273,6 @@
 									</div>
 								</td>
 							</tr>
-						</tbody>
 						`)
 						addDeleteForm(value.FArticleId)
 					})
