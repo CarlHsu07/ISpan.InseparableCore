@@ -107,12 +107,12 @@
 					let UserId = context.UserId
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
-						if (value.FMemberId == UserId && !value.FDeleted) {
+						if (value.FMemberPK == UserId && !value.FDeleted) {
 							$("#divComment").append(`
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px">
 										<div class="divComment" >
-											${value.MemberName}${value.FMemberId}${value.PostingDate}
+											${value.MemberName}${value.FMemberPK}${value.PostingDate}
 								<button type="button" class="btn btn-secondary btnEditComment" value="${value.FCommentId}">編輯</button>
 								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
 										</div>
@@ -131,7 +131,7 @@
 								<div class=" divBorder">
 									<div style="font-size:large; margin:10px 0 0 10px" >
 										<div  class="divComment">
-											${value.MemberName}	${value.FMemberId} ${value.PostingDate}
+											${value.MemberName}	${value.FMemberPK} ${value.PostingDate}
 										</div>
 										<hr style="margin:0"/>
 										<div class="divComment">${value.FCommentContent}</div>
@@ -206,8 +206,9 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(commentId, articleId, comment, deleted)
+			if (confirm('你確定要刪除嗎？')) {
+				CommentDetail(commentId, articleId, comment, deleted)
+			}
 		})
 
 		//點讚ajax

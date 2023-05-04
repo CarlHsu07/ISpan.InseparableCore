@@ -159,7 +159,12 @@
 						</p>
 					</td>
 					<td>
-						<button value="@item.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+						<div class="" style="width:100px">
+							<form asp-action="Delete">
+								<input type="hidden" name="articleId" value="@item.FArticleId" />
+								<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+							</form>
+						</div>
 					</td>
 				</tr>
 			}
@@ -185,8 +190,18 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" value="@ViewBag.errorMessage" id="error" />
+
 @section Scripts {
 	<script>
+		@{
+			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
+			{
+				@:let error = $("#error").val();
+				@:alert(error)
+			}
+		}
+
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
 
@@ -302,12 +317,13 @@
 									</p>
 								</td>
 								<td>
-									<button value="${value.FArticleId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+									<div class="" style="width:100px" id="form${value.FArticleId}Container">
+									</div>
 								</td>
 							</tr>
 						</tbody>
-
 						`)
+						addDeleteForm(value.FArticleId)
 					})
 					$("#divDataCount").html(`
 						<p class="text-muted" colspan="5">
@@ -341,29 +357,16 @@
 				complete: function () {
                     setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
                 }
-
 			})
-
 		}
-
-
-		//刪除文章
-		$(document).on('click', '.Delete', function () {
-			var articleId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminArticle/DeleteAjax",
-				data: { articleId },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
-		})
+		function addDeleteForm(articleId) {
+			let $form = $(`<form class="Delete"></form>`);
+			$form.attr("method", "post");
+			$form.attr("action", "/AdminArticle/Delete");
+			$form.append(`<input type="hidden" name="articleId" value="${articleId}" />`);
+			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
+			$(`#form${articleId}Container`).append($form);
+		}
 
 		//搜尋
 		$("#formSearch").submit(function (event) {

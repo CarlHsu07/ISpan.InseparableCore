@@ -57,9 +57,12 @@
 			</p>
 		</span>
 		<span>
-			<p>
-				<button value="@Model.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
-			</p>
+			<div>
+				<form asp-action="Delete">
+					<input type="hidden" name="articleId" value="@Model.FArticleId" />
+					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+				</form>
+			</div>
 		</span>
 		<span>
 			<p>
@@ -132,25 +135,27 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(commentId, articleId, comment, deleted)
+			if (confirm('你確定要刪除嗎？')){
+				CommentDetail(commentId, articleId, comment, deleted)
+			}
 		})
 		//刪除文章
 		$(document).on('click', '.Delete', function () {
 			var articleId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminArticle/DeleteAjax",
-				data: { articleId },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
+			if (confirm('你確定要刪除嗎？')) {
+				$.ajax({
+					type: "POST",
+					url: "/AdminArticle/DeleteAjax",
+					data: { articleId },
+					success: function (data) {
+						alert("已刪除")
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			}
 		})
 
 

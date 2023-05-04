@@ -41,10 +41,16 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return articles.ModelsToEntities();
 		}
+		public ArticleEntity GetByTitle(string title)
+		{
+			var article = context.TArticles.FirstOrDefault(t => t.FArticleTitle.Equals(title));
+			if(article == null ||article.FDeleted) return null;
+			return article.ModelToEntity();
+		}
 		public ArticleEntity GetByArticleId(int articleId)
 		{
 			TArticles article = context.TArticles.Find(articleId);
-			if (article == null) return null;
+			if (article == null ||article.FDeleted) return null;
 
 			return article.ModelToEntity();
 		}
@@ -99,12 +105,10 @@ namespace ISpan.InseparableCore.Models.DAL
 		public void Delete(int articleId)
 		{
 			var article = context.TArticles.Find(articleId);
-			if (article != null)
-			{
-				article.FDeleted = true;
-				context.TArticles.Update(article);
-				context.SaveChanges();
-			}
+			if (article == null || article.FDeleted) throw new Exception("此文章不存在");
+			article.FDeleted = true;
+			context.TArticles.Update(article);
+			context.SaveChanges();
 		}
         public string GetCategory(int categoryId)
         {
@@ -155,5 +159,6 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return ModelToVms(articles);
         }
+
 	}
 }

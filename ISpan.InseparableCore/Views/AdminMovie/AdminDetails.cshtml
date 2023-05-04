@@ -54,7 +54,7 @@
 			@Html.DisplayFor(model => model.FMovieName)
 		</h1>
 		<a href="/AdminMovie/Edit/@Model.FMovieId" class="btn btn-warning" style="line-height:40px;display: inline-block;">編輯</a>
-		<button value="@Model.FMovieId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+		<button value="@Model.FMovieId" class="btn btn-danger Delete">刪除</button>
 		<button type="button" class="btn btn-info" onclick="backToIndex()">返回</button>
 	</div>
 
@@ -148,26 +148,28 @@
 			let movieId = @Model.FMovieId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(serialNumber,  movieId, comment, deleted)
+			if (confirm("你確定要刪除嗎")){
+				CommentDetail(serialNumber,  movieId, comment, deleted)
+			}
 		})
 
 		//刪除電影
 		$(document).on('click', '.Delete', function () {
 			var movieId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminMovie/DeleteAjax",
-				data: { "movieId": parseInt($(this).attr("value")) },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
+			if (confirm("你確定要刪除嗎")){
+				$.ajax({
+					type: "POST",
+					url: "/AdminMovie/DeleteAjax",
+					data: { "movieId": parseInt($(this).attr("value")) },
+					success: function (data) {
+						alert("已刪除")
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			}
 		})
 
 		//展示評論
