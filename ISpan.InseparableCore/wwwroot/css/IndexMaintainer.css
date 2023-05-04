@@ -19,8 +19,7 @@ td {
 	max-width: 200px;
 	word-wrap: break-word;
 }
-.link-container {
+.space-container {
 	text-align: center;
-	cursor: pointer;
 	white-space: normal;
 }
