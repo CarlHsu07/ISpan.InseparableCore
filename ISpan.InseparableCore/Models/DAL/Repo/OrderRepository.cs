@@ -42,7 +42,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
         public List<COrderVM> GetOrder(CorderSearch search)
         {
 
-            var inseparableContext = _db.TOrders.Include(t => t.FCinema).Include(t => t.FMember).OrderByDescending(t=>t.FOrderId).Select(t=>t);
+            IQueryable<TOrders> inseparableContext = _db.TOrders.Include(t => t.FCinema).Include(t => t.FMember);
             if (inseparableContext == null)
                 return null;
 
@@ -58,6 +58,8 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
                     inseparableContext = inseparableContext.Where(t => t.FOrderDate >= search.min);
 
             }
+            inseparableContext = inseparableContext.OrderByDescending(t => t.FOrderId);
+
             List<COrderVM> data = new List<COrderVM>();
             foreach (var item in inseparableContext)
             {
