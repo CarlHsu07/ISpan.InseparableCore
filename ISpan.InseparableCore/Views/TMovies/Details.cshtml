@@ -130,11 +130,8 @@
 				url: "/MovieDetail/MovieComment",
 				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
-					//alert(data)
 					let context = JSON.parse(data);
-					//alert(data)
 					let UserId = context.UserId
-					//alert(UserId)
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
 						if (value.FMemberPK == UserId &&!value.FDeleted){
@@ -142,7 +139,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
 									<div style="margin:5px" >
-										${value.MemberName}	${value.FMemberPK} ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 							<button type="button" class="btn btn-warning btnEditComment" value="${value.FSerialNumber}">編輯</button>
 									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FSerialNumber}">刪除</button>
 									</div>
@@ -160,7 +157,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" >
 									<div style="margin:5px">
-										${value.MemberName}	${value.FMemberPK} ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 									</div>
 									<hr style="margin:0"/>
 									<div style="margin:5px">${value.FComment}</div>

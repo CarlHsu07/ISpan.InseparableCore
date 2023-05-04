@@ -65,7 +65,10 @@
 			</p>
 		</span>
 		<span>
-			<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
+			@if (Model.FMemberPK == ViewBag.UserId)
+			{
+				<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>	
+			}
 		</span>
 		<span>
 			<button type="button" class="btn btn-info"  onclick="backToIndex()">

@@ -24,7 +24,7 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> MovieComment(MovieCommemtVm comment)
 		{
-			comment.FMemberPk = _user.FId;
+			comment.FMemberPK = _user.FId;
 			List<MovieCommemtVm> vms = new List<MovieCommemtVm>();
 			//無參數=>預設顯示
 			if (string.IsNullOrEmpty(comment.FComment))
