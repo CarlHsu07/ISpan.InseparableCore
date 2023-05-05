@@ -1,4 +1,4 @@
-﻿	function search(){
+﻿function search() {
 			var keyword=$('#keyword').val();
 	$.ajax({
 		url:'/Home/Search',
@@ -30,7 +30,7 @@
 	articles = item.$values;
 					}
 	if (articles.length == 0 && member.length == 0 && movie.length == 0 && cinema.length == 0) {
-		alert(`Oopas...查無資料`);
+		Swal.fire(`Oopas...查無資料`);
 	return;
 						//$('#mainbody').append(`<div style="text-align:center; margin-top:20px;"><h4>Oopas...查無資料</h4></div>`)
 					}
