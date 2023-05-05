@@ -606,7 +606,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TFriendsFMember)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tFriends_tMembers");
             });
 
