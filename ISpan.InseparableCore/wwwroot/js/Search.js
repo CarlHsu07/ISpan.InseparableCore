@@ -1,4 +1,4 @@
-﻿	function search(){
+﻿function search() {
 			var keyword=$('#keyword').val();
 	$.ajax({
 		url:'/Home/Search',
@@ -30,7 +30,7 @@
 	articles = item.$values;
 					}
 	if (articles.length == 0 && member.length == 0 && movie.length == 0 && cinema.length == 0) {
-		alert(`Oopas...查無資料`);
+		Swal.fire(`Oopas...查無資料`);
 	return;
 						//$('#mainbody').append(`<div style="text-align:center; margin-top:20px;"><h4>Oopas...查無資料</h4></div>`)
 					}
@@ -46,7 +46,7 @@
 													<span><h4>${value.FLastName} ${value.FFirstName}</h4>
 													${value.FIntroduction == null ? "" :
 					`${value.FIntroduction.length > 60 ? `<p>${value.FIntroduction.substring(0, 60)}...</p>` :
-						`<p>${value.FIntroduction} < /p>`}`}
+						`<p>${value.FIntroduction} </p>`}`}
 													</span></a></div>`)
 		});
 					}
@@ -96,17 +96,3 @@
 	}
 			});
 		}
-
-
-	tinymce.init({
-		selector: '#textarea', //容器，可使用css选择器
-	language: 'zh_TW', //调用放在langs文件夹内的语言包
-	toolbar: true, //隐藏工具栏
-	menubar: false, //隐藏菜单栏
-	//inline: true, //开启内联模式
-	plugins: ['quickbars', 'link', 'table'], //选择需加载的插件
-	//选中时出现的快捷工具，与插件有依赖关系
-	quickbars_selection_toolbar: 'bold italic forecolor | link blockquote quickimage',
-	skin: 'oxide-dark',
-	content_css: "dark",
-		});
