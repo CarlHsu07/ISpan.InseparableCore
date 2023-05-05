@@ -20,6 +20,8 @@ using ISpan.InseparableCore.Models.DAL.Repo;
 using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -387,6 +389,8 @@ namespace ISpan.InseparableCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
         {
+            // todo VM驗證不過後的View有問題，會不能選擇縣市
+
             TMembers newMember = new TMembers();
             MemberService memberService = new MemberService(_context);
 
@@ -624,6 +628,36 @@ namespace ISpan.InseparableCore.Controllers
                 return Json(new { success = false, message = "更改密碼失敗 in C#" });
             }
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyEmail(string memberId, string token)
+        {
+            MemberService memberService = new MemberService(_context);
+
+            if (memberId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var member = await _context.TMembers.FindAsync(memberId);
+            if (member == null)
+            {
+                return RedirectToAction(nameof(HomeController.Login), "Home");
+            }
+
+            var result = memberService.ConfirmEmail(member, token);
+            if (result)
+            {
+                // todo 實作信箱驗證結果的View
+                return View("ConfirmEmail");
+            }
+            else
+            {
+                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
+            }
+        }
+
 
         // GET: Home/Logout
         public IActionResult Logout()

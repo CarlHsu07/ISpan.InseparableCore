@@ -2,7 +2,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -12,7 +11,7 @@ namespace ISpan.InseparableCore.Models.DAL
     {
         public InseparableContext()
         {
-		}
+        }
 
         public InseparableContext(DbContextOptions<InseparableContext> options)
             : base(options)
@@ -816,6 +815,10 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fIntroduction")
                     .HasComment("個人簡介");
 
+                entity.Property(e => e.FIsEmailVerified)
+                    .HasColumnName("fIsEmailVerified")
+                    .HasComment("Email是否驗證過");
+
                 entity.Property(e => e.FLastName)
                     .IsRequired()
                     .HasMaxLength(200)
@@ -853,6 +856,11 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.Property(e => e.FTotalMemberPoint)
                     .HasColumnName("fTotalMemberPoint")
                     .HasComment("目前點數餘額");
+
+                entity.Property(e => e.FVerificationCode)
+                    .HasMaxLength(100)
+                    .HasColumnName("fVerificationCode")
+                    .HasComment("驗證碼");
 
                 entity.HasOne(d => d.FAccountStatusNavigation)
                     .WithMany(p => p.TMembers)

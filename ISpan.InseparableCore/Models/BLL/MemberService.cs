@@ -106,6 +106,7 @@ namespace ISpan.InseparableCore.Models.BLL
             return isCurrentMember;
         }
 
+        // 取得一個好友紀錄
         public TFriends? GetOneFriendShip(int memberId, int friendId)
         {
             return _context.TFriends.FirstOrDefault(f =>
@@ -139,6 +140,27 @@ namespace ISpan.InseparableCore.Models.BLL
             }
 
             return friendList;
+        }
+
+        // 驗證信
+        public bool ConfirmEmail(TMembers member, string token)
+        {
+            // todo 實作驗證信箱的code
+            bool result = false;
+            if (!string.IsNullOrEmpty(token))
+            {
+                // 驗證驗證碼是否相符
+                if (member.FAddress == token)
+                {
+                    // 驗證成功，更新會員狀態
+                    //member.FAddress = true;
+                    // todo: 更新會員狀態到資料庫
+
+                    result = true;
+                }
+            }
+
+            return result;
         }
     }
 }
