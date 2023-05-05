@@ -272,7 +272,19 @@ namespace ISpan.InseparableCore.Controllers
 		// POST: TArticles/Delete/5
 		[HttpPost]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteAjax(int articleId)
+		public IActionResult Delete(int articleId)
+		{
+			if (_context.TArticles == null)
+			{
+				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
+			}
+			articleRepo.Delete(articleId);
+
+			return RedirectToAction(nameof(Index));
+		}
+		[HttpPost]
+		//[ValidateAntiForgeryToken]
+		public IActionResult DeleteAjax(int articleId)
 		{
 			if (_context.TArticles == null)
 			{

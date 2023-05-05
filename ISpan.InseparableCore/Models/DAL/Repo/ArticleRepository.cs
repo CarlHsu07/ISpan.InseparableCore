@@ -107,7 +107,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			var article = context.TArticles.Find(articleId);
 			if (article == null || article.FDeleted) throw new Exception("此文章不存在");
 			article.FDeleted = true;
-			context.TArticles.Update(article);
+			context.Update(article);
 			context.SaveChanges();
 		}
 		public string GetCategory(int categoryId)
