@@ -26,27 +26,28 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
             {
-                var inseparableContext = _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender);
+                var members = _context.TMembers
+                .Include(m => m.FAccountStatusNavigation)
+                .Include(m => m.FArea)
+                .Include(m => m.FGender)
+                .OrderByDescending(m => m.FId);
 
-                return View(await inseparableContext.ToListAsync());
+                return View(await members.ToListAsync());
             }
             else // 搜尋關鍵字不是空的
             {
-                var inseparableContext = _context.TMembers
+                var members = _context.TMembers
                     .Where(m =>
                     m.FFirstName.Contains(vm.txtKeyword) ||
                     m.FLastName.Contains(vm.txtKeyword) ||
                     m.FEmail.Contains(vm.txtKeyword) ||
-                    m.FMemberId.Contains(vm.txtKeyword)
-                    )
-                    .Include(t => t.FAccountStatusNavigation)
-                    .Include(t => t.FArea)
-                    .Include(t => t.FGender);
+                    m.FMemberId.Contains(vm.txtKeyword))
+                    .Include(m => m.FAccountStatusNavigation)
+                    .Include(m => m.FArea)
+                    .Include(m => m.FGender)
+                    .OrderByDescending(m => m.FId);
 
-                return View(await inseparableContext.ToListAsync());
+                return View(await members.ToListAsync());
             }
         }
 
@@ -59,9 +60,9 @@ namespace ISpan.InseparableCore.Controllers.Server
             }
 
             var tMembers = await _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender)
+                .Include(m => m.FAccountStatusNavigation)
+                .Include(m => m.FArea)
+                .Include(m => m.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)
             {

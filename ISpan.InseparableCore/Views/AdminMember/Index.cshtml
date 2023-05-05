@@ -32,21 +32,19 @@
             <div class="form-group divBlock inDivPosition">
                 <input type="submit" class="btn btn-rounded btn-info" style="margin-left:15px;" value="搜尋" />
             </div>
-            
+
         </div>
-        
-        
+
+
         @*@Html.TextBox("txtKeyword")*@
-        
+
     </form>
-    
+
 </p>
 <table class="table text-light">
     <thead>
         <tr>
-            <th>
-                序號
-            </th>
+
             <th>
                 @*@Html.DisplayNameFor(model => model.FMemberId)*@
                 會員ID
@@ -76,65 +74,70 @@
                 手機
             </th>
             <th>
+                @*@Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)*@
+                區域
+            </th>
+            <th>
                 @*@Html.DisplayNameFor(model => model.FAccountStatusNavigation)*@
                 會員狀態
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.FAreaZipCodeNavigation)*@
-                區域
+                @*@Html.DisplayNameFor(model => model.)*@
+                註冊時間
             </th>
         </tr>
     </thead>
     <tbody>
-@{
-    int count = 0;
-    foreach (var item in Model) {
-        count++;
+        @{
+            int count = 0;
+            foreach (var item in Model)
+            {
+                count++;
 
-        var dateOfBirth = "";
-        if (item.FDateOfBirth.HasValue)
-        {
-            dateOfBirth = item.FDateOfBirth.Value.ToString("yyyy-MM-dd");
+                var dateOfBirth = "";
+                if (item.FDateOfBirth.HasValue)
+                {
+                    dateOfBirth = item.FDateOfBirth.Value.ToString("yyyy-MM-dd");
+                }
+
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FMemberId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FLastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FFirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FEmail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FGender.FGenderType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => dateOfBirth)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FCellphone)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FArea.FAreaName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FAccountStatusNavigation.FStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FSignUpTime)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |
+                        <a asp-action="Details" asp-route-id="@item.FId" class="btn btn-light">明細</a> |
+                        <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger">刪除</a>
+                    </td>
+                </tr>
+            }
         }
-
-        <tr>
-            <td>
-                @count
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FMemberId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FLastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FFirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FEmail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FGender.FGenderType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => dateOfBirth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FCellphone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FAccountStatusNavigation.FStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FArea.FAreaName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |
-                <a asp-action="Details" asp-route-id="@item.FId" class="btn btn-light">明細</a> |
-                <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger">刪除</a>
-            </td>
-        </tr>
-}
-}
     </tbody>
 </table>
