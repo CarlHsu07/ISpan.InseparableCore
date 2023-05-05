@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Register">
+        <form asp-action="Register" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="LastName" class="control-label"></label>
@@ -24,12 +24,12 @@
             </div>
             <div class="form-group mt-2">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" placeholder="請輸入Email" />
+                <input asp-for="Email" class="form-control" placeholder="請輸入Email" autocomplete="off"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group mt-2">
                 <label asp-for="Password" class="control-label"></label>
-                <input asp-for="Password" class="form-control" type="password" placeholder="請輸入密碼" />
+                <input asp-for="Password" class="form-control" type="password" placeholder="請輸入密碼" autocomplete="off"/>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group mt-2">

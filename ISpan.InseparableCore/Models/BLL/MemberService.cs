@@ -14,6 +14,20 @@ namespace ISpan.InseparableCore.Models.BLL
             _context = context;
         }
 
+        // 判斷Email是否存在
+        public bool IsEmailExist(string memberEmail)
+        {
+            bool isExist = false;
+
+            if (!string.IsNullOrEmpty(memberEmail))
+            {
+                isExist = _context.TMembers.Any(f => f.FEmail == memberEmail);
+            }
+
+            return isExist;
+        }
+
+
         // 產生 會員ID 的方法
         public string GenerateMemberId()
         {

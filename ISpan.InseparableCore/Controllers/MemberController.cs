@@ -388,10 +388,16 @@ namespace ISpan.InseparableCore.Controllers
         public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
         {
             TMembers newMember = new TMembers();
+            MemberService memberService = new MemberService(_context);
+
+            // 驗證Email是否存在
+            if (memberService.IsEmailExist(MemberIn.Email) == true)
+            {
+                ModelState.AddModelError("Email", "Email已用過，請換一組");
+            }
 
             if (ModelState.IsValid)
             {
-                MemberService memberService = new MemberService(_context);
 
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
@@ -429,6 +435,7 @@ namespace ISpan.InseparableCore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", newMember.FGenderId);
