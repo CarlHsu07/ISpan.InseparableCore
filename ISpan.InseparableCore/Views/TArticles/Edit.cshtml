@@ -61,9 +61,9 @@
 @section Scripts {
 	<script>
 		function backToIndex() { window.location.href = "/TArticles/Index" }
-
 		$(document).on('click', '.Delete', function () {
 			var articleId = parseInt($(this).attr("value"))
+			//debugger
 			if (confirm('你確定要刪除嗎？')) {
 				$.ajax({
 					type: "POST",

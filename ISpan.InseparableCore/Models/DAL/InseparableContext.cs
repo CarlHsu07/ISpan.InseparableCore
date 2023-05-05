@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -11,7 +12,7 @@ namespace ISpan.InseparableCore.Models.DAL
     {
         public InseparableContext()
         {
-        }
+		}
 
         public InseparableContext(DbContextOptions<InseparableContext> options)
             : base(options)

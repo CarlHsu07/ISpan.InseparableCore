@@ -17,38 +17,38 @@
                 <input asp-for="LastName" class="form-control text-white" placeholder="請輸入姓氏" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" placeholder="請輸入名字" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" placeholder="請輸入Email" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="Password" class="control-label"></label>
                 <input asp-for="Password" class="form-control" type="password" placeholder="請輸入密碼" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="ConfirmPassword" class="control-label"></label>
                 <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="請再次輸入密碼" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mt-2">
                 <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date" />
+                <input asp-for="DateOfBirth" class="form-control" type="date" max="" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
-            <div class="form-row">
+            <div class="form-row mt-2">
                 <label asp-for="GenderId" class="control-label"></label>
                 <select asp-for="GenderId" class ="form-control" asp-items="ViewBag.FGenderId">
                     <option value="">請選擇</option>
                 </select>
             </div>
-            <div class="form-row">
+            <div class="form-row mt-2">
                 <label asp-for="Address" class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-5">
                     <select asp-for="City" class="form-control f-3" asp-items="ViewBag.Cities" id="citySelect">
@@ -68,16 +68,12 @@
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             
-            
-            <div class="form-group">
-                <input type="submit" value="確定" class="btn btn-primary" />
+            <div class="form-group mt-5">
+                <input type="submit" value="確定" class="btn btn-primary" /> 
+                <a asp-action="Login" asp-controller="Home" class="btn btn-light">取消</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Login" asp-controller="Home">取消</a>
 </div>
 
 @section Scripts {

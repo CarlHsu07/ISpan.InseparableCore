@@ -12,97 +12,86 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FMemberId)
+            @*@Html.DisplayNameFor(model => model.FMemberId)*@
+            會員ID
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FMemberId)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FLastName)
+            @*@Html.DisplayNameFor(model => model.FLastName)*@
+            姓氏
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FLastName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FFirstName)
+            @*@Html.DisplayNameFor(model => model.FFirstName)*@
+            名字
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FFirstName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FEmail)
+            @*@Html.DisplayNameFor(model => model.FEmail)*@
+            Email
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FEmail)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FPasswordHash)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FPasswordHash)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FPasswordSalt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FPasswordSalt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FDateOfBirth)
+            @*@Html.DisplayNameFor(model => model.FDateOfBirth)*@
+            生日
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FDateOfBirth)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FCellphone)
+            @*@Html.DisplayNameFor(model => model.FCellphone)*@
+            手機
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FCellphone)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FAddress)
+            @*@Html.DisplayNameFor(model => model.FAddress)*@
+            住址
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FAddress)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FPhotoPath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FPhotoPath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FIntroduction)
+            @*@Html.DisplayNameFor(model => model.FIntroduction)*@
+            簡介
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FIntroduction)
         </dd>
+        
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FTotalMemberPoint)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FTotalMemberPoint)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FSignUpTime)
+            @*@Html.DisplayNameFor(model => model.FSignUpTime)*@
+            註冊時間
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FSignUpTime)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FAccountStatusNavigation)
+            @*@Html.DisplayNameFor(model => model.FAccountStatusNavigation)*@
+            會員狀態
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FAccountStatusNavigation.FStatus)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FArea)
+            @*@Html.DisplayNameFor(model => model.FArea)*@
+            區域
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FArea.FAreaName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FGender)
+            @*@Html.DisplayNameFor(model => model.FGender)*@
+            性別
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FGender.FGenderType)
@@ -112,6 +101,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="FId" />
         <input type="submit" value="刪除" class="btn btn-danger" /> |
-        <a asp-action="Index">取消</a>
+        <a asp-action="Index" class="btn btn-light">返回</a>
     </form>
 </div>
