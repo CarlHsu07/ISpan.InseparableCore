@@ -16,7 +16,7 @@ namespace ISpan.InseparableCore.Models.DAL
 		public IEnumerable<ArticleEntity> Search(ArticleSearchCondition? condition)
 		{
 			IEnumerable<TArticles> articles = context.TArticles.Where(t => t.FDeleted == false)
-				.OrderByDescending(t => t.FArticlePostingDate);
+				.Include(t => t.FMember).OrderByDescending(t => t.FArticlePostingDate);
 
 			if (condition == null) return articles.ModelsToEntities();
 			//id搜尋
@@ -43,19 +43,19 @@ namespace ISpan.InseparableCore.Models.DAL
 		}
 		public ArticleEntity GetByTitle(string title)
 		{
-			var article = context.TArticles.FirstOrDefault(t => t.FArticleTitle.Equals(title));
-			if(article == null ||article.FDeleted) return null;
+			var article = context.TArticles.FirstOrDefault(t => t.FArticleTitle.Equals(title) && !t.FDeleted);
+			if (article == null) return null;
 			return article.ModelToEntity();
 		}
 		public ArticleEntity GetByArticleId(int articleId)
 		{
 			TArticles article = context.TArticles.Find(articleId);
-			if (article == null ||article.FDeleted) return null;
+			if (article == null || article.FDeleted) return null;
 
 			return article.ModelToEntity();
 		}
 
-		public async Task Create(ArticleEntity entity)
+		public void Create(ArticleEntity entity)
 		{
 			TArticles article = new TArticles();
 
@@ -71,9 +71,9 @@ namespace ISpan.InseparableCore.Models.DAL
 			article.FArticleModifiedDate = DateTime.Now;
 
 			context.Add(article);
-			await context.SaveChangesAsync();
+			context.SaveChanges();
 		}
-		public async Task Update(ArticleEntity entity)
+		public void Update(ArticleEntity entity)
 		{
 			TArticles article = context.TArticles.Find(entity.FArticleId);
 
@@ -83,7 +83,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			article.FArticleModifiedDate = DateTime.Now;
 
 			context.Update(article);
-			await context.SaveChangesAsync();
+			context.SaveChanges();
 		}
 
 		public async Task UpdateLikes(int articleId, int likes)
@@ -110,15 +110,15 @@ namespace ISpan.InseparableCore.Models.DAL
 			context.TArticles.Update(article);
 			context.SaveChanges();
 		}
-        public string GetCategory(int categoryId)
-        {
-            return context.TMovieCategories.Find(categoryId).FMovieCategoryName;
-        }
+		public string GetCategory(int categoryId)
+		{
+			return context.TMovieCategories.Find(categoryId).FMovieCategoryName;
+		}
 
-        public TMembers GetMemberByPK(int pk)
-        {
-            return context.TMembers.Find(pk);
-        }
+		public TMembers GetMemberByPK(int pk)
+		{
+			return context.TMembers.Find(pk);
+		}
 		public ArticleVm GetVmById(int id)
 		{
 			TArticles article = context.TArticles.Include(t => t.FArticleCategory)
@@ -130,19 +130,19 @@ namespace ISpan.InseparableCore.Models.DAL
 			vm.FMemberId = article.FMember.FMemberId;
 			return vm;
 		}
-        public IEnumerable<ArticleVm> ModelToVms(IEnumerable<TArticles> articles)
-        {
-            List<ArticleVm> vms = new List<ArticleVm>();
-            foreach (var article in articles)
-            {
-                ArticleVm vm = GetVmById(article.FArticleId);
+		public IEnumerable<ArticleVm> ModelToVms(IEnumerable<TArticles> articles)
+		{
+			List<ArticleVm> vms = new List<ArticleVm>();
+			foreach (var article in articles)
+			{
+				ArticleVm vm = GetVmById(article.FArticleId);
 
-                vms.Add(vm);
-            }
-            return vms;
-        }
+				vms.Add(vm);
+			}
+			return vms;
+		}
 
-        public IEnumerable<ArticleVm> Articles (string keyword)
+		public IEnumerable<ArticleVm> Articles(string keyword)
 		{
 			if (keyword == null)
 				return null;
@@ -158,7 +158,7 @@ namespace ISpan.InseparableCore.Models.DAL
 			}
 
 			return ModelToVms(articles);
-        }
+		}
 
 	}
 }
