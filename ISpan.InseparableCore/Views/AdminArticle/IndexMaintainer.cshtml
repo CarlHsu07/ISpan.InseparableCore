@@ -110,7 +110,7 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody  id="tableSearch">
 			@foreach (var item in Model)
 			{
 				<tr>
@@ -120,14 +120,12 @@
 						</p>
 					</td>
 					<td>
-						<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="link-container">
-							<p>
-								@Html.DisplayFor(modelItem => item.FArticleTitle)
-							</p>
-						</a>
+						<p class="space-container">
+							@Html.DisplayFor(modelItem => item.FArticleTitle)
+						</p>
 					</td>
 					<td>
-						<p class="link-container">
+						<p class="space-container">
 							@Html.DisplayFor(modelItem => item.PartialContent)
 						</p>
 					</td>
@@ -157,7 +155,10 @@
 						</p>
 					</td>
 					<td>
-						<div class="" style="width:100px">
+						<div class="divContainer" style="width:100px">
+							<div>
+								<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
+							</div>
 							<form asp-action="Delete">
 								<input type="hidden" name="articleId" value="@item.FArticleId" />
 								<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
@@ -195,8 +196,8 @@
 		@{
 			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
 			{
-				@:let error = $("#error").val();
-				@:alert(error)
+					@:let error = $("#error").val();
+					@:alert(error)
 			}
 		}
 
@@ -220,57 +221,9 @@
 						return;
 					}
 					let context = JSON.parse(data);
-					$("#tableSearch").html(`
-		<table class="table" id="tableSearch">
-			<thead>
-				<tr>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleId)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleTitle)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PartialContent)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.ArticleCategory)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.MemberName)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleLikes)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleClicks)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PostingDate)
-						</p>
-					</th>
-				</tr>
-			</thead>
-		</table>
-					`)
 					$.each(context.Vm, function (index, value) {
+
 						$("#tableSearch").append(`
-						<tbody>
 							<tr>
 								<td>
 									<p>
@@ -278,14 +231,12 @@
 									</p>
 								</td>
 								<td>
-									<a href="/AdminArticle/AdminDetails/${value.FArticleId}"  class="link-container">
-										<p>
-											${value.FArticleTitle}
-										</p>
-									</a>
+									<p class="space-container">
+										${value.FArticleTitle}
+									</p>
 								</td>
 								<td>
-									<p class="link-container">
+									<p class="space-container">
 										${value.PartialContent}
 									</p>
 								</td>
@@ -315,11 +266,16 @@
 									</p>
 								</td>
 								<td>
-									<div class="" style="width:100px" id="form${value.FArticleId}Container">
+									<div class="divContainer" style="width:100px">
+										<div>
+											<a href="/AdminArticle/AdminDetails/${value.FArticleId}" class="btn btn-light">內容</a>&nbsp;|&nbsp
+										</div>
+										<div>
+											<div class="" style="width:100px" id="form${value.FArticleId}Container"></div>
+										</div>
 									</div>
 								</td>
 							</tr>
-						</tbody>
 						`)
 						addDeleteForm(value.FArticleId)
 					})
