@@ -6,7 +6,6 @@
 
 <h1>新增會員</h1>
 
-<h4>請輸入會員資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,76 +13,76 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FLastName" class="control-label">姓氏</label>
-                <input asp-for="FLastName" class="form-control" />
+                <input asp-for="FLastName" class="form-control text-light" />
                 <span asp-validation-for="FLastName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FFirstName" class="control-label">名字</label>
-                <input asp-for="FFirstName" class="form-control" />
+                <input asp-for="FFirstName" class="form-control text-light" />
                 <span asp-validation-for="FFirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FEmail" class="control-label">Email</label>
-                <input asp-for="FEmail" class="form-control" />
+                <input asp-for="FEmail" class="form-control text-light" />
                 <span asp-validation-for="FEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FPasswordHash" class="control-label">密碼</label>
-                <input asp-for="FPasswordHash" class="form-control" />
+                <input asp-for="FPasswordHash" class="form-control text-light" />
                 <span asp-validation-for="FPasswordHash" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FDateOfBirth" class="control-label">生日</label>
-                <input asp-for="FDateOfBirth" class="form-control" />
+                <input asp-for="FDateOfBirth" class="form-control text-light" />
                 <span asp-validation-for="FDateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FGenderId" class="control-label">性別</label>
-                <select asp-for="FGenderId" class ="form-control" asp-items="ViewBag.FGenderId"></select>
+                <select asp-for="FGenderId" class="form-control text-light" asp-items="ViewBag.FGenderId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="FCellphone" class="control-label">手機</label>
-                <input asp-for="FCellphone" class="form-control" />
+                <input asp-for="FCellphone" class="form-control text-light" />
                 <span asp-validation-for="FCellphone" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FAddress" class="control-label">住址</label>
-                <input asp-for="FAddress" class="form-control" />
+                <input asp-for="FAddress" class="form-control text-light" />
                 <span asp-validation-for="FAddress" class="text-danger"></span>
             </div>
             @*todo 改成適用於AJAX的樣子*@
             <div class="form-group">
                 <label asp-for="FAreaId" class="control-label">居住地區</label>
-                <select asp-for="FAreaId" class ="form-control" asp-items="ViewBag.FAreaZipCode"></select>
+                <select asp-for="FAreaId" class="form-control text-light" asp-items="ViewBag.FAreaZipCode"></select>
             </div>
             <div class="form-group">
                 <label asp-for="FPhotoPath" class="control-label"></label>
-                <input asp-for="FPhotoPath" class="form-control" />
+                <input asp-for="FPhotoPath" class="form-control text-light" />
                 <span asp-validation-for="FPhotoPath" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FIntroduction" class="control-label">會員自我介紹</label>
-                <input asp-for="FIntroduction" class="form-control" />
+                <input asp-for="FIntroduction" class="form-contro text-lightl" />
                 <span asp-validation-for="FIntroduction" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FAccountStatus" class="control-label">會員狀態</label>
-                <select asp-for="FAccountStatus" class ="form-control" asp-items="ViewBag.FAccountStatus"></select>
+                <select asp-for="FAccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus"></select>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FTotalMemberPoint" class="control-label">會員點數</label>
-                <input asp-for="FTotalMemberPoint" class="form-control" />
+                <input asp-for="FTotalMemberPoint" class="form-control text-light" />
                 <span asp-validation-for="FTotalMemberPoint" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
-                <input type="submit" value="儲存" class="btn btn-primary" />
+                <input type="submit" value="送出" class="btn btn-primary" /> |
+                <a class="btn btn-light" asp-action="Index">返回</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a class="btn btn-danger" asp-action="Index">取消新增</a>
 </div> 
 
 @section Scripts {

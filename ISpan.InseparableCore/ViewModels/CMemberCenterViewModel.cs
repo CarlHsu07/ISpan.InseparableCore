@@ -82,7 +82,6 @@ namespace ISpan.InseparableCore.ViewModels
         public string? ConfirmPassword { get; set; }
 
         [Display(Name = "生日")]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}")]
         public DateTime? DateOfBirth
         {
             get { return _member.FDateOfBirth; }
