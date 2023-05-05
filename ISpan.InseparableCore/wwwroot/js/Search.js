@@ -46,7 +46,7 @@
 													<span><h4>${value.FLastName} ${value.FFirstName}</h4>
 													${value.FIntroduction == null ? "" :
 					`${value.FIntroduction.length > 60 ? `<p>${value.FIntroduction.substring(0, 60)}...</p>` :
-						`<p>${value.FIntroduction} < /p>`}`}
+						`<p>${value.FIntroduction} </p>`}`}
 													</span></a></div>`)
 		});
 					}
