@@ -13,8 +13,12 @@ namespace ISpan.InseparableCore.Models.BLL
         {
             _context = context;
         }
-
-        // 判斷Email是否存在
+        
+        /// <summary>
+        /// 判斷Email是否存在
+        /// </summary>
+        /// <param name="memberEmail"></param>
+        /// <returns>如果Email存在就回傳true，否則回傳false</returns>
         public bool IsEmailExist(string memberEmail)
         {
             bool isExist = false;
@@ -41,10 +45,11 @@ namespace ISpan.InseparableCore.Models.BLL
 
             if (string.IsNullOrEmpty(lastMemberID)) // 若DB中沒任何會員
             {
-                newMemberID = CreateFirstMemberIDToday(todayDate);
+                newMemberID = CreateFirstMemberIDToday(todayDate); // 產生第一筆會員ID
             }
             else
             {
+                // todo 有bug，序號不正確
                 string dateString = lastMemberID.Substring(1, 8);
 
                 if (dateString == todayDate) // 今天有會員註冊

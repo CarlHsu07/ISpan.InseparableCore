@@ -395,7 +395,7 @@ namespace ISpan.InseparableCore.Controllers
             MemberService memberService = new MemberService(_context);
 
             // 驗證Email是否存在
-            if (memberService.IsEmailExist(MemberIn.Email) == true)
+            if (memberService.IsEmailExist(MemberIn.Email))
             {
                 ModelState.AddModelError("Email", "此Email已用過，請換一組");
             }
@@ -441,8 +441,9 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", newMember.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", MemberIn.City); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.Area);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
             return View(MemberIn);
         }
 

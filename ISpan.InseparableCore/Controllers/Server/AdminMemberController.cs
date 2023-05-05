@@ -218,7 +218,8 @@ namespace ISpan.InseparableCore.Controllers.Server
             var tMembers = await _context.TMembers.FindAsync(id);
             if (tMembers != null)
             {
-                _context.TMembers.Remove(tMembers);
+                tMembers.FAccountStatusNavigation.FStatusId = 3;
+                _context.TMembers.Update(tMembers);
             }
 
             await _context.SaveChangesAsync();
