@@ -4,6 +4,19 @@
     ViewData["Title"] = "Index";
 }
 
+<style>
+    .divContainer {
+        display: flex;
+        flex-direction: row;
+        padding: 5px;
+    }
+
+    .inDivPosition {
+        position: relative;
+        bottom: -28px;
+    }
+</style>
+
 <h1>會員管理</h1>
 
 <p>
@@ -11,7 +24,20 @@
 </p>
 <p>
     <form asp-action="" method="post">
-        <label for="txtKeyword">關鍵字：</label>@Html.TextBox("txtKeyword")<input type="submit" class="btn btn-rounded btn-info" value="搜尋" />
+        <div class="divContainer">
+            <div class="form-group divBlock">
+                <label for="txtKeyword">關鍵字：</label>
+                <input class="input-validation-error form-control text-light" id="txtKeyword" name="txtKeyword" type="text" value="">
+            </div>
+            <div class="form-group divBlock inDivPosition">
+                <input type="submit" class="btn btn-rounded btn-info" style="margin-left:15px;" value="搜尋" />
+            </div>
+            
+        </div>
+        
+        
+        @*@Html.TextBox("txtKeyword")*@
+        
     </form>
     
 </p>
@@ -105,7 +131,7 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |
                 <a asp-action="Details" asp-route-id="@item.FId" class="btn btn-light">明細</a> |
-                <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger" onclick="return confirm('確定要刪除嗎？')">刪除</a>
+                <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger">刪除</a>
             </td>
         </tr>
 }
