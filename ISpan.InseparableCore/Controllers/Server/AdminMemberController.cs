@@ -148,13 +148,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         // POST: AdminMember/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaId,FIntroduction,FAccountStatus")] TMembers tMembers)
         {
-            if (id != tMembers.FId) // todo 有問題，tMembers.FId為0
+            if (id != tMembers.FId) // todo 這action有問題，tMembers.FId為0
             {
                 return NotFound();
             }
@@ -218,7 +216,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var tMembers = await _context.TMembers.FindAsync(id);
             if (tMembers != null)
             {
-                tMembers.FAccountStatusNavigation.FStatusId = 3;
+                tMembers.FAccountStatus = 3;
                 _context.TMembers.Update(tMembers);
             }
 

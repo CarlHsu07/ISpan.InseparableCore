@@ -16,7 +16,9 @@
 
 </style>
 
-<h1>會員中心</h1>
+<div class="mt-3">
+    <h1>會員中心</h1>
+</div>
 
 <p>
     @*<a asp-action="EditProfile" asp-route-id="@Model.Id" class="btn btn-warning">修改會員資料(舊)</a>*@
@@ -48,49 +50,58 @@
         </ul>
         <div class="tab-content pt-2">
             <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
-                <h5 class="card-title">簡介</h5>
-                <p class="small">@Model.Introduction</p>
-                <h5 class="card-title">個人資料</h5>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId"></label></div>
-                    <div class="col-lg-9 col-md-8">@Model.MemberId</div>
+                <div class="mt-2">
+                    <h5 class="card-title">簡介</h5>
+                    <p class="small">@Model.Introduction</p>
                 </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="GenderString" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.GenderString</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth?.ToString("yyyy/MM/dd")</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.CityString</span><span class="form-label">@Model.AreaString</span><span class="form-label">@Model.Address</span></div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
-                </div>
-                @*<div class="row">
+                <div class="mt-3">
+                    <h5 class="card-title">個人資料</h5>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId"></label></div>
+                        <div class="col-lg-9 col-md-8">@Model.MemberId</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="GenderString" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.GenderString</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth?.ToString("yyyy/MM/dd")</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.CityString</span><span class="form-label">@Model.AreaString</span><span class="form-label">@Model.Address</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="SignUpTime" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.SignUpTime</span></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
+                        <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
+                    </div>
+                    @*<div class="row mb-2">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="TotalMemberPoint" class="control-label"></label></div>
                     <div class="col-lg-9 col-md-8"><span class="form-label">@Model.TotalMemberPoint</span></div>
-                </div>*@
+                    </div>*@
+                </div>
+
 
             </div>
             
@@ -157,7 +168,7 @@
                     <div class="row mb-3">
                         <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")">
+                            <input asp-for="DateOfBirth" class="form-control" type="date" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                     </div>

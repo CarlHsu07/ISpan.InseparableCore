@@ -39,7 +39,7 @@
             
             <div class="form-group">
                 <label asp-for="FDateOfBirth" class="control-label">生日</label>
-                <input asp-for="FDateOfBirth" class="form-control text-light" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <input asp-for="FDateOfBirth" class="form-control text-light" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="FDateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">

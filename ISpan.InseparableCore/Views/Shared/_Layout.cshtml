@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant-TW">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -32,7 +32,7 @@
 				<div class="col-md-5">
 					<div class="top_1m">
 						<div class="input-group">
-							<input type="text" class="form-control bg-black" placeholder="Search Site..." id="keyword">
+							<input type="text" class="form-control bg-black" placeholder="搜尋電影、文章、會員..." id="keyword" onkeydown="searchOnEnter(event)">
 							<span class="input-group-btn">
 								<button class="btn btn text-white bg_red rounded-0 border-0" type="button" onclick="search()">
 									Search
@@ -44,7 +44,7 @@
 				<div class="col-md-4">
 					<div class="top_1r text-end">
 						<ul class="social-network social-circle mb-0">
-							<li><a href="/Home/Login" class="" title="會員"><i class="bi bi-person-fill"></i></a></li>
+							<li><a href="/Home/Login" class="" title="會員登入"><i class="bi bi-person-fill"></i></a></li>
 						</ul>
 					</div>
 				</div>
@@ -237,18 +237,26 @@
 	<script src="~/js/Search.js" type="text/javascript"></script>
 	<script>
 		tinymce.init({
-			selector: '#textarea', //容器，可使用css选择器
-			language: 'zh_TW', //调用放在langs文件夹内的语言包
+			selector: '#textarea', //容器，可使用css選擇器
+			language: 'zh_TW', //調用放在langs文件夾内的語言包
 			toolbar:
 				"undo redo spellcheckdialog  | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | align lineheight checklist bullist numlist | indent outdent | removeformat typography", menubar: false, //隐藏菜单栏
-			//inline: true, //开启内联模式
-			plugins: ['quickbars', 'link', 'table'], //选择需加载的插件
-			//选中时出现的快捷工具，与插件有依赖关系
+			//inline: true, //開啟内聯模式
+			plugins: ['quickbars', 'link', 'table'], //選擇需加載的插件
+			//選中時出現的快捷工具，與插件有依賴關係
 			quickbars_selection_toolbar: 'bold italic forecolor | link blockquote quickimage',
 			skin: 'oxide-dark',
 			content_css: "dark",
 			fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
 		});
+
+		function searchOnEnter(event) {
+			if (event.keyCode === 13) {
+				event.preventDefault();
+				search();
+			}
+		}
+
 	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>

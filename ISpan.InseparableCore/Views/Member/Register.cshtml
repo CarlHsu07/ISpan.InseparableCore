@@ -4,10 +4,13 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>會員註冊</h1>
+<div class="mt-3">
+    <h1>會員註冊</h1>
 
-<h4>請填寫會員資料</h4>
-<h6>* 為必填</h6>
+    <h4>請填寫會員資料</h4>
+    <h6>* 為必填</h6>
+</div>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -40,7 +43,7 @@
             </div>
             <div class="form-group mt-2">
                 <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
+                <input asp-for="DateOfBirth" class="form-control" type="date" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-row mt-2">
