@@ -95,6 +95,14 @@ namespace ISpan.InseparableCore.Models.DAL
         /// 會員註冊時間
         /// </summary>
         public DateTime? FSignUpTime { get; set; }
+        /// <summary>
+        /// 驗證碼
+        /// </summary>
+        public string FVerificationCode { get; set; }
+        /// <summary>
+        /// Email是否驗證過
+        /// </summary>
+        public bool? FIsEmailVerified { get; set; }
 
         public virtual TAccountStatuses FAccountStatusNavigation { get; set; }
         public virtual TAreas FArea { get; set; }
