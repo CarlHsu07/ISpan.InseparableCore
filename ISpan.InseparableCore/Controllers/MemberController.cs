@@ -393,7 +393,7 @@ namespace ISpan.InseparableCore.Controllers
             // 驗證Email是否存在
             if (memberService.IsEmailExist(MemberIn.Email) == true)
             {
-                ModelState.AddModelError("Email", "Email已用過，請換一組");
+                ModelState.AddModelError("Email", "此Email已用過，請換一組");
             }
 
             if (ModelState.IsValid)
