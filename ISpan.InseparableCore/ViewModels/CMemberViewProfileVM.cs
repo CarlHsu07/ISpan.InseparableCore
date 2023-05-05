@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-	public class CMemberViewProfileViewModel
+	public class CMemberViewProfileVM
 	{
 		private TMembers _member;
 
@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member = value; }
 		}
 
-		public CMemberViewProfileViewModel()
+		public CMemberViewProfileVM()
 		{
 			_member = new TMembers();
 		}

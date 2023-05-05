@@ -39,7 +39,7 @@
             </div>
             <div class="form-group mt-2">
                 <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date" max="" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
+                <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-row mt-2">
