@@ -1,9 +1,10 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
+using static ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class CMemberCenterViewModel
+    public class CMemberCreateVM
     {
         private TMembers _member;
 
@@ -13,24 +14,24 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member = value; }
         }
 
-        public CMemberCenterViewModel()
+        public CMemberCreateVM()
         {
             _member = new TMembers();
         }
 
         //[Display(Name = "會員流水號")]
-        public int Id
-        {
-            get { return _member.FId; }
-            set { _member.FId = value; }
-        }
+        //public int Id
+        //{
+        //    get { return _member.FId; }
+        //    set { _member.FId = value; }
+        //}
 
-        [Display(Name = "會員編號")]
-        public string? MemberId
-        {
-            get { return _member.FMemberId; }
-            set { _member.FMemberId = value; }
-        }
+        //[Display(Name = "會員ID")]
+        //public string MemberId
+        //{
+        //    get { return _member.FMemberPK; }
+        //    set { _member.FMemberPK = value; }
+        //}
 
         [Display(Name = "姓氏")]
         [Required(ErrorMessage = "請輸入姓氏")]
@@ -49,6 +50,7 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "Email")]
+        [EmailAddress(ErrorMessage = "請輸入正確的Email格式")]
         [Required(ErrorMessage = "請輸入Email")]
         public string Email
         {
@@ -56,43 +58,28 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FEmail = value; }
         }
 
-        [Display(Name = "目前密碼")]
+        [Display(Name = "密碼")]
+        [Required(ErrorMessage = "請輸入密碼")]
         [DataType(DataType.Password)]
-        [StringLength(100, ErrorMessage = "密碼長度至少為 {2} 個字元。", MinimumLength = 4)]
-        [Required(ErrorMessage = "請輸入目前密碼")]
-        public string? CurrentPassword
+        public string Password
         {
-            get { return null; }
+            get { return _member.FPasswordHash; }
             set { _member.FPasswordHash = value; }
         }
 
-        [Display(Name = "新密碼")]
+        [Display(Name = "確認密碼")]
+        [Required(ErrorMessage = "請再次輸入密碼")]
+        [Compare("Password", ErrorMessage = "密碼不相同！")]
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "請輸入新密碼")]
-        public string? NewPassword
-        {
-            get { return null; }
-            set { _member.FPasswordHash = value; }
-        }
-
-        [Display(Name = "確認新密碼")]
-        [DataType(DataType.Password)]
-        [Compare("NewPassword", ErrorMessage = "密碼不相同！")]
-        [Required(ErrorMessage = "請再次輸入新密碼")]
-        public string? ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; }
 
         [Display(Name = "生日")]
+        [DataType(DataType.Date)]
+        [MaxToday(ErrorMessage = "生日不能超過今天")]
         public DateTime? DateOfBirth
         {
             get { return _member.FDateOfBirth; }
             set { _member.FDateOfBirth = value; }
-        }
-
-        [Display(Name = "性別")]
-        public string? GenderString
-        {
-            get;
-            set;
         }
 
         [Display(Name = "性別")]
@@ -110,19 +97,11 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         //[Display(Name = "縣市")]
-        public string? CityString { get; set; }
-
-        //[Display(Name = "縣市")]
+        [Required(ErrorMessage = "請選擇縣市")]
         public int? City { get; set; }
 
-        //[Display(Name = "區域")]
-        public string? AreaString
-        {
-            get;
-            set;
-        }
-
-        //[Display(Name = "區域")]
+        //[Display(Name = "地區")]
+        [Required(ErrorMessage = "請選擇區域")]
         public int? Area
         {
             get { return _member.FAreaId; }
@@ -136,15 +115,11 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FAddress = value; }
         }
 
-        [Display(Name = "會員大頭貼")]
-        public string? PhotoPath
-        {
-            get { return _member.FPhotoPath; }
-            set { _member.FPhotoPath = value; }
-        }
-
-        [Display(Name = "上傳新大頭貼照")]
-        public IFormFile? MemberPhoto { get; set; }
+        //public string? PhotoPath
+        //{
+        //    get { return _member.FPhotoPath; }
+        //    set { _member.FPhotoPath = value; }
+        //}
 
         [Display(Name = "自我介紹")]
         public string? Introduction
@@ -153,27 +128,28 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FIntroduction = value; }
         }
 
-        [Display(Name = "註冊時間")]
-        public DateTime? SignUpTime
-        {
-            get { return _member.FSignUpTime; }
-            set { _member.FSignUpTime = value; }
-        }
-
         [Display(Name = "會員狀態")]
-        public string? AccountStatus
+        public int? AccountStatus
         {
-            get;
-            set;
+            get { return _member.FAccountStatus; }
+            set { _member.FAccountStatus = value; }
         }
 
-            [Display(Name = "點數")]
+        [Display(Name = "會員點數")]
         public int? TotalMemberPoint
         {
             get { return _member.FTotalMemberPoint; }
             set { _member.FTotalMemberPoint = value; }
         }
 
+        //[Display(Name = "註冊時間")]
+        //public DateTime? SignUpTime
+        //{
+        //    get { return _member.FSignUpTime; }
+        //    set { _member.FSignUpTime = value; }
+        //}
+
+        //public IFormFile MemberPhoto { get; set; }
 
     }
 }

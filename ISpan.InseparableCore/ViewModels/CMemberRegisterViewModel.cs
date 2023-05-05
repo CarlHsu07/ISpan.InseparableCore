@@ -50,6 +50,7 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "Email")]
+        [EmailAddress(ErrorMessage = "請輸入正確的Email格式")]
         [Required(ErrorMessage = "請輸入Email")]
         public string Email
         {
@@ -73,6 +74,8 @@ namespace ISpan.InseparableCore.ViewModels
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "生日")]
+        [DataType(DataType.Date)]
+        [MaxToday(ErrorMessage = "生日不能超過今天")]
         public DateTime? DateOfBirth
         {
             get { return _member.FDateOfBirth; }
@@ -110,6 +113,21 @@ namespace ISpan.InseparableCore.ViewModels
         {
             get { return _member.FAddress; }
             set { _member.FAddress = value; }
+        }
+
+        public class MaxTodayAttribute : ValidationAttribute
+        {
+            public override bool IsValid(object value)
+            {
+                var date = (DateTime?)value;
+
+                if (date.HasValue && date.Value.Date > DateTime.Today)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         //public string? PhotoPath

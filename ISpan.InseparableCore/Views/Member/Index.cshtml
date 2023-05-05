@@ -73,7 +73,7 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
-                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth</span></div>
+                    <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth?.ToString("yyyy/MM/dd")</span></div>
                 </div>
                 <div class="row">
                     <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
@@ -115,7 +115,7 @@
                             <div class="pt-2">
                                 @*<a href="#" class="btn btn-primary btn-sm" title="上傳新大頭貼照">上傳</a>*@
                                 <input type="file" name="MemberPhoto" class="form-control form-control-sm" accept="image/*" />
-                                <a href="#" class="btn btn-danger btn-sm" title="刪除大頭貼照">刪除</a>
+                                @*<a href="#" class="btn btn-danger btn-sm" title="刪除大頭貼照">刪除</a>*@
                             </div>
                         </div>
                         <span asp-validation-for="PhotoPath" class="text-danger"></span>
@@ -157,7 +157,7 @@
                     <div class="row mb-3">
                         <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="DateOfBirth" class="form-control" type="date">
+                            <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")">
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                     </div>
@@ -206,7 +206,7 @@
                     <div class="row mb-3">
                         <label asp-for="Introduction" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <textarea asp-for="Introduction" class="form-control" rows="5"></textarea>
+                            <textarea asp-for="Introduction" class="form-control" rows="20"></textarea>
                         </div>
                         <span asp-validation-for="Introduction" class="text-danger"></span>
                     </div>
