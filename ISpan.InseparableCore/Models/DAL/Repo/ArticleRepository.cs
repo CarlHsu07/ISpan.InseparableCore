@@ -102,13 +102,14 @@ namespace ISpan.InseparableCore.Models.DAL
 			context.Update(article);
 			context.SaveChanges();
 		}
-		public void Delete(int articleId)
+		public async Task Delete(int articleId)
 		{
-			var article = context.TArticles.Find(articleId);
+			var article = await context.TArticles.FindAsync(articleId);
 			if (article == null || article.FDeleted) throw new Exception("此文章不存在");
 			article.FDeleted = true;
+			article.FArticleClicks = 0;
 			context.Update(article);
-			context.SaveChanges();
+			await context.SaveChangesAsync();
 		}
 		public string GetCategory(int categoryId)
 		{

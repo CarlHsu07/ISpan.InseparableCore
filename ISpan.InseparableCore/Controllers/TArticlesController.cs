@@ -284,13 +284,13 @@ namespace ISpan.InseparableCore.Controllers
 		}
 		[HttpPost]
 		//[ValidateAntiForgeryToken]
-		public IActionResult DeleteAjax(int articleId)
+		public async Task<IActionResult> DeleteAjax(int articleId)
 		{
 			if (_context.TArticles == null)
 			{
 				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
 			}
-			articleRepo.Delete(articleId);
+			await articleRepo.Delete(articleId);
 
 			return RedirectToAction(nameof(Index));
 		}
