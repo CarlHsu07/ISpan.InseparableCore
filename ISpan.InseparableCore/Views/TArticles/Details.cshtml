@@ -3,9 +3,7 @@
 	<link href="~/css/loading.css" rel="stylesheet" />
 	<link href="~/css/ArticleDetail.css" rel="stylesheet" />
 }
-
 <style>
-
 	.inDivPosition {
 		position: relative;
 		bottom: 0px;
@@ -65,7 +63,10 @@
 			</p>
 		</span>
 		<span>
-			<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>
+			@if (Model.FMemberPK == ViewBag.UserId)
+			{
+				<a href="/TArticles/Edit/@Model.FArticleId" class="btn btn-warning">編輯</a>	
+			}
 		</span>
 		<span>
 			<button type="button" class="btn btn-info"  onclick="backToIndex()">
@@ -91,10 +92,8 @@
 
 @section Scripts{
 	<script>
-		
 		//返回
 		function backToIndex() { window.location.href = "/TArticles/Index" }
-
 		//送出評論及展示評論ajax函數
 		function CommentDetail(FCommentId, FArticleId, FCommentContent, FDeleted) {
 			$.ajax({

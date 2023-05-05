@@ -153,6 +153,8 @@ namespace ISpan.InseparableCore.Controllers
 			//點閱數+1
 			articleService.Click(vm.FArticleId);
 
+			ViewBag.UserId = _user.FId;
+
 			return View(vm);
 		}
 		[HttpPost]

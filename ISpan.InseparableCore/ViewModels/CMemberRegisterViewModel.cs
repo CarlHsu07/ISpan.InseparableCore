@@ -29,8 +29,8 @@ namespace ISpan.InseparableCore.ViewModels
         //[Display(Name = "會員ID")]
         //public string MemberId
         //{
-        //    get { return _member.FMemberPk; }
-        //    set { _member.FMemberPk = value; }
+        //    get { return _member.FMemberPK; }
+        //    set { _member.FMemberPK = value; }
         //}
 
         [Display(Name = "姓氏")]
