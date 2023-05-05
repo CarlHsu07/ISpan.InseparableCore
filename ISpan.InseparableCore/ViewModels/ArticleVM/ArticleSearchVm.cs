@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Html;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ISpan.InseparableCore.ViewModels
 {
@@ -40,7 +41,8 @@ namespace ISpan.InseparableCore.ViewModels
 	{
 		public static ArticleSearchVm SearchDtoToVm(this ArticleSearchDto dto)
 		{
-			string partialContent = Regex.Replace(dto.FArticleContent, "<.*?>", string.Empty).Trim();
+			string partialContent = Regex.Replace(dto.FArticleContent, "<.*?>", string.Empty);
+			partialContent = HttpUtility.HtmlDecode(partialContent).Trim();
 			int len = Math.Min(partialContent.Length, 10);
 			return new ArticleSearchVm()
 			{
