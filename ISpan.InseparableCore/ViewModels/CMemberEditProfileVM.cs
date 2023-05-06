@@ -4,7 +4,7 @@ using static ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-	public class CMemberEditProfileViewModel
+	public class CMemberEditProfileVM
 	{
 		private TMembers _member;
 
@@ -14,7 +14,7 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member = value; }
 		}
 
-		public CMemberEditProfileViewModel()
+		public CMemberEditProfileVM()
 		{
 			_member = new TMembers();
 		}
@@ -50,7 +50,8 @@ namespace ISpan.InseparableCore.ViewModels
 		}
 
 		[Display(Name = "Email")]
-		[Required(ErrorMessage = "請輸入Email")]
+        [EmailAddress(ErrorMessage = "請輸入正確的Email格式")]
+        [Required(ErrorMessage = "請輸入Email")]
 		public string Email
 		{
 			get { return _member.FEmail; }
@@ -92,8 +93,9 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member.FCellphone = value; }
 		}
 
-		//[Display(Name = "縣市")]
-		public int? City { get; set; }
+        //[Display(Name = "縣市")]
+        [Required(ErrorMessage = "請選擇縣市")]
+        public int? City { get; set; }
 
 		//[Display(Name = "區域")]
 		public int? Area

@@ -137,23 +137,44 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers == null)
+            var member = await _context.TMembers.FindAsync(id);
+            if (member == null)
             {
                 return NotFound();
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+
+            CMemberVM memberVM = new CMemberVM
+            {
+                FId = member.FId,
+                FMemberId = member.FMemberId,
+                FLastName = member.FLastName,
+                FFirstName = member.FFirstName,
+                FEmail = member.FEmail,
+                Password = member.FPasswordHash,
+                FDateOfBirth = member.FDateOfBirth,
+                FGenderId = member.FGenderId,
+                FCellphone = member.FCellphone,
+                FAddress = member.FAddress,
+                FAreaId = member.FAreaId,
+                FPhotoPath = member.FPhotoPath,
+                FIntroduction = member.FIntroduction,
+                FAccountStatus = member.FAccountStatus,
+                FTotalMemberPoint = member.FTotalMemberPoint,
+                FSignUpTime = member.FSignUpTime
+            };
+
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.FAreaId);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.FGenderId);
+            return View(memberVM);
         }
 
         // POST: AdminMember/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaId,FIntroduction,FAccountStatus")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("FId,FMemberId,FLastName,FFirstName,FEmail,FDateOfBirth,FGenderId,FCellphone,FAddress,FCityId,FAreaId,FIntroduction,FAccountStatus,MemberPhoto")] CMemberVM member)
         {
-            if (id != tMembers.FId) // todo 這action有問題，tMembers.FId為0
+            if (id != member.FId) // todo 這action有問題，tMembers.FId為0
             {
                 return NotFound();
             }
@@ -162,12 +183,12 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 try
                 {
-                    _context.Update(tMembers);
+                    _context.Update(member);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TMembersExists(tMembers.FId))
+                    if (!TMembersExists(member.FId))
                     {
                         return NotFound();
                     }
@@ -178,10 +199,10 @@ namespace ISpan.InseparableCore.Controllers.Server
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", member.FAccountStatus);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", member.FAreaId);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            return View(member);
         }
 
         // GET: AdminMember/Delete/5

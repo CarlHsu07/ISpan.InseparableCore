@@ -464,7 +464,7 @@ namespace ISpan.InseparableCore.Controllers
 
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CMemberEditProfileViewModel
+            var viewModel = new CMemberEditProfileVM
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -499,7 +499,7 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Member/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileViewModel MemberIn)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileVM MemberIn)
         {
             if (id != MemberIn.Id)
             {

@@ -129,6 +129,7 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         [Display(Name = "會員狀態")]
+        [Required(ErrorMessage = "請選擇會員狀態")]
         public int? AccountStatus
         {
             get { return _member.FAccountStatus; }
@@ -149,7 +150,7 @@ namespace ISpan.InseparableCore.ViewModels
         //    set { _member.FSignUpTime = value; }
         //}
 
-        //public IFormFile MemberPhoto { get; set; }
-
+        [Display(Name = "上傳新大頭貼照")]
+        public IFormFile? MemberPhoto { get; set; }
     }
 }

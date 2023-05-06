@@ -61,11 +61,11 @@ namespace ISpan.InseparableCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login([Bind("Email,Password")] CMemberLoginViewModel model)
         {
-            TMembers member = _context.TMembers.FirstOrDefault(m => m.FEmail == model.Email);
+            TMembers? member = await _context.TMembers.FirstOrDefaultAsync(m => m.FEmail == model.Email);
 
             if (member == null) // 找不到該會員，即Email錯誤
             {
-                ModelState.AddModelError("Email", "Email錯誤，請檢查您的輸入並重試");
+                ModelState.AddModelError(nameof(CMemberRegisterViewModel.Email), "Email錯誤，找不到您的帳號");
             }
 
             if (ModelState.IsValid) // 驗證通過
@@ -78,7 +78,7 @@ namespace ISpan.InseparableCore.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("Password", "密碼錯誤，請重試");
+                    ModelState.AddModelError("Password", "密碼錯誤");
                     return View(model);
                 }
             }
@@ -87,16 +87,12 @@ namespace ISpan.InseparableCore.Controllers
         }
 
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
         [HttpPost]
         public IActionResult Search(string keyword)
         {
@@ -125,16 +121,19 @@ namespace ISpan.InseparableCore.Controllers
                 ReferenceHandler = ReferenceHandler.Preserve
             };
             string cinemajson = JsonSerializer.Serialize(cinema, cinemaoptions);
+
             JsonSerializerOptions memberoptions = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve
             };
             string memberjson = JsonSerializer.Serialize(member, memberoptions);
+
             JsonSerializerOptions articlesoptions = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve
             };
             string articlesjson = JsonSerializer.Serialize(articles, articlesoptions);
+
             return Ok(new
             {
                 cinema = cinemajson,

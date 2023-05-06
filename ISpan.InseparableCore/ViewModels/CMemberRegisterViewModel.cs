@@ -5,13 +5,11 @@ namespace ISpan.InseparableCore.ViewModels
 {
     public class CMemberRegisterViewModel
     {
-
         private TMembers _member;
 
         public TMembers member
         {
-            get { return _member; }
-            set { _member = value; }
+            get { return _member; } set { _member = value; }
         }
 
         public CMemberRegisterViewModel()
