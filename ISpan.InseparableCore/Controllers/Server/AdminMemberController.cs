@@ -26,27 +26,28 @@ namespace ISpan.InseparableCore.Controllers.Server
         {
             if (string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
             {
-                var inseparableContext = _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender);
+                var members = _context.TMembers
+                .Include(m => m.FAccountStatusNavigation)
+                .Include(m => m.FArea)
+                .Include(m => m.FGender)
+                .OrderByDescending(m => m.FId);
 
-                return View(await inseparableContext.ToListAsync());
+                return View(await members.ToListAsync());
             }
             else // 搜尋關鍵字不是空的
             {
-                var inseparableContext = _context.TMembers
+                var members = _context.TMembers
                     .Where(m =>
                     m.FFirstName.Contains(vm.txtKeyword) ||
                     m.FLastName.Contains(vm.txtKeyword) ||
                     m.FEmail.Contains(vm.txtKeyword) ||
-                    m.FMemberId.Contains(vm.txtKeyword)
-                    )
-                    .Include(t => t.FAccountStatusNavigation)
-                    .Include(t => t.FArea)
-                    .Include(t => t.FGender);
+                    m.FMemberId.Contains(vm.txtKeyword))
+                    .Include(m => m.FAccountStatusNavigation)
+                    .Include(m => m.FArea)
+                    .Include(m => m.FGender)
+                    .OrderByDescending(m => m.FId);
 
-                return View(await inseparableContext.ToListAsync());
+                return View(await members.ToListAsync());
             }
         }
 
@@ -59,9 +60,9 @@ namespace ISpan.InseparableCore.Controllers.Server
             }
 
             var tMembers = await _context.TMembers
-                .Include(t => t.FAccountStatusNavigation)
-                .Include(t => t.FArea)
-                .Include(t => t.FGender)
+                .Include(m => m.FAccountStatusNavigation)
+                .Include(m => m.FArea)
+                .Include(m => m.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
             if (tMembers == null)
             {
@@ -82,8 +83,6 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         // POST: AdminMember/Register
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers MemberIn)
@@ -150,13 +149,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         // POST: AdminMember/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FPasswordHash,FPasswordSalt,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaId,FIntroduction,FAccountStatus")] TMembers tMembers)
         {
-            if (id != tMembers.FId) // todo 有問題，tMembers.FId為0
+            if (id != tMembers.FId) // todo 這action有問題，tMembers.FId為0
             {
                 return NotFound();
             }
@@ -220,7 +217,8 @@ namespace ISpan.InseparableCore.Controllers.Server
             var tMembers = await _context.TMembers.FindAsync(id);
             if (tMembers != null)
             {
-                _context.TMembers.Remove(tMembers);
+                tMembers.FAccountStatus = 3;
+                _context.TMembers.Update(tMembers);
             }
 
             await _context.SaveChangesAsync();

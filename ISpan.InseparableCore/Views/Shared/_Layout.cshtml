@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,8 +12,12 @@
     <link href="~/css/global.css" rel="stylesheet">
     <link href="~/css/index.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="~/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Styles", required: false)
+	@*<script type="text/javascript" src="~/js/tinymce/tinymce.min.js"></script>*@
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://cdn.tiny.cloud/1/b3g7kemxc2ub7nr6pnp1z3f037h4ob77q9zdgu65ie148vop/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>	
+	@await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
@@ -27,9 +32,9 @@
 				<div class="col-md-5">
 					<div class="top_1m">
 						<div class="input-group">
-							<input type="text" class="form-control bg-black" placeholder="Search Site...">
+							<input type="text" class="form-control bg-black" placeholder="搜尋電影、文章、會員..." id="keyword" onkeydown="searchOnEnter(event)">
 							<span class="input-group-btn">
-								<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
+								<button class="btn btn text-white bg_red rounded-0 border-0" type="button" onclick="search()">
 									Search
 								</button>
 							</span>
@@ -39,7 +44,7 @@
 				<div class="col-md-4">
 					<div class="top_1r text-end">
 						<ul class="social-network social-circle mb-0">
-							<li><a href="https://www.youtube.com/" class="icoGoogle" title="Google +"><i class="fa fa-youtube"></i></a></li>
+							<li><a href="/Home/Login" class="" title="會員登入"><i class="bi bi-person-fill"></i></a></li>
 						</ul>
 					</div>
 				</div>
@@ -81,7 +86,7 @@
 	</section>
 
 	<div class="container">
-		<main role="main" class="pb-3">
+		<main role="main" class="pb-3" id="mainbody">
 			@RenderBody()
 		</main>
 	</div>
@@ -92,25 +97,23 @@
 				<div class="row footer_1">
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h3><a class="text-white" href="index.html"><i class="fa fa-video-camera col_red me-1"></i> Planet</a></h3>
-							<p class="mt-3">Lorem ipsum dolor sit amet consect etur adi pisicing elit sed do eiusmod tempor incididunt. Lorem ipsum dolor sit amet consect etur. </p>
+							<h3><a class="text-white" href="~/Home/Index"><i class="fa fa-video-camera col_red me-1"></i> 關於我們</a></h3>
+							@*<p class="mt-3">資展國際</p>*@
 							<h6 class="fw-normal">
-								<i class="fa fa-map-marker fs-5 align-middle col_red me-1"></i> 5311 Ceaver Sidge Td.
-								Pakland, DE 13507
+								<i class="fa fa-map-marker fs-5 align-middle col_red me-1"></i>資展國際 INSEPARABLE小組
 							</h6>
-							<h6 class="fw-normal mt-3"><i class="fa fa-envelope fs-5 align-middle col_red me-1"></i> info@gmail.com</h6>
-							<h6 class="fw-normal mt-3 mb-0"><i class="fa fa-phone fs-5 align-middle col_red me-1"></i>  +123 123 456</h6>
+							<h6 class="fw-normal mt-3"><i class="fa fa-envelope fs-5 align-middle col_red me-1"></i>ISpan230425@outlook.com</h6>
 						</div>
 					</div>
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h4>Flickr <span class="col_red">Stream</span></h4>
+							<h4> <span class="col_red"></span></h4>
 							<div class="footer_1i1 row mt-4">
 								<div class="col-md-3 col-3">
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -119,7 +122,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -128,7 +131,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -137,7 +140,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -148,7 +151,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -157,7 +160,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -166,7 +169,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -175,7 +178,7 @@
 									<div class="footer_1i1i">
 										<div class="grid clearfix">
 											<figure class="effect-jazz mb-0">
-												<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>
+												@*<a href="#"><img src="" height="70" class="w-100" alt="abc"></a>*@
 											</figure>
 										</div>
 									</div>
@@ -185,22 +188,18 @@
 					</div>
 					<div class="col-md-4">
 						<div class="footer_1i">
-							<h4>Sign  <span class="col_red">Newsletter</span></h4>
-							<p class="mt-3">Subscribe to our newsletter list to get latest news and updates from us</p>
+							<h4>  <span class="col_red"></span></h4>
+							<p class="mt-3"></p>
 							<div class="input-group">
-								<input type="text" class="form-control bg-black" placeholder="Email">
+								@*<input type="text" class="form-control bg-black" placeholder="Email">*@
 								<span class="input-group-btn">
-									<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
-										Subscribe
-									</button>
+									@*<button class="btn btn text-white bg_red rounded-0 border-0" type="button">
+										
+									</button>*@
 								</span>
 							</div>
 							<ul class="social-network social-circle mb-0 mt-4">
-								<li><a href="#" class="icoRss" title="Rss"><i class="fa fa-instagram"></i></a></li>
-								<li><a href="#" class="icoFacebook" title="Facebook"><i class="fa fa-facebook"></i></a></li>
-								<li><a href="#" class="icoTwitter" title="Twitter"><i class="fa fa-twitter"></i></a></li>
-								<li><a href="#" class="icoGoogle" title="Google +"><i class="fa fa-youtube"></i></a></li>
-								<li><a href="#" class="icoLinkedin" title="Linkedin"><i class="fa fa-linkedin"></i></a></li>
+								@*<li><a href="href=" https://www.youtube.com/"" class="icoGoogle" title="Google +"><i class="fa fa-youtube"></i></a></li>*@
 							</ul>
 						</div>
 					</div>
@@ -214,18 +213,18 @@
 			<div class="row footer_1">
 				<div class="col-md-8">
 					<div class="footer_1l">
-						<p class="mb-0">© 2013 Your Website Name. All Rights Reserved | Design by <a class="col_red" href="http://www.templateonweb.com">TemplateOnWeb</a></p>
+						<p class="mb-0">© 2023 INSEPARABLE Website . All Rights Reserved | Design by <a class="col_red" href="http://www.templateonweb.com">TemplateOnWeb</a></p>
 					</div>
 				</div>
 				<div class="col-md-4">
 					<div class="footer_1r">
 						<ul class="mb-0">
-							<li class="d-inline-block me-2"><a href="#">Home</a></li>
+							@*<li class="d-inline-block me-2"><a href="#">Home</a></li>
 							<li class="d-inline-block me-2"><a href="#">Features</a></li>
 							<li class="d-inline-block me-2"><a href="#">Pages</a></li>
 							<li class="d-inline-block me-2"><a href="#">Portfolio</a></li>
 							<li class="d-inline-block me-2"><a href="#">Blog</a></li>
-							<li class="d-inline-block"><a href="#">Contact</a></li>
+							<li class="d-inline-block"><a href="#">Contact</a></li>*@
 						</ul>
 					</div>
 				</div>
@@ -235,6 +234,30 @@
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
 	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="~/js/site.js" asp-append-version="true"></script>
+	<script src="~/js/Search.js" type="text/javascript"></script>
+	<script>
+		tinymce.init({
+			selector: '#textarea', //容器，可使用css選擇器
+			language: 'zh_TW', //調用放在langs文件夾内的語言包
+			toolbar:
+				"undo redo spellcheckdialog  | blocks fontfamily fontsize | bold italic underline forecolor backcolor | link image | align lineheight checklist bullist numlist | indent outdent | removeformat typography", menubar: false, //隐藏菜单栏
+			//inline: true, //開啟内聯模式
+			plugins: ['quickbars', 'link', 'table'], //選擇需加載的插件
+			//選中時出現的快捷工具，與插件有依賴關係
+			quickbars_selection_toolbar: 'bold italic forecolor | link blockquote quickimage',
+			skin: 'oxide-dark',
+			content_css: "dark",
+			fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt",
+		});
+
+		function searchOnEnter(event) {
+			if (event.keyCode === 13) {
+				event.preventDefault();
+				search();
+			}
+		}
+
+	</script>
 	@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

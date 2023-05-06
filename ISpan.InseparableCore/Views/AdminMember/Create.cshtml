@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TMembers
+﻿@model ISpan.InseparableCore.ViewModels.CMemberCreateVM
 
 @{
     ViewData["Title"] = "Create";
@@ -6,84 +6,88 @@
 
 <h1>新增會員</h1>
 
-<h4>請輸入會員資料</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create" enctype="multipart/form-data" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FLastName" class="control-label">姓氏</label>
-                <input asp-for="FLastName" class="form-control" />
-                <span asp-validation-for="FLastName" class="text-danger"></span>
+                <label asp-for="LastName" class="control-label">姓氏</label>
+                <input asp-for="LastName" class="form-control text-light" placeholder="請輸入姓氏" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FFirstName" class="control-label">名字</label>
-                <input asp-for="FFirstName" class="form-control" />
-                <span asp-validation-for="FFirstName" class="text-danger"></span>
+                <label asp-for="FirstName" class="control-label">名字</label>
+                <input asp-for="FirstName" class="form-control text-light" placeholder="請輸入名字" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FEmail" class="control-label">Email</label>
-                <input asp-for="FEmail" class="form-control" />
-                <span asp-validation-for="FEmail" class="text-danger"></span>
+                <label asp-for="Email" class="control-label">Email</label>
+                <input asp-for="Email" class="form-control text-light" placeholder="請輸入Email" autocomplete="off  />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FPasswordHash" class="control-label">密碼</label>
-                <input asp-for="FPasswordHash" class="form-control" />
-                <span asp-validation-for="FPasswordHash" class="text-danger"></span>
+                <label asp-for="Password" class="control-label">密碼</label>
+                <input asp-for="Password" class="form-control text-light" placeholder="請輸入密碼" autocomplete="off />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FDateOfBirth" class="control-label">生日</label>
-                <input asp-for="FDateOfBirth" class="form-control" />
-                <span asp-validation-for="FDateOfBirth" class="text-danger"></span>
+                <label asp-for="ConfirmPassword" class="control-label">確認密碼</label>
+                <input asp-for="ConfirmPassword" class="form-control text-light" placeholder="請再次輸入密碼" autocomplete="off />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FGenderId" class="control-label">性別</label>
-                <select asp-for="FGenderId" class ="form-control" asp-items="ViewBag.FGenderId"></select>
+                <label asp-for="DateOfBirth" class="control-label">生日</label>
+                <input asp-for="DateOfBirth" class="form-control text-light" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FCellphone" class="control-label">手機</label>
-                <input asp-for="FCellphone" class="form-control" />
-                <span asp-validation-for="FCellphone" class="text-danger"></span>
+                <label asp-for="GenderId" class="control-label">性別</label>
+                <select asp-for="GenderId" class="form-control text-light" asp-items="ViewBag.FGenderId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="FAddress" class="control-label">住址</label>
-                <input asp-for="FAddress" class="form-control" />
-                <span asp-validation-for="FAddress" class="text-danger"></span>
+                <label asp-for="Cellphone" class="control-label">手機</label>
+                <input asp-for="Cellphone" class="form-control text-light" placeholder="請輸入手機號碼" />
+                <span asp-validation-for="Cellphone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label">住址</label>
+                <input asp-for="Address" class="form-control text-light" placeholder="請輸入剩下的住址" />
+                <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             @*todo 改成適用於AJAX的樣子*@
             <div class="form-group">
-                <label asp-for="FAreaId" class="control-label">居住地區</label>
-                <select asp-for="FAreaId" class ="form-control" asp-items="ViewBag.FAreaZipCode"></select>
+                <label asp-for="Area" class="control-label">居住地區</label>
+                <select asp-for="Area" class="form-control text-light" asp-items="ViewBag.FAreaZipCode"></select>
+            </div>
+            @*<div class="form-group">
+                <label asp-for="PhotoPath" class="control-label"></label>
+                <input asp-for="PhotoPath" class="form-control text-light" />
+                <span asp-validation-for="PhotoPath" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="Introduction" class="control-label">會員自我介紹</label>
+                <textarea asp-for="Introduction" class="form-control text-light" rows="5"></textarea>
+                <span asp-validation-for="Introduction" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FPhotoPath" class="control-label"></label>
-                <input asp-for="FPhotoPath" class="form-control" />
-                <span asp-validation-for="FPhotoPath" class="text-danger"></span>
+                <label asp-for="AccountStatus" class="control-label">會員狀態</label>
+                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="FIntroduction" class="control-label">會員自我介紹</label>
-                <input asp-for="FIntroduction" class="form-control" />
-                <span asp-validation-for="FIntroduction" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FAccountStatus" class="control-label">會員狀態</label>
-                <select asp-for="FAccountStatus" class ="form-control" asp-items="ViewBag.FAccountStatus"></select>
-            </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FTotalMemberPoint" class="control-label">會員點數</label>
-                <input asp-for="FTotalMemberPoint" class="form-control" />
+                <input asp-for="FTotalMemberPoint" class="form-control text-light" />
                 <span asp-validation-for="FTotalMemberPoint" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
-                <input type="submit" value="儲存" class="btn btn-primary" />
+                <input type="submit" value="送出" class="btn btn-primary" /> |
+                <a class="btn btn-light" asp-action="Index">返回</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a class="btn btn-danger" asp-action="Index">取消新增</a>
 </div> 
 
 @section Scripts {

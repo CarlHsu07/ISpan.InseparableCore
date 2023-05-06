@@ -9,10 +9,8 @@
         url: 'Clearproduct',
         data: {},
         success: function (data) {
-            console.log('pass');
         },
         error: function (error) {
-            console.log('fail');
         }
     });
 });

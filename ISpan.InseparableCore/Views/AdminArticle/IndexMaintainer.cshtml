@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.ArticleVm>
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.ArticleSearchVm>
 
 @{
 	var pagedList = (IPagedList)ViewBag.ArticleModel;
@@ -24,7 +24,7 @@
 		}
 
 	p, button {
-		font-size: 20px;
+		font-size: 15px;
 	}
 
 	.inDivBottom {
@@ -46,9 +46,7 @@
 <h1 style="margin:50px 0 0 50px;">貼文搜尋</h1>
 
 <div class="row divBlock">
-
 	<form asp-action="Index" method="post" id="formSearch">
-
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="divContainer ">
 			<div class="form-group divBlock">
@@ -60,15 +58,20 @@
 				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
-				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
+				<input type="submit" value="搜尋" class="btn btn-info btn-rounded inDivBottom" />
 			</div>
 		</div>
 	</form>
 </div>
-<div class="divBorder">
-	<table class="table " id="tableSearch">
+<div class="">
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
 		<thead>
 			<tr>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FArticleId)
+					</p>
+				</th>
 				<th>
 					<p>
 						@Html.DisplayNameFor(model => model.FArticleTitle)
@@ -107,19 +110,22 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody  id="tableSearch">
 			@foreach (var item in Model)
 			{
 				<tr>
 					<td>
-						<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="link-container">
-							<p>
-								@Html.DisplayFor(modelItem => item.FArticleTitle)
-							</p>
-						</a>
+						<p>
+							@Html.DisplayFor(modelItem => item.FArticleId)
+						</p>
 					</td>
 					<td>
-						<p>
+						<p class="space-container">
+							@Html.DisplayFor(modelItem => item.FArticleTitle)
+						</p>
+					</td>
+					<td>
+						<p class="space-container">
 							@Html.DisplayFor(modelItem => item.PartialContent)
 						</p>
 					</td>
@@ -149,7 +155,15 @@
 						</p>
 					</td>
 					<td>
-						<button value="@item.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+						<div class="divContainer" style="width:100px">
+							<div>
+								<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
+							</div>
+							<form asp-action="Delete">
+								<input type="hidden" name="articleId" value="@item.FArticleId" />
+								<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+							</form>
+						</div>
 					</td>
 				</tr>
 			}
@@ -175,26 +189,30 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" value="@ViewBag.errorMessage" id="error" />
+
 @section Scripts {
 	<script>
+		@{
+			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
+			{
+					@:let error = $("#error").val();
+					@:alert(error)
+			}
+		}
+
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
 
 		function show(Key, CategoryId, Page) {
 			$.ajax({
-				beforeSend: function () {
-					$('#loading').css("display", "");
-				},
 				method: "post",
 				url: $(this).attr("action"),
 				data: {Key, CategoryId, Page},
-				beforeSend: function () {
-				},
 				success: function (data) {
 					$("#tableSearch").html(``)
 					if (data == "noData") 
 					{
-						alert("nodata")
 						$("#tableSearch").html(`
 							<p class="text-muted" colspan="5">
 								每頁 0 筆資料，共 0 頁，全部共有 0 筆資料。
@@ -203,62 +221,22 @@
 						return;
 					}
 					let context = JSON.parse(data);
-					$("#tableSearch").html(`
-		<table class="table" id="tableSearch">
-			<thead>
-				<tr>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleTitle)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PartialContent)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.ArticleCategory)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.MemberName)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleLikes)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.FArticleClicks)
-						</p>
-					</th>
-					<th>
-						<p>
-		@Html.DisplayNameFor(model => model.PostingDate)
-						</p>
-					</th>
-				</tr>
-			</thead>
-		</table>
-					`)
 					$.each(context.Vm, function (index, value) {
+
 						$("#tableSearch").append(`
-						<tbody>
 							<tr>
 								<td>
-									<a href="/AdminArticle/AdminDetails/${value.FArticleId}"  class="link-container">
-										<p>
-											${value.FArticleTitle}
-										</p>
-									</a>
+									<p>
+										${value.FArticleId}
+									</p>
 								</td>
 								<td>
-									<p>
+									<p class="space-container">
+										${value.FArticleTitle}
+									</p>
+								</td>
+								<td>
+									<p class="space-container">
 										${value.PartialContent}
 									</p>
 								</td>
@@ -288,12 +266,18 @@
 									</p>
 								</td>
 								<td>
-									<button value="${value.FArticleId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+									<div class="divContainer" style="width:100px">
+										<div>
+											<a href="/AdminArticle/AdminDetails/${value.FArticleId}" class="btn btn-light">內容</a>&nbsp;|&nbsp
+										</div>
+										<div>
+											<div class="" style="width:100px" id="form${value.FArticleId}Container"></div>
+										</div>
+									</div>
 								</td>
 							</tr>
-						</tbody>
-
 						`)
+						addDeleteForm(value.FArticleId)
 					})
 					$("#divDataCount").html(`
 						<p class="text-muted" colspan="5">
@@ -324,28 +308,19 @@
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
+				complete: function () {
+                    setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
+                }
 			})
-
 		}
-
-
-		//刪除文章
-		$(document).on('click', '.Delete', function () {
-			var articleId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminArticle/DeleteAjax",
-				data: { articleId },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
-		})
+		function addDeleteForm(articleId) {
+			let $form = $(`<form class="Delete"></form>`);
+			$form.attr("method", "post");
+			$form.attr("action", "/AdminArticle/Delete");
+			$form.append(`<input type="hidden" name="articleId" value="${articleId}" />`);
+			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
+			$(`#form${articleId}Container`).append($form);
+		}
 
 		//搜尋
 		$("#formSearch").submit(function (event) {
@@ -353,7 +328,6 @@
 			let page = 1
 			let key = $("#Key").val()
 			let categoryId = $("#CategoryId").find(":selected").val()
-			alert(page + "" + key + "" + categoryId)
 
 			show(key, categoryId, page);
 		})

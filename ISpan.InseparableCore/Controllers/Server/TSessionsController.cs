@@ -13,7 +13,7 @@ using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class TSessionsController : Controller
+    public class TSessionsController : AdminSuperController
     {
         private readonly InseparableContext _context;
         private readonly SessionRepository session_repo;
@@ -27,23 +27,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             movie_repo = new MovieRepository(context, null);
             room_repo = new RoomRepository(context);
         }
-        //pagelist
-        /// <summary>
-        /// 分頁
-        /// </summary>
-        /// <param name="page">第幾頁</param>
-        /// <param name="pageSize">一頁幾個</param>
-        /// <param name="vm">資料</param>
-        /// <returns></returns>
-        public IPagedList<CSessionVM> SessionPageList(int? pageIndex, int? pageSize, List<CSessionVM> vm)
-        {
-            if (!pageIndex.HasValue || pageIndex < 1)
-                return null;
-            IPagedList<CSessionVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
-            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
-                return null;
-            return pagelist;
-        }
+        
         // GET: TSessions
         public async Task<IActionResult> Index()
         {
@@ -55,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var pageIndex = 1;
 
             var pagedItems = inseparableContext.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = SessionPageList(pageIndex, pagesize, inseparableContext);
+            ViewBag.page =GetPage.GetPagedProcess(pageIndex, pagesize, inseparableContext);
             ViewData["FCinemaId"] = new SelectList(_context.TCinemas, "FCinemaId", "FCinemaName");
             ViewData["FMovieId"] = new SelectList(movie_repo.GetByOffDay(), "FMovieId", "FMovieName");
             return View(pagedItems);
@@ -260,6 +244,11 @@ namespace ISpan.InseparableCore.Controllers.Server
         }
 
         //Ajax
+        /// <summary>
+        /// 限制場次可選取時間 因每部電影播放時段不同
+        /// </summary>
+        /// <param name="movie">電影id</param>
+        /// <returns></returns>
         public IActionResult GetDate(int? movie)
         {
             if (movie == null)
@@ -272,6 +261,12 @@ namespace ISpan.InseparableCore.Controllers.Server
                 min=min,
             }.ToJson());
         }
+
+        /// <summary>
+        /// 限制可選擇影廳 每家電影院的影廳不同
+        /// </summary>
+        /// <param name="cinema">影院id</param>
+        /// <returns></returns>
         public IActionResult GetRoom(int? cinema)
         {
             if (cinema == null)

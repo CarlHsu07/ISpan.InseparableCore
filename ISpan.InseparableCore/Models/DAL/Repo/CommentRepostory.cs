@@ -25,8 +25,9 @@ namespace ISpan.InseparableCore.Models.DAL
 			foreach (var comment in comments)
 			{
 				CommentVm vm = comment.ModelToVm();
-				vm.MemberName = context.TComments.Include(t => t.FMember)
-					.FirstOrDefault(t => t.FCommentId == vm.FCommentId).FMember.FFirstName;
+				var member = context.TMembers.FirstOrDefault(t => t.FId == comment.FMemberId);
+				vm.MemberName = member.FLastName + member.FFirstName;
+				vm.FMemberId = member.FMemberId;
 				vms.Add(vm);
 			}
 			return vms;
@@ -34,7 +35,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public CommentVm GetVmById(int id)
 		{
-			TComments comment = context.TComments.FirstOrDefault(t => t.FCommentId == id);
+			TComments comment = context.TComments.Find(id);
 			CommentVm vm = comment.ModelToVm();
 			return vm;
 		}
@@ -49,14 +50,13 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			await context.SaveChangesAsync();
 		}
-		public async Task UpdateAsync(CommentVm vm)
+		public void Update(CommentVm vm)
 		{
-			TComments comment = context.TComments.FirstOrDefault(t => t.FCommentId == vm.FCommentId);
+			TComments comment = context.TComments.Find(vm.FCommentId);
 			comment.FCommentContent = vm.FCommentContent;
 			comment.FDeleted = vm.FDeleted;
 			context.Update(comment);
-			await context.SaveChangesAsync();
-
+			context.SaveChanges();
 		}
 	}
 }

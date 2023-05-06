@@ -25,8 +25,9 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 			foreach (var comment in comments)
 			{
 				MovieCommemtVm vm = comment.ModelToVm();
-				vm.MemberName = context.TMovieCommentDetails.Include(t => t.FMember)
-					.FirstOrDefault(t => t.FSerialNumber == vm.FSerialNumber).FMember.FFirstName;
+				var member = context.TMembers.FirstOrDefault(t => t.FId == comment.FMemberId);
+				vm.MemberName = member.FLastName + member.FFirstName;
+				vm.FMemberId = member.FMemberId;
 				vms.Add(vm);
 			}
 			return vms;
@@ -34,7 +35,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 
 		public MovieCommemtVm GetVmById(int id)
 		{
-			TMovieCommentDetails comment = context.TMovieCommentDetails.FirstOrDefault(t => t.FSerialNumber == id);
+			TMovieCommentDetails comment = context.TMovieCommentDetails.Find(id);
 			MovieCommemtVm vm = comment.ModelToVm();
 			return vm;
 		}
@@ -51,7 +52,7 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
 		}
 		public async Task UpdateAsync(MovieCommemtVm vm)
 		{
-			TMovieCommentDetails comment = context.TMovieCommentDetails.FirstOrDefault(t => t.FSerialNumber == vm.FSerialNumber);
+			TMovieCommentDetails comment = context.TMovieCommentDetails.Find(vm.FSerialNumber);
 			comment.FComment = vm.FComment;
 			comment.FDeleted = vm.FDeleted;
 			context.Update(comment);

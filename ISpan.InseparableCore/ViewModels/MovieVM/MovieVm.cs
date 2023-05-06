@@ -43,6 +43,7 @@ namespace ISpan.InseparableCore.ViewModels
 		public decimal? FMovieScore { get; set; } = 0;
 		[DisplayName("電影類別")]
 		public string? CategoryIds { get; set; }
+		public List<int>? CategoryIdsContained { get; set; }
 
 		[DisplayName("電影類別")]
 		public string? Categories { get; set; }
@@ -53,48 +54,48 @@ namespace ISpan.InseparableCore.ViewModels
 		[DisplayName("宣傳照")]
 		public IFormFile? Image { get; set; }
 	}
-	public static class MovieVmExtensions
-	{
-		public static MovieVm ModelToVm(this TMovies movie)
-		{
-			int len = Math.Min(movie.FMovieIntroduction.Length, 10);
+	//public static class MovieVmExtensions
+	//{
+	//	public static MovieVm ModelToVm(this TMovies movie)
+	//	{
+	//		int len = Math.Min(movie.FMovieIntroduction.Length, 10);
 
-			MovieVm vm = new MovieVm()
-			{
-				FMovieId = movie.FMovieId,
-				FMovieIntroduction = movie.FMovieIntroduction,
-				PartialIntro = movie.FMovieIntroduction.Trim().Substring(0, len) + "...",
-				FMovieName = movie.FMovieName,
-				FMovieLevelId = movie.FMovieLevelId,
-				FMovieOnDate = movie.FMovieOnDate,
-				OnDate = movie.FMovieOnDate.ToString("yyyy-MM-dd"),
-				FMovieOffDate = movie.FMovieOffDate,
-				OffDate = ((DateTime)movie.FMovieOffDate).ToString("yyyy-MM-dd"),
-				FMovieLength = movie.FMovieLength,
-				FMovieScore = movie.FMovieScore,
-				FMovieImagePath = movie.FMovieImagePath,
-				FMovieActors = movie.FMovieActors,
-				FMovieDirectors= movie.FMovieDirectors,
-			};
-			return vm;
-		}
-		public static TMovies VmToModel(this MovieVm vm)
-		{
-			var movie = new TMovies()
-			{
-				FMovieId = vm.FMovieId,
-				FMovieIntroduction = vm.FMovieIntroduction,
-				FMovieName = vm.FMovieName,
-				FMovieLevelId = vm.FMovieLevelId,
-				FMovieOnDate = vm.FMovieOnDate,
-				FMovieOffDate = vm.FMovieOnDate.AddMonths(1),
-				FMovieLength = vm.FMovieLength,
-				FMovieScore = (int)vm.FMovieScore,
-				FMovieImagePath = vm.FMovieImagePath,
-				FMovieActors = vm.FMovieActors,
-				FMovieDirectors= vm.FMovieDirectors,
-			};
-			return movie;
-		}
-	}
+	//		MovieVm vm = new MovieVm()
+	//		{
+	//			FMovieId = movie.FMovieId,
+	//			FMovieIntroduction = movie.FMovieIntroduction,
+	//			PartialIntro = movie.FMovieIntroduction.Trim().Substring(0, len) + "...",
+	//			FMovieName = movie.FMovieName,
+	//			FMovieLevelId = movie.FMovieLevelId,
+	//			FMovieOnDate = movie.FMovieOnDate,
+	//			OnDate = movie.FMovieOnDate.ToString("yyyy-MM-dd"),
+	//			FMovieOffDate = movie.FMovieOffDate,
+	//			OffDate = ((DateTime)movie.FMovieOffDate).ToString("yyyy-MM-dd"),
+	//			FMovieLength = movie.FMovieLength,
+	//			FMovieScore = movie.FMovieScore,
+	//			FMovieImagePath = movie.FMovieImagePath,
+	//			FMovieActors = movie.FMovieActors,
+	//			FMovieDirectors= movie.FMovieDirectors,
+	//		};
+	//		return vm;
+	//	}
+	//	public static TMovies VmToModel(this MovieVm vm)
+	//	{
+	//		var movie = new TMovies()
+	//		{
+	//			FMovieId = vm.FMovieId,
+	//			FMovieIntroduction = vm.FMovieIntroduction,
+	//			FMovieName = vm.FMovieName,
+	//			FMovieLevelId = vm.FMovieLevelId,
+	//			FMovieOnDate = vm.FMovieOnDate,
+	//			FMovieOffDate = vm.FMovieOnDate.AddMonths(1),
+	//			FMovieLength = vm.FMovieLength,
+	//			FMovieScore = (int)vm.FMovieScore,
+	//			FMovieImagePath = vm.FMovieImagePath,
+	//			FMovieActors = vm.FMovieActors,
+	//			FMovieDirectors= vm.FMovieDirectors,
+	//		};
+	//		return movie;
+	//	}
+	//}
 }

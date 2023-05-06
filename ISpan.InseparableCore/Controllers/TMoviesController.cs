@@ -13,51 +13,42 @@ using static System.Formats.Asn1.AsnWriter;
 using X.PagedList;
 using prjMvcCoreDemo.Models;
 using System.Text.Json;
+using ISpan.InseparableCore.Models.BLL;
+using ISpan.InseparableCore.Models.BLL.DTOs;
 
 namespace ISpan.InseparableCore.Controllers
 {
-	public class TMoviesController : SuperController
+	public class TMoviesController : Controller
 	{
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
 		private readonly MovieRepository repo;
-
+		private readonly MovieService service;
 		public TMoviesController(InseparableContext context, IWebHostEnvironment enviro)
 		{
 			_context = context;
 			this._enviro = enviro;
 			repo = new MovieRepository(context, enviro);
-		}
-
-		//產生頁碼
-		protected IPagedList<MovieVm> GetPagedProcess(int? page, int pageSize, List<MovieVm> movies)
-		{
-			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1)
-				return null;
-			// 從資料庫取得資料
-			var listUnpaged = movies;
-			IPagedList<MovieVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
-			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
-				return null;
-			return pagelist;
+			service = new MovieService(repo);
 		}
 
 		public IActionResult Index()
 		{
-			List<MovieVm> movies = repo.Search(null).ToList();
-
+			int pageSize = 10;
+			var movies = repo.Search(null);
+			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Take(pageSize);
+			var vms = movies.ModelsToVms();
 			#region ViewData
-			int pageContent = 2;
-			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
-														   : movies.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
@@ -74,30 +65,31 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 			#endregion
-			int pageSize = 10;
-
-			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
-
-			movies = movies.Take(pageSize).ToList();
-			return View(movies);
+			return View(vms);
 		}
-		[HttpPost]
+		[HttpPost]//可改成get
 		public IActionResult Index(MovieSearchCondition condition)
 		{
-			List<MovieVm> movies = repo.Search(condition).ToList();
+			int pageSize = 10;
+			var movies = repo.Search(condition);
+			var pageList = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize);
+			var vms = movies.ModelsToVms();
+
+			if (vms.ToList().Count == 0) return Ok("noData");
 
 			#region ViewData
 
 			//產生頁碼SelectList
-			int pageContent = 2;
-			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
-														   : movies.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
+			//int pageContent = 2;
+			//int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+			//											   : dtos.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
 
 			//為電影類別SelectList加入預設值
 			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -116,14 +108,10 @@ namespace ISpan.InseparableCore.Controllers
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
 			#endregion
-			int pageSize = 10;
-			var pageList = GetPagedProcess(condition.Page, pageSize, movies);
-			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
-			if (movies.Count == 0) return Ok("noData");
 
 			return Ok(new
 			{
-				Vm = movies,
+				Vm = vms,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -139,9 +127,9 @@ namespace ISpan.InseparableCore.Controllers
 				return NotFound();
 			}
 
-			MovieVm vm = repo.GetVmById((int)id);
+			var vm = repo.GetMovieVm((int)id);
+
 			return View(vm);
 		}
-
 	}
 }

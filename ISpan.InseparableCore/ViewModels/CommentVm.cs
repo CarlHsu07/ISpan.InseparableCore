@@ -8,7 +8,9 @@ namespace ISpan.InseparableCore.ViewModels
 		public int FCommentId { get; set; }
 		public int FArticleId { get; set; }
 		public int FItemNumber { get; set; }
-		public int FMemberId { get; set; }
+		public int FMemberPK { get; set; }
+		[DisplayName("會員Id")]
+		public string? FMemberId { get; set; }
 		[DisplayName("會員名字")]
 		public string? MemberName { get; set; }
 		[DisplayName("留言日期")]
@@ -34,7 +36,7 @@ namespace ISpan.InseparableCore.ViewModels
 			{
 				FCommentId = comment.FCommentId,
 				FArticleId = comment.FArticleId,
-				FMemberId = comment.FMemberId,
+				FMemberPK = comment.FMemberId,
 				FCommentPostingDate = comment.FCommentPostingDate,
 				PostingDate = comment.FCommentPostingDate.ToString("yyyy-MM-dd HH:mm:ss"),
 				FCommentModifiedDate = comment.FCommentModifiedDate,
@@ -51,7 +53,7 @@ namespace ISpan.InseparableCore.ViewModels
 			{
 				FCommentId = vm.FCommentId,
 				FArticleId = vm.FArticleId,
-				FMemberId = vm.FMemberId,
+				FMemberId = vm.FMemberPK,
 				FCommentPostingDate = (DateTime)vm.FCommentPostingDate,
 				FCommentModifiedDate = (DateTime)vm.FCommentModifiedDate,
 				FCommentLikes = vm.FCommentLikes,

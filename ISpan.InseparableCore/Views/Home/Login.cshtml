@@ -5,24 +5,23 @@
     ViewData["Title"] = "Login";
 }
 
-<hr />
-<div class="row">
-    <div class="card col-lg-4 mx-auto bg-dark">
+<div class="row mt-5">
+    <div class="card col-lg-4 mx-auto bg_grey">
         <div class="card-body px-5 py-5">
-            <h3 class="card-title text-left mb-3">登入</h3>
+            <h3 class="card-title text-left mb-3">會員登入</h3>
             <form asp-action="Login" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label asp-for="Email" class="control-label"></label>
                     <input asp-for="Email" class="form-control" placeholder="請輸入Email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-3">
                     <label asp-for="Password" class="control-label"></label>
                     <input asp-for="Password" class="form-control" placeholder="請輸入密碼" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
-                <div class="form-group d-flex align-items-center justify-content-between">
+                <div class="form-group d-flex align-items-center justify-content-between" hidden>
                     @*<div class="form-check">
                         <label class="form-check-label">
                             <input type="checkbox" class="form-check-input"> 記住我 <i class="input-helper"></i>
@@ -31,7 +30,7 @@
                     @*<a href="#" class="forgot-pass">忘記密碼</a>*@
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block enter-btn">登入</button>
+                    <button type="submit" class="btn btn-primary btn-block enter-btn mt-5">登入</button>
                 </div>
                 @*<div class="d-flex">
                     // todo 第三方登入按鈕，按鈕樣式要改
@@ -42,7 +41,7 @@
                         <i class="mdi mdi-google-plus"></i> Google
                     </button>
                 </div>*@
-                <p class="text-center">還沒有帳號嗎？<a asp-action="Register" asp-controller="Member"> 註冊</a></p>
+                <p class="text-center mt-4 mb-0">還沒有帳號嗎？<a asp-action="Register" asp-controller="Member"> 點我註冊</a></p>
             </form>
         </div>
     </div>

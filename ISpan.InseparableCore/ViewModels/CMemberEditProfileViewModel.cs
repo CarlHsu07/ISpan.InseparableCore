@@ -1,5 +1,6 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
+using static ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel;
 
 namespace ISpan.InseparableCore.ViewModels
 {
@@ -70,7 +71,8 @@ namespace ISpan.InseparableCore.ViewModels
 		public string? ConfirmPassword { get; set; }
 
 		[Display(Name = "生日")]
-		public DateTime? DateOfBirth
+        [MaxToday(ErrorMessage = "生日不能超過今天")]
+        public DateTime? DateOfBirth
 		{
 			get { return _member.FDateOfBirth; }
 			set { _member.FDateOfBirth = value; }

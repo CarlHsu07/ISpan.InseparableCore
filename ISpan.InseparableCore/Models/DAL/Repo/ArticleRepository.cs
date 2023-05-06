@@ -1,4 +1,5 @@
-﻿using ISpan.InseparableCore.ViewModels;
+﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ISpan.InseparableCore.Models.DAL
@@ -12,34 +13,123 @@ namespace ISpan.InseparableCore.Models.DAL
 			this.context = context;
 		}
 
-		public IEnumerable<ArticleVm> Search(ArticleSearchCondition? condition)
+		public IEnumerable<ArticleEntity> Search(ArticleSearchCondition? condition)
 		{
-			var articles = context.TArticles.Where(t => t.FDeleted == false).Include(t => t.FMember)
-				.OrderByDescending(t => t.FArticlePostingDate).ToList();
+			IEnumerable<TArticles> articles = context.TArticles.Where(t => t.FDeleted == false)
+				.Include(t => t.FMember).OrderByDescending(t => t.FArticlePostingDate);
 
-			if (condition == null) return ModelToVms(articles);
+			if (condition == null) return articles.ModelsToEntities();
 			//id搜尋
 			if (int.TryParse(condition.Key, out int articleId))
 			{
-				articles = articles.Where(t => t.FArticleId == articleId).ToList();
-				return ModelToVms(articles);
+				articles = articles.Where(t => t.FArticleId == articleId);
+				return articles.ModelsToEntities();
 			}
-
 
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
-				articles = articles.Where(t => t.FArticleTitle.Contains(condition.Key) 
+				articles = articles.Where(t => t.FArticleTitle.Contains(condition.Key)
 											|| t.FArticleContent.Contains(condition.Key)
-											|| (t.FMember.FLastName + t.FMember.FFirstName).Contains(condition.Key)).ToList();
+											|| (t.FMember.FLastName + t.FMember.FFirstName).Contains(condition.Key));
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)
 			{
-				articles = articles.Where(t => t.FArticleCategoryId == condition.CategoryId).ToList();
+				articles = articles.Where(t => t.FArticleCategoryId == condition.CategoryId);
 			}
 
-			return ModelToVms(articles);
+			return articles.ModelsToEntities();
+		}
+		public ArticleEntity GetByTitle(string title)
+		{
+			var article = context.TArticles.FirstOrDefault(t => t.FArticleTitle.Equals(title) && !t.FDeleted);
+			if (article == null) return null;
+			return article.ModelToEntity();
+		}
+		public ArticleEntity GetByArticleId(int articleId)
+		{
+			TArticles article = context.TArticles.Find(articleId);
+			if (article == null || article.FDeleted) return null;
+
+			return article.ModelToEntity();
+		}
+
+		public void Create(ArticleEntity entity)
+		{
+			TArticles article = new TArticles();
+
+			article.FArticleTitle = entity.FArticleTitle;
+			article.FMemberId = entity.FMemberId;
+			article.FArticleCategoryId = entity.FArticleCategoryId;
+			article.FArticleContent = entity.FArticleContent;
+			article.FArticleClicks = 0;
+
+			article.FArticleLikes = 0;
+			article.FDeleted = false;
+			article.FArticlePostingDate = DateTime.Now;
+			article.FArticleModifiedDate = DateTime.Now;
+
+			context.Add(article);
+			context.SaveChanges();
+		}
+		public void Update(ArticleEntity entity)
+		{
+			TArticles article = context.TArticles.Find(entity.FArticleId);
+
+			article.FArticleTitle = entity.FArticleTitle;
+			article.FArticleCategoryId = entity.FArticleCategoryId;
+			article.FArticleContent = entity.FArticleContent;
+			article.FArticleModifiedDate = DateTime.Now;
+
+			context.Update(article);
+			context.SaveChanges();
+		}
+
+		public async Task UpdateLikes(int articleId, int likes)
+		{
+			TArticles article = context.TArticles.Find(articleId);
+			article.FArticleLikes = likes;
+
+			context.Update(article);
+			await context.SaveChangesAsync();
+		}
+		public void Click(int articleId)
+		{
+			TArticles article = context.TArticles.Find(articleId);
+			article.FArticleClicks++;
+
+			context.Update(article);
+			context.SaveChanges();
+		}
+		public async Task Delete(int articleId)
+		{
+			var article = await context.TArticles.FindAsync(articleId);
+			if (article == null || article.FDeleted) throw new Exception("此文章不存在");
+			article.FDeleted = true;
+			article.FArticleClicks = 0;
+			context.Update(article);
+			await context.SaveChangesAsync();
+		}
+		public string GetCategory(int categoryId)
+		{
+			return context.TMovieCategories.Find(categoryId).FMovieCategoryName;
+		}
+
+		public TMembers GetMemberByPK(int pk)
+		{
+			return context.TMembers.Find(pk);
+		}
+		public ArticleVm GetVmById(int id)
+		{
+			TArticles article = context.TArticles.Include(t => t.FArticleCategory)
+				.Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
+
+			ArticleVm vm = article.ModelToVm();
+			vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
+			vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
+			vm.FMemberId = article.FMember.FMemberId;
+			return vm;
 		}
 		public IEnumerable<ArticleVm> ModelToVms(IEnumerable<TArticles> articles)
 		{
@@ -53,67 +143,22 @@ namespace ISpan.InseparableCore.Models.DAL
 			return vms;
 		}
 
-		public ArticleVm GetVmById(int id)
+		public IEnumerable<ArticleVm> Articles(string keyword)
 		{
-			TArticles article = context.TArticles.Include(t => t.FArticleCategory)
-				.Include(t => t.FMember).FirstOrDefault(t => t.FArticleId == id);
+			if (keyword == null)
+				return null;
 
-			ArticleVm vm = article.ModelToVm();
-			vm.ArticleCategory = article.FArticleCategory.FMovieCategoryName;
-			vm.MemberName = article.FMember.FLastName + article.FMember.FFirstName;
-			vm.FMemberId = article.FMember.FMemberId;
-			return vm;
-		}
-		public async Task CreateAsync(ArticleVm vm)
-		{
-			//新增Article
-			vm.FArticlePostingDate = DateTime.Now;
-			vm.FArticleModifiedDate = DateTime.Now;
-			TArticles article = vm.VmToModel();
-
-			context.Add(article);
-			context.SaveChanges();
-
-			await context.SaveChangesAsync();
-		}
-		public async Task UpdateAsync(ArticleVm vm)
-		{
-			TArticles article = context.TArticles.Find(vm.FArticleId);
-			article.FArticleModifiedDate = DateTime.Now;
-			article.FArticleTitle = vm.FArticleTitle;
-			article.FArticleCategoryId = vm.FArticleCategoryId;
-			article.FArticleContent = vm.FArticleContent;
-			article.FArticleLikes = vm.FArticleLikes;
-
-			context.Update(article);
-			await context.SaveChangesAsync();
-
-		}
-
-		public async Task UpdateLikeAsync(ArticleVm vm)
-		{
-			TArticles article = context.TArticles.Find(vm.FArticleId);
-			article.FArticleLikes = vm.FArticleLikes;
-
-			context.Update(article);
-			await context.SaveChangesAsync();
-
-		}
-		public void Click(int articleId)
-		{
-			TArticles article = context.TArticles.Find(articleId);
-			article.FArticleClicks++;
-			context.Update(article);
-			context.SaveChanges();
-		}
-		public void Delete(int articleId)
-		{
-			var article = context.TArticles.Find(articleId);
-			if (article != null)
+			List<TArticles> articles = null;
+			if (!string.IsNullOrEmpty(keyword))
 			{
-				article.FDeleted = true;
-				context.TArticles.Update(article);
+				articles = context.TArticles.Where(t => t.FArticleTitle.Contains(keyword)
+													|| t.FArticleContent.Contains(keyword)
+													|| (t.FMember.FFirstName).Contains(keyword)
+													|| (t.FMember.FLastName).Contains(keyword))
+											.Where(t => t.FDeleted == false).ToList();
 			}
+
+			return ModelToVms(articles);
 		}
 
 	}

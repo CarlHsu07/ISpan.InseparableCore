@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class TCinemasController : Controller
+    public class TCinemasController : AdminSuperController
     {
         private readonly InseparableContext _context;
         private readonly CinemaRepository cinema_repo;
@@ -31,15 +31,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             _context = context;
             cinema_repo = new CinemaRepository(context);
         }
-        public IPagedList<CTCinemasVM> CinemaPageList(int? pageIndex, int? pageSize, List<CTCinemasVM> vm)
-        {
-            if (!pageIndex.HasValue || pageIndex < 1)
-                return null;
-            IPagedList<CTCinemasVM> pagelist = vm.ToPagedList(pageIndex ?? 1, (int)pageSize);
-            if (pagelist.PageNumber != 1 && pageIndex.HasValue && pageIndex > pagelist.PageCount)
-                return null;
-            return pagelist;
-        }
+       
         // GET: TCinemas
         public IActionResult Index()
         {
@@ -50,7 +42,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             int pageIndex = 1;
             int pagesize = 10;
             var pagedItems = data.Skip((pageIndex - 1) * pagesize).Take(pagesize).ToList();
-            ViewBag.page = CinemaPageList(pageIndex, pagesize, data);
+            ViewBag.page = GetPage.GetPagedProcess(pageIndex, pagesize, data);
             ViewData["FCity"] = new SelectList(_context.TCities, "FCityName", "FCityName");
             List<string> brnad = new List<string>{"威秀","秀泰","國賓",};
             SelectList brnadList = new SelectList(brnad);

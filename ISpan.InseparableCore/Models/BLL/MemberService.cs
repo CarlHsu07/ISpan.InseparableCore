@@ -13,31 +13,52 @@ namespace ISpan.InseparableCore.Models.BLL
         {
             _context = context;
         }
+        
+        /// <summary>
+        /// 判斷Email是否存在
+        /// </summary>
+        /// <param name="memberEmail"></param>
+        /// <returns>如果Email存在就回傳true，否則回傳false</returns>
+        public bool IsEmailExist(string memberEmail)
+        {
+            bool isExist = false;
 
-        // 產生 會員ID 的方法
+            if (!string.IsNullOrEmpty(memberEmail))
+            {
+                isExist = _context.TMembers.Any(f => f.FEmail == memberEmail);
+            }
+
+            return isExist;
+        }
+
+        /// <summary>
+        /// 產生 會員ID 的方法
+        /// </summary>
+        /// <returns>回傳一個會員ID的字串，例如M2023050300001</returns>
         public string GenerateMemberId()
         {
             String todayDate = DateTime.Now.ToString("yyyyMMdd"); // 今天日期
             string newMemberID = string.Empty; // 新的會員ID
-            int newSequence = 0; // 新的序號
+            string newSequence = string.Empty; // 新的五位數序號
 
-            string lastMemberID = _context.TMembers
+            string? lastMemberID = _context.TMembers
                 .OrderByDescending(m => m.FSignUpTime)
                 .FirstOrDefault()?.FMemberId ?? null;
 
             if (string.IsNullOrEmpty(lastMemberID)) // 若DB中沒任何會員
             {
-                newMemberID = CreateFirstMemberIDToday(todayDate);
+                newMemberID = CreateFirstMemberIDToday(todayDate); // 產生當日第一筆會員ID
             }
             else
             {
+                // todo 有bug，序號不正確
                 string dateString = lastMemberID.Substring(1, 8);
 
                 if (dateString == todayDate) // 今天有會員註冊
                 {
                     int length = lastMemberID.Length;
                     string lastFiveChars = length >= 5 ? lastMemberID.Substring(length - 5) : lastMemberID;
-                    newSequence = int.Parse(lastFiveChars) + 1;
+                    newSequence = (int.Parse(lastFiveChars) + 1).ToString().PadLeft(5, '0');
                     newMemberID = "M" + todayDate + newSequence; // 將日期和序號結合，形成 newMemberID，例如 M2023050300001
                 }
                 else
@@ -92,6 +113,7 @@ namespace ISpan.InseparableCore.Models.BLL
             return isCurrentMember;
         }
 
+        // 取得一個好友紀錄
         public TFriends? GetOneFriendShip(int memberId, int friendId)
         {
             return _context.TFriends.FirstOrDefault(f =>
@@ -125,6 +147,27 @@ namespace ISpan.InseparableCore.Models.BLL
             }
 
             return friendList;
+        }
+
+        // 驗證信
+        public bool ConfirmEmail(TMembers member, string token)
+        {
+            // todo 實作驗證信箱的code
+            bool result = false;
+            if (!string.IsNullOrEmpty(token))
+            {
+                // 驗證驗證碼是否相符
+                if (member.FAddress == token)
+                {
+                    // 驗證成功，更新會員狀態
+                    //member.FAddress = true;
+                    // todo: 更新會員狀態到資料庫
+
+                    result = true;
+                }
+            }
+
+            return result;
         }
     }
 }

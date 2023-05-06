@@ -5,49 +5,66 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
 using NuGet.Protocol;
+using ISpan.InseparableCore.Models.BLL.DTOs;
+using ISpan.InseparableCore.Models.BLL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-	public class AdminArticleController : Controller
+	public class AdminArticleController : AdminSuperController
 	{
 		private readonly InseparableContext _context;
 		private readonly ArticleRepository articleRepo;
+		private readonly ArticleService articleService;
 		private readonly ArticleLikeRepository likeRepo;
 		public AdminArticleController(InseparableContext context)
 		{
 			_context = context;
 			articleRepo = new ArticleRepository(context);
+			articleService = new ArticleService(articleRepo);
 			likeRepo = new ArticleLikeRepository(context);
 		}
+		public IEnumerable<ArticleSearchVm> DtosToVms(IEnumerable<ArticleSearchDto> dtos)
+		{
+			List<ArticleSearchVm> vms = new List<ArticleSearchVm>();
 
-		//產生頁碼
-		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
-		{
-			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1) return null;
-			// 從資料庫取得資料
-			var listUnpaged = articles;
-			IPagedList<ArticleVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
-			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount) return null;
-			return pagelist;
+			foreach (var dto in dtos)
+			{
+				var vm = dto.SearchDtoToVm();
+				vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+				var member = articleRepo.GetMemberByPK(dto.FMemberId);
+				vm.FMemberId = member.FMemberId;
+				vm.MemberName = member.FLastName + member.FFirstName;
+				vms.Add(vm);
+			}
+			return vms;
 		}
-		// GET: TArticles
-		public async Task<IActionResult> IndexMaintainer()
+		private IActionResult ShowError(Exception ex)
 		{
-			List<ArticleVm> articles = articleRepo.Search(null).ToList();
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(IndexMaintainer), new { errorMessage });
+		}
+
+		// GET: TArticles
+		public async Task<IActionResult> IndexMaintainer(string errorMessage = "")
+		{
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+
+			ViewBag.ArticleModel = GetPage.GetPagedProcess(1, pageSize, dtos);
+			dtos = dtos.Take(pageSize).ToList();
+			var vms = DtosToVms(dtos);
 
 			#region ViewData
 
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			//articles = articles.Take(pageContent).ToList();
+			//dtos = dtos.Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -55,23 +72,24 @@ namespace ISpan.InseparableCore.Controllers.Server
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
-
-			int pageSize = 10;
-
-			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
-			articles = articles.Take(pageSize).ToList();
-
-			return View(articles);
+			ViewBag.errorMessage = errorMessage;
+			return View(vms);
 		}
 		[HttpPost]
 		public async Task<IActionResult> IndexMaintainer(ArticleSearchCondition condition)
 		{
-			List<ArticleVm> articles = articleRepo.Search(condition).ToList();
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(condition).ToList();
+
+			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
+			dtos = dtos.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
+			if (dtos.Count == 0) return Ok("noData");
+			var vms = DtosToVms(dtos);
 
 			#region ViewData
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
@@ -85,14 +103,9 @@ namespace ISpan.InseparableCore.Controllers.Server
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 			#endregion
 
-			int pageSize = 10;
-			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
-			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
-			if (articles.Count == 0) return Ok("noData");
-
 			return Ok(new
 			{
-				Vm = articles,
+				Vm = vms,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -106,9 +119,40 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			var vm = articleRepo.GetVmById((int)id);
+			var dto = new ArticleSearchDto();
+			try
+			{
+				dto = articleService.GetSearchDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+			ArticleSearchVm vm = dto.SearchDtoToVm();
+			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+			var member = articleRepo.GetMemberByPK(dto.FMemberId);
+			vm.FMemberId = member.FMemberId;
+			vm.MemberName = member.FLastName + member.FFirstName;
 
 			return View(vm);
+		}
+		public async Task<IActionResult> Delete(int articleId)
+		{
+			if (_context.TArticles == null)
+			{
+				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
+			}
+
+			try
+			{
+				articleRepo.Delete(articleId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
+			return RedirectToAction(nameof(IndexMaintainer));
 		}
 
 	}

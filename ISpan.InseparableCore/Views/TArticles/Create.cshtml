@@ -1,50 +1,10 @@
-﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+﻿@model ISpan.InseparableCore.ViewModels.ArticleCreateVm
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/ArticleEditAndCreate.css" rel="stylesheet" />
+}
 
 <style>
-	.btnEditAndDeleted {
-		justify-content: flex-end
-	}
-
-	.divContainerRow {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-	.divContainerCol {
-		display: flex;
-		flex-direction: column;
-		padding: 5px;
-		margin: 0;
-	}
-
-	.text {
-		font-size: 30px;
-	}
-
-	.textarea {
-		height: 700px;
-		max-width: 3000px;
-	}
-	.divBorder {
-		border-color: white;
-		border-width: 3px;
-		border-style: solid;
-	}
-
-	.divContainerRow label {
-		margin: 10px 10px 0 30px;
-		font-size: 30px;
-	}
-
-	titleInput {
-		width: 700px;
-	}
-
-	.divContainerRow select, .divContainerRow input ,divContainerRow button{
-		margin: 10px;
-		font-size: 20px;
-	}
 
 	.inDivPosition {
 		position: relative;
@@ -60,6 +20,7 @@
 	<div class=" divContainerCol">
 		<form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<input asp-for="FMemberId" type="hidden" value="@ViewBag.UserId" />
 			<div class=" divContainerRow">
 				<div class="form-group">
 					<label asp-for="FArticleTitle" class="control-label "></label>	
@@ -77,7 +38,7 @@
 			</div>
             <div class="form-group">
 				<label asp-for="FArticleContent" class="control-label text "></label>
-				<textarea name="FArticleContent" class="form-control text textarea"></textarea>
+				<textarea asp-for="FArticleContent" class="form-control  tinymce" id="textarea"></textarea>
                 <span asp-validation-for="FArticleContent" class="text-danger"></span>
             </div>
 			<div class="form-group divContainerRow btnEditAndDeleted">
@@ -95,5 +56,7 @@
 	<script>
 		function backToIndex(){ window.location.href = "/TArticles/Index" }
 	</script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
 }

@@ -1,89 +1,11 @@
-﻿@model ISpan.InseparableCore.ViewModels.MovieVm
+﻿@model ISpan.InseparableCore.ViewModels.MovieUpdateVm
 
-@{
-	ViewData["Title"] = "Edit";
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/MovieEditAndCreate.css" rel="stylesheet" />
 }
+
 <style>
-	.form-group label {
-		font-size: 0.875rem;
-		line-height: 1;
-		vertical-align:baseline;
-	}
-	form .form-control {
-		border-radius: 5px;
-		background-color: rgb(20,20,20);
-		color: white;
-	}
-
-		form .form-control:focus {
-			background-color: rgb(20,20,20);
-		}
-
-	.go-right{
-		justify-content: flex-end
-	}
-
-	form div {
-		font-size: 20px;
-		text-align: justify;
-		margin: 10px 10px 10px 50px;
-	}
-
-	.image-container {
-		text-align: center;
-	}
-
-		.image-container img {
-			display: block;
-			margin: 0 auto;
-			width:300px;
-		}
-
-	pre {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-	}
-
-	.divContainerRow {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-		.divContainerRow > div {
-			width: 550px;
-		}
-
-	.textarea {
-		height: 200px;
-		width: 500px;
-	}
-
-	.divBorder {
-		border-color: white;
-		border-width: 1px;
-		border-style: solid;
-		border-radius: 9px;
-	}
-
-
-	.checkbox-container {
-		width: 500px;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		padding: 20px;
-	}
-
-		.checkbox-container > div {
-			width: 30%;
-			margin: initial;
-		}
-
-	.divBlock {
-		padding:0;
-		margin: 20px 0;
-	}
 
 	.inDivPosition {
 		position: relative;
@@ -142,8 +64,16 @@
 					@foreach (var item in ViewBag.FMovieCategoryId)
 					{
 						<div>
+						@if (Model.CategoryIdsContained.Count > 0 && Model.CategoryIdsContained.Contains(int.Parse(item.Value)))
+						{
+							<input type="checkbox" name="CategoryCheck" value="@item.Value" id="@item.Value" checked/>
+							<label for="@item.Value">@item.Text</label>
+						}
+						else
+						{
 							<input type="checkbox" name="CategoryCheck" value="@item.Value" id="@item.Value"/>
 							<label for="@item.Value">@item.Text</label>
+						}
 						</div>
 					}
 					<input type="hidden" name="CategoryIds" id="CategoryIds" />
@@ -170,11 +100,11 @@
 			<div class="divBlock" style="width:100px">
 				<form asp-action="Delete">
 					<input type="hidden" name="movieId" value="@Model.FMovieId" />
-					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+					<input type="submit" value="刪除" class="btn btn-danger"/>
 				</form>
 			</div>
 			<div class="divBlock" style="width:100px">
-				<a asp-action="Index" class="btn btn-light ">返回</a>
+				<a asp-action="IndexMaintainer" class="btn btn-light ">返回</a>
 			</div>
 		</div>
 	</div>
@@ -182,15 +112,16 @@
 
 @section Scripts {
 	<script>
-		var categoryIds = "";
 
+		var categoryIds = "";
+		
 		$("#Edit").submit(function () {
 			var checkboxes = document.querySelectorAll("input[name='CategoryCheck']");
 			$('input[name="CategoryCheck"]:checked').each(function () {
 				categoryIds += $(this).val() + ',';
 			});
 			$("#CategoryIds").val(categoryIds);
-			alert($("#CategoryIds").val())
+			//alert($("#CategoryIds").val())
 		})
 		const fileInput = document.getElementById('fileInput');
 		const preview = document.getElementById('preview');

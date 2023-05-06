@@ -14,6 +14,7 @@ namespace ISpan.InseparableCore.Controllers
 			base.OnActionExecuting(context);
 
 			var actionName = context.ActionDescriptor.RouteValues["action"];
+			var controllerName = context.ActionDescriptor.RouteValues["controller"];
 
 			if (actionName == "Register" || actionName == "GetAreas" ||actionName== "Paydone") // 不進行權限控管
 			{

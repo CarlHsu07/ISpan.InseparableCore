@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.MovieVm
+﻿@model ISpan.InseparableCore.ViewModels.MovieSearchVm
 
 <style>
 	.btnCommentCancel{
@@ -109,10 +109,10 @@
 </div>
 <div class="divContainer">
 	<div class="input-group">
-		<textarea class="form-control" id="FComment" aria-label="With textarea"></textarea>
+		<textarea class="form-control" id="FComment0" aria-label="With textarea"></textarea>
 	</div>
 	<div>
-		<button type="button" id="btnComment" class="btn btn-light">留言</button>
+		<button type="button" id="btnComment" class="btn btn-light" value="0">留言</button>
 	</div>
 </div>
 @*存放評論*@
@@ -130,19 +130,16 @@
 				url: "/MovieDetail/MovieComment",
 				data: { FSerialNumber,  FMovieId, FComment, FDeleted },
 				success: function (data) {
-					alert(data)
 					let context = JSON.parse(data);
-					//alert(data)
 					let UserId = context.UserId
-					alert(UserId)
 					$("#divComment").html("")
 					$.each(context.Vm, function (index, value) {
-						if (value.FMemberId == UserId &&!value.FDeleted){
+						if (value.FMemberPK == UserId &&!value.FDeleted){
 						$("#divComment").append(`
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" id="F${value.FSerialNumber}">
 									<div style="margin:5px" >
-										${value.MemberName}	 ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 							<button type="button" class="btn btn-warning btnEditComment" value="${value.FSerialNumber}">編輯</button>
 									<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FSerialNumber}">刪除</button>
 									</div>
@@ -160,7 +157,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px" >
 									<div style="margin:5px">
-										${value.MemberName}	 ${value.PostDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostDate}
 									</div>
 									<hr style="margin:0"/>
 									<div style="margin:5px">${value.FComment}</div>
@@ -194,8 +191,9 @@
 			let movieId = @Model.FMovieId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(serialNumber,  movieId, comment, deleted)
+			if (confirm('你確定要刪除嗎？')){
+				CommentDetail(serialNumber,  movieId, comment, deleted)
+			}
 		})
 
 		//開始編輯評論，生成編輯textarea
@@ -206,11 +204,11 @@
 
 			let serialNumber = $(this).attr("value")
 			let text = $.trim($(`#divComment${serialNumber}`).text())
-			alert(serialNumber+text)
+			//alert(serialNumber+text)
 			$(`#Container${serialNumber}`).html(`
 				<div class="divContainer">
 					<div class="input-group">
-						<textarea class="form-control" id="FComment" aria-label="With textarea">${text}</textarea>
+						<textarea class="form-control" id="FComment${serialNumber}" aria-label="With textarea">${text}</textarea>
 					</div>
 					<div>
 						<button type="button" id="btnComment" class="btn btn-light" value="${serialNumber}">儲存</button>
@@ -228,7 +226,7 @@
 
 			let serialNumber = $(this).attr("value")
 			let comment = $(`#hidden${serialNumber}`).attr("value");
-			alert(comment)
+			//alert(comment)
 			$(`#Container${serialNumber}`).html(`
 				<div class="divComment"  id="divComment${serialNumber}">${comment}</div>
 			`)
@@ -256,8 +254,9 @@
 		$(document).on('click', '#btnComment', function () {
 			let serialNumber = $(this).attr("value")
 			let movieId = @Model.FMovieId
-			let comment = $("#FComment").val();
-			alert(serialNumber)
+			let comment = $(`#FComment${serialNumber}`).val();
+			//alert(serialNumber)
+			$(`#FComment${serialNumber}`).val("");
 
 			CommentDetail(serialNumber,  movieId, comment, false)
 		})
@@ -272,7 +271,7 @@
 				data: { movieId },
 				success: function (data) {
 					let score = JSON.parse(data);
-					alert(score)
+					//alert(score)
 					$(`#${score}`).removeClass('btn-secondary');
 					$(`#${score}`).addClass('btn-primary');
 				},

@@ -1,4 +1,6 @@
-﻿using ISpan.InseparableCore.ViewModels;
+﻿using ISpan.InseparableCore.Models.BLL.Cores;
+using ISpan.InseparableCore.Models.BLL.DTOs;
+using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
 
@@ -15,43 +17,42 @@ namespace ISpan.InseparableCore.Models.DAL
 			this.enviro = enviro;
 		}
 
-		public IEnumerable<MovieVm> Search(MovieSearchCondition? condition)
+		public IQueryable<TMovies> Search(MovieSearchCondition? condition)
 		{
-			var movies = context.TMovies.Where(t => t.FDeleted == false).ToList();
+			var movies = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).Where(t => t.FDeleted == false);
 
-			if (condition == null) return ModelToVms(movies);
+			if (condition == null) return movies.OrderByDescending(t => t.FMovieId);
 
 			//id搜尋
 			if (int.TryParse(condition.Key, out int movieId))
 			{
-				movies = movies.Where(t => t.FMovieId == movieId).ToList();
-				return ModelToVms(movies);
+				movies = movies.Where(t => t.FMovieId == movieId);
+				return movies;
 			}
 			//電影等級
-			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId).ToList();
-
+			if (condition.LevelId != 0) movies = movies.Where(t => t.FMovieLevelId == condition.LevelId);
 			//上下映日期
 			if (condition.DateCategoryId == 1)//熱映中
 			{
 				movies = movies.Where(t => t.FMovieOnDate < DateTime.Now
-										&& t.FMovieOffDate > DateTime.Now).ToList();
+										&& t.FMovieOffDate > DateTime.Now);
 			}
 			else if (condition.DateCategoryId == 2)//即將上映
 			{
-				movies = movies.Where(t => t.FMovieOnDate > DateTime.Now).ToList();
+				movies = movies.Where(t => t.FMovieOnDate > DateTime.Now);
 			}
 			else if (condition.DateCategoryId == 3)//已下映
 			{
-				movies = movies.Where(t => t.FMovieOffDate < DateTime.Now).ToList();
+				movies = movies.Where(t => t.FMovieOffDate < DateTime.Now);
 			}
-
 			//關鍵字key
 			if (!string.IsNullOrEmpty(condition.Key))
 			{
 				
 				movies = movies.Where(t => t.FMovieName.Contains(condition.Key) 
 										|| t.FMovieActors.Contains(condition.Key) 
-										|| t.FMovieDirectors.Contains(condition.Key)).ToList();
+										|| t.FMovieDirectors.Contains(condition.Key));
 			}
 			//電影類別
 			if (condition.CategoryId.HasValue && condition.CategoryId != 0)
@@ -60,142 +61,108 @@ namespace ISpan.InseparableCore.Models.DAL
 													.Where(t => t.FMovieCategoryId == condition.CategoryId);
 				List<int> movieIds = movieCategoryDetails.Select(t => t.FMovieId).ToList();
 
-				movies = movies.Where(t => movieIds.Contains(t.FMovieId)).ToList();
+				movies = movies.Where(t => movieIds.Contains(t.FMovieId));
 			}
-
-			return ModelToVms(movies);
+			return movies.OrderByDescending(t => t.FMovieId);
 		}
-		public IEnumerable<MovieVm> ModelToVms(IEnumerable<TMovies> movies)
+		public MovieEntity GetByMovieId(int movieId)
 		{
-			List<MovieVm> vms = new List<MovieVm>();
-			foreach (var movie in movies)
-			{
-				MovieVm vm = movie.ModelToVm();
-				vm.Level = context.TMovies.Include(t => t.FMovieLevelId)
-					.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+			TMovies movie = context.TMovies.Find(movieId);
+			if (movie == null || movie.FDeleted) return null;
 
-				//獲得電影類別
-				IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
-																.Where(t => t.FMovieId == vm.FMovieId);
-				//context.Database.CloseConnection();
-				if (categorydetails != null)
-				{
-					List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
-
-					List<string> categories = context.TMovieCategories
-						.Where(t => categoryIds.Contains(t.FMovieCategoryId))
-						.Select(t => t.FMovieCategoryName).ToList();
-					vm.Categories = String.Join(", ", categories.ToArray());
-				}
-				vms.Add(vm);
-			}
-			return vms;
+			return movie.ModelToEntity();
 		}
-
-		public MovieVm GetVmById(int id)
+		public MovieSearchVm GetMovieVm(int movieId)
 		{
-			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieId == id);
-			MovieVm vm = movie.ModelToVm();
-			vm.Level = context.TMovies.Include(t => t.FMovieLevel)
-				.FirstOrDefault(t => t.FMovieId == vm.FMovieId).FMovieLevel.FLevelName;
+			TMovies movie = context.TMovies.Include(t => t.TMovieCategoryDetails)
+				.Include(t => t.FMovieLevel).FirstOrDefault(t => t.FMovieId.Equals(movieId));
+			if (movie == null || movie.FDeleted) throw new Exception("此電影不存在");
 
-			//獲得電影類別
-			IEnumerable<TMovieCategoryDetails> categorydetails = context.TMovieCategoryDetails
-															.Where(t => t.FMovieId == vm.FMovieId);
-			//context.Database.CloseConnection();
-			if (categorydetails != null)
-			{
-				List<int> categoryIds = categorydetails.Select(t => t.FMovieCategoryId).ToList();
-
-				List<string> categories = context.TMovieCategories
-					.Where(t => categoryIds.Contains(t.FMovieCategoryId))
-					.Select(t => t.FMovieCategoryName).ToList();
-				vm.Categories = String.Join(", ", categories.ToArray());
-			}
-			return vm;
+			return movie.ModelToVm();
 		}
-		public async Task CreateAsync(MovieVm vm)
+
+		public int GetMovieId(string movieName)
+		{
+			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));
+
+			return movie.FMovieId;
+		}
+		public TMovies GetbyMovieName(string movieName)
+		{
+			TMovies movie = context.TMovies.Where(t => !t.FDeleted)
+				.FirstOrDefault(t => t.FMovieName.Equals(movieName));
+
+			return movie;
+		}
+		public async Task Create(MovieEntity entity)
 		{
 			//新增Movie
-			TMovies movie = vm.VmToModel();
-			if (vm.Image != null)
-			{
-				string imageName = Guid.NewGuid().ToString() + ".jpg";
-				string path = enviro.WebRootPath + "/images/" + imageName;
-				vm.Image.CopyTo(new FileStream(path, FileMode.Create));
-				movie.FMovieImagePath = imageName;
-			}
+			TMovies movie = new TMovies();
+			movie.FMovieName = entity.FMovieName;
+			movie.FMovieIntroduction = entity.FMovieIntroduction;
+			movie.FMovieLevelId = entity.FMovieLevelId;
+			movie.FMovieOnDate = entity.FMovieOnDate;
+			movie.FMovieOffDate = entity.FMovieOffDate;
+
+			movie.FMovieLength = entity.FMovieLength;
+			movie.FMovieImagePath = entity.FMovieImagePath;
+			movie.FMovieActors = entity.FMovieActors;
+			movie.FMovieDirectors = entity.FMovieDirectors;
+
 			context.Add(movie);
-			//要先作已取得FMoviedId，以新增MovieCategories
 			context.SaveChanges();
-
-			//新增MovieCategories
-			int movieId = context.TMovies.First(t => t.FMovieName == vm.FMovieName).FMovieId;
-			if (!string.IsNullOrEmpty(vm.CategoryIds))
-			{
-				List<int> categoryIds = vm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
-														.Select(i => int.Parse(i)).ToList();
-				foreach (var id in categoryIds)
-				{
-					TMovieCategoryDetails detail = new TMovieCategoryDetails()
-					{
-						FMovieId = movieId,
-						FMovieCategoryId = id
-					};
-					context.Add(detail);
-				}
-			}
-			await context.SaveChangesAsync();
 		}
-		public async Task UpdateAsync(MovieVm vm)
+		public async Task Update(MovieEntity entity)
 		{
+			TMovies movie = context.TMovies.Find(entity.FMovieId);
 
-			TMovies movie = context.TMovies.Find(vm.FMovieId);
-			if (movie == null) return;
-			movie.FMovieName = vm.FMovieName;
-			movie.FMovieIntroduction = vm.FMovieIntroduction;
-			movie.FMovieLevelId = vm.FMovieLevelId;
-			movie.FMovieOnDate = vm.FMovieOnDate;
-			movie.FMovieOffDate = vm.FMovieOffDate;
-			movie.FMovieLength = vm.FMovieLength;
-			movie.FMovieActors = vm.FMovieActors;
-			movie.FMovieDirectors = vm.FMovieDirectors;
+			movie.FMovieName = entity.FMovieName;
+			movie.FMovieIntroduction = entity.FMovieIntroduction;
+			movie.FMovieLevelId = entity.FMovieLevelId;
+			movie.FMovieOnDate = entity.FMovieOnDate;
+			movie.FMovieOffDate = entity.FMovieOffDate;
 
-			if (vm.Image != null)
-			{
-				string imageName = Guid.NewGuid().ToString() + ".jpg";
-				string path = enviro.WebRootPath + "/images/" + imageName;
-				vm.Image.CopyTo(new FileStream(path, FileMode.Create));
-				movie.FMovieImagePath = imageName;
-			}
+			movie.FMovieLength = entity.FMovieLength;
+			movie.FMovieImagePath = entity.FMovieImagePath;
+			movie.FMovieActors = entity.FMovieActors;
+			movie.FMovieDirectors = entity.FMovieDirectors;
 
 			context.Update(movie);
 			context.SaveChanges();
-
-			if (!string.IsNullOrEmpty(vm.CategoryIds))
-			{
-				IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == vm.FMovieId);
-				foreach (TMovieCategoryDetails detail in categoryDetails)
-				{
-					context.Remove(detail);
-				}
-
-				List<int> categoryIds = vm.CategoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
-														.Select(i => int.Parse(i)).ToList();
-				foreach (var categoryId in categoryIds)
-				{
-					TMovieCategoryDetails detail = new TMovieCategoryDetails()
-					{
-						FMovieId = vm.FMovieId,
-						FMovieCategoryId = categoryId,
-					};
-					context.Add(detail);
-				}
-			}
-			await context.SaveChangesAsync();
-
 		}
-		public async Task DeleteAsync(int movieId)
+		public void UpdateCategoryDetail(int movieId, string? categoryIds)
+		{
+			if (string.IsNullOrEmpty(categoryIds)) return;
+			IEnumerable<TMovieCategoryDetails> categoryDetails = context.TMovieCategoryDetails.Where(t => t.FMovieId == movieId);
+			foreach (TMovieCategoryDetails detail in categoryDetails)
+			{
+				context.Remove(detail);
+			}
+
+			CreateCategoryDetail(movieId, categoryIds);
+			context.SaveChanges();
+		}
+		public void CreateCategoryDetail(int movieId, string? categoryIds)
+		{
+			if (string.IsNullOrEmpty(categoryIds)) return;
+
+			List<int> ListCategoryId = categoryIds.Split(',', StringSplitOptions.RemoveEmptyEntries)
+													.Select(i => int.Parse(i)).ToList();
+			foreach (var categoryId in ListCategoryId)
+			{
+				TMovieCategoryDetails detail = new TMovieCategoryDetails()
+				{
+					FMovieId = movieId,
+					FMovieCategoryId = categoryId,
+					FMoiveCategoryName = context.TMovieCategories
+					.SingleOrDefault(t => t.FMovieCategoryId == categoryId).FMovieCategoryName
+				};
+				context.Add(detail);
+			}
+			context.SaveChanges();
+		}
+
+		public async Task Delete(int movieId)
 		{
 			var movie = await context.TMovies.FindAsync(movieId);
 			if (movie != null)
@@ -205,6 +172,11 @@ namespace ISpan.InseparableCore.Models.DAL
 				await context.SaveChangesAsync();
 			}
 		}
+		/// <summary>
+		/// /////////
+		/// </summary>
+		/// <param name="movie"></param>
+		/// <returns></returns>
         public TMovies GetOneMovie(int? movie)
         {
             var data = context.TMovies.FirstOrDefault(t => t.FMovieId == movie);
@@ -220,16 +192,30 @@ namespace ISpan.InseparableCore.Models.DAL
 		public IEnumerable<TMovies> Showing()
 		{
             DateTime today = DateTime.Now.Date;
-            var data = context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today && t.FDeleted == false).OrderByDescending(t => t.FMovieOffDate).Take(6);
+            var data = context.TMovies.Where(t => t.FMovieOffDate > today && t.FMovieOnDate < today && t.FDeleted == false)
+				.OrderByDescending(t => t.FMovieOffDate).Take(6);
 
 			return data;
         }
         public IEnumerable<TMovies> Soon()
         {
             DateTime today = DateTime.Now.Date;
-            var data = context.TMovies.Where(t => t.FMovieOnDate > today && t.FDeleted == false).OrderBy(t => t.FMovieOffDate).Take(6); 
+            var data = context.TMovies.Where(t => t.FMovieOnDate > today && t.FDeleted == false)
+				.OrderBy(t => t.FMovieOffDate).Take(6); 
 
             return data;
+        }
+        
+        public IEnumerable<MovieEntity> Movie(string keyword)
+		{
+			if (string.IsNullOrEmpty(keyword))
+				return null;
+
+			var movies = context.TMovies.Where(t => t.FMovieName.Contains(keyword)
+                                            || t.FMovieActors.Contains(keyword)
+                                            || t.FMovieDirectors.Contains(keyword)).ToList();
+
+			return movies.ModelsToEntities();
         }
     }
 }

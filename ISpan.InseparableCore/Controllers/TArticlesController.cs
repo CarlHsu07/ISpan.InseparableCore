@@ -16,6 +16,10 @@ using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using System.Diagnostics.Metrics;
 using ISpan.InseparableCore.Models.DAL.Repo;
+using ISpan.InseparableCore.Models.BLL;
+using ISpan.InseparableCore.Models.BLL.DTOs;
+using System.Buffers;
+using Humanizer;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -23,42 +27,55 @@ namespace ISpan.InseparableCore.Controllers
 	{
 		private readonly InseparableContext _context;
 		private readonly ArticleRepository articleRepo;
+		private readonly ArticleService articleService;
 		private readonly ArticleLikeRepository likeRepo;
 		public TArticlesController(InseparableContext context)
 		{
 			_context = context;
 			articleRepo = new ArticleRepository(context);
+			articleService = new ArticleService(articleRepo);
 			likeRepo = new ArticleLikeRepository(context);
 		}
-
-		//產生頁碼
-		protected IPagedList<ArticleVm> GetPagedProcess(int? page, int pageSize, List<ArticleVm> articles)
+		public IEnumerable<ArticleSearchVm> DtosToVms(IEnumerable<ArticleSearchDto> dtos)
 		{
-			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1) return null;
-			// 從資料庫取得資料
-			var listUnpaged = articles;
-			IPagedList<ArticleVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
-			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount) return null;
-			return pagelist;
+			List<ArticleSearchVm> vms = new List<ArticleSearchVm>();
+
+			foreach (var dto in dtos)
+			{
+				var vm = dto.SearchDtoToVm();
+				vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+				var member = articleRepo.GetMemberByPK(dto.FMemberId);
+				vm.FMemberId = member.FMemberId;
+				vm.MemberName = member.FLastName + member.FFirstName;
+				vms.Add(vm);
+			}
+			return vms;
 		}
-		// GET: TArticles
-		public async Task<IActionResult> Index()
+		private IActionResult ShowError(Exception ex)
 		{
-			List<ArticleVm> articles = articleRepo.Search(null).ToList();
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(Index), new { errorMessage });
+		}
 
+		// GET: TArticles
+		public async Task<IActionResult> Index(string errorMessage = "")
+		{
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(null).ToList();
+
+			ViewBag.ArticleModel = GetPage.GetPagedProcess(1, pageSize, dtos);
+			dtos = dtos.Take(pageSize).ToList();
+			var vms = DtosToVms(dtos);
 			#region ViewData
-
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
 				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
 			}
-			//articles = articles.Take(pageContent).ToList();
+			//dtos = dtos.Take(pageContent).ToList();
 			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -66,23 +83,25 @@ namespace ISpan.InseparableCore.Controllers
 			categorySelectList.Add(defaultCategory);
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", 0);
 			#endregion
+			ViewBag.errorMessage = errorMessage;
 
-			int pageSize = 10;
-
-			ViewBag.ArticleModel = GetPagedProcess(1, pageSize, articles);
-			articles = articles.Take(pageSize).ToList();
-
-			return View(articles);
+			return View(vms);
 		}
 		[HttpPost]
 		public async Task<IActionResult> Index(ArticleSearchCondition condition)
 		{
-			List<ArticleVm> articles = articleRepo.Search(condition).ToList();
+			int pageSize = 10;
+			List<ArticleSearchDto> dtos = articleService.Search(condition).ToList();
+
+			var pageList = GetPage.GetPagedProcess(condition.Page, pageSize, dtos);
+			dtos = dtos.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
+			if (dtos.Count == 0) return Ok("noData");
+			var vms = DtosToVms(dtos);
 
 			#region ViewData
 			int pageContent = 2;
-			int pageNumber = articles.Count % pageContent == 0 ? articles.Count / pageContent
-														   : articles.Count / pageContent + 1;
+			int pageNumber = dtos.Count % pageContent == 0 ? dtos.Count / pageContent
+														   : dtos.Count / pageContent + 1;
 			List<SelectListItem> pageSelectList = new List<SelectListItem>();
 			for (int i = 1; i < pageNumber + 1; i++)
 			{
@@ -96,14 +115,9 @@ namespace ISpan.InseparableCore.Controllers
 			ViewData["FMovieCategoryId"] = new SelectList(categorySelectList, "FMovieCategoryId", "FMovieCategoryName", condition.CategoryId);
 			#endregion
 
-			int pageSize = 10;
-			var pageList = GetPagedProcess(condition.Page, pageSize, articles);
-			articles = articles.Skip(pageSize * ((int)condition.Page - 1)).Take(pageSize).ToList();
-			if (articles.Count == 0) return Ok("noData");
-
 			return Ok(new
 			{
-				Vm = articles,
+				Vm = vms,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -117,14 +131,29 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				return NotFound();
 			}
+			var dto = new ArticleSearchDto();
+			try
+			{
+				dto = articleService.GetSearchDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
-			var vm = articleRepo.GetVmById((int)id);
+			ArticleSearchVm vm = dto.SearchDtoToVm();
+			vm.ArticleCategory = articleRepo.GetCategory(dto.FArticleCategoryId);
+			var member = articleRepo.GetMemberByPK(dto.FMemberId);
+			vm.FMemberId = member.FMemberId;
+			vm.MemberName = member.FLastName + member.FFirstName;
 
 			//是否點讚
-			 vm.LikeOrUnlike = likeRepo.LikeOrNot((int)id, _user.FId);
+			vm.LikeOrUnlike = likeRepo.LikeOrNot((int)id, _user.FId);
 
 			//點閱數+1
-			articleRepo.Click(vm.FArticleId);
+			articleService.Click(vm.FArticleId);
+
+			ViewBag.UserId = _user.FId;
 
 			return View(vm);
 		}
@@ -136,32 +165,37 @@ namespace ISpan.InseparableCore.Controllers
 
 			var detailInDb = likeRepo.GetLikeVm(vm.FArticleId, vm.FMemberId);
 
-			ArticleVm article = articleRepo.GetVmById(vm.FArticleId);
+			int articleLikes = articleService.getArticleLikes(vm.FArticleId);
 
 			if (detailInDb == null)
 			{
-				article.FArticleLikes++;
-				await articleRepo.UpdateLikeAsync(article);
+				articleLikes++;
+				await articleRepo.UpdateLikes(vm.FArticleId, articleLikes);
 
 				like = true;
 				likeRepo.Create(vm);
 			}
 			else
 			{
-				article.FArticleLikes--;
-				await articleRepo.UpdateLikeAsync(article);
+				articleLikes--;
+				await articleRepo.UpdateLikes(vm.FArticleId, articleLikes);
 
 				like = false;
 				likeRepo.Delete(detailInDb.FSerialNumber);
 			}
 
-			return Ok((new { LikeOrUnlike = like, LikeCount = article.FArticleLikes }).ToJson());
+			return Ok((new 
+			{ 
+				LikeOrUnlike = like,
+				LikeCount = articleLikes 
+			}).ToJson());
 		}
 
 		// GET: TArticles/Create
 		public IActionResult Create()
 		{
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+			ViewBag.UserId = _user.FId;
 			return View();
 		}
 
@@ -170,28 +204,38 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(ArticleVm vm)
+		public IActionResult Create(ArticleCreateVm vm)
 		{
 			if (ModelState.IsValid)
 			{
-				vm.FMemberPK = _user.FId;
-
-				await articleRepo.CreateAsync(vm);
+				var dto = vm.CreateVmToDto();
+				articleService.Create(dto);
 				return RedirectToAction(nameof(Index));
 			}
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
+			ViewBag.UserId = _user.FId;
+
 			return View(vm);
 		}
 
 		// GET: TArticles/Edit/5
-		public async Task<IActionResult> Edit(int? articleId)
+		public async Task<IActionResult> Edit(int? id)
 		{
-			if (articleId == null || _context.TArticles == null)
+			if (id == null || _context.TArticles == null)
 			{
 				return NotFound();
 			}
+			var dto = new ArticleUpdateDto();
+			try
+			{
+				dto = articleService.GetUpdateDto((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
-			var vm = articleRepo.GetVmById((int)articleId);
+			var vm = dto.UpdateDtoToVm();
 			ViewData["FArticleCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName", vm.FArticleCategoryId);
 			return View(vm);
 		}
@@ -201,7 +245,7 @@ namespace ISpan.InseparableCore.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, ArticleVm vm)
+		public async Task<IActionResult> Edit(int id, ArticleUpdateVm vm)
 		{
 			//if (id != vm.FArticleId)
 			//{
@@ -212,20 +256,12 @@ namespace ISpan.InseparableCore.Controllers
 			{
 				try
 				{
-					vm.FMemberPK = _user.FId;
-
-					await articleRepo.UpdateAsync(vm);
+					var dto = vm.UpdateVmToDto();
+					articleService.Update(dto);
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (Exception ex)
 				{
-					if (!TArticlesExists(vm.FArticleId))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
+					ShowError(ex);
 				}
 				return RedirectToAction(nameof(Index));
 			}
@@ -236,13 +272,25 @@ namespace ISpan.InseparableCore.Controllers
 		// POST: TArticles/Delete/5
 		[HttpPost]
 		//[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteAjax(int articleId)
+		public IActionResult Delete(int articleId)
 		{
 			if (_context.TArticles == null)
 			{
 				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
 			}
 			articleRepo.Delete(articleId);
+
+			return RedirectToAction(nameof(Index));
+		}
+		[HttpPost]
+		//[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteAjax(int articleId)
+		{
+			if (_context.TArticles == null)
+			{
+				return Problem("Entity set 'InseparableContext.TArticles'  is null.");
+			}
+			await articleRepo.Delete(articleId);
 
 			return RedirectToAction(nameof(Index));
 		}

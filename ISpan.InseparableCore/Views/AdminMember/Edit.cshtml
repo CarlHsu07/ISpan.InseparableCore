@@ -4,9 +4,12 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<style>
+    
+</style>
 
-<h4>TMembers</h4>
+<h1>編輯會員</h1>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,90 +17,79 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="FId" />
             <div class="form-group">
-                <label asp-for="FMemberId" class="control-label"></label>
-                <input asp-for="FMemberId" class="form-control" />
+                <label asp-for="FMemberId" class="control-label">會員ID</label>
+                <input asp-for="FMemberId" class="form-control text-light" />
                 <span asp-validation-for="FMemberId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FLastName" class="control-label"></label>
-                <input asp-for="FLastName" class="form-control" />
+                <label asp-for="FLastName" class="control-label">姓氏</label>
+                <input asp-for="FLastName" class="form-control text-light" />
                 <span asp-validation-for="FLastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FFirstName" class="control-label"></label>
-                <input asp-for="FFirstName" class="form-control" />
+                <label asp-for="FFirstName" class="control-label">名字</label>
+                <input asp-for="FFirstName" class="form-control text-light" />
                 <span asp-validation-for="FFirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FEmail" class="control-label"></label>
-                <input asp-for="FEmail" class="form-control" />
+                <label asp-for="FEmail" class="control-label">Email</label>
+                <input asp-for="FEmail" class="form-control text-light" />
                 <span asp-validation-for="FEmail" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
-                <label asp-for="FPasswordHash" class="control-label"></label>
-                <input asp-for="FPasswordHash" class="form-control" />
-                <span asp-validation-for="FPasswordHash" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FPasswordSalt" class="control-label"></label>
-                <input asp-for="FPasswordSalt" class="form-control" />
-                <span asp-validation-for="FPasswordSalt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FDateOfBirth" class="control-label"></label>
-                <input asp-for="FDateOfBirth" class="form-control" />
+                <label asp-for="FDateOfBirth" class="control-label">生日</label>
+                <input asp-for="FDateOfBirth" class="form-control text-light" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="FDateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FGenderId" class="control-label"></label>
-                <select asp-for="FGenderId" class="form-control" asp-items="ViewBag.FGenderId"></select>
+                <label asp-for="FGenderId" class="control-label">性別</label>
+                <select asp-for="FGenderId" class="form-control text-light" asp-items="ViewBag.FGenderId"></select>
                 <span asp-validation-for="FGenderId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FCellphone" class="control-label"></label>
-                <input asp-for="FCellphone" class="form-control" />
+                <label asp-for="FCellphone" class="control-label">手機</label>
+                <input asp-for="FCellphone" class="form-control text-light" />
                 <span asp-validation-for="FCellphone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FAddress" class="control-label"></label>
-                <input asp-for="FAddress" class="form-control" />
+                <label asp-for="FAddress" class="control-label">住址</label>
+                <input asp-for="FAddress" class="form-control text-light" />
                 <span asp-validation-for="FAddress" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FAreaId" class="control-label"></label>
-                <select asp-for="FAreaId" class="form-control" asp-items="ViewBag.FAreaZipCode"></select>
+                <label asp-for="FAreaId" class="control-label">區域</label>
+                <select asp-for="FAreaId" class="form-control text-light" asp-items="ViewBag.FAreaZipCode"></select>
                 <span asp-validation-for="FAreaId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FPhotoPath" class="control-label"></label>
                 <input asp-for="FPhotoPath" class="form-control" />
                 <span asp-validation-for="FPhotoPath" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
-                <label asp-for="FIntroduction" class="control-label"></label>
-                <input asp-for="FIntroduction" class="form-control" />
+                <label asp-for="FIntroduction" class="control-label">簡介</label>
+                <input asp-for="FIntroduction" class="form-control text-light" />
                 <span asp-validation-for="FIntroduction" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FAccountStatus" class="control-label"></label>
-                <select asp-for="FAccountStatus" class="form-control" asp-items="ViewBag.FAccountStatus"></select>
+                <label asp-for="FAccountStatus" class="control-label">會員狀態</label>
+                <select asp-for="FAccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus"></select>
                 <span asp-validation-for="FAccountStatus" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="FTotalMemberPoint" class="control-label"></label>
                 <input asp-for="FTotalMemberPoint" class="form-control" />
                 <span asp-validation-for="FTotalMemberPoint" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="送出" class="btn btn-primary" /> |
+                <a asp-action="Index" class="btn btn-light">返回</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -9,7 +9,7 @@ using ISpan.InseparableCore.Models.DAL;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-    public class AdminMovieCategoriesController : Controller
+    public class AdminMovieCategoriesController : AdminSuperController
     {
         private readonly InseparableContext _context;
 

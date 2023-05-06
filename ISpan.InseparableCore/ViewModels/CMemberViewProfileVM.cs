@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-	public class CMemberViewProfileViewModel
+	public class CMemberViewProfileVM
 	{
 		private TMembers _member;
 
@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
 			set { _member = value; }
 		}
 
-		public CMemberViewProfileViewModel()
+		public CMemberViewProfileVM()
 		{
 			_member = new TMembers();
 		}
@@ -28,8 +28,8 @@ namespace ISpan.InseparableCore.ViewModels
 		//[Display(Name = "會員ID")]
 		//public string MemberId
 		//{
-		//    get { return _member.FMemberId; }
-		//    set { _member.FMemberId = value; }
+		//    get { return _member.FMemberPK; }
+		//    set { _member.FMemberPK = value; }
 		//}
 
 		[Display(Name = "姓氏")]

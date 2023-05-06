@@ -1,0 +1,57 @@
+﻿body {
+}
+.btnEditComment {
+}
+
+.btnCommentCancel {
+}
+
+.displayNone {
+	display: none;
+}
+
+.divComment {
+	margin: 5px;
+	font-size: 20px;
+}
+
+.divArticle {
+	font-size: 30px;
+	text-align: justify;
+}
+
+pre {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.divContainerRow {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+}
+
+	.divContainerRow span {
+		display: flex;
+		flex-direction: column;
+		padding: 5px;
+		margin: 0;
+	}
+
+		.divContainerRow span span {
+			display: inline;
+			flex-direction: column;
+			padding: 0px;
+			margin: 0;
+		}
+
+.divBorder {
+	border-color: white;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 9px;
+}
+
+.divBlock {
+	margin: 20px
+}

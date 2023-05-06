@@ -1,4 +1,7 @@
-﻿using ISpan.InseparableCore.Models.DAL;
+﻿using Humanizer;
+using ISpan.InseparableCore.Models.BLL;
+using ISpan.InseparableCore.Models.BLL.DTOs;
+using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,49 +11,39 @@ using X.PagedList;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
-	public class AdminMovieController : Controller
-	{
+	public class AdminMovieController : AdminSuperController
+    {
 		private readonly InseparableContext _context;
 		private readonly IWebHostEnvironment _enviro;
 		private readonly MovieRepository repo;
+		private readonly MovieService service;
 
 		public AdminMovieController(InseparableContext context, IWebHostEnvironment enviro)
 		{
 			_context = context;
 			this._enviro = enviro;
 			repo = new MovieRepository(context, enviro);
-		}
-
-		//產生頁碼
-		protected IPagedList<MovieVm> GetPagedProcess(int? page, int pageSize, List<MovieVm> movies)
-		{
-			// 過濾從client傳送過來有問題頁數
-			if (page.HasValue && page < 1)
-				return null;
-			// 從資料庫取得資料
-			var listUnpaged = movies;
-			IPagedList<MovieVm> pagelist = listUnpaged.ToPagedList(page ?? 1, pageSize);
-			// 過濾從client傳送過來有問題頁數，包含判斷有問題的頁數邏輯
-			if (pagelist.PageNumber != 1 && page.HasValue && page > pagelist.PageCount)
-				return null;
-			return pagelist;
+			service = new MovieService(repo);
 		}
 
 		// GET: TMovies
-		public async Task<IActionResult> IndexMaintainer()
+		public async Task<IActionResult> IndexMaintainer(string errorMessage = "")
 		{
-			List<MovieVm> movies = repo.Search(null).ToList();
-
+			int pageSize = 10;
+			var movies = repo.Search(null);
+			ViewBag.MovieModel = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Take(pageSize);
+			var vms = movies.ModelsToVms();
 			#region ViewData
-			int pageContent = 2;
-			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
-														   : movies.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Value", "Text");
 
 			TMovieCategories defaultCategory = new TMovieCategories() { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
 			List<TMovieCategories> categorySelectList = _context.TMovieCategories.ToList();
@@ -67,30 +60,32 @@ namespace ISpan.InseparableCore.Controllers.Server
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", 0);
 			#endregion
-			int pageSize = 10;
-
-			ViewBag.MovieModel = GetPagedProcess(1, pageSize, movies);
-
-			movies = movies.Take(pageSize).ToList();
-			return View(movies);
+			ViewBag.errorMessage = errorMessage;
+			return View(vms);
 		}
 		[HttpPost]
 		public IActionResult IndexMaintainer(MovieSearchCondition condition)
 		{
-			List<MovieVm> movies = repo.Search(condition).ToList();
+			int pageSize = 10;
+			var movies = repo.Search(condition);
+			var pageList = GetPage.GetPagedProcess(1, pageSize, movies.ToList());
+			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize);
+			var vms = movies.ModelsToVms();
+
+			if (vms.ToList().Count == 0) return Ok("noData");
 
 			#region ViewData
 
 			//產生頁碼SelectList
-			int pageContent = 2;
-			int pageNumber = movies.Count % pageContent == 0 ? movies.Count / pageContent
-														   : movies.Count / pageContent + 1;
-			List<SelectListItem> pageSelectList = new List<SelectListItem>();
-			for (int i = 1; i < pageNumber + 1; i++)
-			{
-				pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
-			}
-			ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
+			//int pageContent = 2;
+			//int pageNumber = vms.Count % pageContent == 0 ? vms.Count / pageContent
+			//											   : vms.Count / pageContent + 1;
+			//List<SelectListItem> pageSelectList = new List<SelectListItem>();
+			//for (int i = 1; i < pageNumber + 1; i++)
+			//{
+			//	pageSelectList.Add(new SelectListItem(i.ToString(), i.ToString()));
+			//}
+			//ViewData["Page"] = new SelectList(pageSelectList, "Id", "Value", condition.Page);
 
 			//為電影類別SelectList加入預設值
 			TMovieCategories defaultCategory = new TMovieCategories { FMovieCategoryId = 0, FMovieCategoryName = "全部" };
@@ -109,14 +104,10 @@ namespace ISpan.InseparableCore.Controllers.Server
 			SelectList dateCategorySelectList = dateCategories.ToSelectList();
 			ViewData["DateCategoryId"] = new SelectList(dateCategorySelectList, "Value", "Text", condition.DateCategoryId);
 			#endregion
-			int pageSize = 10;
-			var pageList = GetPagedProcess(condition.Page, pageSize, movies);
-			movies = movies.Skip(pageSize * (condition.Page - 1)).Take(pageSize).ToList();
-			if (movies.Count == 0) return Ok("noData");
 
 			return Ok(new
 			{
-				Vm = movies,
+				Vm = vms,
 				PageCount = pageList.PageCount,
 				TotalItemCount = pageList.TotalItemCount,
 				PageSize = pageSize
@@ -132,10 +123,26 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return NotFound();
 			}
 
-			MovieVm vm = repo.GetVmById((int)id);
+			MovieSearchVm vm = new MovieSearchVm();
+			try
+			{
+				vm = repo.GetMovieVm((int)id);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
 			return View(vm);
 		}
 
+		public string GetImagePath(IFormFile image)
+		{
+			string imageName = Guid.NewGuid().ToString() + ".jpg";
+			string path = _enviro.WebRootPath + "/images/" + imageName;
+			image.CopyTo(new FileStream(path, FileMode.Create));
+			return path;
+		}
 		// GET: TMovies/Create
 		public IActionResult Create()
 		{
@@ -149,11 +156,24 @@ namespace ISpan.InseparableCore.Controllers.Server
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(MovieVm vm)
+		public async Task<IActionResult> Create(MovieCreateVm vm)
 		{
+			var dto = vm.CreateVmToDto();
+			if (vm.Image != null) dto.FMovieImagePath = GetImagePath(vm.Image);
+
 			if (ModelState.IsValid)
 			{
-				await repo.CreateAsync(vm);
+				try
+				{
+					service.Create(dto);
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
+				int movieId = repo.GetMovieId(dto.FMovieName);
+				repo.CreateCategoryDetail(movieId, vm.CategoryIds);
+
 				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
@@ -162,19 +182,24 @@ namespace ISpan.InseparableCore.Controllers.Server
 		}
 
 		// GET: TMovies/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+		public IActionResult Edit(int? id)
 		{
 			if (id == null || _context.TMovies == null)
 			{
 				return NotFound();
 			}
-
-			var movie = await _context.TMovies.FindAsync(id);
-			if (movie == null)
+			MovieUpdateDto dto = new MovieUpdateDto();
+			try
 			{
-				return NotFound();
+				dto = service.GetUpdateDto((int)id);
 			}
-			MovieVm vm = movie.ModelToVm();
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+			MovieUpdateVm vm = dto.UpdateDtoToVm();
+			vm.CategoryIdsContained = _context.TMovieCategoryDetails.Where(t => t.FMovieId == id).Select(t => t.FMovieCategoryId).ToList();
+
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
 			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
 			return View(vm);
@@ -185,38 +210,43 @@ namespace ISpan.InseparableCore.Controllers.Server
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, MovieVm vm)
+		public IActionResult Edit(int id, MovieUpdateVm vm)
 		{
 			if (id != vm.FMovieId)
 			{
 				return NotFound();
 			}
+			if (vm.Image != null) vm.FMovieImagePath = GetImagePath(vm.Image);
+
+			var dto = vm.UpdateVmToDto();
 
 			if (ModelState.IsValid)
 			{
 				try
 				{
-					await repo.UpdateAsync(vm);
+					service.Update(dto);
+					repo.UpdateCategoryDetail(dto.FMovieId, vm.CategoryIds);
 				}
-				catch (DbUpdateConcurrencyException)
+				catch (Exception ex)
 				{
-					if (!TMoviesExists(vm.FMovieId))
-					{
-						return NotFound();
-					}
-					else
-					{
-						throw;
-					}
+					return ShowError(ex);
 				}
 				return RedirectToAction(nameof(IndexMaintainer));
 			}
 			ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+			ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+
 			return View(vm);
 		}
 
+		private IActionResult ShowError(Exception ex)
+		{
+			string errorMessage = ex.Message;
+			return RedirectToAction(nameof(IndexMaintainer), new { errorMessage });
+		}
+
 		// POST: TMovies/Delete/5
-		[HttpPost]
+		[HttpPost,HttpPost]
 		//[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Delete(int movieId)
 		{
@@ -224,9 +254,15 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var movie = await _context.TMovies.FindAsync(movieId);
 
-			await repo.DeleteAsync(movieId);
+			try
+			{
+				await service.Delete(movieId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
 
 			return RedirectToAction(nameof(IndexMaintainer));
 		}
@@ -237,9 +273,16 @@ namespace ISpan.InseparableCore.Controllers.Server
 			{
 				return Problem("Entity set 'InseparableContext.TMovies'  is null.");
 			}
-			var movie = await _context.TMovies.FindAsync(movieId);
-			await repo.DeleteAsync(movieId);
-			return Ok();
+			try
+			{
+				await service.Delete(movieId);
+			}
+			catch (Exception ex)
+			{
+				return ShowError(ex);
+			}
+
+			return RedirectToAction(nameof(IndexMaintainer));
 		}
 
 		private bool TMoviesExists(int id)

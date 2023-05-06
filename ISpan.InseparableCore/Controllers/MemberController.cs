@@ -20,6 +20,8 @@ using ISpan.InseparableCore.Models.DAL.Repo;
 using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using X.PagedList;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -387,11 +389,19 @@ namespace ISpan.InseparableCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
         {
+            // todo VM驗證不過後的View有問題，會不能選擇縣市
+
             TMembers newMember = new TMembers();
+            MemberService memberService = new MemberService(_context);
+
+            // 驗證Email是否存在
+            if (memberService.IsEmailExist(MemberIn.Email))
+            {
+                ModelState.AddModelError("Email", "此Email已用過，請換一組");
+            }
 
             if (ModelState.IsValid)
             {
-                MemberService memberService = new MemberService(_context);
 
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
@@ -429,9 +439,11 @@ namespace ISpan.InseparableCore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", newMember.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", newMember.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", MemberIn.City); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FId", "FAreaName", MemberIn.Area);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
             return View(MemberIn);
         }
 
@@ -617,6 +629,36 @@ namespace ISpan.InseparableCore.Controllers
                 return Json(new { success = false, message = "更改密碼失敗 in C#" });
             }
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyEmail(string memberId, string token)
+        {
+            MemberService memberService = new MemberService(_context);
+
+            if (memberId == null || token == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var member = await _context.TMembers.FindAsync(memberId);
+            if (member == null)
+            {
+                return RedirectToAction(nameof(HomeController.Login), "Home");
+            }
+
+            var result = memberService.ConfirmEmail(member, token);
+            if (result)
+            {
+                // todo 實作信箱驗證結果的View
+                return View("ConfirmEmail");
+            }
+            else
+            {
+                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
+            }
+        }
+
 
         // GET: Home/Logout
         public IActionResult Logout()

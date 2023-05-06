@@ -1,60 +1,10 @@
-﻿@model ISpan.InseparableCore.ViewModels.ArticleVm
+﻿@model ISpan.InseparableCore.ViewModels.ArticleSearchVm
+@section Styles{
+	<link href="~/css/loading.css" rel="stylesheet" />
+	<link href="~/css/ArticleDetail.css" rel="stylesheet" />
+}
+
 <style>
-	.btnEditComment {
-	}
-
-	.btnCommentCancel {
-	}
-
-	.displayNone {
-		display: none;
-	}
-
-	.divComment {
-		margin: 5px;
-		font-size: 20px;
-	}
-
-	.divArticle {
-		font-size: 30px;
-		text-align: justify;
-	}
-
-	pre {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-	}
-
-	.divContainerRow {
-		display: flex;
-		flex-direction: row;
-		padding: 5px;
-	}
-
-		.divContainerRow span {
-			display: flex;
-			flex-direction: column;
-			padding: 5px;
-			margin: 0;
-		}
-
-			.divContainerRow span span {
-				display: inline;
-				flex-direction: column;
-				padding: 0px;
-				margin: 0;
-			}
-
-	.divBorder {
-		border-color: white;
-		border-width: 1px;
-		border-style: solid;
-		border-radius:9px;
-	}
-
-	.divBlock {
-		margin: 20px
-	}
 
 	.inDivPosition {
 		position: relative;
@@ -107,15 +57,24 @@
 			</p>
 		</span>
 		<span>
-			<button value="@Model.FArticleId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
-			<button type="button" class="btn btn-info"  onclick="backToIndex()">返回</button>
+			<div>
+				<form asp-action="Delete">
+					<input type="hidden" name="articleId" value="@Model.FArticleId" />
+					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
+				</form>
+			</div>
+		</span>
+		<span>
+			<p>
+				<button type="button" class="btn btn-info" onclick="backToIndex()">返回</button>
+			</p>
 		</span>
 	</div>
 	<h1 style="margin-top:20px">@Html.DisplayFor(model => model.FArticleTitle)</h1>
 	<hr />
 </div>
 <div>
-	<pre class="divArticle">@Html.DisplayFor(model => model.FArticleContent)</pre>
+	<pre class="divArticle">@Html.Raw(Model.FArticleContent)</pre>
 </div>
 <div id="divComment"></div>
 
@@ -126,7 +85,6 @@
 
 		//刪除評論ajax函數
 		function CommentDetail(FCommentId, FArticleId, FCommentContent, FDeleted) {
-			alert(FCommentId + "/" + FArticleId + "/" + FCommentContent + "/" + FDeleted)
 			$.ajax({
 				method: "post",
 				url: "/TComments/ArticleComment",
@@ -139,7 +97,7 @@
 							<div class=" divBorder">
 								<div style="font-size:large; margin:10px 0 0 10px">
 									<div class="divComment " id="Delete${value.FCommentId}">
-										${value.MemberName}	 ${value.PostingDate}
+										${value.MemberName}	${value.FMemberId} ${value.PostingDate}
 									</div>
 									<hr style="margin:0"/>
 									<div id="Container${value.FCommentId}">
@@ -177,25 +135,27 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			confirm('你確定要刪除嗎？')
-			CommentDetail(commentId, articleId, comment, deleted)
+			if (confirm('你確定要刪除嗎？')){
+				CommentDetail(commentId, articleId, comment, deleted)
+			}
 		})
 		//刪除文章
 		$(document).on('click', '.Delete', function () {
 			var articleId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminArticle/DeleteAjax",
-				data: { articleId },
-				success: function (data) {
-					alert("已刪除")
-				},
-				error: function (xhr, status, error) {
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
+			if (confirm('你確定要刪除嗎？')) {
+				$.ajax({
+					type: "POST",
+					url: "/AdminArticle/DeleteAjax",
+					data: { articleId },
+					success: function (data) {
+						alert("已刪除")
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			}
 		})
 
 

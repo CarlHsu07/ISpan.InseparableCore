@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieVm>
+﻿@model IEnumerable<ISpan.InseparableCore.ViewModels.MovieSearchVm>
 @{
 	var pagedList = (IPagedList)ViewBag.MovieModel;
 }
@@ -29,7 +29,7 @@
 		color:aliceblue;
 	}
 	p, button{
-		font-size:20px;
+		font-size:15px;
 	}
 
 	.inDivBottom {
@@ -41,7 +41,7 @@
 	.inDivPosition {
 		position: relative;
 		bottom: -35px;
-		right: -600px;
+		right: -400px;
 	}
 </style>
     <div class="loadingdiv" id="loading" style="display: none">
@@ -72,21 +72,25 @@
 				<select name="LevelId" id="LevelId" class="form-control" asp-items="ViewBag.LevelId"></select>
 			</div>
 			<div class="form-group divBlock" style="position:relative">
-				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
+				<input type="submit" value="搜尋" class="btn btn-info btn-rounded inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition" >
-				<a href="/AdminMovie/Create" class="btn btn-info">新增</a>
+				<a href="/AdminMovie/Create" class="btn btn-rounded btn-success">新增</a>
 			</div>
 		</div>
 	</form>
-
 </div>
 
-<div class="divBlock divBorder" id="divSearch">
+<div class="divBlock " id="divSearch">
 
-	<table class="table" id="tableSearch">
+    <table class="table table-dark table-striped table-hover" style="color:#D4D6D6;">
 		<thead>
 			<tr>
+				<th>
+					<p>
+						@Html.DisplayNameFor(model => model.FMovieId)
+					</p>
+				</th>
 				<th>
 					<p>
 						@Html.DisplayNameFor(model => model.FMovieName)
@@ -94,17 +98,12 @@
 				</th>
 				<th>
 					<p>
-						@Html.DisplayNameFor(model => model.PartialIntro)
+						@Html.DisplayNameFor(model => model.OnDate)
 					</p>
 				</th>
 				<th>
 					<p>
-						@Html.DisplayNameFor(model => model.FMovieOnDate)
-					</p>
-				</th>
-				<th>
-					<p>
-						@Html.DisplayNameFor(model => model.FMovieOffDate)
+						@Html.DisplayNameFor(model => model.OffDate)
 					</p>
 				</th>
 				<th>
@@ -130,15 +129,13 @@
 			{
 				<tr>
 					<td>
-						<a asp-action="AdminDetails" asp-route-id="@item.FMovieId">
-							<p class="link-container">
-								@Html.DisplayFor(modelItem => item.FMovieName)
-							</p>
-						</a>
+						<p >
+							@Html.DisplayFor(modelItem => item.FMovieId)
+						</p>
 					</td>
 					<td>
-						<p>
-							@Html.DisplayFor(modelItem => item.PartialIntro)
+						<p class="space-container">
+							@Html.DisplayFor(modelItem => item.FMovieName)
 						</p>
 					</td>
 					<td>
@@ -169,10 +166,17 @@
 					<td>
 						<div class="divContainer">
 							<div class="form-group">
-								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>
+								<a href="/AdminMovie/Edit/@item.FMovieId" class="btn btn-warning">編輯</a>&nbsp;|&nbsp;
 							</div>
-							<div class="form-group">
-								<button value="@item.FMovieId" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')">刪除</button>
+							<div>
+								<a asp-action="AdminDetails" class="btn btn-light " asp-route-id="@item.FMovieId">內容</a>&nbsp;|&nbsp;
+							</div>
+							<div class="" style="width:100px">
+								<form asp-action="Delete">
+									<input type="hidden" name="movieId" value="@item.FMovieId" />
+									<input type="submit" value="刪除" class="btn btn-danger" 
+									onclick="return confirm('你確定要刪除嗎？')" />
+								</form>
 							</div>
 						</div>
 					</td>
@@ -200,8 +204,17 @@
 		</div>
 	</div>
 </div>
+<input type="hidden" value="@ViewBag.errorMessage" id="error"/>
 @section Scripts {
 	<script>
+		@{
+			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
+			{
+					@:let error = $("#error").val();
+					@:alert(error)
+			}
+		}
+
 		var PageCountNumber = @pagedList.PageCount
 		var pageNumber = 1
 
@@ -219,7 +232,6 @@
 					$("#divDataCount").html(``)
 					$("#bodySearch").html(``)
 					if (data == "noData") {
-						alert("nodata")
 						$("#divDataCount").html(`
 							<div>
 								<p class="text-muted" colspan="5">
@@ -229,21 +241,18 @@
 						`)
 						return;
 					}
-
 					let context = JSON.parse(data);
 					$.each(context.Vm, function (index, value) {
 						$("#bodySearch").append(`
 							<tr>
 								<td>
 									<p>
-										<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="link-container">
-											${value.FMovieName}
-										</a>
+										${value.FMovieId}
 									</p>
 								</td>
 								<td>
-									<p>
-										${value.PartialIntro}
+									<p class="space-container">
+										${value.FMovieName}
 									</p>
 								</td>
 								<td>
@@ -274,15 +283,18 @@
 								<td>
 									<div class="divContainer">
 										<div class="form-group">
-											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>
+											<a href="/AdminMovie/Edit/${value.FMovieId}" class="btn btn-warning">編輯</a>&nbsp;|&nbsp;
 										</div>
-										<div class="form-group">
-												<button value="${value.FMovieId}" class="btn btn-danger Delete" onclick="return confirm('你確定要刪除嗎？')" >刪除</button>
+										<div>
+											<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
+										</div>
+										<div class="" style="width:100px" id="form${value.FMovieId}Container">
 										</div>
 									</div>
 								</td>
 							</tr>
 						`)
+						addDeleteForm(value.FMovieId)
 					})
 					$("#divDataCount").append(`
 						<div>
@@ -292,10 +304,8 @@
 						</div>
 					`)
 					if (PageCountNumber != context.PageCount) {
-						alert(PageCountNumber.toString() + context.PageCount)
 						PageCountNumber = context.PageCount
 						$("#divPageContainer").html(``)
-						alert(PageCountNumber.toString() + context.PageCount)
 						$("#divPageContainer").append(`
 							<button type="button" class="btn btn-secondary" id="prePage"><</button>
 						`)
@@ -315,34 +325,51 @@
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
 				},
+				complete: function () {
+                    setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
+                }
 			})
-
 		}
-		//刪除電影
-		$(document).on('click', '.Delete', function () {
-			var movieId = parseInt($(this).attr("value"))
-			//confirm('你確定要刪除嗎？' + movieId)
-			$.ajax({
-				type: "POST",
-				url: "/AdminMovie/DeleteAjax",
-				data: { "movieId": parseInt($(this).attr("value")) },
-				success: function (data) {
-					alert("已刪除")
-					let page = pageNumber
-					let key = $("#Key").val()
-					let categoryId = $("#CategoryId").find(":selected").val()
-					let levelId = $("#LevelId").find(":selected").val()
-					let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-					alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
+		function addDeleteForm(movieId){
+			let $form = $(`<form class="Delete"></form>`);
+			$form.attr("method", "post");
+			$form.attr("action", "/AdminMovie/Delete");
+			$form.append(`<input type="hidden" name="movieId" value="${ movieId }" />`);
+			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
+			$(`#form${movieId}Container`).append($form);
+		}
+		//$submitBtn.on("click", function () {
+		//	// 调用其他函数
+		//	doSomething();
 
-					show(key, categoryId, dateCategoryId, levelId, page)
-				},
-				error: function(xhr, status, error) {					
-					// 處理錯誤
-					console.log("AJAX request error: " + status + " - " + error);
-				}
-			});
-		})
+		//	// 提交表单
+		//	$(``).submit();
+		//});
+		//刪除電影
+		//$(document).on('click', '.Delete', function () {
+		//	var movieId = parseInt($(this).attr("value"))
+		//	//confirm('你確定要刪除嗎？' + movieId)
+		//	$.ajax({
+		//		type: "POST",
+		//		url: "/AdminMovie/DeleteAjax",
+		//		data: { "movieId": parseInt($(this).attr("value")) },
+		//		success: function (data) {
+		//			alert("已刪除")
+		//			let page = pageNumber
+		//			let key = $("#Key").val()
+		//			let categoryId = $("#CategoryId").find(":selected").val()
+		//			let levelId = $("#LevelId").find(":selected").val()
+		//			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+
+		//			show(key, categoryId, dateCategoryId, levelId, page)
+		//		},
+		//		error: function (xhr, status, error) {
+		//			// 處理錯誤
+		//			console.log("AJAX request error: " + status + " - " + error);
+		//		}
+		//	});
+		//})
+
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
 			let page = 1
@@ -350,12 +377,10 @@
 			let categoryId = $("#CategoryId").find(":selected").val()
 			let levelId = $("#LevelId").find(":selected").val()
 			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
-			alert(page + "/" + key + "/" + categoryId + "/" + dateCategoryId + "/" + levelId)
 
 			show(key, categoryId, dateCategoryId, levelId, page)
 		})
 
 	</script>
 		<script type="text/javascript" src="~/js/MoviePage.js"></script>
-
 }

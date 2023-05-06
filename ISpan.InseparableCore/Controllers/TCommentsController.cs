@@ -30,7 +30,7 @@ namespace ISpan.InseparableCore.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ArticleComment(CommentVm comment)
 		{
-			comment.FMemberId = _user.FId;
+			comment.FMemberPK = _user.FId;
 			List<CommentVm> vms = new List<CommentVm>();
 			//無參數=>預設顯示
 			if (string.IsNullOrEmpty(comment.FCommentContent))
@@ -39,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers
 			}
 			else if (comment.FCommentId != 0 || comment.FDeleted)//comment已存在=>跟新or刪除
 			{
-				repo.UpdateAsync(comment);
+				repo.Update(comment);
 			}
 			else // 新comment=>新增
 			{
