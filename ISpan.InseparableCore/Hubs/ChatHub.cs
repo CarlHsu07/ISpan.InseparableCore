@@ -8,9 +8,9 @@ namespace ISpan.InseparableCore.Hubs
     public class ChatHub : Hub
     {
         private readonly InseparableContext _context;
-        private readonly Connections _connections;
+        private readonly CConnections _connections;
 
-        public ChatHub(InseparableContext context, Connections connections)
+        public ChatHub(InseparableContext context, CConnections connections)
         {
             _context = context;
             _connections = connections;

@@ -2,7 +2,7 @@
 
 namespace ISpan.InseparableCore.Hubs
 {
-    public class Connections
+    public class CConnections
     {
         private readonly ConcurrentDictionary<string, string> _connections = new ConcurrentDictionary<string, string>();
 
