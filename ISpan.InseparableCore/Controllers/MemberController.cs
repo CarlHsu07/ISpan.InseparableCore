@@ -442,7 +442,7 @@ namespace ISpan.InseparableCore.Controllers
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", MemberIn.City); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.Area);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FId", "FAreaName", MemberIn.Area);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
             return View(MemberIn);
         }

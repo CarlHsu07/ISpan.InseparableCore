@@ -31,21 +31,23 @@ namespace ISpan.InseparableCore.Models.BLL
             return isExist;
         }
 
-
-        // 產生 會員ID 的方法
+        /// <summary>
+        /// 產生 會員ID 的方法
+        /// </summary>
+        /// <returns>回傳一個會員ID的字串，例如M2023050300001</returns>
         public string GenerateMemberId()
         {
             String todayDate = DateTime.Now.ToString("yyyyMMdd"); // 今天日期
             string newMemberID = string.Empty; // 新的會員ID
-            int newSequence = 0; // 新的序號
+            string newSequence = string.Empty; // 新的五位數序號
 
-            string lastMemberID = _context.TMembers
+            string? lastMemberID = _context.TMembers
                 .OrderByDescending(m => m.FSignUpTime)
                 .FirstOrDefault()?.FMemberId ?? null;
 
             if (string.IsNullOrEmpty(lastMemberID)) // 若DB中沒任何會員
             {
-                newMemberID = CreateFirstMemberIDToday(todayDate); // 產生第一筆會員ID
+                newMemberID = CreateFirstMemberIDToday(todayDate); // 產生當日第一筆會員ID
             }
             else
             {
@@ -56,7 +58,7 @@ namespace ISpan.InseparableCore.Models.BLL
                 {
                     int length = lastMemberID.Length;
                     string lastFiveChars = length >= 5 ? lastMemberID.Substring(length - 5) : lastMemberID;
-                    newSequence = int.Parse(lastFiveChars) + 1;
+                    newSequence = (int.Parse(lastFiveChars) + 1).ToString().PadLeft(5, '0');
                     newMemberID = "M" + todayDate + newSequence; // 將日期和序號結合，形成 newMemberID，例如 M2023050300001
                 }
                 else

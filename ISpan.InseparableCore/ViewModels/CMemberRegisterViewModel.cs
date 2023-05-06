@@ -33,7 +33,7 @@ namespace ISpan.InseparableCore.ViewModels
         //    set { _member.FMemberPK = value; }
         //}
 
-        [Display(Name = "* 姓氏")]
+        [Display(Name = "姓氏")]
         [Required(ErrorMessage = "請輸入姓氏")]
         public string LastName
         {
@@ -41,7 +41,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FLastName = value; }
         }
 
-        [Display(Name = "* 名字")]
+        [Display(Name = "名字")]
         [Required(ErrorMessage = "請輸入名字")]
         public string FirstName
         {
@@ -49,7 +49,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FFirstName = value; }
         }
 
-        [Display(Name = "* Email")]
+        [Display(Name = "Email")]
         [EmailAddress(ErrorMessage = "請輸入正確的Email格式")]
         [Required(ErrorMessage = "請輸入Email")]
         public string Email
@@ -58,7 +58,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FEmail = value; }
         }
 
-        [Display(Name = "* 密碼")]
+        [Display(Name = "密碼")]
         [Required(ErrorMessage = "請輸入密碼")]
         [DataType(DataType.Password)]
         public string Password
@@ -67,7 +67,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FPasswordHash = value; }
         }
 
-        [Display(Name = "* 確認密碼")]
+        [Display(Name = "確認密碼")]
         [Required(ErrorMessage = "請再次輸入密碼")]
         [Compare("Password", ErrorMessage = "密碼不相同！")]
         [DataType(DataType.Password)]
@@ -108,7 +108,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member.FAreaId = value; }
         }
 
-        [Display(Name = "* 住址")]
+        [Display(Name = "住址")]
         public string? Address
         {
             get { return _member.FAddress; }

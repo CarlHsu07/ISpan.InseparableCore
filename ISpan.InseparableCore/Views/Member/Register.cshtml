@@ -8,7 +8,7 @@
     <h1>會員註冊</h1>
 
     <h4>請填寫會員資料</h4>
-    <h6>* 為必填</h6>
+    <h6>* 為必填欄位</h6>
 </div>
 
 <hr />
@@ -17,43 +17,61 @@
         <form asp-action="Register" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
+                <label asp-for="LastName" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </label>
                 <input asp-for="LastName" class="form-control text-white" placeholder="請輸入姓氏" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <label asp-for="FirstName" class="control-label"></label>
+            <div class="form-group mt-3">
+                <label asp-for="FirstName" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </label>
                 <input asp-for="FirstName" class="form-control" placeholder="請輸入名字" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <label asp-for="Email" class="control-label"></label>
+            <div class="form-group mt-3">
+                <label asp-for="Email" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Email)
+                </label>
                 <input asp-for="Email" class="form-control" placeholder="請輸入Email" autocomplete="off"/>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <label asp-for="Password" class="control-label"></label>
+            <div class="form-group mt-3">
+                <label asp-for="Password" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Password)
+                </label>
                 <input asp-for="Password" class="form-control" type="password" placeholder="請輸入密碼" autocomplete="off"/>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
-                <label asp-for="ConfirmPassword" class="control-label"></label>
+            <div class="form-group mt-3">
+                <label asp-for="ConfirmPassword" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.ConfirmPassword)
+                </label>
                 <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="請再次輸入密碼" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <div class="form-group mt-2">
+            <div class="form-group mt-3">
                 <label asp-for="DateOfBirth" class="control-label"></label>
                 <input asp-for="DateOfBirth" class="form-control" type="date" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
-            <div class="form-row mt-2">
+            <div class="form-row mt-3">
                 <label asp-for="GenderId" class="control-label"></label>
                 <select asp-for="GenderId" class ="form-control" asp-items="ViewBag.FGenderId">
                     <option value="">請選擇</option>
                 </select>
             </div>
-            <div class="form-row mt-2">
-                <label asp-for="Address" class="col-sm-2 col-form-label"></label>
+            <div class="form-row mt-3">
+                <label asp-for="Address" class="col-sm-2 col-form-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Address)
+                </label>
                 <div class="col-sm-5">
                     <select asp-for="City" class="form-control f-3" asp-items="ViewBag.Cities" id="citySelect">
                         <option value="">請選擇縣市</option>
