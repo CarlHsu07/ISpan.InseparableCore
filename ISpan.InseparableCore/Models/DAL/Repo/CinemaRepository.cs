@@ -79,6 +79,22 @@ namespace ISpan.InseparableCore.Models.DAL.Repo
             {
                 throw new Exception(ex.Message);
             }
+            //demo 需要所以新增cinema同時新增一個room
+            var id = _db.TCinemas.FirstOrDefault(t => t == entity.cinemas).FCinemaId;
+            TRooms room = new TRooms()
+            {
+                FCinemaId = id,
+                FRoomName = "1號廳"
+            };
+            try
+            {
+                _db.TRooms.Add(room);
+                _db.SaveChanges();
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public TCinemas GetByName(string fCinemaName)
