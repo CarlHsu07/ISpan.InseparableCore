@@ -13,7 +13,6 @@ using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using prjMvcCoreDemo.Models;
 using System.Drawing.Printing;
 
 namespace ISpan.InseparableCore.Controllers.Server

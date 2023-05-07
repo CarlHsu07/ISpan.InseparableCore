@@ -1,9 +1,9 @@
-﻿using ISpan.InseparableCore.Models.BLL;
+﻿using ISpan.InseparableCore.Models;
+using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using prjMvcCoreDemo.Models;
 using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers.Server
@@ -39,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
             if (administrator == null) // 找不到該會員，即Email錯誤
             {
-                ModelState.AddModelError("Email", "Email錯誤，請檢查您的輸入並重試");
+                ModelState.AddModelError("Email", "Email錯誤，帳號不存在");
             }
 
             if (ModelState.IsValid) // 驗證通過
@@ -52,7 +52,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 }
                 else
                 {
-                    ModelState.AddModelError("Password", "密碼錯誤，請重試");
+                    ModelState.AddModelError("Password", "密碼錯誤");
                     return View(model);
                 }
             }
@@ -60,7 +60,16 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View(model);
         }
 
+        public IActionResult Logout()
+        {
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_ADMINISTRATOR))
+            {
+                HttpContext.Session.Remove(CDictionary.SK_LOGINED_ADMINISTRATOR);
+                return RedirectToAction(nameof(AdminHomeController.Login), "AdminHome");
+            }
 
+            return View();
+        }
 
         public IActionResult Index()
         {

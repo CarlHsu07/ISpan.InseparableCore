@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel
+﻿@model ISpan.InseparableCore.ViewModels.CMemberRegisterVM
 
 @{
     ViewData["Title"] = "Register";
@@ -58,7 +58,7 @@
             </div>
             <div class="form-group mt-3">
                 <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" type="date" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
+                <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")" oninvalid="this.setCustomValidity('生日不能超過今天')" oninput="this.setCustomValidity('')" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-row mt-3">
@@ -79,7 +79,7 @@
                     <span asp-validation-for="City" class="text-danger"></span>
                 </div>
                 <div class="col-sm-5">
-                    <select asp-for="Area" class="form-control f-3" id="areaSelect">
+                    <select asp-for="Area" class="form-control f-3" asp-items="ViewBag.Areas" id="areaSelect">
                         <option value="">請選擇區域</option>
                     </select>
                     <span asp-validation-for="Area" class="text-danger"></span>

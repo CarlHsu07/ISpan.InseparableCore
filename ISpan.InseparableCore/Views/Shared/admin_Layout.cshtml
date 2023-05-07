@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant-TW">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -25,6 +25,14 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    @using Microsoft.AspNetCore.Http;
+    @inject IHttpContextAccessor HttpContextAccessor
+    @{
+        var session = HttpContextAccessor.HttpContext.Session;
+        bool isLoggedIn = session.Keys.Contains(CDictionary.SK_LOGINED_ADMINISTRATOR);
+
+    }
+
     <div class="container-scroller">
 
         <div class="row p-0 m-0 proBanner" id="proBanner" hidden>
@@ -48,10 +56,12 @@
 
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
+
             <div class="sidebar-brand-wrapper d-none d-lg-flex align-items-center justify-content-center fixed-top">
                 <a class="sidebar-brand brand-logo" href="~/Admin/Index"><img src="~/images/inseparable.png" alt="logo" /></a>
                 <a class="sidebar-brand brand-logo-mini" href="~/Admin/Index"><img src="~/images/icon.png" alt="logo" /></a>
             </div>
+
             <ul class="nav">
                 <li class="nav-item profile">
                     <div class="profile-desc">
@@ -64,8 +74,10 @@
                                 @*<span>Gold Member</span>*@
                             </div>
                         </div>
-                        <a href="#" id="profile-dropdown" data-bs-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>
-                        <div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
+
+
+                        @*<a href="#" id="profile-dropdown" data-bs-toggle="dropdown"><i class="mdi mdi-dots-vertical"></i></a>*@
+                        @*<div class="dropdown-menu dropdown-menu-right sidebar-dropdown preview-list" aria-labelledby="profile-dropdown">
                             <a href="#" class="dropdown-item preview-item">
                                 <div class="preview-thumbnail">
                                     <div class="preview-icon bg-dark rounded-circle">
@@ -98,7 +110,7 @@
                                     <p class="preview-subject ellipsis mb-1 text-small">To-do list</p>
                                 </div>
                             </a>
-                        </div>
+                        </div>*@
                     </div>
                 </li>
                 <li class="nav-item nav-category">
@@ -340,6 +352,7 @@
                                 <p class="p-3 mb-0 text-center">See all notifications</p>
                             </div>
                         </li>*@
+
                         <li class="nav-item dropdown">
                             <a class="nav-link" id="profileDropdown" href="#" data-bs-toggle="dropdown">
                                 <div class="navbar-profile">
@@ -348,6 +361,7 @@
                                     @*<i class="mdi mdi-menu-down d-none d-sm-block"></i>*@
                                 </div>
                             </a>
+
                             @*<div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="profileDropdown">
                                 <h6 class="p-3 mb-0">Profile</h6>
                                 <div class="dropdown-divider"></div>
@@ -376,6 +390,16 @@
                                 <p class="p-3 mb-0 text-center">Advanced settings</p>
                             </div>*@
                         </li>
+
+                        @{
+                            if(isLoggedIn)
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="AdminHome" asp-action="Logout" class="btn btn-danger">登出</a>
+                                </li>
+                            }
+                        }
+
                     </ul>
                     <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
                         <span class="mdi mdi-format-line-spacing"></span>

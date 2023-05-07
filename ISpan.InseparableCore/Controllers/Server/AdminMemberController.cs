@@ -9,6 +9,7 @@ using ISpan.InseparableCore.ViewModels;
 using System.Text;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.BLL;
+using System.Reflection;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -72,40 +73,53 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View(tMembers);
         }
 
-        // GET: AdminMember/Register
+        // GET: AdminMember/Create
         public IActionResult Create()
         {
             // todo 居住區域選單，要改成縣市跟區域，先選縣市再顯示區域
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
             return View();
         }
 
-        // POST: AdminMember/Register
+        // POST: AdminMember/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode,FPhotoPath,FIntroduction,FAccountStatus,FTotalMemberPoint")] TMembers MemberIn)
+        public async Task<IActionResult> Create([Bind("LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,Introduction,AccountStatus,TotalMemberPoint,MemberPhoto")] CMemberCreateVM memberVM)
         {
             if (ModelState.IsValid)
             {
+                TMembers newMember = new TMembers();
                 MemberService memberService = new MemberService(_context);
 
                 // 產生會員ID
-                MemberIn.FMemberId = memberService.GenerateMemberId();
+                newMember.FMemberId = memberService.GenerateMemberId();
 
                 // 產生會員註冊時間
-                MemberIn.FSignUpTime = memberService.GenerateSignUpTime();
+                newMember.FSignUpTime = memberService.GenerateSignUpTime();
 
                 // 產生會員點數
-                if (MemberIn.FTotalMemberPoint == null)
+                if (memberVM.TotalMemberPoint == null)
                 {
-                    MemberIn.FTotalMemberPoint = 0;
+                    newMember.FTotalMemberPoint = 0;
                 }
+
+                newMember.FLastName = memberVM.LastName;
+                newMember.FFirstName = memberVM.FirstName;
+                newMember.FEmail = memberVM.Email;
+                newMember.FDateOfBirth = memberVM.DateOfBirth;
+                newMember.FGenderId = memberVM.GenderId;
+                newMember.FCellphone = memberVM.Cellphone;
+                newMember.FAreaId = memberVM.Area;
+                newMember.FAddress = memberVM.Address;
+                newMember.FIntroduction = memberVM.Introduction;
+                newMember.FAccountStatus = memberVM.AccountStatus;
 
                 // 加密會員密碼
                 #region
-                string password = MemberIn.FPasswordHash; // 要加密的密碼
+                string password = memberVM.Password; // 要加密的密碼
 
                 // 產生鹽值
                 byte[] salt = CPasswordHelper.GenerateSalt();
@@ -114,19 +128,20 @@ namespace ISpan.InseparableCore.Controllers.Server
                 byte[] hashedPassword = CPasswordHelper.HashPasswordWithSalt(Encoding.UTF8.GetBytes(password), salt);
 
                 // 將鹽值與加密後的密碼轉換成 Base64 字串儲存
-                MemberIn.FPasswordSalt = Convert.ToBase64String(salt);
-                MemberIn.FPasswordHash = Convert.ToBase64String(hashedPassword);
+                newMember.FPasswordSalt = Convert.ToBase64String(salt);
+                newMember.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
 
-                _context.Add(MemberIn);
+                _context.Add(newMember);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", MemberIn.FAccountStatus);
-            // todo 改成顯示縣市；區域用ajax處理
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.FGenderId);
-            return View(MemberIn);
+
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.Area);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+            return View(memberVM);
         }
 
         // GET: AdminMember/Edit/5
@@ -137,23 +152,47 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers.FindAsync(id);
-            if (tMembers == null)
+            var member = await _context.TMembers
+                .Include(m => m.FArea.FCity)
+                .FirstOrDefaultAsync(m => m.FId == id);
+
+            if (member == null)
             {
                 return NotFound();
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+
+            CAdminMemberEditVM memberVM = new CAdminMemberEditVM
+            {
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
+                DateOfBirth = member.FDateOfBirth,
+                GenderId = member.FGenderId,
+                Cellphone = member.FCellphone,
+                Address = member.FAddress,
+                AreaId = member.FAreaId,
+                MemberPhotoPath = member.FPhotoPath,
+                Introduction = member.FIntroduction,
+                AccountStatus = member.FAccountStatus,
+                TotalMemberPoint = member.FTotalMemberPoint,
+                SignUpTime = member.FSignUpTime
+            };
+
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCity.FCityId); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+            return View(memberVM);
         }
 
         // POST: AdminMember/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FMemberId,FLastName,FFirstName,FEmail,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaId,FIntroduction,FAccountStatus")] TMembers tMembers)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MemberId,LastName,FirstName,Email,DateOfBirth,GenderId,Cellphone,Address,CityId,AreaId,Introduction,AccountStatus,MemberPhoto")] CAdminMemberEditVM memberVM)
         {
-            if (id != tMembers.FId) // todo 這action有問題，tMembers.FId為0
+            if (id != memberVM.Id)
             {
                 return NotFound();
             }
@@ -162,12 +201,30 @@ namespace ISpan.InseparableCore.Controllers.Server
             {
                 try
                 {
-                    _context.Update(tMembers);
-                    await _context.SaveChangesAsync();
+                    TMembers? member = _context.TMembers.FirstOrDefault(m => m.FId == memberVM.Id);
+
+                    if (member != null)
+                    {
+
+                        member.FMemberId = memberVM.MemberId;
+                        member.FLastName = memberVM.LastName;
+                        member.FFirstName = memberVM.FirstName;
+                        member.FEmail = memberVM.Email;
+                        member.FDateOfBirth = memberVM.DateOfBirth;
+                        member.FGenderId = memberVM.GenderId;
+                        member.FCellphone = memberVM.Cellphone;
+                        member.FAreaId = memberVM.AreaId;
+                        member.FAddress = memberVM.Address;
+                        member.FIntroduction = memberVM.Introduction;
+                        member.FAccountStatus = memberVM.AccountStatus;
+
+                        _context.Update(member);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TMembersExists(tMembers.FId))
+                    if (!TMembersExists(memberVM.Id))
                     {
                         return NotFound();
                     }
@@ -178,10 +235,12 @@ namespace ISpan.InseparableCore.Controllers.Server
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", tMembers.FAccountStatus);
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", tMembers.FAreaId);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", tMembers.FGenderId);
-            return View(tMembers);
+
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.AreaId);
+            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+            return View(memberVM);
         }
 
         // GET: AdminMember/Delete/5

@@ -55,7 +55,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[tChat]",
+         "Name": "[dbo].[tChats]",
          "ObjectType": 0
       },
       {

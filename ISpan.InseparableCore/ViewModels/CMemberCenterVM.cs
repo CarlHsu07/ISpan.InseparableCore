@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ISpan.InseparableCore.ViewModels
 {
-    public class CMemberCenterViewModel
+    public class CMemberCenterVM
     {
         private TMembers _member;
 
@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
             set { _member = value; }
         }
 
-        public CMemberCenterViewModel()
+        public CMemberCenterVM()
         {
             _member = new TMembers();
         }

@@ -28,7 +28,7 @@ namespace ISpan.InseparableCore.Models.DAL
         public virtual DbSet<TArticleKeywordDetails> TArticleKeywordDetails { get; set; }
         public virtual DbSet<TArticleLikeDetails> TArticleLikeDetails { get; set; }
         public virtual DbSet<TArticles> TArticles { get; set; }
-        public virtual DbSet<TChat> TChat { get; set; }
+        public virtual DbSet<TChats> TChats { get; set; }
         public virtual DbSet<TCinemas> TCinemas { get; set; }
         public virtual DbSet<TCities> TCities { get; set; }
         public virtual DbSet<TComments> TComments { get; set; }
@@ -164,7 +164,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TActivityParticipants)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tActivityParticipants_tMembers");
             });
 
@@ -257,7 +256,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FCityId)
                     .HasColumnName("fCityID")
-                    .HasComment("鄉鎮市區所屬縣市");
+                    .HasComment("鄉鎮市區所屬縣市ID");
 
                 entity.Property(e => e.FZipCode)
                     .HasColumnName("fZipCode")
@@ -297,7 +296,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TArticleClickedDetails)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TArticleClickedDetails_tMembers");
             });
 
@@ -355,7 +353,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TArticleLikeDetails)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TArticleLikeDetails_tMembers");
             });
 
@@ -407,15 +404,15 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TArticles)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tArticles_tMembers");
             });
 
-            modelBuilder.Entity<TChat>(entity =>
+            modelBuilder.Entity<TChats>(entity =>
             {
-                entity.HasKey(e => e.FMessageId);
+                entity.HasKey(e => e.FMessageId)
+                    .HasName("PK_tChat");
 
-                entity.ToTable("tChat");
+                entity.ToTable("tChats");
 
                 entity.Property(e => e.FMessageId)
                     .HasColumnName("fMessageID")
@@ -439,13 +436,13 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("發送者的會員ID");
 
                 entity.HasOne(d => d.FReceiver)
-                    .WithMany(p => p.TChatFReceiver)
+                    .WithMany(p => p.TChatsFReceiver)
                     .HasForeignKey(d => d.FReceiverId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tChat_tMembers1");
 
                 entity.HasOne(d => d.FSender)
-                    .WithMany(p => p.TChatFSender)
+                    .WithMany(p => p.TChatsFSender)
                     .HasForeignKey(d => d.FSenderId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tChat_tMembers");
@@ -552,7 +549,6 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FMember)
                     .WithMany(p => p.TComments)
                     .HasForeignKey(d => d.FMemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tComments_tMembers");
             });
 
@@ -775,7 +771,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("會員帳戶狀態");
 
                 entity.Property(e => e.FAddress)
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .HasColumnName("fAddress")
                     .HasComment("住址");
 
@@ -795,13 +791,13 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FEmail)
                     .IsRequired()
-                    .HasMaxLength(256)
+                    .HasMaxLength(200)
                     .HasColumnName("fEmail")
                     .HasComment("電子郵件的地址");
 
                 entity.Property(e => e.FFirstName)
                     .IsRequired()
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .HasColumnName("fFirstName")
                     .HasComment("名字");
 
@@ -810,7 +806,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("性別ID");
 
                 entity.Property(e => e.FIntroduction)
-                    .HasMaxLength(500)
+                    .HasMaxLength(600)
                     .HasColumnName("fIntroduction")
                     .HasComment("個人簡介");
 
@@ -1117,8 +1113,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasColumnName("fMovieDirectors");
 
                 entity.Property(e => e.FMovieImagePath)
-                    .IsRequired()
-                    .HasMaxLength(50)
+                    .HasMaxLength(4000)
                     .HasColumnName("fMovieImagePath")
                     .HasDefaultValueSql("('no image')");
 

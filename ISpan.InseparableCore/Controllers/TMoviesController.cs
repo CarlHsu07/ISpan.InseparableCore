@@ -11,7 +11,6 @@ using NuGet.Protocol;
 using ISpan.InseparableCore.Models.DAL;
 using static System.Formats.Asn1.AsnWriter;
 using X.PagedList;
-using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.BLL.DTOs;

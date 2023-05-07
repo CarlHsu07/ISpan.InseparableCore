@@ -1,7 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using prjMvcCoreDemo.Models;
+using ISpan.InseparableCore.Models;
 using System.Text.Json;
 
 namespace ISpan.InseparableCore.Controllers.Server

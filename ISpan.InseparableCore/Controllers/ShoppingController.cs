@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using prjMvcCoreDemo.Models;
+using ISpan.InseparableCore.Models;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
