@@ -1,4 +1,4 @@
-﻿namespace prjMvcCoreDemo.Models
+﻿namespace ISpan.InseparableCore.Models
 {
     public class CDictionary
     {

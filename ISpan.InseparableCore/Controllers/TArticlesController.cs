@@ -12,7 +12,6 @@ using X.PagedList;
 using Azure;
 using System.Drawing.Printing;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using System.Diagnostics.Metrics;
 using ISpan.InseparableCore.Models.DAL.Repo;

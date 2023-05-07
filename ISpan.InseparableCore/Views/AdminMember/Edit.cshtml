@@ -5,7 +5,9 @@
 }
 
 <style>
-    
+    .textarea {
+        min-height: 10rem !important;
+    }
 </style>
 
 <h1>編輯會員</h1>
@@ -39,7 +41,7 @@
             
             <div class="form-group">
                 <label asp-for="DateOfBirth" class="control-label">生日</label>
-                <input asp-for="DateOfBirth" class="form-control text-light" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                <input asp-for="DateOfBirth" class="form-control text-light" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" />
                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,11 +53,6 @@
                 <label asp-for="Cellphone" class="control-label">手機</label>
                 <input asp-for="Cellphone" class="form-control text-light" />
                 <span asp-validation-for="Cellphone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label">住址</label>
-                <input asp-for="Address" class="form-control text-light" />
-                <span asp-validation-for="Address" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CityId" class="control-label">城市</label>
@@ -71,6 +68,11 @@
                 </select>
                 <span asp-validation-for="AreaId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label">住址</label>
+                <input asp-for="Address" class="form-control text-light" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
             @*<div class="form-group">
                 <label asp-for="FPhotoPath" class="control-label"></label>
                 <input asp-for="FPhotoPath" class="form-control" />
@@ -78,12 +80,14 @@
             </div>*@
             <div class="form-group">
                 <label asp-for="Introduction" class="control-label">簡介</label>
-                <input asp-for="Introduction" class="form-control text-light" />
+                <textarea asp-for ="Introduction" class="form-control textarea text-light"></textarea>
                 <span asp-validation-for="Introduction" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="AccountStatus" class="control-label">會員狀態</label>
-                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus"></select>
+                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus">
+                    <option value="">請選擇</option>
+                </select>
                 <span asp-validation-for="AccountStatus" class="text-danger"></span>
             </div>
             @*<div class="form-group">

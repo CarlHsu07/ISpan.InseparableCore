@@ -6,7 +6,6 @@ using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;
-using prjMvcCoreDemo.Models;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;

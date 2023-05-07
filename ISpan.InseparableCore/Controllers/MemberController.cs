@@ -13,7 +13,6 @@ using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using System.Diagnostics.Metrics;
-using prjMvcCoreDemo.Models;
 using System.Text.Json;
 using System.Security.Claims;
 using ISpan.InseparableCore.Models.DAL.Repo;
@@ -499,7 +498,7 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Member/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileVM MemberIn)
+        public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,City,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileVM MemberIn)
         {
             if (id != MemberIn.Id)
             {
@@ -566,7 +565,7 @@ namespace ISpan.InseparableCore.Controllers
             
             ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", MemberIn.Area);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
-            return View(MemberIn);
+            return View();
         }
 
         [HttpPost]
@@ -658,7 +657,6 @@ namespace ISpan.InseparableCore.Controllers
                 throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
             }
         }
-
 
         // GET: Home/Logout
         public IActionResult Logout()

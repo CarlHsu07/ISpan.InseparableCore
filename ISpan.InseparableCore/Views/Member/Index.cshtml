@@ -168,7 +168,7 @@
                     <div class="row mb-3">
                         <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="DateOfBirth" class="form-control" type="date" value="@DateTime.Now.AddYears(-12).ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")">
+                            <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                     </div>
@@ -217,7 +217,7 @@
                     <div class="row mb-3">
                         <label asp-for="Introduction" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <textarea asp-for="Introduction" class="form-control" rows="20"></textarea>
+                            <textarea asp-for="Introduction" class="form-control" rows="10"></textarea>
                         </div>
                         <span asp-validation-for="Introduction" class="text-danger"></span>
                     </div>
