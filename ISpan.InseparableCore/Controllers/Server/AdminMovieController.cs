@@ -141,7 +141,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 			string imageName = Guid.NewGuid().ToString() + ".jpg";
 			string path = _enviro.WebRootPath + "/images/" + imageName;
 			image.CopyTo(new FileStream(path, FileMode.Create));
-			return path;
+			return imageName;
 		}
 		// GET: TMovies/Create
 		public IActionResult Create()
@@ -156,7 +156,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(MovieCreateVm vm)
+		public IActionResult Create(MovieCreateVm vm)
 		{
 			var dto = vm.CreateVmToDto();
 			if (vm.Image != null) dto.FMovieImagePath = GetImagePath(vm.Image);
@@ -282,7 +282,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 				return ShowError(ex);
 			}
 
-			return RedirectToAction(nameof(IndexMaintainer));
+			return Ok();
 		}
 
 		private bool TMoviesExists(int id)

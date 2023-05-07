@@ -120,6 +120,7 @@
 
 
 @section Scripts{
+<script type="text/javascript" src="~/js/swalConfirm.js"></script>
 	<script>
 		function backToIndex() { window.location.href = "/TMovies/Index" }
 
@@ -191,9 +192,14 @@
 			let movieId = @Model.FMovieId
 			let comment = "留言已刪除"
 			let deleted = true
-			if (confirm('你確定要刪除嗎？')){
+			deleteConfirmation(function () {
 				CommentDetail(serialNumber,  movieId, comment, deleted)
-			}
+				Swal.fire(
+					'已刪除',
+					'success'
+				);
+
+			})
 		})
 
 		//開始編輯評論，生成編輯textarea
