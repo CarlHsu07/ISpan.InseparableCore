@@ -21,7 +21,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// </summary>
         public int FZipCode { get; set; }
         /// <summary>
-        /// 鄉鎮市區所屬縣市
+        /// 鄉鎮市區所屬縣市ID
         /// </summary>
         public int FCityId { get; set; }
         /// <summary>

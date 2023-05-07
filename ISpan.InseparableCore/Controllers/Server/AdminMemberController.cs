@@ -199,6 +199,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", member.FAccountStatus);
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", member.FAreaId);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);

@@ -10,21 +10,13 @@ namespace ISpan.InseparableCore.ViewModels
 
         public TMembers member
         {
-            get { return _member; }
-            set { _member = value; }
+            get { return _member; } set { _member = value; }
         }
 
         public CMemberCreateVM()
         {
             _member = new TMembers();
         }
-
-        //[Display(Name = "會員流水號")]
-        //public int Id
-        //{
-        //    get { return _member.FId; }
-        //    set { _member.FId = value; }
-        //}
 
         //[Display(Name = "會員ID")]
         //public string MemberId
@@ -37,16 +29,14 @@ namespace ISpan.InseparableCore.ViewModels
         [Required(ErrorMessage = "請輸入姓氏")]
         public string LastName
         {
-            get { return _member.FLastName; }
-            set { _member.FLastName = value; }
+            get { return _member.FLastName; } set { _member.FLastName = value; }
         }
 
         [Display(Name = "名字")]
         [Required(ErrorMessage = "請輸入名字")]
         public string FirstName
         {
-            get { return _member.FFirstName; }
-            set { _member.FFirstName = value; }
+            get { return _member.FFirstName; } set { _member.FFirstName = value; }
         }
 
         [Display(Name = "Email")]
@@ -54,8 +44,7 @@ namespace ISpan.InseparableCore.ViewModels
         [Required(ErrorMessage = "請輸入Email")]
         public string Email
         {
-            get { return _member.FEmail; }
-            set { _member.FEmail = value; }
+            get { return _member.FEmail; } set { _member.FEmail = value; }
         }
 
         [Display(Name = "密碼")]
@@ -63,8 +52,7 @@ namespace ISpan.InseparableCore.ViewModels
         [DataType(DataType.Password)]
         public string Password
         {
-            get { return _member.FPasswordHash; }
-            set { _member.FPasswordHash = value; }
+            get { return _member.FPasswordHash; } set { _member.FPasswordHash = value; }
         }
 
         [Display(Name = "確認密碼")]
@@ -142,13 +130,6 @@ namespace ISpan.InseparableCore.ViewModels
             get { return _member.FTotalMemberPoint; }
             set { _member.FTotalMemberPoint = value; }
         }
-
-        //[Display(Name = "註冊時間")]
-        //public DateTime? SignUpTime
-        //{
-        //    get { return _member.FSignUpTime; }
-        //    set { _member.FSignUpTime = value; }
-        //}
 
         [Display(Name = "上傳新大頭貼照")]
         public IFormFile? MemberPhoto { get; set; }

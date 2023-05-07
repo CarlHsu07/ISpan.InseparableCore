@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace ISpan.InseparableCore.Models.DAL
 {
-    public partial class TChat
+    public partial class TChats
     {
         /// <summary>
         /// 聊天流水號

@@ -58,7 +58,7 @@ namespace ISpan.InseparableCore.ViewModels
         [Required(ErrorMessage = "請再次輸入密碼")]
         [Compare("Password", ErrorMessage = "密碼不相同！")]
         [DataType(DataType.Password)]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
         /// <summary>
         /// 密碼鹽值
@@ -81,7 +81,7 @@ namespace ISpan.InseparableCore.ViewModels
         /// 手機號碼
         /// </summary>
         [Display(Name = "手機")]
-        public string FCellphone { get => _member.FCellphone; set => _member.FCellphone = value; }
+        public string? FCellphone { get => _member.FCellphone; set => _member.FCellphone = value; }
 
         /// <summary>
         /// 住址
@@ -100,13 +100,13 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 大頭貼的檔案路徑
         /// </summary>
-        public string FPhotoPath { get => _member.FPhotoPath; set => _member.FPhotoPath = value; }
+        public string? FPhotoPath { get => _member.FPhotoPath; set => _member.FPhotoPath = value; }
 
         /// <summary>
         /// 個人簡介
         /// </summary>
         [Display(Name = "個人簡介")]
-        [MaxLength(500, ErrorMessage = "個人簡介不能超過300字")]
+        [MaxLength(500, ErrorMessage = "個人簡介不能超過{0}字")]
         public string? FIntroduction { get => _member.FIntroduction; set => _member.FIntroduction = value; }
 
         /// <summary>
