@@ -51,14 +51,23 @@
                 <span asp-validation-for="Cellphone" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="City" class="control-label">城市</label>
+                <select asp-for="City" class="form-control text-light" asp-items="ViewBag.Cities" id="citySelect">
+                    <option value="">請選擇縣市</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Area" class="control-label">地區</label>
+                <select asp-for="Area" class="form-control text-light" asp-items="ViewBag.FAreaZipCode" id="areaSelect">
+                    <option value="">請選擇區域</option>
+                </select>
+                <span asp-validation-for="Area" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Address" class="control-label">住址</label>
                 <input asp-for="Address" class="form-control text-light" placeholder="請輸入剩下的住址" />
                 <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            @*todo 改成適用於AJAX的樣子*@
-            <div class="form-group">
-                <label asp-for="Area" class="control-label">居住地區</label>
-                <select asp-for="Area" class="form-control text-light" asp-items="ViewBag.FAreaZipCode"></select>
             </div>
             @*<div class="form-group">
                 <label asp-for="PhotoPath" class="control-label"></label>
@@ -91,5 +100,8 @@
 </div> 
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
+    <script src="~/js/addressEdit.js"></script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

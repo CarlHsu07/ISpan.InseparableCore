@@ -39,7 +39,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
             if (administrator == null) // 找不到該會員，即Email錯誤
             {
-                ModelState.AddModelError("Email", "Email錯誤，請檢查您的輸入並重試");
+                ModelState.AddModelError("Email", "Email錯誤，帳號不存在");
             }
 
             if (ModelState.IsValid) // 驗證通過
@@ -52,7 +52,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 }
                 else
                 {
-                    ModelState.AddModelError("Password", "密碼錯誤，請重試");
+                    ModelState.AddModelError("Password", "密碼錯誤");
                     return View(model);
                 }
             }

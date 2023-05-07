@@ -1,6 +1,6 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
-using static ISpan.InseparableCore.ViewModels.CMemberRegisterViewModel;
+using static ISpan.InseparableCore.ViewModels.CMemberRegisterVM;
 
 namespace ISpan.InseparableCore.ViewModels
 {

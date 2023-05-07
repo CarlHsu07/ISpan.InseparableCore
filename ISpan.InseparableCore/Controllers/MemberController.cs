@@ -106,7 +106,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CMemberCenterViewModel
+            var viewModel = new CMemberCenterVM
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -387,7 +387,7 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Members/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterViewModel MemberIn)
+        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterVM memberVM)
         {
             // todo VM驗證不過後的View有問題，會不能選擇縣市
 
@@ -395,7 +395,7 @@ namespace ISpan.InseparableCore.Controllers
             MemberService memberService = new MemberService(_context);
 
             // 驗證Email是否存在
-            if (memberService.IsEmailExist(MemberIn.Email))
+            if (memberService.IsEmailExist(memberVM.Email))
             {
                 ModelState.AddModelError("Email", "此Email已用過，請換一組");
             }
@@ -412,18 +412,18 @@ namespace ISpan.InseparableCore.Controllers
                     newMember.FTotalMemberPoint = 0;
                 }
 
-                newMember.FLastName = MemberIn.LastName;
-                newMember.FFirstName = MemberIn.FirstName;
-                newMember.FEmail = MemberIn.Email;
-                newMember.FDateOfBirth = MemberIn.DateOfBirth;
-                newMember.FGenderId = MemberIn.GenderId;
-                newMember.FAreaId = MemberIn.Area;
-                newMember.FAddress = MemberIn.Address;
+                newMember.FLastName = memberVM.LastName;
+                newMember.FFirstName = memberVM.FirstName;
+                newMember.FEmail = memberVM.Email;
+                newMember.FDateOfBirth = memberVM.DateOfBirth;
+                newMember.FGenderId = memberVM.GenderId;
+                newMember.FAreaId = memberVM.Area;
+                newMember.FAddress = memberVM.Address;
 
 
                 // 加密會員密碼
                 #region
-                string password = MemberIn.Password; // 要加密的密碼
+                string password = memberVM.Password; // 要加密的密碼
                 
                 byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
 
@@ -441,10 +441,10 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", MemberIn.City); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FId", "FAreaName", MemberIn.Area);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
-            return View(MemberIn);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FId", "FAreaName", memberVM.Area);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
+            return View(memberVM);
         }
 
         // GET: Member/EditProfile/5
@@ -531,7 +531,7 @@ namespace ISpan.InseparableCore.Controllers
                         member.FAreaId = MemberIn.Area;
                         member.FAddress = MemberIn.Address;
                         member.FIntroduction = MemberIn.Introduction;
-                        // todo 字數太長的處理
+                        // todo 字數太長的處理，目前已在VM驗證
 
                         if (MemberIn.Password != null) // 加密會員密碼
                         {
@@ -545,10 +545,10 @@ namespace ISpan.InseparableCore.Controllers
                             member.FPasswordSalt = Convert.ToBase64String(salt);
                             member.FPasswordHash = Convert.ToBase64String(hashedPassword);
                         }
-                    }
 
-                    _context.Update(member);
-                    await _context.SaveChangesAsync();
+                        _context.Update(member);
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
