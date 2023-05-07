@@ -73,7 +73,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View(tMembers);
         }
 
-        // GET: AdminMember/Register
+        // GET: AdminMember/Create
         public IActionResult Create()
         {
             // todo 居住區域選單，要改成縣市跟區域，先選縣市再顯示區域
@@ -84,7 +84,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View();
         }
 
-        // POST: AdminMember/Register
+        // POST: AdminMember/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,Introduction,AccountStatus,TotalMemberPoint,MemberPhoto")] CMemberCreateVM memberVM)
@@ -152,7 +152,10 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var member = await _context.TMembers.FindAsync(id);
+            var member = await _context.TMembers
+                .Include(m => m.FArea.FCity)
+                .FirstOrDefaultAsync(m => m.FId == id);
+
             if (member == null)
             {
                 return NotFound();
@@ -177,10 +180,10 @@ namespace ISpan.InseparableCore.Controllers.Server
                 SignUpTime = member.FSignUpTime
             };
 
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
-            //ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.FAreaId);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCity.FCityId); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
             return View(memberVM);
         }
 

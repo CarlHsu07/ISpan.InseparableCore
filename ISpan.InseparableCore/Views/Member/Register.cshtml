@@ -79,7 +79,7 @@
                     <span asp-validation-for="City" class="text-danger"></span>
                 </div>
                 <div class="col-sm-5">
-                    <select asp-for="Area" class="form-control f-3" id="areaSelect">
+                    <select asp-for="Area" class="form-control f-3" asp-items="ViewBag.Areas" id="areaSelect">
                         <option value="">請選擇區域</option>
                     </select>
                     <span asp-validation-for="Area" class="text-danger"></span>

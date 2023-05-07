@@ -771,7 +771,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("會員帳戶狀態");
 
                 entity.Property(e => e.FAddress)
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .HasColumnName("fAddress")
                     .HasComment("住址");
 
@@ -791,13 +791,13 @@ namespace ISpan.InseparableCore.Models.DAL
 
                 entity.Property(e => e.FEmail)
                     .IsRequired()
-                    .HasMaxLength(256)
+                    .HasMaxLength(200)
                     .HasColumnName("fEmail")
                     .HasComment("電子郵件的地址");
 
                 entity.Property(e => e.FFirstName)
                     .IsRequired()
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .HasColumnName("fFirstName")
                     .HasComment("名字");
 
@@ -806,7 +806,7 @@ namespace ISpan.InseparableCore.Models.DAL
                     .HasComment("性別ID");
 
                 entity.Property(e => e.FIntroduction)
-                    .HasMaxLength(500)
+                    .HasMaxLength(600)
                     .HasColumnName("fIntroduction")
                     .HasComment("個人簡介");
 

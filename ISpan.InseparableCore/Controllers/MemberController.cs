@@ -442,7 +442,7 @@ namespace ISpan.InseparableCore.Controllers
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FId", "FAreaName", memberVM.Area);
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", memberVM.Area);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
             return View(memberVM);
         }
@@ -564,7 +564,7 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction(nameof(Index));
             }
             
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", MemberIn.Area);
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", MemberIn.Area);
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", MemberIn.GenderId);
             return View(MemberIn);
         }
