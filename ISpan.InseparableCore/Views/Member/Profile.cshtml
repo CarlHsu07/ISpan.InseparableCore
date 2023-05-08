@@ -74,30 +74,33 @@
         $(document).ready(function () {
             $("#btnAddFriend").hover(
                 function () {
-                    const friendStatus = $(this).data("friend-status");
+                    var friendStatus = $("#btnAddFriend").data("friend-status");
 
-                    if (friendStatus === "is-friend") {
+                    if (friendStatus == "is-friend") {
+                        $(this).text("解除好友");
                         $(this).addClass("btn-danger").removeClass("btn-secondary");
-                        $(this).text('解除好友');
                     } else {
-                        $(this).text('加入好友');
+                        $(this).text("加入好友");
                     }
                 },
                 function () {
-                    const friendStatus = $(this).data("friend-status");
+                    var friendStatus = $("#btnAddFriend").data("friend-status");
 
-                    if (friendStatus === "is-friend") {
+                    if (friendStatus == "is-friend") {
+                        console.log("滑鼠離開，是朋友，之後顯示已是好友，變灰色");
+                        $(this).text("已是好友");
                         $(this).addClass("btn-secondary").removeClass("btn-danger");
-                        $(this).text('已是好友');
                     } else {
-                        $(this).text('加入好友');
+                        $(this).text("加入好友");
                     }
                 }
             );
 
             $("#btnAddFriend").click(function () {
-                var btn = $(this);
-                var id =  btn.val();
+                const btn = $(this);
+                let id =  btn.val();
+
+                btn.prop("disabled", true); // 禁用按鈕
 
                 // 取得好友的狀態
                 const friendStatus = btn.data("friend-status");
@@ -109,9 +112,15 @@
                         data: { friendId: id },
                         success: function (result) {
                             if (result.success) {
+                                btn.attr("data-friend-status", "is-friend");
+
+                                setTimeout( function(){
+                                    btn.addClass("btn-secondary").removeClass("btn-primary");
+                                    btn.text("已是好友");
+                                    btn.prop("disabled", false);
+                                }, 1000);
+                                
                                 console.log("加好友成功 in all");
-                                btn.text("已是好友");
-                                btn.addClass("btn-secondary").removeClass("btn-primary");
                             }
                             else {
                                 console.log(result.message);
@@ -130,9 +139,15 @@
                         data: { friendId: id },
                         success: function (result) {
                             if (result.success) {
+                                btn.attr('data-friend-status', 'not-friend');
+
+                                setTimeout(function () {
+                                    btn.addClass("btn-primary").removeClass("btn-secondary").removeClass("btn-danger");
+                                    btn.text("加入好友");
+                                    btn.prop("disabled", false);
+                                }, 1000);
+
                                 console.log("解除好友成功 in all");
-                                btn.text("加入好友");
-                                btn.addClass("btn-primary").removeClass("btn-secondary");
                             }
                             else {
                                 console.log(result.message); // 失敗訊息
