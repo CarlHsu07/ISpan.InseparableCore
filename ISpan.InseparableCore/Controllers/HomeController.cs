@@ -102,9 +102,10 @@ namespace ISpan.InseparableCore.Controllers
             var cinema = cinema_repo.Cinema(keyword);
             IEnumerable<CMemberVM> member = Enumerable.Empty<CMemberVM>();
             IEnumerable<ArticleVm> articles = Enumerable.Empty<ArticleVm>();
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER))
+
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER)) // 在登入狀態下可查到會員跟文章
             {
-                member = member_repo.members(keyword);
+                member = member_repo.searchMembers(keyword);
 
                 articles = article_repo.Articles(keyword);
             }
