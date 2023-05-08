@@ -5,7 +5,9 @@
 }
 
 <style>
+	.Delete{
 
+	}
 	.inDivPosition {
 		position: relative;
 		bottom: 0px;
@@ -58,10 +60,10 @@
 		</span>
 		<span>
 			<div>
-				<form asp-action="Delete">
-					<input type="hidden" name="articleId" value="@Model.FArticleId" />
-					<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
-				</form>
+				<button value="@Model.FArticleId" class="btn btn-danger"
+						style="" id="DeleteArticle">
+					刪除
+				</button>
 			</div>
 		</span>
 		<span>
@@ -79,6 +81,8 @@
 <div id="divComment"></div>
 
 @section Scripts{
+		<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 		//返回
 		function backToIndex() { window.location.href = "/AdminArticle/IndexMaintainer" }
@@ -110,7 +114,7 @@
 						)
 						if(!value.FDeleted){
 							$(`#Delete${value.FCommentId}`).append(`
-								<button type="button" id="btnDeleteComment" class="btn btn-danger" value="${value.FCommentId}">刪除</button>
+								<button type="button" id="btnDeleteComment" class="btn btn-danger Delete" value="${value.FCommentId}">刪除</button>
 							`)
 						}
 					})
@@ -135,29 +139,39 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			if (confirm('你確定要刪除嗎？')){
+			deleteConfirmation(function (){
 				CommentDetail(commentId, articleId, comment, deleted)
-			}
+				Swal.fire(
+					'已刪除',
+					'success'
+				);
+			})
+
 		})
 		//刪除文章
-		$(document).on('click', '.Delete', function () {
+		$(document).on('click', '#DeleteArticle', function (event) {
 			var articleId = parseInt($(this).attr("value"))
-			if (confirm('你確定要刪除嗎？')) {
+			deleteConfirmation(function () {
 				$.ajax({
 					type: "POST",
-					url: "/AdminArticle/DeleteAjax",
+					url: "/TArticles/DeleteAjax",
 					data: { articleId },
 					success: function (data) {
-						alert("已刪除")
+						Swal.fire(
+							'已刪除',
+							'success'
+						);
+						location.href = "/AdminArticle/IndexMaintainer"
 					},
 					error: function (xhr, status, error) {
 						// 處理錯誤
 						console.log("AJAX request error: " + status + " - " + error);
 					}
 				});
-			}
-		})
+			})
 
+
+		})
 
 		//展示評論
 		CommentDetail(0, @Model.FArticleId, "", false)

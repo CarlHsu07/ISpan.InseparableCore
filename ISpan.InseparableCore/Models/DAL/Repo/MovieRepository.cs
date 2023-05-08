@@ -83,8 +83,8 @@ namespace ISpan.InseparableCore.Models.DAL
 
 		public int GetMovieId(string movieName)
 		{
-			TMovies movie = context.TMovies.FirstOrDefault(t => t.FMovieName.Equals(movieName));
-
+			TMovies movie = context.TMovies.Where(t => !t.FDeleted).FirstOrDefault(t => t.FMovieName == movieName);
+			if (movie == null) throw new Exception("此電影不存在");
 			return movie.FMovieId;
 		}
 		public TMovies GetbyMovieName(string movieName)
@@ -94,7 +94,7 @@ namespace ISpan.InseparableCore.Models.DAL
 
 			return movie;
 		}
-		public async Task Create(MovieEntity entity)
+		public void Create(MovieEntity entity)
 		{
 			//新增Movie
 			TMovies movie = new TMovies();

@@ -44,7 +44,7 @@
 				@Html.DisplayFor(model => model.ModifiedDate)
 			</p>
 		</span>
-		<span class=" " style="width:130px">
+		<span class=" " style="width:140px">
 			<p>
 				@Html.DisplayNameFor(model => model.FArticleLikes):
 				<span id="spanLikes">@Html.DisplayFor(model => model.FArticleLikes)</span>
@@ -93,6 +93,8 @@
 <div id="divComment"></div>
 
 @section Scripts{
+		<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 		//返回
 		function backToIndex() { window.location.href = "/TArticles/Index" }
@@ -208,9 +210,14 @@
 			let articleId = @Model.FArticleId
 			let comment = "留言已刪除"
 			let deleted = true
-			if (confirm('你確定要刪除嗎？')) {
+			deleteConfirmation(function () {
 				CommentDetail(commentId, articleId, comment, deleted)
-			}
+				Swal.fire(
+					'已刪除',
+					'success'
+				);
+
+			})
 		})
 
 		//點讚ajax

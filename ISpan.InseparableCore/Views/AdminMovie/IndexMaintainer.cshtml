@@ -47,7 +47,7 @@
     <div class="loadingdiv" id="loading" style="display: none">
         <img src="~/images/Infinity-1s-200px.gif" />
     </div>
-<h1 style="margin:20px;">電影管理</h1>
+<h1 style="margin:20px;">電影</h1>
 
 <div class="row divBlock">
 
@@ -172,11 +172,10 @@
 								<a asp-action="AdminDetails" class="btn btn-light " asp-route-id="@item.FMovieId">內容</a>&nbsp;|&nbsp;
 							</div>
 							<div class="" style="width:100px">
-								<form asp-action="Delete">
-									<input type="hidden" name="movieId" value="@item.FMovieId" />
-									<input type="submit" value="刪除" class="btn btn-danger" 
-									onclick="return confirm('你確定要刪除嗎？')" />
-								</form>
+								<button value="@item.FMovieId" class="btn btn-danger Delete" >
+									刪除
+								</button>
+
 							</div>
 						</div>
 					</td>
@@ -205,7 +204,9 @@
 	</div>
 </div>
 <input type="hidden" value="@ViewBag.errorMessage" id="error"/>
-@section Scripts {
+@section Scripts {	
+	<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 		@{
 			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
@@ -289,12 +290,13 @@
 											<a href="/AdminMovie/AdminDetails/${value.FMovieId}" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
 										</div>
 										<div class="" style="width:100px" id="form${value.FMovieId}Container">
+										<button value="${value.FMovieId}" class="btn btn-danger Delete">刪除</button>
+
 										</div>
 									</div>
 								</td>
 							</tr>
 						`)
-						addDeleteForm(value.FMovieId)
 					})
 					$("#divDataCount").append(`
 						<div>
@@ -330,45 +332,37 @@
                 }
 			})
 		}
-		function addDeleteForm(movieId){
-			let $form = $(`<form class="Delete"></form>`);
-			$form.attr("method", "post");
-			$form.attr("action", "/AdminMovie/Delete");
-			$form.append(`<input type="hidden" name="movieId" value="${ movieId }" />`);
-			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
-			$(`#form${movieId}Container`).append($form);
-		}
-		//$submitBtn.on("click", function () {
-		//	// 调用其他函数
-		//	doSomething();
+		$(document).on('click', '.Delete', function (event) {
+			event.preventDefault();
+			var movieId = parseInt($(this).attr("value"))
+			//confirm('你確定要刪除嗎？' + movieId)
+			deleteConfirmation(function () {
+				$.ajax({
+					type: "POST",
+					url: "/AdminMovie/DeleteAjax",
+					data: { movieId },
+					success: function (data) {
+						let page = pageNumber
+						let key = $("#Key").val()
+						let categoryId = $("#CategoryId").find(":selected").val()
+						let levelId = $("#LevelId").find(":selected").val()
+						let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+						Swal.fire(
+							'已刪除',
+							'success'
+						);
 
-		//	// 提交表单
-		//	$(``).submit();
-		//});
-		//刪除電影
-		//$(document).on('click', '.Delete', function () {
-		//	var movieId = parseInt($(this).attr("value"))
-		//	//confirm('你確定要刪除嗎？' + movieId)
-		//	$.ajax({
-		//		type: "POST",
-		//		url: "/AdminMovie/DeleteAjax",
-		//		data: { "movieId": parseInt($(this).attr("value")) },
-		//		success: function (data) {
-		//			alert("已刪除")
-		//			let page = pageNumber
-		//			let key = $("#Key").val()
-		//			let categoryId = $("#CategoryId").find(":selected").val()
-		//			let levelId = $("#LevelId").find(":selected").val()
-		//			let dateCategoryId = $("#DateCategoryId").find(":selected").val()
+						show(key, categoryId, dateCategoryId, levelId, page)
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			})
 
-		//			show(key, categoryId, dateCategoryId, levelId, page)
-		//		},
-		//		error: function (xhr, status, error) {
-		//			// 處理錯誤
-		//			console.log("AJAX request error: " + status + " - " + error);
-		//		}
-		//	});
-		//})
+
+		})
 
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();

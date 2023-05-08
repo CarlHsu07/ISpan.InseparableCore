@@ -14,6 +14,9 @@
 }
 
 <style>
+	.Delete{
+
+	}
 	#Key, #CategoryId{
 		color: aliceblue;
 		font-size: 15px;
@@ -43,7 +46,7 @@
         <img src="~/images/Infinity-1s-200px.gif" />
     </div>
 
-<h1 style="margin:50px 0 0 50px;">貼文搜尋</h1>
+<h1 style="margin:20px;">論壇</h1>
 
 <div class="row divBlock">
 	<form asp-action="Index" method="post" id="formSearch">
@@ -159,10 +162,11 @@
 							<div>
 								<a asp-action="AdminDetails" asp-route-id="@item.FArticleId" class="btn btn-light ">內容</a>&nbsp;|&nbsp;
 							</div>
-							<form asp-action="Delete">
-								<input type="hidden" name="articleId" value="@item.FArticleId" />
-								<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')" />
-							</form>
+							<div>
+								<button value="@item.FArticleId" class="btn btn-danger Delete">
+									刪除
+								</button>
+							</div>
 						</div>
 					</td>
 				</tr>
@@ -192,6 +196,8 @@
 <input type="hidden" value="@ViewBag.errorMessage" id="error" />
 
 @section Scripts {
+		<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 		@{
 			if (!string.IsNullOrEmpty(ViewBag.errorMessage))
@@ -271,13 +277,15 @@
 											<a href="/AdminArticle/AdminDetails/${value.FArticleId}" class="btn btn-light">內容</a>&nbsp;|&nbsp
 										</div>
 										<div>
-											<div class="" style="width:100px" id="form${value.FArticleId}Container"></div>
+											<div class="" style="width:100px" id="form${value.FArticleId}Container">	
+												<button value="${value.FArticleId}" class="btn btn-danger Delete"
+												style="">刪除</button>
+											</div>
 										</div>
 									</div>
 								</td>
 							</tr>
 						`)
-						addDeleteForm(value.FArticleId)
 					})
 					$("#divDataCount").html(`
 						<p class="text-muted" colspan="5">
@@ -312,17 +320,37 @@
                     setTimeout(function () { $('#loading').css("display", "none"); }, 2000);
                 }
 			})
-		}
-		function addDeleteForm(articleId) {
-			let $form = $(`<form class="Delete"></form>`);
-			$form.attr("method", "post");
-			$form.attr("action", "/AdminArticle/Delete");
-			$form.append(`<input type="hidden" name="articleId" value="${articleId}" />`);
-			$form.append(`<input type="submit" value="刪除" class="btn btn-danger" onclick="return confirm('你確定要刪除嗎？')"/>`);
-			$(`#form${articleId}Container`).append($form);
-		}
+		}		
+		//刪除文章
+		$(document).on('click', '.Delete', function (event) {
+			var articleId = parseInt($(this).attr("value"))
+			deleteConfirmation(function () {
+				$.ajax({
+					type: "POST",
+					url: "/TArticles/DeleteAjax",
+					data: { articleId },
+					success: function (data) {
+						Swal.fire(
+							'已刪除',
+							'success'
+						);
+					let page = pageNumber
+					let key = $("#Key").val()
+					let categoryId = $("#CategoryId").find(":selected").val()
 
-		//搜尋
+					show(key, categoryId, page);
+
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			})
+
+
+		})
+
 		$("#formSearch").submit(function (event) {
 			event.preventDefault();
 			let page = 1

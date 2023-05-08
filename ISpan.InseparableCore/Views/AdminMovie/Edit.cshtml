@@ -6,7 +6,9 @@
 }
 
 <style>
+	.Delete{
 
+	}
 	.inDivPosition {
 		position: relative;
 		bottom: 0px;
@@ -89,7 +91,16 @@
 					<label asp-for="Image" class="control-label"></label>
 					<input asp-for="FMovieImagePath" class="form-control" type="hidden" />
 					<input type="file" name="Image" class="form-control" id="fileInput" />
-					<img src="~/images/@Model.FMovieImagePath"  id="preview">
+					@{
+						if (Model.FMovieImagePath == "no image")
+						{
+							<img src="~/images/no-image-icon.png"  id="preview">
+						}
+						else
+						{
+							<img src="~/images/@Model.FMovieImagePath"  id="preview">
+						}
+					}
 				</div>
 				<div class="form-group" style="text-align:right">
 					<input type="submit" value="儲存" class="btn btn-primary" />
@@ -98,10 +109,7 @@
 		</form>
 		<div class="go-right divContainerRow">
 			<div class="divBlock" style="width:100px">
-				<form asp-action="Delete">
-					<input type="hidden" name="movieId" value="@Model.FMovieId" />
-					<input type="submit" value="刪除" class="btn btn-danger"/>
-				</form>
+				<button value="@Model.FMovieId" class="btn btn-danger Delete">刪除</button>
 			</div>
 			<div class="divBlock" style="width:100px">
 				<a asp-action="IndexMaintainer" class="btn btn-light ">返回</a>
@@ -111,6 +119,8 @@
 </div>
 
 @section Scripts {
+	<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 
 		var categoryIds = "";
@@ -136,6 +146,31 @@
 
 			reader.readAsDataURL(file);
 		});
+				//刪除電影
+		$(document).on('click', '.Delete', function (event) {
+			event.preventDefault();
+			var movieId = parseInt($(this).attr("value"))
+			deleteConfirmation(function () {
+
+				$.ajax({
+					type: "POST",
+					url: "/AdminMovie/DeleteAjax",
+					data: { movieId },
+					success: function (data) {
+						location.href = "/AdminMovie/IndexMaintainer"
+						Swal.fire(
+							'已刪除',
+							'success'
+						);
+					},
+					error: function (xhr, status, error) {
+						// 處理錯誤
+						console.log("AJAX request error: " + status + " - " + error);
+					}
+				});
+			})
+		})
+
 	</script>
 
 	@{

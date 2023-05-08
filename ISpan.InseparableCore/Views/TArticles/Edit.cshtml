@@ -59,25 +59,31 @@
 </div>
 
 @section Scripts {
+	<script type="text/javascript" src="~/js/swalConfirm.js"></script>
+
 	<script>
 		function backToIndex() { window.location.href = "/TArticles/Index" }
-		$(document).on('click', '.Delete', function () {
+		$(document).on('click', '.Delete', function (event) {
+			event.preventDefault();
 			var articleId = parseInt($(this).attr("value"))
-			//debugger
-			if (confirm('你確定要刪除嗎？')) {
+			deleteConfirmation(function (){
 				$.ajax({
 					type: "POST",
 					url: "/TArticles/DeleteAjax",
 					data: { articleId },
 					success: function (data) {
-						alert("已刪除")
+						Swal.fire(
+							'已刪除',
+							'success'
+						);
+						location.href = "/TArticles/Index"
 					},
 					error: function (xhr, status, error) {
 						// 處理錯誤
 						console.log("AJAX request error: " + status + " - " + error);
 					}
 				});
-			}
+			})
 		})
 	</script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
