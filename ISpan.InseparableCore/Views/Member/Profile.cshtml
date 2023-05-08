@@ -105,7 +105,7 @@
                 // 取得好友的狀態
                 const friendStatus = btn.data("friend-status");
 
-                if (friendStatus === "not-friend") {
+                if (friendStatus == "not-friend") {
                     $.ajax({
                         type: "POST",
                         url: "/member/AddFriend", // 填寫後端API的URL
@@ -132,7 +132,7 @@
                         }
                     });
                 }
-                else if (friendStatus === "is-friend") {
+                else if (friendStatus == "is-friend") {
                     $.ajax({
                         type: "POST",
                         url: "/member/UnFriend",
