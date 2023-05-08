@@ -169,7 +169,11 @@ namespace ISpan.InseparableCore.Controllers.Server
 				}
 				catch (Exception ex)
 				{
-					ShowError(ex);
+					ViewBag.errorMessage = ex.Message;
+					ViewData["FMovieLevelId"] = new SelectList(_context.TMovieLevels, "FLevelId", "FLevelName", vm.FMovieLevelId);
+					ViewData["FMovieCategoryId"] = new SelectList(_context.TMovieCategories, "FMovieCategoryId", "FMovieCategoryName");
+					return View(vm);
+
 				}
 				int movieId = repo.GetMovieId(dto.FMovieName);
 				repo.CreateCategoryDetail(movieId, vm.CategoryIds);
