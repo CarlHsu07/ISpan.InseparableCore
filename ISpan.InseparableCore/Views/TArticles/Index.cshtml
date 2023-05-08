@@ -43,18 +43,14 @@
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 		<div class="divContainer ">
 			<div class="form-group divBlock">
-				<label name="Key"  class="control-label">關鍵字</label>
+				<label name="Key"  class="control-label" placeholder="搜尋標題、內容、發文者...">關鍵字</label>
 				<input name="Key" id="Key" class="form-control" />
 			</div>
 			<div class="form-group divBlock">
 				<label name="CategoryId" class="control-label">類別</label>
 				<select name="CategoryId" id="CategoryId" class="form-control" asp-items="ViewBag.FMovieCategoryId"></select>
 			</div>
-@*			<div class="form-group divBlock">
-				<label name="Page" class="control-label">頁數</label>
-				<select name="Page" id="Page" class="form-control" asp-items="ViewBag.Page"></select>
-			</div>
-*@			<div class="form-group divBlock" style="position:relative">
+			<div class="form-group divBlock" style="position:relative">
 				<input type="submit" value="搜尋" class="btn btn-light inDivBottom" />
 			</div>
 			<div class="form-group divBlock inDivPosition ">
