@@ -14,6 +14,17 @@
         border-radius: 0px;
     }
 
+    .member-input{
+        border-color: #5a5a5a;
+        border-radius: 0;
+        color: #a9a9a9 !important;
+        background: none;
+    }
+
+        .member-input:focus {
+            border: 2px solid #a1a1a1;
+        }
+
 </style>
 
 <div class="mt-3">
@@ -50,49 +61,61 @@
         </ul>
         <div class="tab-content pt-2">
             <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
+
+                @{
+                    if (!String.IsNullOrEmpty(Model.PhotoPath))
+                    {
+                        <img src="/images/memberProfilePhotos/@Model.PhotoPath" asp-append-version="true" class="" alt="會員大頭貼" height="120">
+                    }
+                    else
+                    {
+                        <label class="control-label">還沒上傳大頭貼哦</label>
+                    }
+                }
+
                 <div class="mt-2">
-                    <h5 class="card-title">簡介</h5>
+                    <h4 class="card-title">簡介</h4>
                     <p class="small">@Model.Introduction</p>
                 </div>
-                <div class="mt-3">
-                    <h5 class="card-title">個人資料</h5>
-                    <div class="row mb-2">
+                <div class="mt-5">
+                    <h4 class="card-title">個人資料</h4>
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="MemberId"></label></div>
                         <div class="col-lg-9 col-md-8">@Model.MemberId</div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="LastName" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.LastName</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="FirstName" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.FirstName</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="GenderString" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.GenderString</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="Email" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Email</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="DateOfBirth" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.DateOfBirth?.ToString("yyyy/MM/dd")</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="Cellphone" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.Cellphone</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="Address" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.CityString</span><span class="form-label">@Model.AreaString</span><span class="form-label">@Model.Address</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="SignUpTime" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.SignUpTime</span></div>
                     </div>
-                    <div class="row mb-2">
+                    <div class="row mb-3">
                         <div class="col-lg-3 col-md-4 label "><label asp-for="AccountStatus" class="control-label"></label></div>
                         <div class="col-lg-9 col-md-8"><span class="form-label">@Model.AccountStatus</span></div>
                     </div>
@@ -116,7 +139,7 @@
                             @{
                                 if (!String.IsNullOrEmpty(Model.PhotoPath))
                                 {
-                                    <img src="/images/memberProfilePhotos/@Model.PhotoPath" asp-append-version="true" class="" alt="會員大頭貼" height="120">
+                                    <img src="/images/memberProfilePhotos/@Model.PhotoPath" asp-append-version="true" class="" id="img1" alt="會員大頭貼" height="120">
                                 }
                                 else
                                 {
@@ -125,26 +148,17 @@
                             }
                             <div class="pt-2">
                                 @*<a href="#" class="btn btn-primary btn-sm" title="上傳新大頭貼照">上傳</a>*@
-                                <input type="file" name="MemberPhoto" class="form-control form-control-sm" accept="image/*" />
+                                <input type="file" class="form-control form-control-sm member-input" name="MemberPhoto" id="memberPhoto" accept="image/*" />
                                 @*<a href="#" class="btn btn-danger btn-sm" title="刪除大頭貼照">刪除</a>*@
                             </div>
                         </div>
                         <span asp-validation-for="PhotoPath" class="text-danger"></span>
                     </div>
 
-                    @*// todo 上傳大頭貼照 換位置、樣式*@
-                    @*<div class="row mb-3">
-                        <label asp-for="MemberPhoto" class="col-md-4 col-lg-3 col-form-label"></label>
-                        <div class="col-md-8 col-lg-9">
-                            <input type="file" name="MemberPhoto" class="form-control" accept="image/*" />
-                        </div>
-                        <span asp-validation-for="MemberPhoto" class="text-danger"></span>
-                    </div>*@
-
                     <div class="row mb-3">
                         <label asp-for="LastName" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="LastName" class="form-control">
+                            <input asp-for="LastName" class="form-control member-input">
                             <span asp-validation-for="LastName" class="text-danger"></span>
                         </div>
                     </div>
@@ -152,7 +166,7 @@
                     <div class="row mb-3">
                         <label asp-for="FirstName" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="FirstName" class="form-control">
+                            <input asp-for="FirstName" class="form-control member-input">
                             <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
                     </div>
@@ -160,7 +174,7 @@
                     <div class="row mb-3">
                         <label asp-for="Email" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="Email" class="form-control" type="email">
+                            <input asp-for="Email" class="form-control member-input" type="email">
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
@@ -168,7 +182,7 @@
                     <div class="row mb-3">
                         <label asp-for="DateOfBirth" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="DateOfBirth" class="form-control" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")">
+                            <input asp-for="DateOfBirth" class="form-control member-input" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddYears(-130).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                     </div>
@@ -176,7 +190,7 @@
                     <div class="row mb-3">
                         <label asp-for="GenderId" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <select asp-for="GenderId" class="form-control" asp-items="ViewBag.FGenderId"></select>
+                            <select asp-for="GenderId" class="form-control member-input" asp-items="ViewBag.FGenderId"></select>
                             <span asp-validation-for="GenderId" class="text-danger"></span>
                         </div>
                     </div>
@@ -184,7 +198,7 @@
                     <div class="row mb-3">
                         <label asp-for="Cellphone" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="Cellphone" class="form-control">
+                            <input asp-for="Cellphone" class="form-control member-input">
                             <span asp-validation-for="Cellphone" class="text-danger"></span>
                         </div>
                     </div>
@@ -193,13 +207,13 @@
                     <div class="row mb-3">
                         <label asp-for="Address" class="col-sm-2 col-form-label"></label>
                         <div class="col-sm-2">
-                            <select asp-for="City" class="form-control f-3" asp-items="ViewBag.Cities" id="citySelect">
+                            <select asp-for="City" class="form-control member-input f-3" asp-items="ViewBag.Cities" id="citySelect">
                                 <option value="">請選擇縣市</option>
                             </select>
                             <span asp-validation-for="City" class="text-danger"></span>
                         </div>
                         <div class="col-sm-2">
-                            <select asp-for="Area" class="form-control f-3" asp-items="ViewBag.Areas" id="areaSelect">
+                            <select asp-for="Area" class="form-control member-input f-3" asp-items="ViewBag.Areas" id="areaSelect">
                                 <option value="">請選擇區域</option>
                             </select>
                             <span asp-validation-for="Area" class="text-danger"></span>
@@ -209,7 +223,7 @@
                     <div class="row mb-3">
                         <label asp-for="Address" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="Address" class="form-control">
+                            <input asp-for="Address" class="form-control member-input">
                             <span asp-validation-for="Address" class="text-danger"></span>
                         </div>
                     </div>
@@ -217,7 +231,7 @@
                     <div class="row mb-3">
                         <label asp-for="Introduction" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <textarea asp-for="Introduction" class="form-control" rows="10"></textarea>
+                            <textarea asp-for="Introduction" class="form-control member-input" rows="10"></textarea>
                         </div>
                         <span asp-validation-for="Introduction" class="text-danger"></span>
                     </div>
@@ -236,7 +250,7 @@
                     <div class="row mb-3">
                         <label asp-for="CurrentPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="CurrentPassword" type="password" class="form-control" id="CurrentPassword">
+                            <input asp-for="CurrentPassword" type="password" class="form-control member-input" id="CurrentPassword">
                             <span asp-validation-for="CurrentPassword" class="text-danger"></span>
                         </div>
                     </div>
@@ -244,7 +258,7 @@
                     <div class="row mb-3">
                         <label asp-for="NewPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="NewPassword" type="password" class="form-control" id="NewPassword">
+                            <input asp-for="NewPassword" type="password" class="form-control member-input" id="NewPassword">
                             <span asp-validation-for="NewPassword" class="text-danger"></span>
                         </div>
                     </div>
@@ -252,7 +266,7 @@
                     <div class="row mb-3">
                         <label asp-for="ConfirmPassword" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <input asp-for="ConfirmPassword" type="password" class="form-control" id="ConfirmPassword">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control member-input" id="ConfirmPassword">
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
                     </div>
@@ -306,6 +320,30 @@
 
     <script>
         $(document).ready(function () {
+
+            $("#memberPhoto").change(function () {
+                $("#img1").attr({ src: '' }); // 先清除舊圖
+                previewImg(this.files); // 再預覽新圖
+            });
+
+            function previewImg(files) {
+                if (files.length == 0)
+                    return;
+
+                var file = files[0];
+                var fr = new FileReader();
+
+                //註冊：選檔被讀取完成後之事件處理器
+                fr.onload =
+                    function () {
+                        $("#img1").attr({ src: fr.result });
+                        /*  fr.result: The file's contents. 內容如下:
+                        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA ...
+                        */
+                    };
+                fr.readAsDataURL(file);
+            }
+
             $("#changePasswordForm").submit(function (event) {
                 event.preventDefault(); // 防止表單提交刷新頁面
 

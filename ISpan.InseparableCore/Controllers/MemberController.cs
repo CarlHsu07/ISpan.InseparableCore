@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ISpan.InseparableCore.Models;
-using System.Reflection;
 using System.Text;
 using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.ViewModels;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using System.Diagnostics.Metrics;
 using System.Text.Json;
-using System.Security.Claims;
 using ISpan.InseparableCore.Models.DAL.Repo;
 using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace ISpan.InseparableCore.Controllers
 {
