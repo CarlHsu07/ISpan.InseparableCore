@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSession();
+builder.Services.AddSession(options => options.IdleTimeout = TimeSpan.FromDays(1) ); // 加入Session，過期時間設為1天
 builder.Services.AddSignalR(); //加入 SignalR
 builder.Services.AddHttpContextAccessor();
 

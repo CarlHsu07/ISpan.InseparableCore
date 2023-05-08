@@ -32,6 +32,15 @@ namespace ISpan.InseparableCore.Models.BLL
         }
 
         /// <summary>
+        /// 產生驗證碼，用於會員信箱驗證
+        /// </summary>
+        /// <returns></returns>
+        public string GenerateVerificationCode()
+        {
+            return Guid.NewGuid().ToString().Replace("-", "");
+        }
+
+        /// <summary>
         /// 產生 會員ID 的方法
         /// </summary>
         /// <returns>回傳一個會員ID的字串，例如M2023050300001</returns>
@@ -149,21 +158,25 @@ namespace ISpan.InseparableCore.Models.BLL
             return friendList;
         }
 
-        // 驗證信
+        /// <summary>
+        /// 驗證會員信箱是否存在
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="token"></param>
+        /// <returns>ue</returns>
         public bool ConfirmEmail(TMembers member, string token)
         {
-            // todo 實作驗證信箱的code
             bool result = false;
             if (!string.IsNullOrEmpty(token))
             {
                 // 驗證驗證碼是否相符
-                if (member.FAddress == token)
+                if (member.FVerificationCode == token)
                 {
-                    // 驗證成功，更新會員狀態
-                    //member.FAddress = true;
-                    // todo: 更新會員狀態到資料庫
+                    member.FIsEmailVerified = true; // 驗證成功，更新會員Email驗證狀態
+                    _context.Update(member);
+                    _context.SaveChanges();
 
-                    result = true;
+                    return true;
                 }
             }
 

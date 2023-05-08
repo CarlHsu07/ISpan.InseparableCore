@@ -443,7 +443,6 @@ namespace ISpan.InseparableCore.Controllers
             if (id == null || _context.TMembers == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
-
             }
 
             var member = await _context.TMembers.FindAsync(id);
@@ -451,7 +450,6 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
             }
-
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
             var viewModel = new CMemberEditProfileVM
@@ -620,15 +618,22 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
+        /// <summary>
+        /// 驗證會員信箱
+        /// </summary>
+        /// <param name="memberId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string memberId, string token)
         {
             MemberService memberService = new MemberService(_context);
 
-            if (memberId == null || token == null)
+            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token) )
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
             var member = await _context.TMembers.FindAsync(memberId);
