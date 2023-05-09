@@ -90,12 +90,12 @@ namespace ISpan.InseparableCore.ViewModels
         public string? FAddress { get => _member.FAddress; set => _member.FAddress = value; }
 
         [Required(ErrorMessage = "請選擇縣市")]
-        public int? FCityId { get; set; }
+        public int FCityId { get; set; }
 
         /// <summary>
         /// 區域ID
         /// </summary>
-        public int? FAreaId { get => _member.FAreaId; set => _member.FAreaId = value; }
+        public int FAreaId { get => _member.FAreaId; set => _member.FAreaId = value; }
 
         /// <summary>
         /// 大頭貼的檔案路徑
@@ -114,7 +114,7 @@ namespace ISpan.InseparableCore.ViewModels
         /// </summary>
         [Display(Name = "會員狀態")]
         [Required(ErrorMessage = "請選擇會員狀態")]
-        public int? FAccountStatus { get => _member.FAccountStatus; set => _member.FAccountStatus = value; }
+        public int FAccountStatus { get => _member.FAccountStatus; set => _member.FAccountStatus = value; }
 
         /// <summary>
         /// 目前點數餘額
@@ -124,7 +124,7 @@ namespace ISpan.InseparableCore.ViewModels
         /// <summary>
         /// 會員註冊時間
         /// </summary>
-        public DateTime? FSignUpTime { get => _member.FSignUpTime; set => _member.FSignUpTime = value; }
+        public DateTime FSignUpTime { get => _member.FSignUpTime; set => _member.FSignUpTime = value; }
 
         [Display(Name = "上傳新大頭貼照")]
         public IFormFile? MemberPhoto { get; set; }

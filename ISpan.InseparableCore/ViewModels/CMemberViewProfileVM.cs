@@ -94,11 +94,11 @@ namespace ISpan.InseparableCore.ViewModels
 
 		//[Display(Name = "縣市")]
 		[Required(ErrorMessage = "請選擇縣市")]
-		public int? City { get; set; }
+		public int City { get; set; }
 
 		//[Display(Name = "地區")]
 		[Required(ErrorMessage = "請選擇區域")]
-		public int? Area
+		public int Area
 		{
 			get { return _member.FAreaId; }
 			set { _member.FAreaId = value; }
@@ -139,7 +139,7 @@ namespace ISpan.InseparableCore.ViewModels
 		//}
 
 		[Display(Name = "註冊時間")]
-		public DateTime? SignUpTime
+		public DateTime SignUpTime
 		{
 			get { return _member.FSignUpTime; }
 			set { _member.FSignUpTime = value; }

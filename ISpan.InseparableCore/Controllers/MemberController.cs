@@ -400,6 +400,7 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
                 newMember.FVerificationCode = memberService.GenerateVerificationCode();
                 newMember.FIsEmailVerified = false;
+                newMember.FAccountStatus = 1;
                 newMember.FTotalMemberPoint = 0; // 產生會員點數
 
                 newMember.FLastName = memberVM.LastName;
