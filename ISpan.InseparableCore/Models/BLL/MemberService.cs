@@ -2,19 +2,25 @@
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
+using System.Net;
 using System.Security.Policy;
+using System.Text.Encodings.Web;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
     public class MemberService
     {
         private readonly InseparableContext _context;
+        private readonly ApiKeys _key;
 
-        public MemberService(InseparableContext context)
+        public MemberService(InseparableContext context, ApiKeys key)
         {
             _context = context;
+            _key = key;
         }
-        
+
         /// <summary>
         /// 判斷Email是否已經存在於資料庫中
         /// </summary>
@@ -44,24 +50,41 @@ namespace ISpan.InseparableCore.Models.BLL
         /// <summary>
         /// 產生Email驗證信內的連結
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="memberId"></param>
         /// <returns></returns>
-        public string GenerateEmailVerificationLink(string id)
+        public string GenerateEmailVerificationLink(string memberId, string token)
         {
-            var token = GenerateVerificationCode(); // 生成隨機token
-
             // 產生Email驗證連結，包含token和會員的Email
             UriBuilder builder = new UriBuilder("https", "inseparable.fun");
             builder.Path = "VerifyEmail";
-            builder.Query = $"id={id}&token={token}";
+            builder.Query = $"id={memberId}&token={token}";
             string url = builder.ToString();
 
             return url;
         }
 
-        public void SendVerificationEmail(string email, string url)
+        public async void SendVerificationEmail(string email, string url)
         {
+            var builder = new BodyBuilder();
+            builder.HtmlBody = $@"
+        <h1>感謝您註冊Inseparable!</h1>
+        <p>請點擊下方連結以驗證您的電子信箱：</p>
+        <a href='{HtmlEncoder.Default.Encode(url)}'>驗證連結</a>";
 
+            SmtpClient client = new SmtpClient();
+            client.Connect("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            client.Authenticate(_key.Email, _key.Password);
+
+            //MailMessage mail = new MailMessage();
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("INSEPARABLE", _key.Email));
+            message.To.Add(new MailboxAddress(email, email));
+            message.Priority = MessagePriority.Normal;
+            message.Subject = "INSEPARABLE 電子信箱驗證信";
+            message.Body = builder.ToMessageBody();
+            await client.SendAsync(message);
+            client.Disconnect(true);
         }
 
         /// <summary>

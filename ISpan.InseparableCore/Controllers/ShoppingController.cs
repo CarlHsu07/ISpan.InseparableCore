@@ -676,6 +676,7 @@ namespace ISpan.InseparableCore.Controllers
 
             return result.ToString();
         }
+
         /// <summary>
         /// 結帳成功寄送email
         /// </summary>
@@ -717,6 +718,7 @@ namespace ISpan.InseparableCore.Controllers
                 body += "\r\n</tbody>\r\n</table>";
             }
             body += $"<br /></div><br /></div><a href=\"https://inseparable.fun/\"><p style=\"color:\t#FF0000;text-decoration:none;\">INSEPARABLE</p></a>"; //todo 待測試
+
             SmtpClient mysmpt = new SmtpClient("smtp-mail.outlook.com", 587);
             mysmpt.Credentials = new NetworkCredential(_key.Email, _key.Password);
             mysmpt.EnableSsl = true;

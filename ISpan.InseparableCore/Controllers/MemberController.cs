@@ -12,24 +12,27 @@ using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class MemberController : SuperController
     {
         private readonly InseparableContext _context;
+        private readonly ApiKeys _key;
         private readonly OrderRepository _orderRepo;
         private readonly TicketOrderRepository _ticketRepo;
         private readonly ProductOrderRepository _productRepo;
         IWebHostEnvironment _enviro;
 
-        public MemberController(InseparableContext context, IWebHostEnvironment enviro)
+        public MemberController(InseparableContext context, IWebHostEnvironment enviro, IOptions<ApiKeys> key)
         {
             _context = context;
             _orderRepo = new OrderRepository(context);
             _ticketRepo = new TicketOrderRepository(context);
             _productRepo = new ProductOrderRepository(context);
             _enviro = enviro;
+            _key = key.Value;
         }
 
         // GET: Member/Index/2
@@ -260,7 +263,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Member/Profile/5
         public async Task<IActionResult> Profile(int? id)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (id == null || _context.TMembers == null)
@@ -327,7 +330,7 @@ namespace ISpan.InseparableCore.Controllers
         [HttpPost]
         public IActionResult UnFriend(int friendId)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (memberId != null && memberService.IsFriend(memberId, friendId))
@@ -354,7 +357,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Member/FriendList
         public async Task<IActionResult> FriendList()
 		{
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (memberId != null)
@@ -383,7 +386,7 @@ namespace ISpan.InseparableCore.Controllers
             // todo VM驗證不過後的View有問題，會不能選擇縣市
 
             TMembers newMember = new TMembers();
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
 
             // 驗證Email是否已存在
             if (memberService.IsEmailExist(memberVM.Email))
@@ -395,6 +398,7 @@ namespace ISpan.InseparableCore.Controllers
             {
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
+                newMember.FVerificationCode = memberService.GenerateVerificationCode();
                 newMember.FTotalMemberPoint = 0; // 產生會員點數
 
                 newMember.FLastName = memberVM.LastName;
@@ -421,6 +425,10 @@ namespace ISpan.InseparableCore.Controllers
 
                 _context.Add(newMember);
                 await _context.SaveChangesAsync();
+
+                string url = memberService.GenerateEmailVerificationLink(newMember.FMemberId, newMember.FVerificationCode);
+                memberService.SendVerificationEmail(memberVM.Email, url); // 寄驗證信
+
                 return View("RegistrationCompleted");
             }
 
@@ -620,22 +628,26 @@ namespace ISpan.InseparableCore.Controllers
         /// <summary>
         /// 驗證會員信箱
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="memberId"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> VerifyEmail(string id, string token)
+        public async Task<IActionResult> VerifyEmail(string memberId, string token)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
 
-            if ( String.IsNullOrEmpty(id) || String.IsNullOrEmpty(token) ) // id或token是null或空字串時就導引回首頁
+            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token)) // memberId或token是null或空字串時就導引回首頁
             {
+
+                //ViewBag.IsConfirmEmailSuccess = true;
+                //return View("VerifyEmail");
+
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
-            var member = await _context.TMembers.FindAsync(id);
+            var member = await _context.TMembers.FirstOrDefaultAsync(m => m.FMemberId == memberId);
             if (member == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
@@ -643,12 +655,15 @@ namespace ISpan.InseparableCore.Controllers
 
             if (memberService.ConfirmEmail(member, token))
             {
-                // todo 實作信箱驗證結果的View
+                ViewBag.IsConfirmEmailSuccess = true;
                 return View("ConfirmEmail");
             }
             else
             {
-                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{id}':");
+                ViewBag.IsConfirmEmailSuccess = false;
+                return View("ConfirmEmail");
+
+                //throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
             }
         }
 
