@@ -12,24 +12,27 @@ using NuGet.Protocol;
 using System.Text.Json.Serialization;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace ISpan.InseparableCore.Controllers
 {
     public class MemberController : SuperController
     {
         private readonly InseparableContext _context;
+        private readonly ApiKeys _key;
         private readonly OrderRepository _orderRepo;
         private readonly TicketOrderRepository _ticketRepo;
         private readonly ProductOrderRepository _productRepo;
         IWebHostEnvironment _enviro;
 
-        public MemberController(InseparableContext context, IWebHostEnvironment enviro)
+        public MemberController(InseparableContext context, IWebHostEnvironment enviro, IOptions<ApiKeys> key)
         {
             _context = context;
             _orderRepo = new OrderRepository(context);
             _ticketRepo = new TicketOrderRepository(context);
             _productRepo = new ProductOrderRepository(context);
             _enviro = enviro;
+            _key = key.Value;
         }
 
         // GET: Member/Index/2
@@ -132,7 +135,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        //todo 以下是member會員中心訂單紀錄 in Member(已複製好)
+        //todo 以下是member會員中心的訂單紀錄 in Member(已複製好)
         public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
@@ -256,10 +259,11 @@ namespace ISpan.InseparableCore.Controllers
             return RedirectToAction(nameof(OrderHistory));
         }
 
+        // 會員檔案
         // GET: Member/Profile/5
         public async Task<IActionResult> Profile(int? id)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (id == null || _context.TMembers == null)
@@ -326,7 +330,7 @@ namespace ISpan.InseparableCore.Controllers
         [HttpPost]
         public IActionResult UnFriend(int friendId)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (memberId != null && memberService.IsFriend(memberId, friendId))
@@ -353,7 +357,7 @@ namespace ISpan.InseparableCore.Controllers
         // GET: Member/FriendList
         public async Task<IActionResult> FriendList()
 		{
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
             int? memberId = GetMemberFID();
 
             if (memberId != null)
@@ -377,14 +381,14 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Members/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterVM memberVM)
+        public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,ConfirmPassword,DateOfBirth,GenderId,City,Area,Address")] CMemberRegisterVM memberVM)
         {
             // todo VM驗證不過後的View有問題，會不能選擇縣市
 
             TMembers newMember = new TMembers();
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
 
-            // 驗證Email是否存在
+            // 驗證Email是否已存在
             if (memberService.IsEmailExist(memberVM.Email))
             {
                 ModelState.AddModelError("Email", "此Email已用過，請換一組");
@@ -392,15 +396,11 @@ namespace ISpan.InseparableCore.Controllers
 
             if (ModelState.IsValid)
             {
-
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
-
-                // 產生會員點數
-                if (newMember.FTotalMemberPoint == null)
-                {
-                    newMember.FTotalMemberPoint = 0;
-                }
+                newMember.FVerificationCode = memberService.GenerateVerificationCode();
+                newMember.FIsEmailVerified = false;
+                newMember.FTotalMemberPoint = 0; // 產生會員點數
 
                 newMember.FLastName = memberVM.LastName;
                 newMember.FFirstName = memberVM.FirstName;
@@ -410,9 +410,8 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FAreaId = memberVM.Area;
                 newMember.FAddress = memberVM.Address;
 
-
-                // 加密會員密碼
-                #region
+                //加密會員密碼
+                #region 
                 string password = memberVM.Password; // 要加密的密碼
                 
                 byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
@@ -427,7 +426,11 @@ namespace ISpan.InseparableCore.Controllers
 
                 _context.Add(newMember);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                string url = memberService.GenerateEmailVerificationLink(newMember.FMemberId, newMember.FVerificationCode);
+                memberService.SendVerificationEmail(memberVM.Email, url); // 寄驗證信
+
+                return View("RegistrationCompleted");
             }
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
@@ -437,13 +440,17 @@ namespace ISpan.InseparableCore.Controllers
             return View(memberVM);
         }
 
+        //public async Task<IActionResult> RegisterC()
+        //{
+        //    return View("RegistrationCompleted");
+        //}
+
         // GET: Member/EditProfile/5
         public async Task<IActionResult> EditProfile(int? id)
         {
             if (id == null || _context.TMembers == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
-
             }
 
             var member = await _context.TMembers.FindAsync(id);
@@ -451,7 +458,6 @@ namespace ISpan.InseparableCore.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
             }
-
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
             var viewModel = new CMemberEditProfileVM
@@ -620,32 +626,45 @@ namespace ISpan.InseparableCore.Controllers
             }
         }
 
+        /// <summary>
+        /// 驗證會員信箱
+        /// </summary>
+        /// <param name="memberId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> VerifyEmail(string memberId, string token)
         {
-            MemberService memberService = new MemberService(_context);
+            MemberService memberService = new MemberService(_context, _key);
 
-            if (memberId == null || token == null)
+            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token)) // memberId或token是null或空字串時就導引回首頁
             {
-                return RedirectToAction("Index", "Home");
+
+                ViewBag.IsConfirmEmailSuccess = false;
+                return View("VerifyEmail");
+
+                //return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
-            var member = await _context.TMembers.FindAsync(memberId);
+            var member = await _context.TMembers.FirstOrDefaultAsync(m => m.FMemberId == memberId);
             if (member == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            var result = memberService.ConfirmEmail(member, token);
-            if (result)
+            if (await memberService.ConfirmEmail(member, token))
             {
-                // todo 實作信箱驗證結果的View
-                return View("ConfirmEmail");
+                ViewBag.IsConfirmEmailSuccess = true;
+                return View("VerifyEmail");
             }
             else
             {
-                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
+                ViewBag.IsConfirmEmailSuccess = false;
+                return View("VerifyEmail");
+
+                //throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
             }
         }
 

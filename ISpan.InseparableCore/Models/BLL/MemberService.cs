@@ -2,20 +2,27 @@
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
+using System.Net;
+using System.Security.Policy;
+using System.Text.Encodings.Web;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
     public class MemberService
     {
         private readonly InseparableContext _context;
+        private readonly ApiKeys _key;
 
-        public MemberService(InseparableContext context)
+        public MemberService(InseparableContext context, ApiKeys key)
         {
             _context = context;
+            _key = key;
         }
-        
+
         /// <summary>
-        /// 判斷Email是否存在
+        /// 判斷Email是否已經存在於資料庫中
         /// </summary>
         /// <param name="memberEmail"></param>
         /// <returns>如果Email存在就回傳true，否則回傳false</returns>
@@ -29,6 +36,80 @@ namespace ISpan.InseparableCore.Models.BLL
             }
 
             return isExist;
+        }
+
+        /// <summary>
+        /// 產生32位元字串的驗證碼，用於會員信箱驗證
+        /// </summary>
+        /// <returns></returns>
+        public string GenerateVerificationCode()
+        {
+            return Guid.NewGuid().ToString().Replace("-", "");
+        }
+
+        /// <summary>
+        /// 產生Email驗證信內的連結
+        /// </summary>
+        /// <param name="memberId"></param>
+        /// <returns></returns>
+        public string GenerateEmailVerificationLink(string memberId, string token)
+        {
+            // 產生Email驗證連結，包含token和會員的Email
+            UriBuilder builder = new UriBuilder("https", "inseparable.fun");
+            builder.Path = "Member/VerifyEmail";
+            builder.Query = $"memberId={memberId}&token={token}";
+            string url = builder.ToString();
+
+            return url;
+        }
+
+        public async void SendVerificationEmail(string email, string url)
+        {
+            var builder = new BodyBuilder();
+            builder.HtmlBody = $@"
+        <h1>感謝您註冊Inseparable!</h1>
+        <p>請點擊下方連結以驗證您的電子信箱：</p>
+        <a href='{HtmlEncoder.Default.Encode(url)}'>驗證連結</a>";
+
+            SmtpClient client = new SmtpClient();
+            await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_key.Email, _key.Password);
+
+            //MailMessage mail = new MailMessage();
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("INSEPARABLE", _key.Email));
+            message.To.Add(new MailboxAddress(email, email));
+            message.Priority = MessagePriority.Normal;
+            message.Subject = "INSEPARABLE 電子信箱驗證信";
+            message.Body = builder.ToMessageBody();
+            await client.SendAsync(message);
+            client.Disconnect(true);
+        }
+
+        /// <summary>
+        /// 驗證會員信箱
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="token"></param>
+        /// <returns>驗證成功就回傳true，否則回傳false</returns>
+        public async Task<bool> ConfirmEmail(TMembers member, string token)
+        {
+            bool result = false;
+            if (!string.IsNullOrEmpty(token))
+            {
+                // 驗證驗證碼是否相符
+                if (member.FVerificationCode == token)
+                {
+                    member.FIsEmailVerified = true; // 驗證成功，更新會員Email驗證狀態
+                    _context.Update(member);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -70,7 +151,11 @@ namespace ISpan.InseparableCore.Models.BLL
             return newMemberID;
         }
 
-        // 產生 今天第一個會員ID 的方法
+        /// <summary>
+        /// 產生今天第一個會員ID
+        /// </summary>
+        /// <param name="todayDate"></param>
+        /// <returns>當天第一個會員ID，例如M2023050300001</returns>
         private static string CreateFirstMemberIDToday(string todayDate)
         {
             string newSequence = "1"; // 第一位會員，序號為1
@@ -149,25 +234,5 @@ namespace ISpan.InseparableCore.Models.BLL
             return friendList;
         }
 
-        // 驗證信
-        public bool ConfirmEmail(TMembers member, string token)
-        {
-            // todo 實作驗證信箱的code
-            bool result = false;
-            if (!string.IsNullOrEmpty(token))
-            {
-                // 驗證驗證碼是否相符
-                if (member.FAddress == token)
-                {
-                    // 驗證成功，更新會員狀態
-                    //member.FAddress = true;
-                    // todo: 更新會員狀態到資料庫
-
-                    result = true;
-                }
-            }
-
-            return result;
-        }
     }
 }

@@ -10,16 +10,19 @@ using System.Text;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.BLL;
 using System.Reflection;
+using Microsoft.Extensions.Options;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
     public class AdminMemberController : AdminSuperController
     {
         private readonly InseparableContext _context;
+        private readonly ApiKeys _key;
 
-        public AdminMemberController(InseparableContext context)
+        public AdminMemberController(InseparableContext context, IOptions<ApiKeys> key)
         {
             _context = context;
+            _key = key.Value;
         }
 
         // GET: AdminMember
@@ -92,7 +95,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             if (ModelState.IsValid)
             {
                 TMembers newMember = new TMembers();
-                MemberService memberService = new MemberService(_context);
+                MemberService memberService = new MemberService(_context, _key);
 
                 // 產生會員ID
                 newMember.FMemberId = memberService.GenerateMemberId();
