@@ -642,10 +642,10 @@ namespace ISpan.InseparableCore.Controllers
             if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token)) // memberId或token是null或空字串時就導引回首頁
             {
 
-                //ViewBag.IsConfirmEmailSuccess = true;
-                //return View("VerifyEmail");
+                ViewBag.IsConfirmEmailSuccess = false;
+                return View("VerifyEmail");
 
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                //return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
             var member = await _context.TMembers.FirstOrDefaultAsync(m => m.FMemberId == memberId);

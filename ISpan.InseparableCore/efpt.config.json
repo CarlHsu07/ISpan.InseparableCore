@@ -175,7 +175,7 @@
          "ObjectType": 0
       }
    ],
-   "UiHint": "inseparable.Inseparable",
+   "UiHint": "inseparable.Inseparable.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,

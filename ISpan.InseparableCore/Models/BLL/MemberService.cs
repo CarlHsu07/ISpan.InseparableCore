@@ -56,7 +56,7 @@ namespace ISpan.InseparableCore.Models.BLL
         {
             // 產生Email驗證連結，包含token和會員的Email
             UriBuilder builder = new UriBuilder("https", "inseparable.fun");
-            builder.Path = "VerifyEmail";
+            builder.Path = "Member/VerifyEmail";
             builder.Query = $"id={memberId}&token={token}";
             string url = builder.ToString();
 
@@ -151,7 +151,11 @@ namespace ISpan.InseparableCore.Models.BLL
             return newMemberID;
         }
 
-        // 產生 今天第一個會員ID 的方法
+        /// <summary>
+        /// 產生今天第一個會員ID
+        /// </summary>
+        /// <param name="todayDate"></param>
+        /// <returns>當天第一個會員ID，例如M2023050300001</returns>
         private static string CreateFirstMemberIDToday(string todayDate)
         {
             string newSequence = "1"; // 第一位會員，序號為1
