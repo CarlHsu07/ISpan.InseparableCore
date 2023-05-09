@@ -72,8 +72,8 @@ namespace ISpan.InseparableCore.Models.BLL
         <a href='{HtmlEncoder.Default.Encode(url)}'>驗證連結</a>";
 
             SmtpClient client = new SmtpClient();
-            client.Connect("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            client.Authenticate(_key.Email, _key.Password);
+            await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(_key.Email, _key.Password);
 
             //MailMessage mail = new MailMessage();
 
