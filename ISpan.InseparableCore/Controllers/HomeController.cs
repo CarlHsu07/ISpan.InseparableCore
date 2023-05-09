@@ -64,11 +64,11 @@ namespace ISpan.InseparableCore.Controllers
 
             if (member == null) // 找不到該會員，即Email錯誤
             {
-                ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email錯誤，找不到您的帳號");
+                ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email錯誤");
             }
             else if (member.FIsEmailVerified == false) // 信箱驗證尚未完成
             {
-                ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email尚未驗證通過，請至信箱收驗證信並進行驗證");
+                ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email尚未驗證，請至信箱收驗證信並進行驗證");
             }
 
             if (ModelState.IsValid) // 驗證通過

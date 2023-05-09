@@ -57,7 +57,7 @@ namespace ISpan.InseparableCore.Models.BLL
             // 產生Email驗證連結，包含token和會員的Email
             UriBuilder builder = new UriBuilder("https", "inseparable.fun");
             builder.Path = "Member/VerifyEmail";
-            builder.Query = $"id={memberId}&token={token}";
+            builder.Query = $"memberId={memberId}&token={token}";
             string url = builder.ToString();
 
             return url;
@@ -93,7 +93,7 @@ namespace ISpan.InseparableCore.Models.BLL
         /// <param name="member"></param>
         /// <param name="token"></param>
         /// <returns>驗證成功就回傳true，否則回傳false</returns>
-        public bool ConfirmEmail(TMembers member, string token)
+        public async Task<bool> ConfirmEmail(TMembers member, string token)
         {
             bool result = false;
             if (!string.IsNullOrEmpty(token))
@@ -103,7 +103,7 @@ namespace ISpan.InseparableCore.Models.BLL
                 {
                     member.FIsEmailVerified = true; // 驗證成功，更新會員Email驗證狀態
                     _context.Update(member);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
 
                     return true;
                 }

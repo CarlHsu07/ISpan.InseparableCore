@@ -654,15 +654,15 @@ namespace ISpan.InseparableCore.Controllers
                 return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            if (memberService.ConfirmEmail(member, token))
+            if (await memberService.ConfirmEmail(member, token))
             {
                 ViewBag.IsConfirmEmailSuccess = true;
-                return View("ConfirmEmail");
+                return View("VerifyEmail");
             }
             else
             {
                 ViewBag.IsConfirmEmailSuccess = false;
-                return View("ConfirmEmail");
+                return View("VerifyEmail");
 
                 //throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
             }
