@@ -378,7 +378,7 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Members/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,DateOfBirth,GenderId,Area,Address")] CMemberRegisterVM memberVM)
+        public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,ConfirmPassword,DateOfBirth,GenderId,City,Area,Address")] CMemberRegisterVM memberVM)
         {
             // todo VM驗證不過後的View有問題，會不能選擇縣市
 
@@ -421,7 +421,7 @@ namespace ISpan.InseparableCore.Controllers
 
                 _context.Add(newMember);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View("RegistrationCompleted");
             }
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
@@ -430,6 +430,11 @@ namespace ISpan.InseparableCore.Controllers
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
             return View(memberVM);
         }
+
+        //public async Task<IActionResult> RegisterC()
+        //{
+        //    return View("RegistrationCompleted");
+        //}
 
         // GET: Member/EditProfile/5
         public async Task<IActionResult> EditProfile(int? id)
@@ -615,36 +620,35 @@ namespace ISpan.InseparableCore.Controllers
         /// <summary>
         /// 驗證會員信箱
         /// </summary>
-        /// <param name="memberId"></param>
+        /// <param name="id"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         /// <exception cref="ApplicationException"></exception>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> VerifyEmail(string memberId, string token)
+        public async Task<IActionResult> VerifyEmail(string id, string token)
         {
             MemberService memberService = new MemberService(_context);
 
-            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token) )
+            if ( String.IsNullOrEmpty(id) || String.IsNullOrEmpty(token) ) // id或token是null或空字串時就導引回首頁
             {
                 return RedirectToAction(nameof(HomeController.Index), "Home");
             }
 
-            var member = await _context.TMembers.FindAsync(memberId);
+            var member = await _context.TMembers.FindAsync(id);
             if (member == null)
             {
                 return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            var result = memberService.ConfirmEmail(member, token);
-            if (result)
+            if (memberService.ConfirmEmail(member, token))
             {
                 // todo 實作信箱驗證結果的View
                 return View("ConfirmEmail");
             }
             else
             {
-                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{memberId}':");
+                throw new ApplicationException($"驗證電子郵件時發生錯誤 for user with ID '{id}':");
             }
         }
 

@@ -2,6 +2,7 @@
 using ISpan.InseparableCore.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
+using System.Security.Policy;
 
 namespace ISpan.InseparableCore.Models.BLL
 {
@@ -38,6 +39,54 @@ namespace ISpan.InseparableCore.Models.BLL
         public string GenerateVerificationCode()
         {
             return Guid.NewGuid().ToString().Replace("-", "");
+        }
+
+        /// <summary>
+        /// 產生Email驗證信內的連結
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string GenerateEmailVerificationLink(string id)
+        {
+            var token = GenerateVerificationCode(); // 生成隨機token
+
+            // 產生Email驗證連結，包含token和會員的Email
+            UriBuilder builder = new UriBuilder("https", "inseparable.fun");
+            builder.Path = "VerifyEmail";
+            builder.Query = $"id={id}&token={token}";
+            string url = builder.ToString();
+
+            return url;
+        }
+
+        public void SendVerificationEmail(string email, string url)
+        {
+
+        }
+
+        /// <summary>
+        /// 驗證會員信箱
+        /// </summary>
+        /// <param name="member"></param>
+        /// <param name="token"></param>
+        /// <returns>驗證成功就回傳true，否則回傳false</returns>
+        public bool ConfirmEmail(TMembers member, string token)
+        {
+            bool result = false;
+            if (!string.IsNullOrEmpty(token))
+            {
+                // 驗證驗證碼是否相符
+                if (member.FVerificationCode == token)
+                {
+                    member.FIsEmailVerified = true; // 驗證成功，更新會員Email驗證狀態
+                    _context.Update(member);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -158,29 +207,5 @@ namespace ISpan.InseparableCore.Models.BLL
             return friendList;
         }
 
-        /// <summary>
-        /// 驗證會員信箱是否存在
-        /// </summary>
-        /// <param name="member"></param>
-        /// <param name="token"></param>
-        /// <returns>ue</returns>
-        public bool ConfirmEmail(TMembers member, string token)
-        {
-            bool result = false;
-            if (!string.IsNullOrEmpty(token))
-            {
-                // 驗證驗證碼是否相符
-                if (member.FVerificationCode == token)
-                {
-                    member.FIsEmailVerified = true; // 驗證成功，更新會員Email驗證狀態
-                    _context.Update(member);
-                    _context.SaveChanges();
-
-                    return true;
-                }
-            }
-
-            return result;
-        }
     }
 }
