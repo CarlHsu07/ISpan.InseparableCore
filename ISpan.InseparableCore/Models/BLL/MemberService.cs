@@ -15,7 +15,7 @@ namespace ISpan.InseparableCore.Models.BLL
         }
         
         /// <summary>
-        /// 判斷Email是否存在
+        /// 判斷Email是否已經存在於資料庫中
         /// </summary>
         /// <param name="memberEmail"></param>
         /// <returns>如果Email存在就回傳true，否則回傳false</returns>
@@ -32,7 +32,7 @@ namespace ISpan.InseparableCore.Models.BLL
         }
 
         /// <summary>
-        /// 產生驗證碼，用於會員信箱驗證
+        /// 產生32位元字串的驗證碼，用於會員信箱驗證
         /// </summary>
         /// <returns></returns>
         public string GenerateVerificationCode()

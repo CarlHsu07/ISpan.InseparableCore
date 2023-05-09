@@ -132,7 +132,7 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        //todo 以下是member會員中心訂單紀錄 in Member(已複製好)
+        //todo 以下是member會員中心的訂單紀錄 in Member(已複製好)
         public IPagedList<COrderVM> MemberOrderPageList(int? pageIndex, int? pageSize, List<COrderVM> vm)
         {
             if (!pageIndex.HasValue || pageIndex < 1)
@@ -256,6 +256,7 @@ namespace ISpan.InseparableCore.Controllers
             return RedirectToAction(nameof(OrderHistory));
         }
 
+        // 會員檔案
         // GET: Member/Profile/5
         public async Task<IActionResult> Profile(int? id)
         {
@@ -377,14 +378,14 @@ namespace ISpan.InseparableCore.Controllers
         // POST: Members/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(/*[Bind("FLastName,FFirstName,FEmail,FPasswordHash,FDateOfBirth,FGenderId,FCellphone,FAddress,FAreaZipCode")]*/ CMemberRegisterVM memberVM)
+        public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,DateOfBirth,GenderId,Area,Address")] CMemberRegisterVM memberVM)
         {
             // todo VM驗證不過後的View有問題，會不能選擇縣市
 
             TMembers newMember = new TMembers();
             MemberService memberService = new MemberService(_context);
 
-            // 驗證Email是否存在
+            // 驗證Email是否已存在
             if (memberService.IsEmailExist(memberVM.Email))
             {
                 ModelState.AddModelError("Email", "此Email已用過，請換一組");
@@ -392,15 +393,9 @@ namespace ISpan.InseparableCore.Controllers
 
             if (ModelState.IsValid)
             {
-
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
-
-                // 產生會員點數
-                if (newMember.FTotalMemberPoint == null)
-                {
-                    newMember.FTotalMemberPoint = 0;
-                }
+                newMember.FTotalMemberPoint = 0; // 產生會員點數
 
                 newMember.FLastName = memberVM.LastName;
                 newMember.FFirstName = memberVM.FirstName;
@@ -410,9 +405,8 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FAreaId = memberVM.Area;
                 newMember.FAddress = memberVM.Address;
 
-
-                // 加密會員密碼
-                #region
+                //加密會員密碼
+                #region 
                 string password = memberVM.Password; // 要加密的密碼
                 
                 byte[] salt = CPasswordHelper.GenerateSalt(); // 產生鹽值
