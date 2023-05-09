@@ -67,6 +67,11 @@ namespace ISpan.InseparableCore.Controllers
                 ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email錯誤，找不到您的帳號");
             }
 
+            if (member.FIsEmailVerified == false)
+            {
+                ModelState.AddModelError(nameof(CMemberRegisterVM.Email), "Email尚未驗證通過，請至信箱收驗證信並進行驗證");
+            }
+
             if (ModelState.IsValid) // 驗證通過
             {
                 if (member != null && CPasswordHelper.VerifyPassword(model.Password, member.FPasswordHash, member.FPasswordSalt))
