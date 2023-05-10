@@ -26,13 +26,13 @@ namespace ISpan.InseparableCore.Models.BLL
         /// </summary>
         /// <param name="memberEmail"></param>
         /// <returns>如果Email存在就回傳true，否則回傳false</returns>
-        public bool IsEmailExist(string memberEmail)
+        public async Task<bool> IsEmailExistAsync(string memberEmail)
         {
             bool isExist = false;
 
             if (!string.IsNullOrEmpty(memberEmail))
             {
-                isExist = _context.TMembers.Any(f => f.FEmail == memberEmail);
+                isExist = await _context.TMembers.AnyAsync(f => f.FEmail == memberEmail);
             }
 
             return isExist;
@@ -72,18 +72,16 @@ namespace ISpan.InseparableCore.Models.BLL
         <a href='{HtmlEncoder.Default.Encode(url)}'>驗證連結</a>";
 
             SmtpClient client = new SmtpClient();
-            await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_key.Email, _key.Password);
-
-            //MailMessage mail = new MailMessage();
+            await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls); // 連線
+            await client.AuthenticateAsync(_key.Email, _key.Password); // 登入
 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("INSEPARABLE", _key.Email));
-            message.To.Add(new MailboxAddress(email, email));
+            message.From.Add(new MailboxAddress("INSEPARABLE", _key.Email)); // 寄件者
+            message.To.Add(new MailboxAddress(email, email)); // 收件者
             message.Priority = MessagePriority.Normal;
-            message.Subject = "INSEPARABLE 電子信箱驗證信";
+            message.Subject = "INSEPARABLE 電子信箱驗證信"; // 信的標題
             message.Body = builder.ToMessageBody();
-            await client.SendAsync(message);
+            await client.SendAsync(message); // 寄送email
             client.Disconnect(true);
         }
 

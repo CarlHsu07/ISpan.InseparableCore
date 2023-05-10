@@ -39,6 +39,8 @@ namespace ISpan.InseparableCore.ViewModels
         [Display(Name = "密碼")]
         [Required(ErrorMessage = "請輸入密碼")]
         [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+-=,./?;:'""[\]{}\\|]{8,}$", ErrorMessage = "密碼至少包含一個英文、一個數字，長度至少為8個字元。")]
+        //[StringLength(100, ErrorMessage = "密碼長度至少為 {2} 個字元。", MinimumLength = 8)]
         public string Password
         {
             get => _member.FPasswordHash; set => _member.FPasswordHash = value;
