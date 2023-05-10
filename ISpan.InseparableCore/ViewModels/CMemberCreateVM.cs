@@ -52,11 +52,11 @@ namespace ISpan.InseparableCore.ViewModels
 
         //[Display(Name = "縣市")]
         [Required(ErrorMessage = "請選擇縣市")]
-        public int? City { get; set; }
+        public int City { get; set; }
 
         //[Display(Name = "地區")]
         [Required(ErrorMessage = "請選擇區域")]
-        public int? Area { get => _member.FAreaId; set => _member.FAreaId = value; }
+        public int Area { get => _member.FAreaId; set => _member.FAreaId = value; }
 
         [Display(Name = "住址")]
         public string? Address { get => _member.FAddress; set => _member.FAddress = value; }
@@ -72,12 +72,12 @@ namespace ISpan.InseparableCore.ViewModels
 
         [Display(Name = "會員狀態")]
         [Required(ErrorMessage = "請選擇會員狀態")]
-        public int? AccountStatus { get => _member.FAccountStatus; set => _member.FAccountStatus = value; }
+        public int AccountStatus { get => _member.FAccountStatus; set => _member.FAccountStatus = value; }
 
         [Display(Name = "會員點數")]
         public int? TotalMemberPoint { get => _member.FTotalMemberPoint; set => _member.FTotalMemberPoint = value; }
 
-        public DateTime? SignUpTime { get => _member.FSignUpTime; set => _member.FSignUpTime = value; }
+        public DateTime SignUpTime { get => _member.FSignUpTime; set => _member.FSignUpTime = value; }
 
         [Display(Name = "上傳新大頭貼照")]
         public IFormFile? MemberPhoto { get; set; }

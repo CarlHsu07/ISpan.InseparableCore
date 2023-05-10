@@ -86,10 +86,10 @@ namespace ISpan.InseparableCore.ViewModels
 
         //[Display(Name = "縣市")]
         [Required(ErrorMessage = "請選擇縣市")]
-        public int? City { get; set; }
+        public int City { get; set; }
 
 		//[Display(Name = "區域")]
-		public int? Area
+		public int Area
 		{
 			get { return _member.FAreaId; } set { _member.FAreaId = value; }
 		}

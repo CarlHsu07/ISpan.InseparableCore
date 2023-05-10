@@ -860,11 +860,13 @@ namespace ISpan.InseparableCore.Models.DAL
                 entity.HasOne(d => d.FAccountStatusNavigation)
                     .WithMany(p => p.TMembers)
                     .HasForeignKey(d => d.FAccountStatus)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tMembers_tAccountStatuses");
 
                 entity.HasOne(d => d.FArea)
                     .WithMany(p => p.TMembers)
                     .HasForeignKey(d => d.FAreaId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_tMembers_tAreas");
 
                 entity.HasOne(d => d.FGender)

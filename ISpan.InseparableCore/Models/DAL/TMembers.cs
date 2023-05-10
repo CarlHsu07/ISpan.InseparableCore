@@ -74,7 +74,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// <summary>
         /// 區域ID
         /// </summary>
-        public int? FAreaId { get; set; }
+        public int FAreaId { get; set; }
         /// <summary>
         /// 大頭貼的檔案路徑
         /// </summary>
@@ -86,7 +86,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// <summary>
         /// 會員帳戶狀態
         /// </summary>
-        public int? FAccountStatus { get; set; }
+        public int FAccountStatus { get; set; }
         /// <summary>
         /// 目前點數餘額
         /// </summary>
@@ -94,7 +94,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// <summary>
         /// 會員註冊時間
         /// </summary>
-        public DateTime? FSignUpTime { get; set; }
+        public DateTime FSignUpTime { get; set; }
         /// <summary>
         /// 驗證碼
         /// </summary>
@@ -102,7 +102,7 @@ namespace ISpan.InseparableCore.Models.DAL
         /// <summary>
         /// Email是否驗證過
         /// </summary>
-        public bool? FIsEmailVerified { get; set; }
+        public bool FIsEmailVerified { get; set; }
 
         public virtual TAccountStatuses FAccountStatusNavigation { get; set; }
         public virtual TAreas FArea { get; set; }
