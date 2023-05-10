@@ -384,7 +384,6 @@ namespace ISpan.InseparableCore.Controllers
         public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,ConfirmPassword,DateOfBirth,GenderId,City,Area,Address")] CMemberRegisterVM memberVM)
         {
             // todo VM驗證不過後的View有問題，會不能選擇縣市
-
             TMembers newMember = new TMembers();
             MemberService memberService = new MemberService(_context, _key);
 
@@ -396,10 +395,10 @@ namespace ISpan.InseparableCore.Controllers
 
             if (ModelState.IsValid)
             {
+
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
                 newMember.FVerificationCode = memberService.GenerateVerificationCode();
-                
                 newMember.FIsEmailVerified = false;
                 newMember.FAccountStatus = 1;
                 newMember.FTotalMemberPoint = 0; // 產生會員點數

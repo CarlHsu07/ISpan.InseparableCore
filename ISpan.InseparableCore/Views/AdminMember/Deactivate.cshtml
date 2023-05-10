@@ -1,12 +1,12 @@
 ﻿@model ISpan.InseparableCore.Models.DAL.TMembers
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Deactivate";
 }
 
-<h1>刪除會員</h1>
+<h1>註銷會員</h1>
 
-<h3>確定要刪除這個會員嗎?</h3>
+<h3>確定要註銷這個會員嗎?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -99,7 +99,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="FId" />
-        <input type="submit" value="刪除" class="btn btn-danger" /> |
+        <input type="submit" value="註銷" class="btn btn-danger" /> |
         <a asp-action="Index" class="btn btn-light">返回</a>
     </form>
 </div>

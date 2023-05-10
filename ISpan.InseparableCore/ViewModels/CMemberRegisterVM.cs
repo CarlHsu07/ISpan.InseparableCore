@@ -36,20 +36,17 @@ namespace ISpan.InseparableCore.ViewModels
             get => _member.FEmail; set => _member.FEmail = value;
         }
 
-        [Display(Name = "密碼")]
-        [Required(ErrorMessage = "請輸入密碼")]
+        [Display(Name = "密碼(密碼需包含英文、數字，至少為8位數)")]
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "請輸入密碼")]
         [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+-=,./?;:'""[\]{}\\|]{8,}$", ErrorMessage = "密碼至少包含一個英文、一個數字，長度至少為8個字元。")]
         //[StringLength(100, ErrorMessage = "密碼長度至少為 {2} 個字元。", MinimumLength = 8)]
-        public string Password
-        {
-            get => _member.FPasswordHash; set => _member.FPasswordHash = value;
-        }
+        public string Password { get => _member.FPasswordHash; set => _member.FPasswordHash = value; }
 
         [Display(Name = "確認密碼")]
+        [DataType(DataType.Password)]
         [Required(ErrorMessage = "請再次輸入密碼")]
         [Compare("Password", ErrorMessage = "密碼不相同！")]
-        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "生日")]

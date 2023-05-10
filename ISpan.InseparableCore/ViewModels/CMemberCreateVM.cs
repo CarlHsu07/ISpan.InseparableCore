@@ -13,7 +13,7 @@ namespace ISpan.InseparableCore.ViewModels
         public CMemberCreateVM() { _member = new TMembers(); }
 
         [Display(Name = "會員ID")]
-        public string MemberId { get => _member.FMemberId; set => _member.FMemberId = value; }
+        public string? MemberId { get => _member.FMemberId; set => _member.FMemberId = value; }
 
         [Display(Name = "姓氏")]
         [Required(ErrorMessage = "請輸入姓氏")]
@@ -28,9 +28,10 @@ namespace ISpan.InseparableCore.ViewModels
         [Required(ErrorMessage = "請輸入Email")]
         public string Email { get => _member.FEmail; set => _member.FEmail = value; }
 
-        [Display(Name = "密碼")]
-        [Required(ErrorMessage = "請輸入密碼")]
+        [Display(Name = "密碼(密碼需包含英文、數字，至少為8位數)")]
         [DataType(DataType.Password)]
+        [Required(ErrorMessage = "請輸入密碼")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+-=,./?;:'""[\]{}\\|]{8,}$", ErrorMessage = "格式錯誤，密碼至少包含一個英文、一個數字，長度至少為8個字元。")]
         public string Password { get => _member.FPasswordHash; set => _member.FPasswordHash = value; }
 
         [Display(Name = "確認密碼")]

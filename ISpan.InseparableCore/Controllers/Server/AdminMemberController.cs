@@ -28,7 +28,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         // GET: AdminMember
         public async Task<IActionResult> Index(CQueryKeywordViewModel vm)
         {
-            if (string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的
+            if (string.IsNullOrEmpty(vm.txtKeyword)) // 搜尋關鍵字是空的，顯示全部資料
             {
                 var members = _context.TMembers
                 .Include(m => m.FAccountStatusNavigation)
@@ -50,6 +50,8 @@ namespace ISpan.InseparableCore.Controllers.Server
                     .Include(m => m.FArea)
                     .Include(m => m.FGender)
                     .OrderByDescending(m => m.FId);
+
+                ViewBag.SearchKeyword = vm.txtKeyword;
 
                 return View(await members.ToListAsync());
             }
@@ -80,28 +82,32 @@ namespace ISpan.InseparableCore.Controllers.Server
         public IActionResult Create()
         {
             // todo 居住區域選單，要改成縣市跟區域，先選縣市再顯示區域
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
+            ViewData["GenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType");
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
+            //ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName");
+            ViewData["AccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus");
             return View();
         }
 
         // POST: AdminMember/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,Area,Introduction,AccountStatus,TotalMemberPoint,MemberPhoto")] CMemberCreateVM memberVM)
+        public async Task<IActionResult> Create([Bind("MemberId,LastName,FirstName,Email,Password,ConfirmPassword,DateOfBirth,GenderId,Cellphone,Address,City,Area,Introduction,AccountStatus,TotalMemberPoint,MemberPhoto")] CMemberCreateVM memberVM)
         {
+            MemberService memberService = new MemberService(_context, _key);
+
+            // 驗證Email是否已存在
+            if (await memberService.IsEmailExistAsync(memberVM.Email))
+            {
+                ModelState.AddModelError("Email", "此Email已用過，請換一組");
+            }
+
             if (ModelState.IsValid)
             {
                 TMembers newMember = new TMembers();
-                MemberService memberService = new MemberService(_context, _key);
-
-                // 產生會員ID
-                newMember.FMemberId = memberService.GenerateMemberId();
-
-                // 產生會員註冊時間
-                newMember.FSignUpTime = memberService.GenerateSignUpTime();
+                
+                newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
+                newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
 
                 // 產生會員點數
                 if (memberVM.TotalMemberPoint == null)
@@ -119,6 +125,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                 newMember.FAddress = memberVM.Address;
                 newMember.FIntroduction = memberVM.Introduction;
                 newMember.FAccountStatus = memberVM.AccountStatus;
+                newMember.FIsEmailVerified = true;
 
                 // 加密會員密碼
                 #region
@@ -141,9 +148,9 @@ namespace ISpan.InseparableCore.Controllers.Server
             }
 
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.Area);
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.Area);
+            ViewData["AccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
             return View(memberVM);
         }
 
@@ -246,8 +253,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View(memberVM);
         }
 
-        // GET: AdminMember/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Deactivate(int? id)
         {
             if (id == null || _context.TMembers == null)
             {
@@ -267,10 +273,9 @@ namespace ISpan.InseparableCore.Controllers.Server
             return View(tMembers);
         }
 
-        // POST: AdminMember/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Deactivate")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeactivateConfirmed(int id)
         {
             if (_context.TMembers == null)
             {
@@ -279,7 +284,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             var tMembers = await _context.TMembers.FindAsync(id);
             if (tMembers != null)
             {
-                tMembers.FAccountStatus = 3;
+                tMembers.FAccountStatus = 3; // 將會員狀態改為註銷狀態
                 _context.TMembers.Update(tMembers);
             }
 

@@ -23,20 +23,16 @@
     <a asp-action="Create" class="btn btn-rounded btn-success">新增會員</a>
 </p>
 <p>
-    <form asp-action="" method="post">
+    <form asp-action="" method="get">
         <div class="divContainer">
-            <div class="form-group divBlock">
+            <div class="form-group col-md-4">
                 <label for="txtKeyword">關鍵字：</label>
-                <input class="input-validation-error form-control text-light" id="txtKeyword" name="txtKeyword" type="text" value="">
+                <input class="input-validation-error form-control text-light" id="txtKeyword" name="txtKeyword" type="text" value="@ViewBag.SearchKeyword" placeholder="可搜尋姓氏、名字、會員ID、Email">
             </div>
-            <div class="form-group divBlock inDivPosition">
+            <div class="form-group inDivPosition col-md-2">
                 <input type="submit" class="btn btn-rounded btn-info" style="margin-left:15px;" value="搜尋" />
             </div>
-
         </div>
-
-
-        @*@Html.TextBox("txtKeyword")*@
 
     </form>
 
@@ -64,10 +60,6 @@
             <th>
                 @*@Html.DisplayNameFor(model => model.FGender)*@
                 性別
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.FDateOfBirth)*@
-                生日
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.FCellphone)*@
@@ -117,9 +109,6 @@
                         @Html.DisplayFor(modelItem => item.FGender.FGenderType)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => dateOfBirth)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.FCellphone)
                     </td>
                     <td>
@@ -134,7 +123,7 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@item.FId" class="btn btn-warning">編輯</a> |
                         <a asp-action="Details" asp-route-id="@item.FId" class="btn btn-light">明細</a> |
-                        <a asp-action="Delete" asp-route-id="@item.FId" class="btn btn-danger">刪除</a>
+                        <a asp-action="Deactivate" asp-route-id="@item.FId" class="btn btn-danger">註銷</a>
                     </td>
                 </tr>
             }

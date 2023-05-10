@@ -12,27 +12,42 @@
         <form asp-action="Create" enctype="multipart/form-data" autocomplete="off">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="LastName" class="control-label">姓氏</label>
+                <label asp-for="LastName" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.LastName)
+                </label>
                 <input asp-for="LastName" class="form-control text-light" placeholder="請輸入姓氏" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FirstName" class="control-label">名字</label>
+                <label asp-for="FirstName" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </label>
                 <input asp-for="FirstName" class="form-control text-light" placeholder="請輸入名字" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label">Email</label>
+                <label asp-for="Email" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Email)
+                </label>
                 <input asp-for="Email" class="form-control text-light" placeholder="請輸入Email" autocomplete="off" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label">密碼</label>
+                <label asp-for="Password" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Password)
+                </label>
                 <input asp-for="Password" class="form-control text-light" placeholder="請輸入密碼" autocomplete="off" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ConfirmPassword" class="control-label">確認密碼</label>
+                <label asp-for="ConfirmPassword" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.ConfirmPassword)
+                </label>
                 <input asp-for="ConfirmPassword" class="form-control text-light" placeholder="請再次輸入密碼" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
@@ -43,7 +58,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="GenderId" class="control-label">性別</label>
-                <select asp-for="GenderId" class="form-control text-light" asp-items="ViewBag.FGenderId"></select>
+                <select asp-for="GenderId" class="form-control text-light" asp-items="ViewBag.GenderId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Cellphone" class="control-label">手機</label>
@@ -51,15 +66,21 @@
                 <span asp-validation-for="Cellphone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="City" class="control-label">城市</label>
+                <label asp-for="City" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.City)
+                </label>
                 <select asp-for="City" class="form-control text-light" asp-items="ViewBag.Cities" id="citySelect">
                     <option value="">請選擇縣市</option>
                 </select>
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Area" class="control-label">地區</label>
-                <select asp-for="Area" class="form-control text-light" asp-items="ViewBag.FAreaZipCode" id="areaSelect">
+                <label asp-for="Area" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.Area)
+                </label>
+                <select asp-for="Area" class="form-control text-light" asp-items="ViewBag.Areas" id="areaSelect">
                     <option value="">請選擇區域</option>
                 </select>
                 <span asp-validation-for="Area" class="text-danger"></span>
@@ -80,8 +101,11 @@
                 <span asp-validation-for="Introduction" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AccountStatus" class="control-label">會員狀態</label>
-                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus"></select>
+                <label asp-for="AccountStatus" class="control-label">
+                    <span class="text-danger">*</span>
+                    @Html.DisplayNameFor(model => model.AccountStatus)
+                </label>
+                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.AccountStatus"></select>
             </div>
             @*<div class="form-group">
                 <label asp-for="FTotalMemberPoint" class="control-label">會員點數</label>
@@ -101,7 +125,7 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script src="~/js/addressEdit.js"></script>
+    <script src="~/js/address.js"></script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
