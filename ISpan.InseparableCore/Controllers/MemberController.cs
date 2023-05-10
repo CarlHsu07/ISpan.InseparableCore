@@ -399,6 +399,7 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
                 newMember.FVerificationCode = memberService.GenerateVerificationCode();
+                
                 newMember.FIsEmailVerified = false;
                 newMember.FTotalMemberPoint = 0; // 產生會員點數
 
