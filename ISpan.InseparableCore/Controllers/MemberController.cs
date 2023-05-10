@@ -389,7 +389,7 @@ namespace ISpan.InseparableCore.Controllers
             MemberService memberService = new MemberService(_context, _key);
 
             // 驗證Email是否已存在
-            if (memberService.IsEmailExistAsync(memberVM.Email))
+            if (await memberService.IsEmailExistAsync(memberVM.Email))
             {
                 ModelState.AddModelError("Email", "此Email已用過，請換一組");
             }
