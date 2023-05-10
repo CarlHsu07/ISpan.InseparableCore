@@ -190,7 +190,9 @@
                     <div class="row mb-3">
                         <label asp-for="GenderId" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <select asp-for="GenderId" class="form-control member-input" asp-items="@ViewBag.FGenderId"></select>
+                            <select asp-for="GenderId" class="form-control member-input" asp-items="ViewBag.FGenderId">
+                                <option value="">請選擇</option>
+                            </select>
                             <span asp-validation-for="GenderId" class="text-danger"></span>
                         </div>
                     </div>
@@ -208,13 +210,13 @@
                         <label asp-for="Address" class="col-sm-4 col-lg-3 col-form-label"></label>
                         <div class="col-sm-8 col-lg-9">
                             <div class="col-sm-2">
-                                <select asp-for="City" class="form-control member-input f-3" asp-items="@ViewBag.Cities" id="citySelect">
+                                <select asp-for="City" class="form-control member-input f-3" asp-items="ViewBag.Cities" id="citySelect">
                                     <option value="">請選擇縣市</option>
                                 </select>
                                 <span asp-validation-for="City" class="text-danger"></span>
                             </div>
                             <div class="col-sm-2">
-                                <select asp-for="Area" class="form-control member-input f-3" asp-items="@ViewBag.Areas" id="areaSelect">
+                                <select asp-for="Area" class="form-control member-input f-3" asp-items="ViewBag.Areas" id="areaSelect">
                                     <option value="">請選擇區域</option>
                                 </select>
                                 <span asp-validation-for="Area" class="text-danger"></span>
@@ -314,7 +316,7 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
-    <script src="~/js/addressEdit.js"></script>
+    @*<script src="~/js/addressEdit.js"></script>*@
 
     <script>
         $(document).ready(function () {

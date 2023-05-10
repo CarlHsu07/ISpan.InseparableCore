@@ -13,6 +13,7 @@ using System.Text.Json.Serialization;
 using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.Metrics;
 
 namespace ISpan.InseparableCore.Controllers
 {
@@ -129,7 +130,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", selectedValue: FCityId); // 縣市選單的選項
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", selectedValue: FCityId.ToString()); // 縣市選單的選項
             ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
             
             return View(viewModel);
@@ -383,7 +384,6 @@ namespace ISpan.InseparableCore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([Bind("LastName,FirstName,Email,Password,ConfirmPassword,DateOfBirth,GenderId,City,Area,Address")] CMemberRegisterVM memberVM)
         {
-            // todo VM驗證不過後的View有問題，會不能選擇縣市
             TMembers newMember = new TMembers();
             MemberService memberService = new MemberService(_context, _key);
 
@@ -436,7 +436,14 @@ namespace ISpan.InseparableCore.Controllers
 
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", newMember.FAccountStatus);
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
-            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", memberVM.Area);
+            ViewData["Areas"] = new SelectList(await _context.TAreas.Where(a => a.FCityId == memberVM.City).ToListAsync(), "FId", "FAreaName", memberVM.Area);
+            //ViewData["Areas"] = await _context.TAreas.Where(a => a.FCityId == memberVM.City)
+            //    .Select(a => new SelectListItem
+            //    {
+            //        Value = a.FId.ToString(),
+            //        Text = a.FAreaName,
+            //        Selected = (a.FId == memberVM.Area)
+            //    }).ToListAsync();
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
             return View(memberVM);
         }
