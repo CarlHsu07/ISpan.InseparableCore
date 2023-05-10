@@ -122,14 +122,14 @@ namespace ISpan.InseparableCore.Controllers
 
             };
 
-            int? CityID = null;
+            int FCityId = 0;
             if (member.FAreaId != null)
             {
-                CityID = _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefault();
+                FCityId = await _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefaultAsync();
             }
 
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", CityID); // 縣市選單的選項
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", selectedValue: FCityId); // 縣市選單的選項
             ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
             
             return View(viewModel);
@@ -425,11 +425,11 @@ namespace ISpan.InseparableCore.Controllers
                 newMember.FPasswordHash = Convert.ToBase64String(hashedPassword);
                 #endregion
 
-                _context.Add(newMember);
-                await _context.SaveChangesAsync();
-
                 string url = memberService.GenerateEmailVerificationLink(newMember.FMemberId, newMember.FVerificationCode);
                 memberService.SendVerificationEmail(memberVM.Email, url); // 寄驗證信
+
+                _context.Add(newMember);
+                await _context.SaveChangesAsync();
 
                 return View("RegistrationCompleted");
             }
@@ -493,7 +493,6 @@ namespace ISpan.InseparableCore.Controllers
             return View(viewModel);
         }
 
-        // POST: Member/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(int id, [Bind("Id,MemberId,LastName,FirstName,Email,Password,DateOfBirth,GenderId,Cellphone,Address,City,Area,PhotoPath,Introduction,MemberPhoto")] CMemberEditProfileVM MemberIn)

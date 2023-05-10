@@ -190,7 +190,7 @@
                     <div class="row mb-3">
                         <label asp-for="GenderId" class="col-md-4 col-lg-3 col-form-label"></label>
                         <div class="col-md-8 col-lg-9">
-                            <select asp-for="GenderId" class="form-control member-input" asp-items="ViewBag.FGenderId"></select>
+                            <select asp-for="GenderId" class="form-control member-input" asp-items="@ViewBag.FGenderId"></select>
                             <span asp-validation-for="GenderId" class="text-danger"></span>
                         </div>
                     </div>
@@ -205,26 +205,24 @@
 
                     @*// todo 地址輸入樣式要改*@
                     <div class="row mb-3">
-                        <label asp-for="Address" class="col-sm-2 col-form-label"></label>
-                        <div class="col-sm-2">
-                            <select asp-for="City" class="form-control member-input f-3" asp-items="ViewBag.Cities" id="citySelect">
-                                <option value="">請選擇縣市</option>
-                            </select>
-                            <span asp-validation-for="City" class="text-danger"></span>
-                        </div>
-                        <div class="col-sm-2">
-                            <select asp-for="Area" class="form-control member-input f-3" asp-items="ViewBag.Areas" id="areaSelect">
-                                <option value="">請選擇區域</option>
-                            </select>
-                            <span asp-validation-for="Area" class="text-danger"></span>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label asp-for="Address" class="col-md-4 col-lg-3 col-form-label"></label>
-                        <div class="col-md-8 col-lg-9">
-                            <input asp-for="Address" class="form-control member-input">
-                            <span asp-validation-for="Address" class="text-danger"></span>
+                        <label asp-for="Address" class="col-sm-4 col-lg-3 col-form-label"></label>
+                        <div class="col-sm-8 col-lg-9">
+                            <div class="col-sm-2">
+                                <select asp-for="City" class="form-control member-input f-3" asp-items="@ViewBag.Cities" id="citySelect">
+                                    <option value="">請選擇縣市</option>
+                                </select>
+                                <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <select asp-for="Area" class="form-control member-input f-3" asp-items="@ViewBag.Areas" id="areaSelect">
+                                    <option value="">請選擇區域</option>
+                                </select>
+                                <span asp-validation-for="Area" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-8">
+                                <input asp-for="Address" class="form-control member-input">
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
 

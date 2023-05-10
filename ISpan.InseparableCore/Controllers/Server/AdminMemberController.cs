@@ -190,10 +190,12 @@ namespace ISpan.InseparableCore.Controllers.Server
                 SignUpTime = member.FSignUpTime
             };
 
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCity.FCityId); // 縣市選單的選項
-            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
-            ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+            ViewBag.GenderId = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
+            // todo 縣市選單的選項不會選中指定值
+            ViewBag.Cities = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCityId); // 縣市選單的選項
+            ViewBag.Areas = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
+            ViewBag.AccountStatus = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+
             return View(memberVM);
         }
 
@@ -250,6 +252,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
             ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.AreaId);
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
+
             return View(memberVM);
         }
 

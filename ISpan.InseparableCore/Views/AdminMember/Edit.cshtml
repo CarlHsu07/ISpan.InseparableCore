@@ -46,7 +46,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="GenderId" class="control-label">性別</label>
-                <select asp-for="GenderId" class="form-control text-light" asp-items="ViewBag.FGenderId"></select>
+                <select asp-for="GenderId" class="form-control text-light" asp-items="ViewBag.GenderId"></select>
                 <span asp-validation-for="GenderId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -85,7 +85,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="AccountStatus" class="control-label">會員狀態</label>
-                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.FAccountStatus">
+                <select asp-for="AccountStatus" class="form-control text-light" asp-items="ViewBag.AccountStatus">
                     <option value="">請選擇</option>
                 </select>
                 <span asp-validation-for="AccountStatus" class="text-danger"></span>

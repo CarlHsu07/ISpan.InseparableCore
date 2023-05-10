@@ -78,7 +78,7 @@ namespace ISpan.InseparableCore.ViewModels
         public string? Address { get => _member.FAddress; set => _member.FAddress = value; }
 
         [Required(ErrorMessage = "請選擇縣市")]
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
 
         /// <summary>
         /// 區域ID
