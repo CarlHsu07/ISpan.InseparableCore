@@ -163,6 +163,7 @@ namespace ISpan.InseparableCore.Controllers.Server
             }
 
             var member = await _context.TMembers
+                .Include(m => m.FGender)
                 .Include(m => m.FArea.FCity)
                 .FirstOrDefaultAsync(m => m.FId == id);
 
@@ -181,8 +182,9 @@ namespace ISpan.InseparableCore.Controllers.Server
                 DateOfBirth = member.FDateOfBirth,
                 GenderId = member.FGenderId,
                 Cellphone = member.FCellphone,
+                City = member.FArea.FCityId,
+                Area = member.FAreaId,
                 Address = member.FAddress,
-                AreaId = member.FAreaId,
                 MemberPhotoPath = member.FPhotoPath,
                 Introduction = member.FIntroduction,
                 AccountStatus = member.FAccountStatus,
@@ -191,9 +193,14 @@ namespace ISpan.InseparableCore.Controllers.Server
             };
 
             ViewBag.GenderId = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            // todo 縣市選單的選項不會選中指定值
-            ViewBag.Cities = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCityId); // 縣市選單的選項
-            ViewBag.Areas = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
+
+            // todo 縣市選單的選項不會預先選中指定值
+            //ViewBag.Cities = new SelectList(_context.TCities, "FCityId", "FCityName", member.FArea.FCityId); // 縣市選單的選項
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
+
+            //ViewBag.Areas = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId);
+            ViewData["Areas"] = new SelectList(await _context.TAreas.Where(a => a.FCityId == memberVM.City).ToListAsync(), "FId", "FAreaName", memberVM.Area); // 區域選單的選項
+
             ViewBag.AccountStatus = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
 
             return View(memberVM);
@@ -202,7 +209,7 @@ namespace ISpan.InseparableCore.Controllers.Server
         // POST: AdminMember/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,MemberId,LastName,FirstName,Email,DateOfBirth,GenderId,Cellphone,Address,CityId,AreaId,Introduction,AccountStatus,MemberPhoto")] CAdminMemberEditVM memberVM)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,MemberId,LastName,FirstName,Email,DateOfBirth,GenderId,Cellphone,Address,City,Area,Introduction,AccountStatus,MemberPhoto")] CAdminMemberEditVM memberVM)
         {
             if (id != memberVM.Id)
             {
@@ -225,7 +232,7 @@ namespace ISpan.InseparableCore.Controllers.Server
                         member.FDateOfBirth = memberVM.DateOfBirth;
                         member.FGenderId = memberVM.GenderId;
                         member.FCellphone = memberVM.Cellphone;
-                        member.FAreaId = memberVM.AreaId;
+                        member.FAreaId = memberVM.Area;
                         member.FAddress = memberVM.Address;
                         member.FIntroduction = memberVM.Introduction;
                         member.FAccountStatus = memberVM.AccountStatus;
@@ -250,7 +257,7 @@ namespace ISpan.InseparableCore.Controllers.Server
 
             ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
             ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName"); // 縣市選單的選項
-            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.AreaId);
+            ViewData["FAreaZipCode"] = new SelectList(_context.TAreas, "FZipCode", "FAreaName", memberVM.Area);
             ViewData["FAccountStatus"] = new SelectList(_context.TAccountStatuses, "FStatusId", "FStatus", memberVM.AccountStatus);
 
             return View(memberVM);
