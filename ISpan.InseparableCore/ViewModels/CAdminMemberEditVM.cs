@@ -77,12 +77,15 @@ namespace ISpan.InseparableCore.ViewModels
         [Display(Name = "住址")]
         public string? Address { get => _member.FAddress; set => _member.FAddress = value; }
 
+        [Display(Name = "城市")]
         [Required(ErrorMessage = "請選擇縣市")]
         public int City { get; set; }
 
         /// <summary>
         /// 區域ID
         /// </summary>
+        /// 
+        [Display(Name = "區域")]
         [Required(ErrorMessage = "請選擇區域")]
         public int Area { get => _member.FAreaId; set => _member.FAreaId = value; }
 
