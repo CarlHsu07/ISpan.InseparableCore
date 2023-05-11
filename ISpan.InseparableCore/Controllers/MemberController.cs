@@ -660,12 +660,15 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             var member = await _context.TMembers.FirstOrDefaultAsync(m => m.FMemberId == memberId);
-            if (member == null)
+            if (member == null) // 會員不存在就顯示錯誤畫面
             {
-                return RedirectToAction(nameof(HomeController.Login), "Home");
+                ViewBag.IsConfirmEmailSuccess = false;
+                return View("VerifyEmail");
+
+                //return RedirectToAction(nameof(HomeController.Login), "Home");
             }
 
-            if (await memberService.ConfirmEmail(member, token))
+            if (await memberService.ConfirmEmail(member, token)) // 驗證成功
             {
                 ViewBag.IsConfirmEmailSuccess = true;
                 return View("VerifyEmail");
