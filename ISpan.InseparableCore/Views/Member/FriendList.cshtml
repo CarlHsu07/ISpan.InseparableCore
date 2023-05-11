@@ -53,8 +53,11 @@
     }
 </style>
 
-<a asp-action="Index" class="btn btn-secondary">返回</a>
+<div class="mt-3">
+    <h1>好友清單</h1>
+</div>
 
+<a asp-action="Index" class="btn btn-secondary">返回</a>
 <div class="container py-2 px-4">
 
     <div class="row rounded-lg overflow-hidden">
@@ -84,12 +87,12 @@
 
                         @foreach (var friend in Model)
                         {
-                            <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0">
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-light rounded-0" onclick="friendClick(@friend.Id)">
                                 <div class="media">
                                     <img src="../../images/memberProfilePhotos/@friend.PhotoPath" alt="user" width="50" class="rounded-circle">
                                     <div class="media-body ml-4">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
-                                            <h6 class="mb-0">@friend.LastName@friend.FirstName</h6><small class="small font-weight-bold">@*日期*@</small>
+                                            <h6 class="mb-0" id="Name@(friend.Id)">@friend.LastName@friend.FirstName</h6><small class="small font-weight-bold">@*日期*@</small>
                                         </div>
                                         <p class="font-italic text-muted mb-0 text-small">@*顯示最近一則訊息*@</p>
                                     </div>
@@ -117,6 +120,7 @@
         <!-- Chat Box 聊天區域-->
         <div class="col-7 px-0">
             <div class="px-4 py-5 chat-box bg-white" id="messagesArea">
+                <h5 class="mt-1 mb-1 text-black" id="friendName"></h5>
 
                 @*<ul class="text-black" id="messagesList"></ul>*@
 
@@ -183,13 +187,19 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.4.js"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
 
     <script>
-        let senderId = @ViewBag.memberId;
-        //let receiverId ;
+        window.Id = @ViewBag.memberId;
+        
+
+        function friendClick(id) {
+            window.friendId = id;
+            const friendName = $(`#Name${id}`).text();
+            $("#friendName").text(friendName);
+        }
 
     </script>
+    <script src="~/js/chat.js"></script>
 
     
 }
