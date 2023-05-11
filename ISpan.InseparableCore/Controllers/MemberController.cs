@@ -100,7 +100,7 @@ namespace ISpan.InseparableCore.Controllers
             }
 
             // 將資料庫中的 TMembers 物件映射到 ViewModel（即CEditProfileViewModel）
-            var viewModel = new CMemberCenterVM
+            var memberVM = new CMemberCenterVM
             {
                 // 設定 ViewModel 的屬性值
                 Id = member.FId,
@@ -113,27 +113,28 @@ namespace ISpan.InseparableCore.Controllers
                 GenderId = member.FGenderId,
                 Cellphone = member.FCellphone,
                 CityString = cityString,
+                City = member.FArea.FCityId,
                 AreaString = areaString,
+                Area = member.FAreaId,
                 Address = member.FAddress,
                 PhotoPath = member.FPhotoPath,
                 Introduction = member.FIntroduction,
                 AccountStatus = accountStatusString,
                 TotalMemberPoint = member.FTotalMemberPoint,
                 SignUpTime = member.FSignUpTime
-
             };
 
-            int FCityId = 0;
-            if (member.FAreaId != null)
-            {
-                FCityId = await _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefaultAsync();
-            }
+            //int FCityId = 0;
+            //if (member.FAreaId != null)
+            //{
+            //    FCityId = await _context.TAreas.Where(a => a.FId == member.FAreaId).Select(x => x.FCityId).FirstOrDefaultAsync();
+            //}
 
-            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", member.FGenderId);
-            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", selectedValue: FCityId.ToString()); // 縣市選單的選項
-            ViewData["Areas"] = new SelectList(_context.TAreas, "FId", "FAreaName", member.FAreaId); // 區域選單的選項
-            
-            return View(viewModel);
+            ViewData["FGenderId"] = new SelectList(_context.TGenders, "FGenderId", "FGenderType", memberVM.GenderId);
+            ViewData["Cities"] = new SelectList(_context.TCities, "FCityId", "FCityName", memberVM.City); // 縣市選單的選項
+            ViewData["Areas"] = new SelectList(await _context.TAreas.Where(a => a.FCityId == memberVM.City).ToListAsync(), "FId", "FAreaName", member.FAreaId); // 區域選單的選項
+
+            return View(memberVM);
         }
 
         //todo 以下是member會員中心的訂單紀錄 in Member(已複製好)
@@ -395,7 +396,6 @@ namespace ISpan.InseparableCore.Controllers
 
             if (ModelState.IsValid)
             {
-
                 newMember.FMemberId = memberService.GenerateMemberId(); // 產生會員ID
                 newMember.FSignUpTime = memberService.GenerateSignUpTime(); // 產生會員註冊時間
                 newMember.FVerificationCode = memberService.GenerateVerificationCode();
@@ -646,7 +646,7 @@ namespace ISpan.InseparableCore.Controllers
         {
             MemberService memberService = new MemberService(_context, _key);
 
-            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token)) // memberId或token是null或空字串時就導引回首頁
+            if ( String.IsNullOrEmpty(memberId) || String.IsNullOrEmpty(token)) // memberId或token是null或空字串時就顯示錯誤畫面
             {
 
                 ViewBag.IsConfirmEmailSuccess = false;
