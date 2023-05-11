@@ -1,7 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
 
-namespace ISpan.InseparableCore.ViewModels
+namespace ISpan.InseparableCore.ViewModels.MemberVM
 {
     /// <summary>
     /// 會員註冊的ViewModel

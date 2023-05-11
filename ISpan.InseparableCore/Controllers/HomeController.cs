@@ -3,6 +3,7 @@ using ISpan.InseparableCore.Models.BLL;
 using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.DAL.Repo;
 using ISpan.InseparableCore.ViewModels;
+using ISpan.InseparableCore.ViewModels.MemberVM;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol;

@@ -11,6 +11,8 @@ using ISpan.InseparableCore.Models.DAL;
 using ISpan.InseparableCore.Models.BLL;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using ISpan.InseparableCore.ViewModels.MemberVM;
+using System.Diagnostics.Metrics;
 
 namespace ISpan.InseparableCore.Controllers.Server
 {
@@ -65,17 +67,43 @@ namespace ISpan.InseparableCore.Controllers.Server
                 return NotFound();
             }
 
-            var tMembers = await _context.TMembers
+            var member = await _context.TMembers
                 .Include(m => m.FAccountStatusNavigation)
+                .Include(m => m.FArea.FCity)
                 .Include(m => m.FArea)
                 .Include(m => m.FGender)
                 .FirstOrDefaultAsync(m => m.FId == id);
-            if (tMembers == null)
+
+            if (member == null)
             {
                 return NotFound();
             }
 
-            return View(tMembers);
+            var memberVM = new CMemberCenterVM
+            {
+                // 設定 ViewModel 的屬性值
+                Id = member.FId,
+                MemberId = member.FMemberId,
+                LastName = member.FLastName,
+                FirstName = member.FFirstName,
+                Email = member.FEmail,
+                DateOfBirth = member.FDateOfBirth,
+                GenderString = member.FGender.FGenderType,
+                //GenderId = member.FGenderId,
+                Cellphone = member.FCellphone,
+                CityString = member.FArea.FCity.FCityName,
+                //City = member.FArea.FCityId,
+                AreaString = member.FArea.FAreaName,
+                //Area = member.FAreaId,
+                Address = member.FAddress,
+                PhotoPath = member.FPhotoPath,
+                Introduction = member.FIntroduction,
+                AccountStatus = member.FAccountStatusNavigation.FStatus,
+                TotalMemberPoint = member.FTotalMemberPoint,
+                SignUpTime = member.FSignUpTime
+            };
+
+            return View(memberVM);
         }
 
         // GET: AdminMember/Create

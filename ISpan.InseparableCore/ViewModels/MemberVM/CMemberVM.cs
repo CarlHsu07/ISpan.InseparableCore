@@ -1,7 +1,7 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
 
-namespace ISpan.InseparableCore.ViewModels
+namespace ISpan.InseparableCore.ViewModels.MemberVM
 {
     public class CMemberVM
     {
@@ -18,7 +18,7 @@ namespace ISpan.InseparableCore.ViewModels
             _member = new TMembers();
         }
 
-        public int FId { get=>_member.FId; set=>_member.FId=value; }
+        public int FId { get => _member.FId; set => _member.FId = value; }
 
         /// <summary>
         /// 會員ID

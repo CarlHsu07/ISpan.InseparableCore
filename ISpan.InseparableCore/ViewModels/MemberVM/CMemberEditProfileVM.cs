@@ -1,18 +1,14 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
-using static ISpan.InseparableCore.ViewModels.CMemberRegisterVM;
+using static ISpan.InseparableCore.ViewModels.MemberVM.CMemberRegisterVM;
 
-namespace ISpan.InseparableCore.ViewModels
+namespace ISpan.InseparableCore.ViewModels.MemberVM
 {
     public class CMemberEditProfileVM
     {
         private TMembers _member;
 
-        public TMembers member
-        {
-            get { return _member; }
-            set { _member = value; }
-        }
+        public TMembers member { get => _member; set => _member = value; }
 
         public CMemberEditProfileVM()
         {
@@ -20,46 +16,27 @@ namespace ISpan.InseparableCore.ViewModels
         }
 
         //[Display(Name = "會員流水號")]
-        public int Id
-        {
-            get => _member.FId; set => _member.FId = value;
-        }
+        public int Id { get => _member.FId; set => _member.FId = value; }
 
         [Display(Name = "會員編號(不可修改)")]
-        public string? MemberId
-        {
-            get => _member.FMemberId; set => _member.FMemberId = value;
-        }
+        public string? MemberId { get => _member.FMemberId; set => _member.FMemberId = value; }
 
         [Display(Name = "姓氏")]
         [Required(ErrorMessage = "請輸入姓氏")]
-        public string LastName
-        {
-            get => _member.FLastName; set => _member.FLastName = value;
-        }
+        public string LastName { get => _member.FLastName; set => _member.FLastName = value; }
 
         [Display(Name = "名字")]
         [Required(ErrorMessage = "請輸入名字")]
-        public string FirstName
-        {
-            get => _member.FFirstName; set => _member.FFirstName = value;
-        }
+        public string FirstName { get => _member.FFirstName; set => _member.FFirstName = value; }
 
         [Display(Name = "Email")]
         [EmailAddress(ErrorMessage = "請輸入正確的Email格式")]
         [Required(ErrorMessage = "請輸入Email")]
-        public string Email
-        {
-            get => _member.FEmail; set => _member.FEmail = value;
-        }
+        public string Email { get => _member.FEmail; set => _member.FEmail = value; }
 
         [Display(Name = "密碼")]
         [DataType(DataType.Password)]
-        public string? Password
-        {
-            get { return null; }
-            set { _member.FPasswordHash = value; }
-        }
+        public string? Password { get => null; set => _member.FPasswordHash = value; }
 
         [Display(Name = "確認密碼")]
         [Compare("Password", ErrorMessage = "密碼不相同！")]
@@ -68,22 +45,13 @@ namespace ISpan.InseparableCore.ViewModels
 
         [Display(Name = "生日")]
         [MaxToday(ErrorMessage = "生日不能超過今天")]
-        public DateTime? DateOfBirth
-        {
-            get => _member.FDateOfBirth; set => _member.FDateOfBirth = value;
-        }
+        public DateTime? DateOfBirth { get => _member.FDateOfBirth; set => _member.FDateOfBirth = value; }
 
         [Display(Name = "性別")]
-        public int? GenderId
-        {
-            get => _member.FGenderId; set => _member.FGenderId = value;
-        }
+        public int? GenderId { get => _member.FGenderId; set => _member.FGenderId = value; }
 
         [Display(Name = "手機")]
-        public string? Cellphone
-        {
-            get => _member.FCellphone; set => _member.FCellphone = value;
-        }
+        public string? Cellphone { get => _member.FCellphone; set => _member.FCellphone = value; }
 
         //[Display(Name = "縣市")]
         [Required(ErrorMessage = "請選擇縣市")]

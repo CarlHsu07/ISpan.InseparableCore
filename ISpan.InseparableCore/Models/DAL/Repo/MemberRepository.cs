@@ -1,10 +1,10 @@
-﻿using ISpan.InseparableCore.ViewModels;
+﻿using ISpan.InseparableCore.ViewModels.MemberVM;
 using System;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace ISpan.InseparableCore.Models.DAL.Repo
 {
-	public class MemberRepository
+    public class MemberRepository
 	{
 		private readonly InseparableContext _context;
 		public MemberRepository(InseparableContext context)

@@ -14,6 +14,7 @@ using X.PagedList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System.Diagnostics.Metrics;
+using ISpan.InseparableCore.ViewModels.MemberVM;
 
 namespace ISpan.InseparableCore.Controllers
 {

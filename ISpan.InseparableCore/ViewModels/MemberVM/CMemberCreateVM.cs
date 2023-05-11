@@ -1,8 +1,8 @@
 ﻿using ISpan.InseparableCore.Models.DAL;
 using System.ComponentModel.DataAnnotations;
-using static ISpan.InseparableCore.ViewModels.CMemberRegisterVM;
+using static ISpan.InseparableCore.ViewModels.MemberVM.CMemberRegisterVM;
 
-namespace ISpan.InseparableCore.ViewModels
+namespace ISpan.InseparableCore.ViewModels.MemberVM
 {
     public class CMemberCreateVM
     {

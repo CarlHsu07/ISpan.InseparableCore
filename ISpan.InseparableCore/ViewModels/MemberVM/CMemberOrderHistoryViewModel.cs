@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using static NuGet.Packaging.PackagingConstants;
 
-namespace ISpan.InseparableCore.ViewModels
+namespace ISpan.InseparableCore.ViewModels.MemberVM
 {
     public class CMemberOrderHistoryViewModel
     {

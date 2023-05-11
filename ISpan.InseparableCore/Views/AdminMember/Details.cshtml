@@ -1,4 +1,4 @@
-﻿@model ISpan.InseparableCore.Models.DAL.TMembers
+﻿@model ISpan.InseparableCore.ViewModels.MemberVM.CMemberCenterVM
 
 @{
     ViewData["Title"] = "Details";
@@ -14,63 +14,70 @@
             會員ID
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FMemberId)
+            @Html.DisplayFor(model => model.MemberId)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FLastName)*@
             姓氏
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FLastName)
+            @Html.DisplayFor(model => model.LastName)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FFirstName)*@
             名字
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FFirstName)
+            @Html.DisplayFor(model => model.FirstName)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FEmail)*@
             Email
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FEmail)
+            @Html.DisplayFor(model => model.Email)
         </dd>
         <dt class="col-sm-2">
             @*@Html.DisplayNameFor(model => model.FGender)*@
             性別
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FGender.FGenderType)
+            @Html.DisplayFor(model => model.GenderString)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FDateOfBirth)*@
             生日
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FDateOfBirth)
+            @Html.DisplayFor(model => model.DateOfBirth)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FCellphone)*@
             手機
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FCellphone)
+            @Html.DisplayFor(model => model.Cellphone)
+        </dd>
+        <dt class="col-sm-2">
+            @*@Html.DisplayNameFor(model => model.FArea)*@
+            城市
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CityString)
         </dd>
         <dt class="col-sm-2">
             @*@Html.DisplayNameFor(model => model.FArea)*@
             區域
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FArea.FAreaName)
+            @Html.DisplayFor(model => model.AreaString)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FAddress)*@
             住址
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FAddress)
+            @Html.DisplayFor(model => model.Address)
         </dd>
         @*<dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FPhotoPath)
@@ -83,27 +90,27 @@
             簡介
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FIntroduction)
+            @Html.DisplayFor(model => model.Introduction)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FSignUpTime)*@
             註冊時間
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FSignUpTime)
+            @Html.DisplayFor(model => model.SignUpTime)
         </dd>
         <dt class = "col-sm-2">
             @*@Html.DisplayNameFor(model => model.FAccountStatusNavigation)*@
             會員狀態
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FAccountStatusNavigation.FStatus)
+            @Html.DisplayFor(model => model.AccountStatus)
         </dd>
         
         
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.FId" class="btn btn-warning">編輯</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">編輯</a> |
     <a asp-action="Index" class="btn btn-light">返回</a>
 </div>
