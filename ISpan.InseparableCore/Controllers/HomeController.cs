@@ -101,18 +101,23 @@ namespace ISpan.InseparableCore.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        /// <summary>
+        /// 網站頂部用的搜尋
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Search(string keyword)
         {
             if (string.IsNullOrEmpty(keyword))
                 return Ok(null);
 
-            var movie = movie_repo.Movie(keyword);
+            var movie = movie_repo.Movie(keyword); // todo 要改Movie方法的實作，因為會查到已刪除的電影
             var cinema = cinema_repo.Cinema(keyword);
             IEnumerable<CMemberVM> member = Enumerable.Empty<CMemberVM>();
             IEnumerable<ArticleVm> articles = Enumerable.Empty<ArticleVm>();
 
-            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER)) // 在登入狀態下可查到會員跟文章
+            if (HttpContext.Session.Keys.Contains(CDictionary.SK_LOGINED_USER)) // 在登入狀態下可再多查到會員跟文章
             {
                 member = member_repo.searchMembers(keyword);
 

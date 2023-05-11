@@ -521,7 +521,11 @@ namespace ISpan.InseparableCore.Controllers
                             string extension = Path.GetExtension(MemberIn.MemberPhoto.FileName).ToLower();
                             string photoName = "memberProfilePhotos_" + member.FMemberId.ToString() + extension;
                             string photoPath = _enviro.WebRootPath + "/images/memberProfilePhotos/" + photoName;
-                            MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
+                            //MemberIn.MemberPhoto.CopyTo(new FileStream(photoPath, FileMode.Create));
+                            using (var stream = new FileStream(photoPath, FileMode.Create))
+                            {
+                                await MemberIn.MemberPhoto.CopyToAsync(stream);
+                            }
                             member.FPhotoPath = photoName;
                         }
 
